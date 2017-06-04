@@ -1,0 +1,18 @@
+= SWE StartStopp 2.0: Softwareentwurf
+Uwe Peuker <uwe.peuker@bitctrl.de>
+v1.0, 2017-06-01
+:toc:
+:imagesdir: images
+:homepage: http://bitctrl.de
+
+include::overview.adoc[]
+
+include::skripts.adoc[]
+
+include::processes.adoc[]
+
+include::davinterface.adoc[]
+
+include::api.adoc[]
+
+include::terminalui.adoc[]
