@@ -10,6 +10,79 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
+	<profiles>
+		<profile>
+			<id>bitctrl</id>
+			<pluginRepositories>
+				<pluginRepository>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+					<id>bintray-datenverteiler-maven</id>
+					<name>bintray-plugins</name>
+					<url>http://dl.bintray.com/datenverteiler/maven</url>
+				</pluginRepository>
+			</pluginRepositories>
+			<repositories>
+				<repository>
+					<id>bitctrl.nexus.snapshots</id>
+					<name>Lokales BitCtrl Maven Snapshots Repository</name>
+					<url>http://bitctrlbuildserver:8081/nexus/content/repositories/snapshots/</url>
+				</repository>
+				<repository>
+					<id>bitctrl.nexus</id>
+					<name>BitCtrl Nexus Releases Repository</name>
+					<url>http://bitctrlbuildserver:8081/nexus/content/repositories/releases/</url>
+				</repository>
+				<repository>
+					<id>bintray-bitctrl-maven</id>
+					<name>bintray</name>
+					<url>http://dl.bintray.com/bitctrl/maven</url>
+				</repository>
+			</repositories>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>bitctrl.nexus.snapshots</id>
+					<name>BitCtrl Nexus Snapshots Repository</name>
+					<url>http://bitctrlbuildserver:8081/nexus/content/repositories/snapshots/</url>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>bintray</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<repositories>
+				<repository>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+					<id>bintray-bitctrl-maven</id>
+					<name>bintray</name>
+					<url>http://dl.bintray.com/bitctrl/maven</url>
+				</repository>
+			</repositories>
+			<pluginRepositories>
+				<pluginRepository>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+					<id>bintray-datenverteiler-maven</id>
+					<name>bintray-plugins</name>
+					<url>http://dl.bintray.com/datenverteiler/maven</url>
+				</pluginRepository>
+			</pluginRepositories>
+			<distributionManagement>
+				<repository>
+					<id>bintray-bitctrl-maven</id>
+					<name>bitctrl-maven</name>
+					<url>https://api.bintray.com/maven/bitctrl/maven/${project.artifactId}/;publish=1</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -54,6 +127,27 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20170516</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.bsvrz.dav</groupId>
+			<artifactId>de.bsvrz.dav.daf</artifactId>
+			<version>3.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>de.bsvrz.sys</groupId>
+			<artifactId>de.bsvrz.sys.funclib.application</artifactId>
+			<version>3.8.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.4.5.v20170502</version>
 		</dependency>
 	</dependencies>
 </project>

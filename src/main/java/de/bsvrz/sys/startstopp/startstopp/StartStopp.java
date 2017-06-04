@@ -12,26 +12,26 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
+import de.bsvrz.dav.daf.main.ClientDavInterface;
+import de.bsvrz.sys.funclib.application.StandardApplication;
+import de.bsvrz.sys.funclib.application.StandardApplicationRunner;
+import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
+import de.bsvrz.sys.startstopp.api.ApiServer;
+import de.bsvrz.sys.startstopp.config.ConfigurationManager;
 import de.bsvrz.sys.startstopp.data.StartStoppKonfiguration;
+import de.bsvrz.sys.startstopp.process.ProcessManager;
 
-public class StartStopp {
-
-	private final static String TEST_KONFIG = "testkonfigurationen/startStopp01_1.xml";
+public class StartStopp  {
 
 	public static void main(String[] args) {
-
-		try (InputStream stream = StartStoppKonfiguration.class.getResourceAsStream(TEST_KONFIG)) {;
-			StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(stream);
-			JSONObject json = konfiguration.getJson();
-			
-			StartStoppKonfiguration newKonfiguration = new StartStoppKonfiguration(json);
-		//	System.err.println(newKonfiguration.getJson().toString(4));
-			
-			newKonfiguration.saveToXmlFile(new OutputStreamWriter(System.err));
-			
-		} catch (ParserConfigurationException | SAXException | IOException | XMLStreamException | TransformerFactoryConfigurationError | TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		StartStoppOptions options = new StartStoppOptions(args);
+		ConfigurationManager configurationManager = new ConfigurationManager(options);
+		
+		ProcessManager processManager = new ProcessManager(options, configurationManager);
+		processManager.start();
+		
+		ApiServer apiServer = new ApiServer(options, processManager);
+		apiServer.start();
 	}
+	
 }

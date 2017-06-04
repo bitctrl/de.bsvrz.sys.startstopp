@@ -63,14 +63,15 @@ public class StartArt implements StartStoppConfigurationElement {
 
 		result.put("option", option.externalName);
 		result.put("neuStart", neuStart);
-		result.put("intervall", intervall);
-
+		if (intervall != null) {
+			result.put("intervall", intervall);
+		}
 		return result;
 	}
 
 	@Override
 	public void initFromJson(JSONObject json) {
-		intervall = json.getString("intervall");
+		intervall = json.optString("intervall", null);
 		neuStart = json.getBoolean("neuStart");
 		option = StartArtOption.getStartArtOption(json.getString("option"));
 	}
@@ -80,7 +81,7 @@ public class StartArt implements StartStoppConfigurationElement {
 		destination.writeStartElement("startart");
 		destination.writeAttribute("option", option.externalName);
 		destination.writeAttribute("neustart", neuStart ? "ja" : "nein");
-		if( intervall != null) {
+		if (intervall != null) {
 			destination.writeAttribute("intervall", intervall);
 		}
 		destination.writeEndElement();
