@@ -1,3 +1,29 @@
+/*
+ * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Copyright (C) 2007-2017 BitCtrl Systems GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Contact Information:<br>
+ * BitCtrl Systems GmbH<br>
+ * Weißenfelser Straße 67<br>
+ * 04229 Leipzig<br>
+ * Phone: +49 341-490670<br>
+ * mailto: info@bitctrl.de
+ */
+
 package de.bsvrz.sys.startstopp.data;
 
 import java.io.ByteArrayOutputStream;
@@ -20,7 +46,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -44,7 +69,9 @@ public class StartStoppKonfiguration implements StartStoppConfigurationElement {
 	private static class StartStoppParserHandler extends DefaultHandler {
 
 		private enum Tags {
-			tagIsUndefined, konfiguration, startStopp, global, makrodefinition, kernsystem, zugangdav, rechner, protokolldatei, applikationen, inkarnation, applikation, aufrufparameter, startart, standardAusgabe, standardFehlerAusgabe, startFehlerverhalten, stoppFehlerverhalten, usv, startbedingung, stoppbedingung;
+			tagIsUndefined, konfiguration, startStopp, global, makrodefinition, kernsystem, zugangdav, rechner,
+			protokolldatei, applikationen, inkarnation, applikation, aufrufparameter, startart, standardAusgabe,
+			standardFehlerAusgabe, startFehlerverhalten, stoppFehlerverhalten, usv, startbedingung, stoppbedingung;
 
 			static Tags getTag(String tagStr) {
 				for (Tags tag : values()) {
@@ -59,7 +86,7 @@ public class StartStoppKonfiguration implements StartStoppConfigurationElement {
 		private StartStoppKonfiguration destination;
 		private Inkarnation currentInkarnation;
 
-		public StartStoppParserHandler(StartStoppKonfiguration destination) {
+		StartStoppParserHandler(StartStoppKonfiguration destination) {
 			this.destination = destination;
 		}
 
@@ -262,12 +289,13 @@ public class StartStoppKonfiguration implements StartStoppConfigurationElement {
 		return inkarnationen.values();
 	}
 
-	public void saveToXmlFile(OutputStreamWriter outputStreamWriter) throws XMLStreamException, IOException, TransformerFactoryConfigurationError, ParserConfigurationException, SAXException, TransformerException {
+	public void saveToXmlFile(OutputStreamWriter outputStreamWriter) throws XMLStreamException, IOException,
+			TransformerFactoryConfigurationError, ParserConfigurationException, SAXException, TransformerException {
 		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 		outputFactory.setProperty("javax.xml.stream.isRepairingNamespaces", true);
 
 		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(102400)) {
-			XMLStreamWriter writer = outputFactory.createXMLStreamWriter(outputStream);
+			XMLStreamWriter writer = outputFactory.createXMLStreamWriter(outputStream, "UTF-8");
 
 			writer.writeStartDocument("UTF-8", null);
 			writeXml(writer);
@@ -277,10 +305,10 @@ public class StartStoppKonfiguration implements StartStoppConfigurationElement {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-			
+
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(new InputSource(new StringReader(outputStream.toString()))); 
+			Document doc = db.parse(new InputSource(new StringReader(outputStream.toString("UTF-8"))));
 			DOMSource source = new DOMSource(doc);
 			transformer.transform(source, new StreamResult(outputStreamWriter));
 		}
