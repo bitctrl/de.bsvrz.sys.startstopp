@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bitctrl/de.bsvrz.sys.startstopp.svg?branch=develop)](https://travis-ci.org/bitctrl/de.bsvrz.sys.startstopp)
+
 # SWE Start/Stop 
 
 ## Version 2
