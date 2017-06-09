@@ -1,0 +1,18 @@
+#%RAML 1.0
+title: StartStopp
+version: v1
+baseUri: https://api.github.com
+mediaType: application/json
+types:
+  StartStoppKonfiguration:
+    schema: !include startstoppkonfiguration.json
+
+/startstoppkonfigurationen:
+  description: The search resource
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: StartStoppKonfiguration
+  

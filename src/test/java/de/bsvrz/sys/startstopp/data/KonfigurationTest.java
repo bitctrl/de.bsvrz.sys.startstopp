@@ -62,6 +62,8 @@ public class KonfigurationTest {
 				StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(stream);
 				JSONObject json = konfiguration.getJson();
 
+				System.err.println(json.toString());
+				
 				StartStoppKonfiguration newKonfiguration = new StartStoppKonfiguration(json);
 				newKonfiguration.saveToXmlFile(new OutputStreamWriter(System.err, Charset.forName("UTF-8")));
 			}

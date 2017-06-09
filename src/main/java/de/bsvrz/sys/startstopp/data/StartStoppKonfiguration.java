@@ -270,6 +270,7 @@ public class StartStoppKonfiguration implements StartStoppConfigurationElement {
 	private GlobalData global = new GlobalData();
 	private Map<String, Inkarnation> inkarnationen = new LinkedHashMap<>();
 
+	
 	public StartStoppKonfiguration(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser saxParser = factory.newSAXParser();
@@ -278,7 +279,6 @@ public class StartStoppKonfiguration implements StartStoppConfigurationElement {
 
 	public StartStoppKonfiguration(JSONObject json) {
 		initFromJson(json);
-
 	}
 
 	private void addInkarnation(Inkarnation inkarnation) {

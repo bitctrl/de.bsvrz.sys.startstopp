@@ -46,6 +46,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
+import de.bsvrz.sys.startstop.api.jsonschema.Startstoppkonfigurationen;
 import de.bsvrz.sys.startstopp.data.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
@@ -111,7 +112,7 @@ public class ApiServer extends Thread {
 //		}
 		
 		URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
-		ResourceConfig config = new ResourceConfig(TracksImpl.class);
+		ResourceConfig config = new ResourceConfig(Startstoppkonfigurationen.class);
 	    Server server = JettyHttpContainerFactory.createServer(baseUri, config);
 //	    Server server = JettyHttpContainerFactory.createServer(baseUri, false);
 //	    server.setHandler(new AbstractHandler() {
