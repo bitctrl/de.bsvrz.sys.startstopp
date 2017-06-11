@@ -37,7 +37,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 
-public class ApiServer {
+public class ApiServer extends Thread {
 
 	public ApiServer(StartStoppOptions options, ProcessManager processManager) {
 		
