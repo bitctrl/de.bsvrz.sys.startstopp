@@ -22,6 +22,8 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
+import de.bsvrz.sys.startstopp.data.StartArt.StartArtOption;
+import de.bsvrz.sys.startstopp.data.StartFehlerVerhalten.StartFehlerVerhaltenOption;
 
 public class StartStoppKonfigurationParser {
 
@@ -109,7 +111,7 @@ public class StartStoppKonfigurationParser {
 				
 				if (attributes.getValue("option") != null) {
 					currentInkarnation.getStartArt()
-							.setOption(attributes.getValue("option"));
+							.setOption(StartArt.Option.fromValue(attributes.getValue("option")));
 				}
 				if (attributes.getValue("neustart") != null) {
 					currentInkarnation.getStartArt().setNeuStart(attributes.getValue("neustart").equals("ja"));
@@ -123,11 +125,11 @@ public class StartStoppKonfigurationParser {
 					currentInkarnation.setStartFehlerVerhalten(new StartFehlerVerhalten());
 				}
 				if (attributes.getValue("option") != null) {
-					currentInkarnation.getStartFehlerVerhalten().setOption(attributes.getValue("option"));
+					currentInkarnation.getStartFehlerVerhalten().setOption(StartFehlerVerhalten.Option.valueOf(attributes.getValue("option")));
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStartFehlerVerhalten()
-							.setWiederholungen(Integer.parseInt(attributes.getValue("wiederholungen")));
+							.setWiederholungen(Double.parseDouble(attributes.getValue("wiederholungen")));
 				}
 				break;
 			case startStopp:
@@ -145,11 +147,11 @@ public class StartStoppKonfigurationParser {
 				}
 				
 				if (attributes.getValue("option") != null) {
-					currentInkarnation.getStoppFehlerVerhalten().setOption(attributes.getValue("option"));
+					currentInkarnation.getStoppFehlerVerhalten().setOption(StoppFehlerVerhalten.Option.valueOf(attributes.getValue("option")));
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStoppFehlerVerhalten()
-							.setWiederholungen(Integer.parseInt(attributes.getValue("wiederholungen")));
+							.setWiederholungen(Double.parseDouble(attributes.getValue("wiederholungen")));
 				}
 				break;
 			case usv:
