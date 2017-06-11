@@ -31,100 +31,42 @@
 					"type": "array"
 				},
 				"makrodefinitionen": {
-					"additionalProperties": false,
-					"properties": {
-						"aoe.pid": {
-							"type": "string"
+					"items": {
+						"additionalProperties": false,
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"wert": {
+								"type": "string"
+							}
 						},
-						"authentifizierung.benutzer": {
-							"type": "string"
-						},
-						"authentifizierung.default": {
-							"type": "string"
-						},
-						"authentifizierung.passwortdatei": {
-							"type": "string"
-						},
-						"dav1.appPort": {
-							"type": "string"
-						},
-						"dav1.davPort": {
-							"type": "string"
-						},
-						"dav1.einstellungen": {
-							"type": "string"
-						},
-						"dav1.host": {
-							"type": "string"
-						},
-						"dav1.mitAuthentifizierung": {
-							"type": "string"
-						},
-						"dav1.ohneAuthentifizierung": {
-							"type": "string"
-						},
-						"debug.default": {
-							"type": "string"
-						},
-						"debug.file": {
-							"type": "string"
-						},
-						"debug.filePath": {
-							"type": "string"
-						},
-						"debug.stderr": {
-							"type": "string"
-						},
-						"dist": {
-							"type": "string"
-						},
-						"java": {
-							"type": "string"
-						},
-						"rechner1.ip": {
-							"type": "string"
-						},
-						"rechner2.ip": {
-							"type": "string"
-						},
-						"root": {
-							"type": "string"
-						}
+						"required": [
+							"name",
+							"wert"
+						],
+						"type": "object"
 					},
-					"required": [
-						"rechner2.ip",
-						"authentifizierung.benutzer",
-						"dav1.host",
-						"dist",
-						"dav1.einstellungen",
-						"dav1.appPort",
-						"dav1.ohneAuthentifizierung",
-						"debug.stderr",
-						"debug.filePath",
-						"dav1.davPort",
-						"authentifizierung.default",
-						"dav1.mitAuthentifizierung",
-						"debug.default",
-						"rechner1.ip",
-						"authentifizierung.passwortdatei",
-						"aoe.pid",
-						"root",
-						"debug.file",
-						"java"
-					],
-					"type": "object"
+					"type": "array"
 				},
 				"rechner": {
-					"additionalProperties": false,
-					"properties": {
-						"rechner2": {
-							"type": "string"
-						}
+					"items": {
+						"additionalProperties": false,
+						"properties": {
+							"name": {
+								"type": "string"
+							},
+							"tcpAdresse": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"name",
+							"tcpAdresse"
+						],
+						"type": "object"
 					},
-					"required": [
-						"rechner2"
-					],
-					"type": "object"
+					"type": "array"
 				},
 				"zugangDav": {
 					"additionalProperties": false,

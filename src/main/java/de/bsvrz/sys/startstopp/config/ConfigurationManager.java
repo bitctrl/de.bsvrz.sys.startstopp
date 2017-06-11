@@ -33,5 +33,4 @@ public class ConfigurationManager {
 	public ConfigurationManager(StartStoppOptions options) {
 		// TODO Auto-generated constructor stub
 	}
-
 }

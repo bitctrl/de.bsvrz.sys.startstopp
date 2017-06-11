@@ -40,7 +40,6 @@ public class StartStopp  {
 		processManager.start();
 		
 		ApiServer apiServer = new ApiServer(options, processManager);
-		apiServer.start();
 	}
 	
 }

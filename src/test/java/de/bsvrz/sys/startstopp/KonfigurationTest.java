@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.data;
+package de.bsvrz.sys.startstopp;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +39,8 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+
+import de.bsvrz.sys.startstopp.data.StartStoppKonfiguration;
 
 public class KonfigurationTest {
 
@@ -57,7 +59,7 @@ public class KonfigurationTest {
 	public void convertKonfiguration() throws ParserConfigurationException, SAXException, IOException,
 			XMLStreamException, TransformerFactoryConfigurationError, TransformerException {
 		for (String file : files) {
-			try (InputStream stream = StartStoppKonfiguration.class.getResourceAsStream(file)) {
+			try (InputStream stream = KonfigurationTest.class.getResourceAsStream(file)) {
 
 				StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(stream);
 				JSONObject json = konfiguration.getJson();
