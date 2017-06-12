@@ -1,0 +1,160 @@
+{
+  "global" : {
+    "kernsysteme" : [ {
+      "inkarnationsName" : "Datenverteiler",
+      "mitInkarnationsName" : false
+    }, {
+      "inkarnationsName" : "Konfiguration",
+      "mitInkarnationsName" : false
+    }, {
+      "inkarnationsName" : "Parametrierung",
+      "mitInkarnationsName" : true
+    } ],
+    "makrodefinitionen" : [ ],
+    "zugangDav" : {
+      "adresse" : "%dav1.host%",
+      "passWord" : "systeststst",
+      "port" : "%dav1.appPort%",
+      "userName" : "SystestStSt"
+    },
+    "rechner" : [ {
+      "name" : "rechner2",
+      "tcpAdresse" : "%rechner2.ip%"
+    } ]
+  },
+  "inkarnationen" : [ {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx4G", "-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter", "%dav1.einstellungen%", "%debug.default%", "-benutzer=davnutzer", "-konfigurationsBenutzer=konfigurationnutzer", "-parametrierungsBenutzer=parametrierungnutzer", "-authentifizierung=%authentifizierung.passwortdatei%", "-datenverteilerId=111111111111111111", "-rechtePruefung=neu", "-verzögerungFürAndereDatenverteiler=600s" ],
+    "inkarnationsName" : "Datenverteiler",
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingungen" : [ ],
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 0.0
+    },
+    "stoppBedingungen" : [ ],
+    "stoppFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 0.0
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx4g", "-cp %dist%/de.bsvrz.puk.config/de.bsvrz.puk.config-runtime.jar de.bsvrz.puk.config.main.ConfigurationApp", "%dav1.ohneAuthentifizierung%", "%debug.default%", "-benutzer=konfigurationnutzer", "-authentifizierung=%authentifizierung.passwortdatei%", "-verwaltung=%root%/konfiguration/verwaltungsdaten.xml", "-benutzerverwaltung=%root%/konfiguration/benutzerverwaltung.xml" ],
+    "inkarnationsName" : "Konfiguration",
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingungen" : [ ],
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 0.0
+    },
+    "stoppBedingungen" : [ ],
+    "stoppFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 0.0
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx20g", "-jar %dist%/de.bsvrz.puk.param/de.bsvrz.puk.param-runtime.jar", "%dav1.ohneAuthentifizierung%", "%debug.default%", "-benutzer=parametrierungnutzer", "-authentifizierung=%authentifizierung.passwortdatei%", "-persistenzModul=de.bsvrz.puk.param.param.DerbyPersistenz", "-persistenz=%root%/parameter", "-cacheGroesse=200000", "-oldDefault=nein" ],
+    "inkarnationsName" : "Parametrierung",
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingungen" : [ ],
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 0.0
+    },
+    "stoppBedingungen" : [ ],
+    "stoppFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 0.0
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application01", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsName" : "Applikation01",
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingungen" : [ ],
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 1.0
+    },
+    "stoppBedingungen" : [ ],
+    "stoppFehlerVerhalten" : {
+      "option" : "stopp",
+      "wiederholungen" : 2.0
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsName" : "Applikation04",
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingungen" : [ ],
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 1.0
+    },
+    "stoppBedingungen" : [ ],
+    "stoppFehlerVerhalten" : {
+      "option" : "stopp",
+      "wiederholungen" : 1.0
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsName" : "Applikation05",
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingungen" : [ ],
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 0.0
+    },
+    "stoppBedingungen" : [ ],
+    "stoppFehlerVerhalten" : {
+      "option" : "stopp",
+      "wiederholungen" : 0.0
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsName" : "Applikation06",
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingungen" : [ ],
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : 0.0
+    },
+    "stoppBedingungen" : [ ],
+    "stoppFehlerVerhalten" : {
+      "option" : "stopp",
+      "wiederholungen" : 0.0
+    }
+  } ],
+  "metaDaten" : { }
+}

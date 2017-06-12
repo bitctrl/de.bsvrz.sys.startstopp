@@ -125,7 +125,7 @@ public class StartStoppKonfigurationParser {
 					currentInkarnation.setStartFehlerVerhalten(new StartFehlerVerhalten());
 				}
 				if (attributes.getValue("option") != null) {
-					currentInkarnation.getStartFehlerVerhalten().setOption(StartFehlerVerhalten.Option.valueOf(attributes.getValue("option")));
+					currentInkarnation.getStartFehlerVerhalten().setOption(StartFehlerVerhalten.Option.fromValue(attributes.getValue("option")));
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStartFehlerVerhalten()
@@ -147,7 +147,7 @@ public class StartStoppKonfigurationParser {
 				}
 				
 				if (attributes.getValue("option") != null) {
-					currentInkarnation.getStoppFehlerVerhalten().setOption(StoppFehlerVerhalten.Option.valueOf(attributes.getValue("option")));
+					currentInkarnation.getStoppFehlerVerhalten().setOption(StoppFehlerVerhalten.Option.fromValue(attributes.getValue("option")));
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStoppFehlerVerhalten()
