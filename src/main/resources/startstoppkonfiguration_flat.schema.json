@@ -1,0 +1,280 @@
+
+
+    {
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"additionalProperties": false,
+	"id": "http://bitctrl.de/startstoppkonfiguration.schema.json",
+	"properties": {
+		"global": {
+      "additionalProperties": false,
+			"properties": {
+				"kernsysteme": {
+					"items": {
+            "additionalProperties": false,
+			"properties": {
+				"inkarnationsName": {
+					"type": "string"
+				},
+				"wartezeit": {
+					"type": "number"
+				},
+				"mitInkarnationsName": {
+					"type": "boolean"
+				}
+			},
+			"required": [
+				"inkarnationsName"
+			],
+			"type": "object"
+					},
+					"type": "array"
+				},
+				"makrodefinitionen": {
+					"items": {
+            "additionalProperties": false,
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"wert": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name",
+				"wert"
+			],
+			"type": "object"
+					},
+					"type": "array"
+				},
+				"zugangDav": {
+          "additionalProperties": false,
+			"properties": {
+				"adresse": {
+					"type": "string"
+				},
+				"passWord": {
+					"type": "string"
+				},
+				"port": {
+					"type": "string"
+				},
+				"userName": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"userName",
+				"passWord",
+				"adresse",
+				"port"
+			],
+			"type": "object"
+				},
+				"usv": {
+          "additionalProperties": false,
+			"properties": {
+				"pid": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"pid"
+			],
+			"type": "object"
+				},
+				"rechner": {
+					"items": {
+            "additionalProperties": false,
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"tcpAdresse": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"name",
+				"tcpAdresse"
+			],
+			"type": "object"
+					},
+					"type": "array"
+				}
+			},
+			"required": [
+				"zugangDav"
+			],
+			"type": "object"
+		},
+		"inkarnationen": {
+			"items": {
+        "additionalProperties": false,
+			"properties": {
+				"applikation": {
+					"type": "string"
+				},
+				"aufrufParameter": {
+					"items": {
+						"type": "string"
+					},
+					"type": "array"
+				},
+				"inkarnationsName": {
+					"type": "string"
+				},
+				"startArt": {
+          "additionalProperties": false,
+			"properties": {
+				"option": {
+					"type": "string",
+					"enum": [
+						"automatisch",
+						"manuell",
+						"intervallrelativ",
+						"intervallabsolut"
+					],
+					"default": "automatisch"
+				},
+				"neuStart": {
+					"type": "boolean",
+					"default": true
+				},
+				"intervall": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+				},
+				"startBedingungen": {
+					"items": {
+            "additionalProperties": false,
+			"properties": {
+				"vorgaenger": {
+					"type": "string"
+				},
+				"warteart": {
+					"type": "string",
+					"enum": [
+						"beginn",
+						"ende"
+					],
+					"default": "beginn"
+				},
+				"rechner": {
+					"type": "string"
+				},
+				"wartezeit": {
+					"type": "string"
+				}
+			},
+			"type": "object"
+					},
+					"type": "array"
+				},
+				"startFehlerVerhalten": {
+          "additionalProperties": false,
+			"properties": {
+				"option": {
+					"type": "string",
+					"enum": [
+						"beenden",
+						"abbruch",
+						"ignorieren"
+					],
+					"default": "ignorieren"
+				},
+				"wiederholungen": {
+					"type": "number"
+				}
+			},
+			"type": "object"
+				},
+				"stoppBedingungen": {
+					"items": {
+            "additionalProperties": false,
+			"properties": {
+				"nachfolger": {
+					"type": "string"
+				},
+				"rechner": {
+					"type": "string"
+				},
+				"wartezeit": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"vorgaenger"
+			],
+			"type": "object"
+					},
+					"type": "array"
+				},
+				"stoppFehlerVerhalten": {
+          "additionalProperties": false,
+			"properties": {
+				"option": {
+					"type": "string",
+					"enum": [
+						"stopp",
+						"abbruch",
+						"ignorieren"
+					],
+					"default": "ignorieren"
+				},
+				"wiederholungen": {
+					"type": "number"
+				}
+			},
+			"type": "object"
+				}
+			},
+			"required": [
+				"startBedingungen",
+				"aufrufParameter",
+				"applikation",
+				"startArt",
+				"stoppBedingungen",
+				"startFehlerVerhalten",
+				"stoppFehlerVerhalten",
+				"inkarnationsName"
+			],
+			"type": "object"
+			},
+			"type": "array"
+		},
+		"metaDaten": {
+			"additionalProperties": false,
+			"properties": {
+				"aenderungsGrund": {
+					"type": "string"
+				},
+				"erstelltAm": {
+					"type": "string"
+				},
+				"erstelltDurch": {
+					"type": "string"
+				},
+				"versionsNummer": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"erstelltDurch",
+				"versionsNummer",
+				"aenderungsGrund",
+				"erstelltAm"
+			],
+			"type": "object"
+		}
+	},
+	"required": [
+		"global",
+		"inkarnationen",
+		"metaDaten"
+	],
+	"type": "object"
+}
