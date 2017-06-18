@@ -1,1 +1,3 @@
-= Schnittstelle zum Datenverteiler
+== Schnittstelle zum Datenverteiler
+
+Die Schnittstele zum Datenverteiler
