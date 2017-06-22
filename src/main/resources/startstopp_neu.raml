@@ -4,7 +4,8 @@ version: v1
 baseUri: https://api.startstopp.sys.bsvrz.de
 mediaType: application/json
 types:
-   StartStoppKonfiguration: !include startstoppkonfiguration.schema.json
+   StartStoppKonfiguration:
+     type: !include startstoppkonfiguration.schema.json
 
 /startstoppkonfigurationen:
   description: The search resource
@@ -14,5 +15,3 @@ types:
         body:
           application/json:
             type: StartStoppKonfiguration
-  put:
-    
