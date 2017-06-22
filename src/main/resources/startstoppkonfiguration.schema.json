@@ -78,7 +78,6 @@
 			"required": [
 				"inkarnationsName"
 			],
-			"javaType": "de.bsvrz.sys.startstopp.api.Otto",
 			"type": "object"
 		},
 		"zugangDav": {

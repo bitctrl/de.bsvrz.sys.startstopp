@@ -25,4 +25,5 @@ public class StartstoppkonfigurationenImpl implements Startstoppkonfigurationen 
 	    
 	    return GetStartstoppkonfigurationenResponse.respond200WithApplicationJson(konfiguration);
 	}
+
 }
