@@ -19,11 +19,9 @@ import de.bsvrz.sys.startstopp.api.jsonschema.MetaDaten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppKonfiguration;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
-import de.bsvrz.sys.startstopp.data.StartArt.StartArtOption;
-import de.bsvrz.sys.startstopp.data.StartFehlerVerhalten.StartFehlerVerhaltenOption;
 
 public class StartStoppKonfigurationParser {
 
@@ -44,10 +42,10 @@ public class StartStoppKonfigurationParser {
 			}
 		};
 
-		private StartStoppKonfiguration destination;
+		private StartStoppSkript destination;
 		private Inkarnationen currentInkarnation;
 
-		StartStoppParserHandler(StartStoppKonfiguration destination) {
+		StartStoppParserHandler(StartStoppSkript destination) {
 			this.destination = destination;
 		}
 
@@ -254,9 +252,9 @@ public class StartStoppKonfigurationParser {
 		}
 	}
 	
-	public static StartStoppKonfiguration getKonfigurationFrom(String resourceName) {
+	public static StartStoppSkript getKonfigurationFrom(String resourceName) {
 	
-		StartStoppKonfiguration startStoppKonfiguration = new StartStoppKonfiguration();
+		StartStoppSkript startStoppKonfiguration = new StartStoppSkript();
 
 		try (InputStream stream = StartStoppKonfigurationParser.class.getResourceAsStream(resourceName)) {
 			SAXParserFactory factory = SAXParserFactory.newInstance();

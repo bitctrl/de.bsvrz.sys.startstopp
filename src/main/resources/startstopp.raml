@@ -4,15 +4,30 @@ version: v1
 baseUri: https://api.startstopp.sys.bsvrz.de
 mediaType: application/json
 types:
-   StartStoppKonfiguration: !include startstoppkonfiguration.schema.json
+  StartStoppSkript: !include startstoppskript.schema.json
+  StatusResponse: !include statusresponse.schema.json
 
-/startstoppkonfigurationen:
-  description: The search resource
-  get:
-    responses:
-      200:
-        body:
-          application/json:
-            type: StartStoppKonfiguration
+/skripte:
+  description: Zugriff auf die für StartStopp vorliegenden Skripte
+  /current:
+    description: Liefert das aktuelle im StartStopp verwendete Skript
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              type: StartStoppSkript
+        202:
+          body:
+            application/json:
+              type: StartStoppSkript
+    /status:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+                type: StatusResponse
 
-    
+/applikationen:
+  description: Zugriff auf die in StartStopp verwalteten Applikationen

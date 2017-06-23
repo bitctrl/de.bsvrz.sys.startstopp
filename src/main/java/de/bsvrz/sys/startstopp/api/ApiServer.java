@@ -42,7 +42,7 @@ public class ApiServer extends Thread {
 	public ApiServer(StartStoppOptions options, ProcessManager processManager) {
 		
 		URI baseUri = UriBuilder.fromUri("http://localhost/").port(9998).build();
-		ResourceConfig config = new ResourceConfig(StartstoppkonfigurationenImpl.class);
+		ResourceConfig config = new ResourceConfig(Dummy.class);
 	    Server server = JettyHttpContainerFactory.createServer(baseUri, config);
 	    try {
 			server.start();
