@@ -18,8 +18,10 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Makrodefinitionen;
 import de.bsvrz.sys.startstopp.api.jsonschema.MetaDaten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingungen;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingungen;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 
@@ -42,10 +44,10 @@ public class StartStoppKonfigurationParser {
 			}
 		};
 
-		private StartStoppSkript destination;
+		private Startstoppskript destination;
 		private Inkarnationen currentInkarnation;
 
-		StartStoppParserHandler(StartStoppSkript destination) {
+		StartStoppParserHandler(Startstoppskript destination) {
 			this.destination = destination;
 		}
 
@@ -78,7 +80,7 @@ public class StartStoppKonfigurationParser {
 				if (attributes.getValue("mitInkarnationsname") != null) {
 					kernsysteme.setMitInkarnationsName(attributes.getValue("mitInkarnationsname").equals("ja"));
 				}
-				if( destination.getGlobal() == null) {
+				if (destination.getGlobal() == null) {
 					destination.setGlobal(new Global());
 				}
 				destination.getGlobal().getKernsysteme().add(kernsysteme);
@@ -103,10 +105,10 @@ public class StartStoppKonfigurationParser {
 			case standardFehlerAusgabe:
 				break;
 			case startart:
-				if( currentInkarnation.getStartArt() == null) {
+				if (currentInkarnation.getStartArt() == null) {
 					currentInkarnation.setStartArt(new StartArt());
 				}
-				
+
 				if (attributes.getValue("option") != null) {
 					currentInkarnation.getStartArt()
 							.setOption(StartArt.Option.fromValue(attributes.getValue("option")));
@@ -119,11 +121,12 @@ public class StartStoppKonfigurationParser {
 				}
 				break;
 			case startFehlerverhalten:
-				if( currentInkarnation.getStartFehlerVerhalten() == null) {
+				if (currentInkarnation.getStartFehlerVerhalten() == null) {
 					currentInkarnation.setStartFehlerVerhalten(new StartFehlerVerhalten());
 				}
 				if (attributes.getValue("option") != null) {
-					currentInkarnation.getStartFehlerVerhalten().setOption(StartFehlerVerhalten.Option.fromValue(attributes.getValue("option")));
+					currentInkarnation.getStartFehlerVerhalten()
+							.setOption(StartFehlerVerhalten.Option.fromValue(attributes.getValue("option")));
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStartFehlerVerhalten()
@@ -131,7 +134,7 @@ public class StartStoppKonfigurationParser {
 				}
 				break;
 			case startStopp:
-				if( destination.getMetaDaten() == null) {
+				if (destination.getMetaDaten() == null) {
 					destination.setMetaDaten(new MetaDaten());
 				}
 				destination.getMetaDaten().setVersionsNummer(attributes.getValue("Versionsnummer"));
@@ -140,12 +143,13 @@ public class StartStoppKonfigurationParser {
 				destination.getMetaDaten().setAenderungsGrund(attributes.getValue("Aenderungsgrund"));
 				break;
 			case stoppFehlerverhalten:
-				if( currentInkarnation.getStoppFehlerVerhalten() == null) {
+				if (currentInkarnation.getStoppFehlerVerhalten() == null) {
 					currentInkarnation.setStoppFehlerVerhalten(new StoppFehlerVerhalten());
 				}
-				
+
 				if (attributes.getValue("option") != null) {
-					currentInkarnation.getStoppFehlerVerhalten().setOption(StoppFehlerVerhalten.Option.fromValue(attributes.getValue("option")));
+					currentInkarnation.getStoppFehlerVerhalten()
+							.setOption(StoppFehlerVerhalten.Option.fromValue(attributes.getValue("option")));
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStoppFehlerVerhalten()
@@ -157,10 +161,10 @@ public class StartStoppKonfigurationParser {
 				// destination.getGlobal().setUsv(attributes.getValue("pid"));
 				break;
 			case zugangdav:
-				if( destination.getGlobal() == null) {
+				if (destination.getGlobal() == null) {
 					destination.setGlobal(new Global());
 				}
-				if( destination.getGlobal().getZugangDav() == null) {
+				if (destination.getGlobal().getZugangDav() == null) {
 					destination.getGlobal().setZugangDav(new ZugangDav());
 				}
 				destination.getGlobal().getZugangDav().setAdresse(attributes.getValue("adresse"));
@@ -169,30 +173,30 @@ public class StartStoppKonfigurationParser {
 				destination.getGlobal().getZugangDav().setPassWord(attributes.getValue("passwort"));
 				break;
 			case startbedingung:
-				// TODO Schema ergänzen
-//				StartBedingung startBedingung = new StartBedingung(attributes.getValue("vorgaenger"));
-//				if (attributes.getValue("warteart") != null) {
-//					startBedingung.setWarteArt(StartBedingung.WarteArt.getWarteArt(attributes.getValue("warteart")));
-//				}
-//				if (attributes.getValue("rechner") != null) {
-//					startBedingung.setRechner(attributes.getValue("rechner"));
-//				}
-//				if (attributes.getValue("wartezeit") != null) {
-//					startBedingung.setWarteZeit(attributes.getValue("wartezeit"));
-//				}
-//				currentInkarnation.addStartBedingung(startBedingung);
+				StartBedingungen startBedingung = new StartBedingungen();
+				startBedingung.setVorgaenger(attributes.getValue("vorgaenger"));
+				if (attributes.getValue("warteart") != null) {
+					startBedingung.setWarteart(StartBedingungen.Warteart.fromValue(attributes.getValue("warteart")));
+				}
+				if (attributes.getValue("rechner") != null) {
+					startBedingung.setRechner(attributes.getValue("rechner"));
+				}
+				if (attributes.getValue("wartezeit") != null) {
+					startBedingung.setWartezeit(attributes.getValue("wartezeit"));
+				}
+				currentInkarnation.getStartBedingungen().add(startBedingung);
 				break;
 			case stoppbedingung:
-				// TODO Schema ergänzen
-//				StoppBedingung stoppBedingung = new StoppBedingung(attributes.getValue("nachfolger"));
-//				if (attributes.getValue("rechner") != null) {
-//					stoppBedingung.setRechner(attributes.getValue("rechner"));
-//				}
-//				if (attributes.getValue("wartezeit") != null) {
-//					stoppBedingung.setWarteZeit(attributes.getValue("wartezeit"));
-//				}
-//				currentInkarnation.addStoppBedingung(stoppBedingung);
-//				break;
+				StoppBedingungen stoppBedingung = new StoppBedingungen();
+				stoppBedingung.setNachfolger(attributes.getValue("nachfolger"));
+				if (attributes.getValue("rechner") != null) {
+					stoppBedingung.setRechner(attributes.getValue("rechner"));
+				}
+				if (attributes.getValue("wartezeit") != null) {
+					stoppBedingung.setWartezeit(attributes.getValue("wartezeit"));
+				}
+				currentInkarnation.getStoppBedingungen().add(stoppBedingung);
+				break;
 			case tagIsUndefined:
 				throw new IllegalArgumentException("Tag not supported: " + qName);
 
@@ -251,10 +255,10 @@ public class StartStoppKonfigurationParser {
 			}
 		}
 	}
-	
-	public static StartStoppSkript getKonfigurationFrom(String resourceName) {
-	
-		StartStoppSkript startStoppKonfiguration = new StartStoppSkript();
+
+	public static Startstoppskript getKonfigurationFrom(String resourceName) {
+
+		Startstoppskript startStoppKonfiguration = new Startstoppskript();
 
 		try (InputStream stream = StartStoppKonfigurationParser.class.getResourceAsStream(resourceName)) {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -265,7 +269,7 @@ public class StartStoppKonfigurationParser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return startStoppKonfiguration;
 	}
 }

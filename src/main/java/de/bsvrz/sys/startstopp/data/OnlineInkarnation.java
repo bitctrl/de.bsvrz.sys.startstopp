@@ -37,10 +37,10 @@ public class OnlineInkarnation {
 		GESTOPPT
 	}
 	
-	private Inkarnation inkarnation;
+	private String inkarnationsId;
 
-	public OnlineInkarnation(Inkarnation inkarnation) {
-		this.inkarnation = inkarnation;
+	public OnlineInkarnation(String inkarnationsId) {
+		this.inkarnationsId = inkarnationsId;
 	}
 	
 	
@@ -50,7 +50,7 @@ public class OnlineInkarnation {
 	int startCount;
 
 	public String getApplikationsName() {
-		return inkarnation.getInkarnationsName();
+		return inkarnationsId;
 	}
 	public StartStoppStatus getStatus() {
 		return status;

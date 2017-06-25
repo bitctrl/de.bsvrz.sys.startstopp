@@ -27,20 +27,21 @@
 package de.bsvrz.sys.startstopp;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
+import java.io.StringWriter;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.json.JSONObject;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import de.bsvrz.sys.startstopp.data.StartStoppKonfiguration;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import de.bsvrz.sys.startstopp.api.StartStoppKonfigurationParser;
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 
 public class KonfigurationTest {
 
@@ -59,16 +60,17 @@ public class KonfigurationTest {
 	public void convertKonfiguration() throws ParserConfigurationException, SAXException, IOException,
 			XMLStreamException, TransformerFactoryConfigurationError, TransformerException {
 		for (String file : files) {
-			try (InputStream stream = KonfigurationTest.class.getResourceAsStream(file)) {
-
-				StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(stream);
-				JSONObject json = konfiguration.getJson();
-
-				System.err.println(json.toString());
+				Startstoppskript skript = StartStoppKonfigurationParser.getKonfigurationFrom(file);
 				
-				StartStoppKonfiguration newKonfiguration = new StartStoppKonfiguration(json);
-				newKonfiguration.saveToXmlFile(new OutputStreamWriter(System.err, Charset.forName("UTF-8")));
-			}
+				ObjectMapper objectMapper = new ObjectMapper();
+				
+				//configure Object mapper for pretty print
+				objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+				
+				//writing to console, can write to any output stream such as file
+				StringWriter stringEmp = new StringWriter();
+				objectMapper.writeValue(stringEmp, skript);
+				System.err.println(stringEmp);
 		}
 	}
 }
