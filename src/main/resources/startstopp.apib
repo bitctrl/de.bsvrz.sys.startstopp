@@ -3,14 +3,6 @@ FORMAT: 1A
 # StartStopp API
 Die StartStopp-API
 
-# Data Structures
-
-## Applikation (object)
-
-+ id: 250FF (string, required)
-+ created: 1415203908 (number) - Time stamp
-+ percent_off: 25 (number) - A positive integer between 1 and 100 that represents the discount the coupon will apply.
-+ redeem_by (number) - Date after which the coupon can no longer be redeemed
 
 # Group StartStopp
 Gruppe aller StartStopp-bezogenenen Ressourcen.
@@ -22,8 +14,7 @@ Liefert den Status der StartStopp-Applikation.
 
 + Response 200 (application/json)
 
-    + Attributes
-		+ status: running (string)
+    + Attributes (StartStoppStatus)
 
 ## StartStopp beenden [/startstopp/stopp]
 Beendet die StartStopp-Applikation.
@@ -47,12 +38,22 @@ Gruppe aller skriptbezogenenen Ressourcen.
 
 Liefert das aktuell von StartStopp geladene Skript.
 
-
 ### Aktuelles Skript lesen [GET]
 
 + Response 200 (application/json)
 
-    + Attributes(object)
+    + Attributes(StartStoppSkript)
+
+### Aktuelles Skript schreiben/versioniern [PUT]
+
++ Request (application/json)
+
+    + Attributes(StartStoppSkript)
+
++ Response 200 (application/json)
+
+  + Attributes(StartStoppSkriptStatus)
+
 
 ## Aktueller Skript-Status [/skripte/current/status]
 
@@ -63,13 +64,7 @@ Liefert den Status des aktuell von StartStopp geladenen Skripts.
 
 + Response 200 (application/json)
 
-	+ Body
-
-            {
-              "id": 1,
-              "message": "Hello World!"
-            }
-
+	+ Attributes(StartStoppSkriptStatus)
 
 # Group Applikation
 
@@ -82,8 +77,8 @@ Alle von StartStopp verwalteten Applikationen
 + Response 200 (application/json)
 
 	+ Attributes(array[Applikation], fixed-type)
-        
-        
+
+
 ## Status einer Applikation [/applikationen/{inkarnationsname}]
 Liefert den Status der referenzierten Applikation.
 
@@ -103,11 +98,11 @@ Start die referenzierte Applikation.
 + Parameters
 
     + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
-
-### Applikation starten [GET]
+Å
+### Applikation starten [PUT]
 
 + Response 203
- 
+
 ## Applikation starten [/applikationen/{inkarnationsname}/restart]
 Startet die referenzierte Applikation neu.
 
@@ -115,10 +110,10 @@ Startet die referenzierte Applikation neu.
 
     + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
 
-### Applikation neu starten [GET]
+### Applikation neu starten [PUT]
 
 + Response 203
- 
+
 ## Applikation beenden [/applikationen/{inkarnationsname}/stopp]
 Beendet die referenzierte Applikation.
 
@@ -126,13 +121,123 @@ Beendet die referenzierte Applikation.
 
     + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
 
-### Applikation beenden [GET]
+### Applikation beenden [PUT]
 
 + Response 203
-  
-  
 
-  
-  
-  
- 
+# Data Structures
+
+## StartStoppStatus
+
++ status: initialized (enum, required) - der Status der StartStoppApplikation
+  + initialized (string)
+  + running (string)
+  + stopped (string)
+  + configerror (string)
+
+## StartStoppSkriptStatus
+
++ status: initialized (enum, required) - der Status der StartStoppApplikation
+  + initialized (string)
+  + failure (string)
++ messages (array [string], fixed-type)
+
+## KernSystem
+
++ inkarnationsName: Parametrierung (string, required)
++ wartezeit: 30 (number)
++ mitInkarnationsName: true (boolean)
+
+## MakroDefinition
+
++ name: kbliste (string, required)
++ wert: `kb.tlsObjekte,kb.verkehrsObjekte` (string, required)
+
+## StartArt
+
++ option (enum)
+    + automatisch (string)
+    + manuell (string)
+    + intervallrelativ (string)
+    + intervallabsolut (string)
++ neuStart: true (boolean)
++ intervall (string)
+
+## StartBedingung
+
++ vorgaenger (string, required)
++ warteart (enum)
+    + beginn (string)
+    + ende (string)
++ rechner (string)
++ wartezeit (string)
+
+## StartFehlerVerhalten
+
++ option (enum)
+    + beenden (string)
+    + abbruch (string)
+    + ignorieren (string)
++ wiederholungen: 0
+
+## StoppBedingung
+
++ nachfolger (string, required)
++ rechner (string)
++ wartezeit (string)
+
+## StoppFehlerVerhalten
+
++ option (enum, required)
+    + stopp (string)
+    + abbruch (string)
+    + ignorieren (string)
++ wiederholungen: 0
+
+## Inkarnation
+
++ inkarnationsName (string, required)
++ applikation (string, required)
++ aufrufParameter (array[string], fixed-type)
++ startArt (StartArt)
++ startBedingungen (array[StartBedingung], fixed-type)
++ startFehlerVerhalten (StartFehlerVerhalten)
++ stoppBedingungen (array[StoppBedingung], fixed-type)
++ stoppFehlerVerhalten (StoppFehlerVerhalten)
+
+
+## StartStoppSkript
+
++ global (object, required)
+  + kernsysteme (array [KernSystem], fixed-type)
+  + makrodefinitionen (array [MakroDefinition], fixed-type)
+  + zugangDav (object)
+      + adresse (string, required)
+      + passWord (string, required)
+      + port (string, required)
+      + userName (string, required)
+  + usv (object)
+      + pid (string, required)
+  + rechner (object)
+      + name (string, required)
+      + tcpAdresse (string, required)
++ inkarnationen (array[Inkarnation], fixed-type, required)
++ metaDaten (object, required)
+  + aenderungsGrund (string, required)
+  + erstelltAm (string, required)
+  + erstelltDurch (string, required)
+  + versionsNummer (string, required)
+
+## Applikation (object)
+
++ inkarnationsName: Parametrierung (string, required) - der Name der Inkarnation
++ arguments: `-datenverteiler=localhost:8083`, `-persistenz=parameter` (array[string], fixed-type) - die Argumente der Applikation
++ letzteStartzeit: `24.12.2016 12:01" (string) - die letzte Startzeit der Inkarnation
++ letzteStoppzeit: `06.12.2016 11:11" (string) - die letzte Stoppzeit der Inkarnation
++ status: installiert (enum, required) - der Status der Inkarnation in StartStopp
+  + installiert (string)
+  + gestartet (string)
+  + initialisiert (string)
+  + wirdgestoppt (string)
+  + gestoppt (string)
+  + abgebrochen (string)

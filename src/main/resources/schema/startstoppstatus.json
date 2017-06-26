@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "stopped",
+        "configerror"
+      ],
+      "description": "der Status der StartStoppApplikation"
+    }
+  },
+  "required": [
+    "status"
+  ]
+}
