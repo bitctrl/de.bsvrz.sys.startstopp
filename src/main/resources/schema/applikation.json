@@ -1,0 +1,39 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"additionalProperties": false,
+	"id": "http://bitctrl.de/applikation.json",
+	"properties": {
+		"inkarnationsName": {
+			"type": "string"
+		},
+		"arguments": {
+			"items": {
+				"type": "string"
+			},
+			"type": "array"
+		},
+		"letzteStartzeit": {
+			"type": "string"
+		},
+		"letzteStoppzeit": {
+			"type": "string"
+		},
+		"status": {
+			"type": "string",
+			"enum": [
+				"installiert",
+				"gestartet",
+				"initialisiert",
+				"wirdgestoppt",
+				"gestoppt",
+				"abgebrochen"
+			],
+			"default": "installiert"
+		}
+	},
+	"required": [
+		"inkarnationsName",
+		"status"
+	],
+	"type": "object"
+}

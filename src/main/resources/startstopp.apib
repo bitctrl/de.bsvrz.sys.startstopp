@@ -1,0 +1,138 @@
+FORMAT: 1A
+
+# StartStopp API
+Die StartStopp-API
+
+# Data Structures
+
+## Applikation (object)
+
++ id: 250FF (string, required)
++ created: 1415203908 (number) - Time stamp
++ percent_off: 25 (number) - A positive integer between 1 and 100 that represents the discount the coupon will apply.
++ redeem_by (number) - Date after which the coupon can no longer be redeemed
+
+# Group StartStopp
+Gruppe aller StartStopp-bezogenenen Ressourcen.
+
+## Status von StartStopp [/startstopp]
+Liefert den Status der StartStopp-Applikation.
+
+## Status von StartStopp abrufen [GET]
+
++ Response 200 (application/json)
+
+    + Attributes
+		+ status: running (string)
+
+## StartStopp beenden [/startstopp/stopp]
+Beendet die StartStopp-Applikation.
+
+## StartStopp beenden [GET]
+
++ Response 203
+
+## StartStopp neu starten [/startstopp/restart]
+Startet die StartStopp-Konfiguration neu.
+
+## StartStopp neu starten [GET]
+
++ Response 203
+
+# Group Skripte
+
+Gruppe aller skriptbezogenenen Ressourcen.
+
+## Aktuelles Skript [/skripte/current]
+
+Liefert das aktuell von StartStopp geladene Skript.
+
+
+### Aktuelles Skript lesen [GET]
+
++ Response 200 (application/json)
+
+    + Attributes(object)
+
+## Aktueller Skript-Status [/skripte/current/status]
+
+Liefert den Status des aktuell von StartStopp geladenen Skripts.
+
+
+### Status des aktuelles Skript lesen [GET]
+
++ Response 200 (application/json)
+
+	+ Body
+
+            {
+              "id": 1,
+              "message": "Hello World!"
+            }
+
+
+# Group Applikation
+
+
+## Alle Applikationen [/applikationen]
+Alle von StartStopp verwalteten Applikationen
+
+### Alle Applikationen ermitteln [GET]
+
++ Response 200 (application/json)
+
+	+ Attributes(array[Applikation], fixed-type)
+        
+        
+## Status einer Applikation [/applikationen/{inkarnationsname}]
+Liefert den Status der referenzierten Applikation.
+
++ Parameters
+
+    + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
+
+### Aktuellen Status einer Applikation abrufen [GET]
+
++ Response 200 (application/json)
+
+	+ Attributes (Applikation)
+
+## Applikation starten [/applikationen/{inkarnationsname}/start]
+Start die referenzierte Applikation.
+
++ Parameters
+
+    + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
+
+### Applikation starten [GET]
+
++ Response 203
+ 
+## Applikation starten [/applikationen/{inkarnationsname}/restart]
+Startet die referenzierte Applikation neu.
+
++ Parameters
+
+    + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
+
+### Applikation neu starten [GET]
+
++ Response 203
+ 
+## Applikation beenden [/applikationen/{inkarnationsname}/stopp]
+Beendet die referenzierte Applikation.
+
++ Parameters
+
+    + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
+
+### Applikation beenden [GET]
+
++ Response 203
+  
+  
+
+  
+  
+  
+ 

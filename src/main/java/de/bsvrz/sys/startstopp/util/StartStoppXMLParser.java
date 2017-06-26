@@ -1,4 +1,4 @@
-package de.bsvrz.sys.startstopp.api;
+package de.bsvrz.sys.startstopp.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingungen;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 
-public class StartStoppKonfigurationParser {
+public class StartStoppXMLParser {
 
 	private static class StartStoppParserHandler extends DefaultHandler {
 
@@ -260,7 +260,7 @@ public class StartStoppKonfigurationParser {
 
 		Startstoppskript startStoppKonfiguration = new Startstoppskript();
 
-		try (InputStream stream = StartStoppKonfigurationParser.class.getResourceAsStream(resourceName)) {
+		try (InputStream stream = StartStoppXMLParser.class.getResourceAsStream(resourceName)) {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
 

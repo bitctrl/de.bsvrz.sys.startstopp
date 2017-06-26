@@ -1,20 +1,17 @@
 {
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"additionalProperties": false,
-	"id": "http://bitctrl.de/statusresponse.schema.json",
+	"id": "http://bitctrl.de/startstoppskripte.json",
 	"properties": {
-		"code": {
-			"type": "integer"
-		},
-		"messages": {
+		"skripte": {
 			"items": {
-				"type": "string"
+				"type": "$ref: http://bitctrl.de/startstoppskripte.json"
 			},
 			"type": "array"
 		}
 	},
 	"required": [
-		"code"
+		"skripte"
 	],
 	"type": "object"
 }

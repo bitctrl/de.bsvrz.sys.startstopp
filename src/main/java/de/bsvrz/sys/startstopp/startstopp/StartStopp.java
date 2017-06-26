@@ -26,7 +26,7 @@
 
 package de.bsvrz.sys.startstopp.startstopp;
 
-import de.bsvrz.sys.startstopp.api.ApiServer;
+import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.ConfigurationManager;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
 

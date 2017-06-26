@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.api;
+package de.bsvrz.sys.startstopp.api.server;
 
 import java.net.URI;
 
