@@ -26,7 +26,10 @@
 
 package de.bsvrz.sys.startstopp.process;
 
-import de.bsvrz.sys.startstopp.config.ConfigurationManager;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 
 public class ProcessManager extends Thread {
@@ -34,9 +37,8 @@ public class ProcessManager extends Thread {
 	private boolean stopped;
 	private Object lock = new Object();
 
-	public ProcessManager(StartStoppOptions options, ConfigurationManager configurationManager) {
+	public ProcessManager(SkriptManager skriptManager, StartStoppOptions options) {
 		super("ProcessManager");
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override

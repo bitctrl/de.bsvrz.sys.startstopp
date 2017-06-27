@@ -27,20 +27,53 @@
 package de.bsvrz.sys.startstopp.startstopp;
 
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
-import de.bsvrz.sys.startstopp.config.ConfigurationManager;
+import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
 
 public class StartStopp  {
 
-	public static void main(String[] args) {
-		StartStoppOptions options = new StartStoppOptions(args);
-		ConfigurationManager configurationManager = new ConfigurationManager(options);
+	private static StartStopp instance;
+
+	private final StartStoppOptions options;
+
+	private final SkriptManager skriptManager;
+
+	public SkriptManager getSkriptManager() {
+		return skriptManager;
+	}
+
+	private final ProcessManager processManager;
+
+	public ProcessManager getProcessManager() {
+		return processManager;
+	}
+
+	private ApiServer apiServer;
+
+	public StartStopp(String[] args) {
+
+		options = new StartStoppOptions(args);
 		
-		ProcessManager processManager = new ProcessManager(options, configurationManager);
+		skriptManager = new SkriptManager(options);
+		
+		processManager = new ProcessManager(skriptManager, options);
 		processManager.start();
-		
-		ApiServer apiServer = new ApiServer(options, processManager);
+
+		apiServer = new ApiServer(options, processManager);
 		apiServer.start();
+	}
+
+	public static void main(String[] args) {
+		instance = new StartStopp(args);
+	}
+
+
+	public StartStoppOptions getOptions() {
+		return options;
+	}
+
+	public static StartStopp getInstance() {
+		return instance;
 	}
 	
 }

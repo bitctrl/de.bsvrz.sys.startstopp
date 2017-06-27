@@ -28,9 +28,9 @@ package de.bsvrz.sys.startstopp.config;
 
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 
-public class ConfigurationManager {
+public class SkriptManager {
 
-	public ConfigurationManager(StartStoppOptions options) {
+	public SkriptManager(StartStoppOptions options) {
 		// TODO Auto-generated constructor stub
 	}
 }
