@@ -9,3 +9,4 @@ buildNumber.properties
 .mvn/timing.properties
 /bin/
 .checkstyle
+src/main/resources/startstopp.html
