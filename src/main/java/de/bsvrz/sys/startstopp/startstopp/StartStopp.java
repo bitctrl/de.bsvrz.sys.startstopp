@@ -26,6 +26,7 @@
 
 package de.bsvrz.sys.startstopp.startstopp;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppstatus;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
@@ -74,6 +75,36 @@ public class StartStopp  {
 
 	public static StartStopp getInstance() {
 		return instance;
+	}
+
+	public Startstoppstatus getStatus() {
+		return new Startstoppstatus();
+	}
+
+	public void stoppApplikation() {
+		// TODO Auto-generated method stub
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				System.exit(0);
+			}
+		}.start();
+	}
+
+	public void stoppCurrentSkript() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void restartCurrentSkript() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

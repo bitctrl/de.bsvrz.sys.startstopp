@@ -26,11 +26,36 @@
 
 package de.bsvrz.sys.startstopp.config;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
+import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public class SkriptManager {
 
+	private Startstoppskript currentSkript;
+
 	public SkriptManager(StartStoppOptions options) {
+		currentSkript = StartStoppXMLParser.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
 		// TODO Auto-generated constructor stub
+	}
+
+	public Startstoppskript getCurrentSkript() throws StartStoppException  {
+		
+		if( currentSkript == null ) {
+			throw new StartStoppException("Die StartStopp-Applikation hat kein aktuelles Skript geladen");
+		}
+		// TODO Auto-generated method stub
+		return currentSkript;
+	}
+
+	public Startstoppskriptstatus checkStatus(Startstoppskript konfiguration) {
+		// TODO Auto-generated method stub
+		return new Startstoppskriptstatus();
+	}
+
+	public Startstoppskriptstatus setNewSkript(Startstoppskript skript) {
+		// TODO Auto-generated method stub
+		return new Startstoppskriptstatus();
 	}
 }

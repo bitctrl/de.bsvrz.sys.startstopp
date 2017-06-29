@@ -3,32 +3,38 @@ FORMAT: 1A
 # StartStopp API
 Die StartStopp-API
 
-
 # Group StartStopp
 Gruppe aller StartStopp-bezogenenen Ressourcen.
 
 ## Status von StartStopp [/startstopp]
 Liefert den Status der StartStopp-Applikation.
 
-## Status von StartStopp abrufen [GET]
+### Status von StartStopp abrufen [GET]
 
 + Response 200 (application/json)
 
     + Attributes (StartStoppStatus)
 
-## StartStopp beenden [/startstopp/stopp]
+## StartStopp Applikation beenden [/startstopp/exit]
 Beendet die StartStopp-Applikation.
 
-## StartStopp beenden [GET]
+### StartStopp-Applikation beenden [POST]
 
-+ Response 203
++ Response 202
 
-## StartStopp neu starten [/startstopp/restart]
+## StartStopp-Konfiguration beenden [/startstopp/stopp]
 Startet die StartStopp-Konfiguration neu.
 
-## StartStopp neu starten [GET]
+### Beenden [POST]
 
-+ Response 203
++ Response 202
+
+## StartStopp-Konfiguration neu starten [/startstopp/restart]
+Startet die StartStopp-Konfiguration neu.
+
+### Neu starten [POST]
+
++ Response 202
 
 # Group Skripte
 
@@ -44,7 +50,11 @@ Liefert das aktuell von StartStopp geladene Skript.
 
     + Attributes(StartStoppSkript)
 
-### Aktuelles Skript schreiben/versioniern [PUT]
++ Response 503 (application/json)
+
+    + Attributes(StatusResponse)
+
+### Aktuelles Skript schreiben/versionieren [PUT]
 
 + Request (application/json)
 
@@ -53,7 +63,6 @@ Liefert das aktuell von StartStopp geladene Skript.
 + Response 200 (application/json)
 
   + Attributes(StartStoppSkriptStatus)
-
 
 ## Aktueller Skript-Status [/skripte/current/status]
 
@@ -64,7 +73,7 @@ Liefert den Status des aktuell von StartStopp geladenen Skripts.
 
 + Response 200 (application/json)
 
-	+ Attributes(StartStoppSkriptStatus)
+   + Attributes(StartStoppSkriptStatus)
 
 # Group Applikation
 
@@ -76,7 +85,7 @@ Alle von StartStopp verwalteten Applikationen
 
 + Response 200 (application/json)
 
-	+ Attributes(array[Applikation], fixed-type)
+    + Attributes(array[Applikation], fixed-type)
 
 
 ## Status einer Applikation [/applikationen/{inkarnationsname}]
@@ -84,52 +93,75 @@ Liefert den Status der referenzierten Applikation.
 
 + Parameters
 
-    + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
+    + inkarnationsname: Parametrierung (string, required) - der Inkarnationsname der Applikation.
 
 ### Aktuellen Status einer Applikation abrufen [GET]
 
 + Response 200 (application/json)
 
-	+ Attributes (Applikation)
+    + Attributes (Applikation)
 
 ## Applikation starten [/applikationen/{inkarnationsname}/start]
-Start die referenzierte Applikation.
+Startet die referenzierte Applikation.
 
 + Parameters
 
-    + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
-Å
-### Applikation starten [PUT]
+    + inkarnationsname: Parametrierung (string, required) - der Inkarnationsname der Applikation.
 
-+ Response 203
+### Applikation starten [POST]
 
-## Applikation starten [/applikationen/{inkarnationsname}/restart]
++ Response 200 (application/json)
+
+    + Attributes (Applikation)
+    
++ Response 409 (application/json)
+
+    + Attribute (StatusResponse)
+
+## Applikation neu starten [/applikationen/{inkarnationsname}/restart]
 Startet die referenzierte Applikation neu.
 
 + Parameters
 
-    + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
+    + inkarnationsname: Parametrierung (string, required) - der Inkarnationsname der Applikation.
 
-### Applikation neu starten [PUT]
+### Applikation neu starten [POST]
 
-+ Response 203
++ Response 200 (application/json)
+
+    + Attributes (Applikation)
+    
++ Response 409 (application/json)
+
+    + Attribute (StatusResponse)
 
 ## Applikation beenden [/applikationen/{inkarnationsname}/stopp]
 Beendet die referenzierte Applikation.
 
 + Parameters
 
-    + inkarnationsname (string, required) - der Inkarnationsname der Applikation.
+    + inkarnationsname: Parametrierung (string, required) - der Inkarnationsname der Applikation.
 
-### Applikation beenden [PUT]
+### Applikation beenden [POST]
 
-+ Response 203
++ Response 200 (application/json)
+
+    + Attributes (Applikation)
+    
++ Response 409 (application/json)
+
+    + Attribute (StatusResponse)
 
 # Data Structures
 
+## StatusResponse
+
++ code: `-1` (number, required)
++ messages (array[string])
+
 ## StartStoppStatus
 
-+ status: initialized (enum, required) - der Status der StartStoppApplikation
++ status: initialized (enum, required, default) - der Status der StartStoppApplikation
   + initialized (string)
   + running (string)
   + stopped (string)
@@ -137,7 +169,7 @@ Beendet die referenzierte Applikation.
 
 ## StartStoppSkriptStatus
 
-+ status: initialized (enum, required) - der Status der StartStoppApplikation
++ status: initialized (enum, required, default) - der Status der StartStoppApplikation
   + initialized (string)
   + failure (string)
 + messages (array [string], fixed-type)
@@ -178,7 +210,7 @@ Beendet die referenzierte Applikation.
     + beenden (string)
     + abbruch (string)
     + ignorieren (string)
-+ wiederholungen: 0
++ wiederholungen: 0 (string)
 
 ## StoppBedingung
 
@@ -192,7 +224,7 @@ Beendet die referenzierte Applikation.
     + stopp (string)
     + abbruch (string)
     + ignorieren (string)
-+ wiederholungen: 0
++ wiederholungen: 0 (string)
 
 ## Inkarnation
 
@@ -218,15 +250,15 @@ Beendet die referenzierte Applikation.
       + userName (string, required)
   + usv (object)
       + pid (string, required)
-  + rechner (object)
+  + rechner (array[object])
       + name (string, required)
       + tcpAdresse (string, required)
 + inkarnationen (array[Inkarnation], fixed-type, required)
-+ metaDaten (object, required)
-  + aenderungsGrund (string, required)
-  + erstelltAm (string, required)
-  + erstelltDurch (string, required)
-  + versionsNummer (string, required)
++ metaDaten (object)
+  + aenderungsGrund (string)
+  + erstelltAm (string)
+  + erstelltDurch (string)
+  + versionsNummer (string)
 
 ## Applikation (object)
 
@@ -236,6 +268,7 @@ Beendet die referenzierte Applikation.
 + letzteStoppzeit: `06.12.2016 11:11" (string) - die letzte Stoppzeit der Inkarnation
 + status: installiert (enum, required) - der Status der Inkarnation in StartStopp
   + installiert (string)
+  + startenwarten (string)
   + gestartet (string)
   + initialisiert (string)
   + wirdgestoppt (string)

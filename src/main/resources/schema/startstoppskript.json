@@ -30,19 +30,12 @@
 					"type": "string"
 				}
 			},
-			"required": [
-				"erstelltDurch",
-				"versionsNummer",
-				"aenderungsGrund",
-				"erstelltAm"
-			],
 			"type": "object"
 		}
 	},
 	"required": [
 		"global",
-		"inkarnationen",
-		"metaDaten"
+		"inkarnationen"
 	],
 	"type": "object",
 	"definitions": {
@@ -224,7 +217,7 @@
 					"default": "ignorieren"
 				},
 				"wiederholungen": {
-					"type": "number"
+					"type": "string"
 				}
 			},
 			"type": "object"
@@ -260,7 +253,7 @@
 					"default": "ignorieren"
 				},
 				"wiederholungen": {
-					"type": "number"
+					"type": "string"
 				}
 			},
 			"type": "object"

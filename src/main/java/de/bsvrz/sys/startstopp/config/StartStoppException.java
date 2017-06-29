@@ -24,8 +24,12 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.api.client;
+package de.bsvrz.sys.startstopp.config;
 
-public class ClientDummy {
+public class StartStoppException extends Exception {
+
+	public StartStoppException(String string) {
+		super(string);
+	}
 
 }

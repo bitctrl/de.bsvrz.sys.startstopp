@@ -1,39 +1,48 @@
 {
-	"$schema": "http://json-schema.org/draft-04/schema#",
-	"additionalProperties": false,
-	"id": "http://bitctrl.de/applikation.json",
-	"properties": {
-		"inkarnationsName": {
-			"type": "string"
-		},
-		"arguments": {
-			"items": {
-				"type": "string"
-			},
-			"type": "array"
-		},
-		"letzteStartzeit": {
-			"type": "string"
-		},
-		"letzteStoppzeit": {
-			"type": "string"
-		},
-		"status": {
-			"type": "string",
-			"enum": [
-				"installiert",
-				"gestartet",
-				"initialisiert",
-				"wirdgestoppt",
-				"gestoppt",
-				"abgebrochen"
-			],
-			"default": "installiert"
-		}
-	},
-	"required": [
-		"inkarnationsName",
-		"status"
-	],
-	"type": "object"
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://www.bitctrl.de/applikation.json",
+  "type": "object",
+  "properties": {
+    "inkarnationsName": {
+      "type": "string",
+      "description": "der Name der Inkarnation"
+    },
+    "arguments": {
+      "type": "array",
+      "items": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "die Argumente der Applikation"
+    },
+    "letzteStartzeit": {
+      "type": "string",
+      "description": "die letzte Startzeit der Inkarnation"
+    },
+    "letzteStoppzeit": {
+      "type": "string",
+      "description": "die letzte Stoppzeit der Inkarnation"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "installiert",
+        "startenwarten",
+        "gestartet",
+        "initialisiert",
+        "wirdgestoppt",
+        "gestoppt",
+        "abgebrochen"
+      ],
+      "description": "der Status der Inkarnation in StartStopp"
+    }
+  },
+  "required": [
+    "inkarnationsName",
+    "status"
+  ]
 }

@@ -6,12 +6,16 @@
       "type": "string",
       "enum": [
         "initialized",
-        "running",
-        "stopped",
-        "configerror"
+        "failure"
       ],
       "default": "initialized",
       "description": "der Status der StartStoppApplikation"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": [

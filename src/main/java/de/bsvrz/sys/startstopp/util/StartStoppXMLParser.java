@@ -1,3 +1,29 @@
+/*
+ * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Copyright (C) 2007-2017 BitCtrl Systems GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Contact Information:<br>
+ * BitCtrl Systems GmbH<br>
+ * Weißenfelser Straße 67<br>
+ * 04229 Leipzig<br>
+ * Phone: +49 341-490670<br>
+ * mailto: info@bitctrl.de
+ */
+
 package de.bsvrz.sys.startstopp.util;
 
 import java.io.IOException;
@@ -23,6 +49,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingungen;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
+import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 
 public class StartStoppXMLParser {
@@ -130,7 +157,7 @@ public class StartStoppXMLParser {
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStartFehlerVerhalten()
-							.setWiederholungen(Double.parseDouble(attributes.getValue("wiederholungen")));
+							.setWiederholungen(attributes.getValue("wiederholungen"));
 				}
 				break;
 			case startStopp:
@@ -153,12 +180,13 @@ public class StartStoppXMLParser {
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStoppFehlerVerhalten()
-							.setWiederholungen(Double.parseDouble(attributes.getValue("wiederholungen")));
+							.setWiederholungen(attributes.getValue("wiederholungen"));
 				}
 				break;
 			case usv:
-				// TODO Im Schema ergänzen
-				// destination.getGlobal().setUsv(attributes.getValue("pid"));
+				Usv usv = new Usv();
+				usv.setPid(attributes.getValue("pid"));
+				destination.getGlobal().setUsv(usv);
 				break;
 			case zugangdav:
 				if (destination.getGlobal() == null) {

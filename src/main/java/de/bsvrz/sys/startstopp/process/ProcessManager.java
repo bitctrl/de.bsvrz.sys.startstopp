@@ -26,10 +26,12 @@
 
 package de.bsvrz.sys.startstopp.process;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 
 public class ProcessManager extends Thread {
@@ -53,6 +55,45 @@ public class ProcessManager extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		} 
 	}
+
+	public List<Applikation> getApplikationen() {
+		// TODO Auto-generated method stub
+		
+		Applikation applikation = new Applikation();
+		applikation.setInkarnationsName("Heinz");
+		applikation.setStatus(Applikation.Status.STARTENWARTEN);
+		applikation.getArguments().add("Arg1");
+		applikation.setLetzteStartzeit("Letzte Startzeit");
+		applikation.setLetzteStoppzeit("Letzte Stoppzeit");
+
+		List<Applikation> result = new ArrayList<>();
+		result.add(applikation);
+		
+		return result;
+	}
+
+	public Applikation getApplikation(String inkarnationsName) throws StartStoppException {
+		// TODO Auto-generated method stub
+		
+		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+	}
+
+	public Applikation starteApplikation(String inkarnationsName) throws StartStoppException {
+		// TODO Auto-generated method stub
+		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+	}
+
+	public Applikation restarteApplikation(String inkarnationsName) throws StartStoppException {
+		// TODO Auto-generated method stub
+		return new Applikation();
+//		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+	}
+
+	public Applikation stoppeApplikation(String inkarnationsName) throws StartStoppException {
+		// TODO Auto-generated method stub
+		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+	}
+
 }
