@@ -6,7 +6,7 @@ Die StartStopp-API
 # Group StartStopp
 Gruppe aller StartStopp-bezogenenen Ressourcen.
 
-## Status von StartStopp [/startstopp]
+## Status von StartStopp [/ststapi/v1/system]
 Liefert den Status der StartStopp-Applikation.
 
 ### Status von StartStopp abrufen [GET]
@@ -15,21 +15,21 @@ Liefert den Status der StartStopp-Applikation.
 
     + Attributes (StartStoppStatus)
 
-## StartStopp Applikation beenden [/startstopp/exit]
+## StartStopp Applikation beenden [/ststapi/v1/system/exit]
 Beendet die StartStopp-Applikation.
 
 ### StartStopp-Applikation beenden [POST]
 
 + Response 202
 
-## StartStopp-Konfiguration beenden [/startstopp/stopp]
+## StartStopp-Konfiguration beenden [/ststapi/v1/system/stopp]
 Startet die StartStopp-Konfiguration neu.
 
 ### Beenden [POST]
 
 + Response 202
 
-## StartStopp-Konfiguration neu starten [/startstopp/restart]
+## StartStopp-Konfiguration neu starten [/ststapi/v1/system/restart]
 Startet die StartStopp-Konfiguration neu.
 
 ### Neu starten [POST]
@@ -40,7 +40,7 @@ Startet die StartStopp-Konfiguration neu.
 
 Gruppe aller skriptbezogenenen Ressourcen.
 
-## Aktuelles Skript [/skripte/current]
+## Aktuelles Skript [/ststapi/v1/skripte/current]
 
 Liefert das aktuell von StartStopp geladene Skript.
 
@@ -62,9 +62,9 @@ Liefert das aktuell von StartStopp geladene Skript.
 
 + Response 200 (application/json)
 
-  + Attributes(StartStoppSkriptStatus)
+  + Attributes(StartStoppSkript)
 
-## Aktueller Skript-Status [/skripte/current/status]
+## Aktueller Skript-Status [/ststapi/v1/skripte/current/status]
 
 Liefert den Status des aktuell von StartStopp geladenen Skripts.
 
@@ -78,7 +78,7 @@ Liefert den Status des aktuell von StartStopp geladenen Skripts.
 # Group Applikation
 
 
-## Alle Applikationen [/applikationen]
+## Alle Applikationen [/ststapi/v1/applikationen]
 Alle von StartStopp verwalteten Applikationen
 
 ### Alle Applikationen ermitteln [GET]
@@ -88,12 +88,12 @@ Alle von StartStopp verwalteten Applikationen
     + Attributes(array[Applikation], fixed-type)
 
 
-## Status einer Applikation [/applikationen/{inkarnationsname}]
+## Status einer Applikation [/ststapi/v1/applikationen/{inkarnationsname}]
 Liefert den Status der referenzierten Applikation.
 
 + Parameters
 
-    + inkarnationsname: Parametrierung (string, required) - der Inkarnationsname der Applikation.
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
 
 ### Aktuellen Status einer Applikation abrufen [GET]
 
@@ -101,29 +101,29 @@ Liefert den Status der referenzierten Applikation.
 
     + Attributes (Applikation)
 
-## Applikation starten [/applikationen/{inkarnationsname}/start]
+## Applikation starten [/ststapi/v1/applikationen/{inkarnationsname}/start]
 Startet die referenzierte Applikation.
 
 + Parameters
 
-    + inkarnationsname: Parametrierung (string, required) - der Inkarnationsname der Applikation.
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
 
 ### Applikation starten [POST]
 
 + Response 200 (application/json)
 
     + Attributes (Applikation)
-    
+
 + Response 409 (application/json)
 
     + Attribute (StatusResponse)
 
-## Applikation neu starten [/applikationen/{inkarnationsname}/restart]
+## Applikation neu starten [/ststapi/v1/applikationen/{inkarnationsname}/restart]
 Startet die referenzierte Applikation neu.
 
 + Parameters
 
-    + inkarnationsname: Parametrierung (string, required) - der Inkarnationsname der Applikation.
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
 
 ### Applikation neu starten [POST]
 
@@ -135,12 +135,12 @@ Startet die referenzierte Applikation neu.
 
     + Attribute (StatusResponse)
 
-## Applikation beenden [/applikationen/{inkarnationsname}/stopp]
+## Applikation beenden [/ststapi/v1/applikationen/{inkarnationsname}/stopp]
 Beendet die referenzierte Applikation.
 
 + Parameters
 
-    + inkarnationsname: Parametrierung (string, required) - der Inkarnationsname der Applikation.
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
 
 ### Applikation beenden [POST]
 
@@ -179,6 +179,11 @@ Beendet die referenzierte Applikation.
 + inkarnationsName: Parametrierung (string, required)
 + wartezeit: 30 (number)
 + mitInkarnationsName: true (boolean)
+
+## Rechner
+
++ name: Hauptserver (string, required)
++ tcpAdresse: 127.0.0.1 (string, required)
 
 ## MakroDefinition
 
@@ -250,9 +255,7 @@ Beendet die referenzierte Applikation.
       + userName (string, required)
   + usv (object)
       + pid (string, required)
-  + rechner (array[object])
-      + name (string, required)
-      + tcpAdresse (string, required)
+  + rechner (array[Rechner], fixed-type)
 + inkarnationen (array[Inkarnation], fixed-type, required)
 + metaDaten (object)
   + aenderungsGrund (string)

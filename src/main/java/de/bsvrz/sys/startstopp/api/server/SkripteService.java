@@ -41,7 +41,7 @@ import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
-@Path("/skripte")
+@Path("/ststapi/v1/skripte")
 public class SkripteService {
 
 	private SkriptManager skriptManager;
@@ -112,10 +112,10 @@ public class SkripteService {
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 		
-		Startstoppskriptstatus status = skriptManager.setNewSkript(skript);
+		Startstoppskript newSkript = skriptManager.setNewSkript(skript);
 		Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type",
 				"application/json");
-		responseBuilder.entity(status);
+		responseBuilder.entity(newSkript);
 		return responseBuilder.build();
 	}
 

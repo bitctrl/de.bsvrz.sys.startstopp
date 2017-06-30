@@ -2,28 +2,75 @@ package de.bsvrz.sys.startstopp;
 
 import java.util.List;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.glassfish.jersey.client.ClientConfig;
-
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppstatus;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 
 public class AppTest {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
- 
-		Client client = ClientBuilder.newClient(new ClientConfig().register(Applikation.class));
-		Response response = client.target("http://localhost:9998/applikationen").request(MediaType.APPLICATION_JSON)
-				.get(Response.class);
-		List<Applikation> readEntity = response.readEntity(new GenericType<List<Applikation>>() {
-		});
-		
-		System.err.println(readEntity);
-	}
 
+		try {
+			StartStoppClient client = new StartStoppClient("localhost", 9998);
+
+			Startstoppstatus startStoppStatus = client.getStartStoppStatus();
+			System.err.println(startStoppStatus);
+			
+			client.stoppStartStopp();
+			client.restartStartStopp();
+			
+			Startstoppskript currentSkript = client.getCurrentSkript();
+			System.err.println(currentSkript);
+			
+			currentSkript = client.setCurrentSkript(currentSkript);
+			System.err.println(currentSkript);
+			
+			Startstoppskriptstatus currentSkriptStatus = client.getCurrentSkriptStatus();
+			System.err.println(currentSkriptStatus);
+
+			List<Applikation> applikationen = client.getApplikationen();
+			System.err.println(applikationen);
+
+			Applikation applikation = client.getApplikation("Datenverteiler");
+			System.err.println(applikation);
+
+			try {
+				applikation = client.starteApplikation("Datenverteiler");
+				System.err.println(applikation);
+			} catch (StartStoppStatusException e) {
+				System.err.println("\t" + e.getLocalizedMessage());
+				for (String message : e.getMessages()) {
+					System.err.println("\t" + message);
+				}
+			}
+
+			try {
+				applikation = client.restarteApplikation("Datenverteiler");
+				System.err.println(applikation);
+			} catch (StartStoppStatusException e) {
+				System.err.println("\t" + e.getLocalizedMessage());
+				for (String message : e.getMessages()) {
+					System.err.println("\t" + message);
+				}
+			}
+
+			try {
+				applikation = client.stoppeApplikation("Datenverteiler");
+				System.err.println(applikation);
+			} catch (StartStoppStatusException e) {
+				System.err.println("\t" + e.getLocalizedMessage());
+				for (String message : e.getMessages()) {
+					System.err.println("\t" + message);
+				}
+			}
+			
+			
+		} catch (StartStoppException e) {
+			System.err.println(e.getLocalizedMessage());
+		}
+	}
 }

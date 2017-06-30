@@ -46,7 +46,7 @@ public class ProcessManager extends Thread {
 	@Override
 	public void run() {
 		while (!stopped) {
-			System.err.println("Überwache Inkarnationen");
+//			System.err.println("Überwache Inkarnationen");
 			try {
 				synchronized (lock) {
 					lock.wait(30000);
@@ -77,22 +77,47 @@ public class ProcessManager extends Thread {
 	public Applikation getApplikation(String inkarnationsName) throws StartStoppException {
 		// TODO Auto-generated method stub
 		
+		if( "Datenverteiler".equals(inkarnationsName)) {
+			Applikation applikation = new Applikation();
+			applikation.setInkarnationsName("Datenverteiler");
+			applikation.setStatus(Applikation.Status.STARTENWARTEN);
+			applikation.getArguments().add("Arg1");
+			applikation.setLetzteStartzeit("Letzte Startzeit");
+			applikation.setLetzteStoppzeit("Letzte Stoppzeit");
+			return applikation;
+		}
+		
 		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
 	public Applikation starteApplikation(String inkarnationsName) throws StartStoppException {
 		// TODO Auto-generated method stub
+		
+		Applikation applikation = getApplikation(inkarnationsName);
+		if( applikation != null) {
+			return applikation;
+		}
+		
 		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
 	public Applikation restarteApplikation(String inkarnationsName) throws StartStoppException {
 		// TODO Auto-generated method stub
-		return new Applikation();
-//		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+		Applikation applikation = getApplikation(inkarnationsName);
+		if( applikation != null) {
+			return applikation;
+		}
+
+		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
 	public Applikation stoppeApplikation(String inkarnationsName) throws StartStoppException {
 		// TODO Auto-generated method stub
+		Applikation applikation = getApplikation(inkarnationsName);
+		if( applikation != null) {
+			return applikation;
+		}
+
 		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 

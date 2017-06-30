@@ -41,7 +41,7 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
-@Path("/applikationen")
+@Path("/ststapi/v1/applikationen")
 public class ApplikationenService {
 
 	private ProcessManager processManager;
@@ -73,13 +73,11 @@ public class ApplikationenService {
 
 		try {
 			Applikation applikation = processManager.getApplikation(inkarnationsName);
-
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
-			// TODO Auto-generated catch block
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 	}

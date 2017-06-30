@@ -54,8 +54,8 @@ public class SkriptManager {
 		return new Startstoppskriptstatus();
 	}
 
-	public Startstoppskriptstatus setNewSkript(Startstoppskript skript) {
+	public Startstoppskript setNewSkript(Startstoppskript skript) {
 		// TODO Auto-generated method stub
-		return new Startstoppskriptstatus();
+		return skript;
 	}
 }

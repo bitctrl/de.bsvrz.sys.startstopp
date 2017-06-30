@@ -32,4 +32,8 @@ public class StartStoppException extends Exception {
 		super(string);
 	}
 
+	public StartStoppException(Exception e) {
+		super(e);
+	}
+
 }

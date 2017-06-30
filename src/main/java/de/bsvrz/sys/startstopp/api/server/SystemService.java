@@ -35,16 +35,16 @@ import javax.ws.rs.core.Response;
 
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
-@Path("/startstopp")
-public class StartStoppService {
+@Path("/ststapi/v1/system")
+public class SystemService {
 
 	private StartStopp startStopp;
 
-	public StartStoppService() {
+	public SystemService() {
 		this(StartStopp.getInstance());
 	}
 
-	public StartStoppService(StartStopp startStopp) {
+	public SystemService(StartStopp startStopp) {
 		this.startStopp = startStopp;
 	}
 
