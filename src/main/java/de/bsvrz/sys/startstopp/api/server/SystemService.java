@@ -30,7 +30,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
@@ -50,7 +49,7 @@ public class SystemService {
 
 	@GET
 	@Produces("application/json")
-	public Response responseStartStoppStatus() throws NoContentException {
+	public Response responseStartStoppStatus() {
 
 		Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 				"application/json");

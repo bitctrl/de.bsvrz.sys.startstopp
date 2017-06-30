@@ -26,59 +26,99 @@
 
 package de.bsvrz.sys.startstopp.startstopp;
 
+import de.bsvrz.sys.startstopp.api.ManagedSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppstatus;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
 
-public class StartStopp  {
+public class StartStopp {
 
-	private static StartStopp instance;
-
-	private final StartStoppOptions options;
-
-	private final SkriptManager skriptManager;
-
-	public SkriptManager getSkriptManager() {
-		return skriptManager;
-	}
-
-	private final ProcessManager processManager;
-
-	public ProcessManager getProcessManager() {
-		return processManager;
-	}
-
-	private ApiServer apiServer;
-
-	public StartStopp(String[] args) {
-
-		options = new StartStoppOptions(args);
-		
-		skriptManager = new SkriptManager(options);
-		
-		processManager = new ProcessManager(skriptManager, options);
-		processManager.start();
-
-		apiServer = new ApiServer(options, processManager);
-		apiServer.start();
-	}
-
-	public static void main(String[] args) {
-		instance = new StartStopp(args);
-	}
-
-
-	public StartStoppOptions getOptions() {
-		return options;
-	}
+	private static StartStopp instance = new StartStopp();
 
 	public static StartStopp getInstance() {
 		return instance;
 	}
 
+	public static void main(String[] args) throws Exception {
+		try {
+			instance.init(args);
+			instance.start();
+		} catch (Exception e) {
+			instance.cancel(e);
+		}
+	}
+
+	private StartStoppOptions options;
+
+	private SkriptManager skriptManager;
+
+	private ProcessManager processManager;
+
+	private ApiServer apiServer;
+
+	private void cancel(Exception e) {
+		System.err.println(e.getLocalizedMessage());
+		if( processManager != null) {
+			processManager.stopp();
+		}
+		System.exit(-1);
+	}
+
+	
+	public StartStoppOptions getOptions() {
+		return options;
+	}
+
+	public ProcessManager getProcessManager() {
+		return processManager;
+	}
+
+	public SkriptManager getSkriptManager() {
+		return skriptManager;
+	}
+
 	public Startstoppstatus getStatus() {
-		return new Startstoppstatus();
+		Startstoppstatus status = new Startstoppstatus();
+		ManagedSkript skript = null;
+		try {
+			skript = skriptManager.getCurrentSkript();
+		} catch (StartStoppException e) {
+			status.setStatus(Startstoppstatus.Status.CONFIGERROR);
+			return status;
+		}
+		
+		if (skript.getStatus().getStatus() == Startstoppskriptstatus.Status.FAILURE) {
+			status.setStatus(Startstoppstatus.Status.CONFIGERROR);
+		} else {
+			if (processManager.isSkriptRunning()) {
+				status.setStatus(Startstoppstatus.Status.RUNNING);
+			} else if (processManager.isSkriptStopped()) {
+				status.setStatus(Startstoppstatus.Status.STOPPED);
+			} else {
+				status.setStatus(Startstoppstatus.Status.INITIALIZED);
+			}
+		}
+		return status;
+	}
+
+	private void init(String[] args) throws Exception {
+		options = new StartStoppOptions(args);
+		skriptManager = new SkriptManager();
+		processManager = new ProcessManager();
+		apiServer = new ApiServer();
+	}
+
+	public void restartCurrentSkript() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void start() throws Exception {
+		processManager.start();
+		apiServer.start();
 	}
 
 	public void stoppApplikation() {
@@ -99,12 +139,7 @@ public class StartStopp  {
 
 	public void stoppCurrentSkript() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public void restartCurrentSkript() {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

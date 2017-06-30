@@ -17,27 +17,60 @@ public class AppTest {
 		try {
 			StartStoppClient client = new StartStoppClient("localhost", 9998);
 
+			System.err.println("STARTSTOPPSTATUS");
 			Startstoppstatus startStoppStatus = client.getStartStoppStatus();
 			System.err.println(startStoppStatus);
-			
+			System.err.println();
+
+			System.err.println("STARTSTOPP_STOPP");
 			client.stoppStartStopp();
+			System.err.println();
+
+			System.err.println("STARTSTOPP_RESTART");
 			client.restartStartStopp();
-			
-			Startstoppskript currentSkript = client.getCurrentSkript();
-			System.err.println(currentSkript);
-			
-			currentSkript = client.setCurrentSkript(currentSkript);
-			System.err.println(currentSkript);
-			
+			System.err.println();
+
+			Startstoppskript currentSkript = null;
+
+			System.err.println("SKRIPT_CURRENT");
+			try {
+				currentSkript = client.getCurrentSkript();
+				System.err.println(currentSkript);
+				System.err.println();
+			} catch (StartStoppStatusException e) {
+				System.err.println(e.getLocalizedMessage());
+			}
+
+			if (currentSkript != null) {
+				System.err.println("SET_SKRIPT_CURRENT");
+				try {
+					currentSkript = client.setCurrentSkript(currentSkript);
+					System.err.println(currentSkript);
+				} catch (StartStoppStatusException e) {
+					System.err.println(e.getLocalizedMessage());
+					for (String message : e.getMessages()) {
+						System.err.println("\t" + message);
+					}
+				}
+				System.err.println();
+			}
+
+			System.err.println("SKRIPT_CURRENT_STATUS");
 			Startstoppskriptstatus currentSkriptStatus = client.getCurrentSkriptStatus();
 			System.err.println(currentSkriptStatus);
+			System.err.println();
 
+			System.err.println("APPLIKATIONEN");
 			List<Applikation> applikationen = client.getApplikationen();
 			System.err.println(applikationen);
+			System.err.println();
 
+			System.err.println("APPLIKATION_DATENVERTEILER");
 			Applikation applikation = client.getApplikation("Datenverteiler");
 			System.err.println(applikation);
+			System.err.println();
 
+			System.err.println("APPLIKATION_DATENVERTEILER_START");
 			try {
 				applikation = client.starteApplikation("Datenverteiler");
 				System.err.println(applikation);
@@ -47,7 +80,9 @@ public class AppTest {
 					System.err.println("\t" + message);
 				}
 			}
+			System.err.println();
 
+			System.err.println("APPLIKATION_DATENVERTEILER_RESTART");
 			try {
 				applikation = client.restarteApplikation("Datenverteiler");
 				System.err.println(applikation);
@@ -57,7 +92,9 @@ public class AppTest {
 					System.err.println("\t" + message);
 				}
 			}
+			System.err.println();
 
+			System.err.println("APPLIKATION_DATENVERTEILER_STOPP");
 			try {
 				applikation = client.stoppeApplikation("Datenverteiler");
 				System.err.println(applikation);
@@ -67,8 +104,7 @@ public class AppTest {
 					System.err.println("\t" + message);
 				}
 			}
-			
-			
+
 		} catch (StartStoppException e) {
 			System.err.println(e.getLocalizedMessage());
 		}

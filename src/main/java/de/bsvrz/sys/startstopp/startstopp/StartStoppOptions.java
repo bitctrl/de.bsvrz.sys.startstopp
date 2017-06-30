@@ -31,4 +31,9 @@ public class StartStoppOptions {
 	public StartStoppOptions(String[] args) {
 		// TODO Auto-generated constructor stub
 	}
+
+	public String  getSkriptDir() {
+		// TODO Auto-generated method stub
+		return ".";
+	}
 }

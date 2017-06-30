@@ -35,33 +35,24 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import de.bsvrz.sys.startstopp.process.ProcessManager;
-import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
+public class ApiServer {
 
-public class ApiServer extends Thread {
-
-	public ApiServer(StartStoppOptions options, ProcessManager processManager) {
-		
+	public void start() throws Exception {
 		URI baseUri = UriBuilder.fromUri("https://localhost/").port(9998).build();
-		ResourceConfig config = new ResourceConfig(SystemService.class, SkripteService.class, ApplikationenService.class);
+		ResourceConfig config = new ResourceConfig(SystemService.class, SkripteService.class,
+				ApplikationenService.class);
 
 		SslContextFactory sslContextFactory = new SslContextFactory();
-	    sslContextFactory.setKeyStorePath(ApiServer.class.getResource(
-	            "keystore.jks").toExternalForm());
-	    sslContextFactory.setKeyStorePassword("startstopp");
-	    sslContextFactory.setKeyManagerPassword("startstopp");
+		sslContextFactory.setKeyStorePath(ApiServer.class.getResource("keystore.jks").toExternalForm());
+		sslContextFactory.setKeyStorePassword("startstopp");
+		sslContextFactory.setKeyManagerPassword("startstopp");
 		Server httpsServer = JettyHttpContainerFactory.createServer(baseUri, sslContextFactory, config);
 
 		baseUri = UriBuilder.fromUri("http://localhost/").port(9999).build();
 		Server httpServer = JettyHttpContainerFactory.createServer(baseUri, config);
 
-		
-	    try {
-			httpsServer.start();
-			httpServer.start();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		httpsServer.start();
+		httpServer.start();
 	}
+
 }

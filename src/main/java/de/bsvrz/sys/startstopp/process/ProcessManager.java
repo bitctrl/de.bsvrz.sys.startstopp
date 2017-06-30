@@ -30,16 +30,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
+import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 public class ProcessManager extends Thread {
 
 	private boolean stopped;
 	private Object lock = new Object();
 
-	public ProcessManager(SkriptManager skriptManager, StartStoppOptions options) {
+	public ProcessManager() {
+		this(StartStopp.getInstance());
+	}
+	
+	public ProcessManager(StartStopp startStopp) {
 		super("ProcessManager");
 	}
 	
@@ -119,6 +122,23 @@ public class ProcessManager extends Thread {
 		}
 
 		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+	}
+
+	public void stopp() {
+		stopped = true;
+		synchronized (lock) {
+			lock.notify();
+		}
+	}
+
+	public boolean isSkriptRunning() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isSkriptStopped() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

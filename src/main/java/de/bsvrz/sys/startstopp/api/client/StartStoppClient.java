@@ -36,13 +36,11 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.client.ClientConfig;
 
-import de.bsvrz.sys.funclib.operatingMessage.MessageIdFactory;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
@@ -198,6 +196,11 @@ public class StartStoppClient {
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
+		if ((response != null) && (response.getStatus() == Response.Status.SERVICE_UNAVAILABLE.getStatusCode())) {
+			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte abgerufen werden",
+					response.readEntity(Statusresponse.class));
+		}
+		
 		throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden (Response: "
 				+ response.getStatus() + ")");
 	}
@@ -212,6 +215,11 @@ public class StartStoppClient {
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
+		if ((response != null) && (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode())) {
+			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden",
+					response.readEntity(Statusresponse.class));
+		}
+
 		throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden (Response: "
 				+ response.getStatus() + ")");
 	}

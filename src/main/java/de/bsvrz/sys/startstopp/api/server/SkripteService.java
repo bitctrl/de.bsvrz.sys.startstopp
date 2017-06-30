@@ -39,6 +39,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/skripte")
@@ -63,7 +64,7 @@ public class SkripteService {
 		Response response;
 
 		try {
-			Startstoppskript konfiguration = skriptManager.getCurrentSkript();
+			Startstoppskript konfiguration = skriptManager.getCurrentSkript().getSkript();
 
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
@@ -87,7 +88,7 @@ public class SkripteService {
 		Startstoppskriptstatus status;
 		
 		try {
-			Startstoppskript konfiguration = skriptManager.getCurrentSkript();
+			Startstoppskript konfiguration = skriptManager.getCurrentSkript().getSkript();
 			status = skriptManager.checkStatus(konfiguration);
 
 		} catch (StartStoppException e) {
@@ -109,14 +110,24 @@ public class SkripteService {
 	public Response responseSkripteCurrentPut(Startstoppskript skript) {
 
 		if( skript == null) {
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			Statusresponse status = new Statusresponse();
+			status.setCode(-1);
+			status.getMessages().add("Es wurde kein Skript übermittelt!");
+			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
 		}
 		
-		Startstoppskript newSkript = skriptManager.setNewSkript(skript);
-		Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type",
-				"application/json");
-		responseBuilder.entity(newSkript);
-		return responseBuilder.build();
+		try {
+			Startstoppskript newSkript = skriptManager.setNewSkript(skript);
+			Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type",
+					"application/json");
+			responseBuilder.entity(newSkript);
+			return responseBuilder.build();
+		} catch (StartStoppStatusException e) {
+			Statusresponse status = new Statusresponse();
+			status.setCode(-1);
+			status.getMessages().addAll(e.getMessages());
+			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
+		}
 	}
 
 }

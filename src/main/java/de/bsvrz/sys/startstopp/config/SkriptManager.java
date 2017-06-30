@@ -26,36 +26,59 @@
 
 package de.bsvrz.sys.startstopp.config;
 
+import de.bsvrz.sys.startstopp.api.ManagedSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
-import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
+import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
+import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public class SkriptManager {
 
-	private Startstoppskript currentSkript;
+	private ManagedSkript currentSkript;
 
-	public SkriptManager(StartStoppOptions options) {
-		currentSkript = StartStoppXMLParser.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
-		// TODO Auto-generated constructor stub
+	public SkriptManager() {
+		this(StartStopp.getInstance());
 	}
 
-	public Startstoppskript getCurrentSkript() throws StartStoppException  {
-		
-		if( currentSkript == null ) {
+	public SkriptManager(StartStopp startStopp) {
+
+		startStopp.getOptions().getSkriptDir();
+
+		try {
+			Startstoppskript skript = StartStoppXMLParser
+					.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
+			currentSkript = new ManagedSkript(skript);
+		} catch (Exception e) {
+
+		}
+	}
+
+	public ManagedSkript getCurrentSkript() throws StartStoppException {
+		if (currentSkript == null) {
 			throw new StartStoppException("Die StartStopp-Applikation hat kein aktuelles Skript geladen");
 		}
-		// TODO Auto-generated method stub
 		return currentSkript;
 	}
 
 	public Startstoppskriptstatus checkStatus(Startstoppskript konfiguration) {
 		// TODO Auto-generated method stub
-		return new Startstoppskriptstatus();
+		return currentSkript.getStatus();
 	}
 
-	public Startstoppskript setNewSkript(Startstoppskript skript) {
-		// TODO Auto-generated method stub
-		return skript;
+	public Startstoppskript setNewSkript(Startstoppskript skript) throws StartStoppStatusException {
+
+		ManagedSkript newSkript = new ManagedSkript(skript);
+		if (newSkript.getStatus().getStatus() == Startstoppskriptstatus.Status.INITIALIZED) {
+
+			// TODO Auto-generated method stub
+
+			return skript;
+		}
+
+		Statusresponse status = new Statusresponse();
+		status.setCode(-1);
+		status.getMessages().addAll(newSkript.getStatus().getMessages());
+		throw new StartStoppStatusException("Skript konnte nicht übernommen und versioniert werden!", status);
 	}
 }
