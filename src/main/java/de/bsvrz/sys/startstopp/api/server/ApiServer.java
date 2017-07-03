@@ -40,7 +40,7 @@ public class ApiServer {
 	public void start() throws Exception {
 		URI baseUri = UriBuilder.fromUri("https://localhost/").port(9998).build();
 		ResourceConfig config = new ResourceConfig(SystemService.class, SkripteService.class,
-				ApplikationenService.class);
+				ApplikationenService.class, RechnerService.class);
 
 		SslContextFactory sslContextFactory = new SslContextFactory();
 		sslContextFactory.setKeyStorePath(ApiServer.class.getResource("keystore.jks").toExternalForm());

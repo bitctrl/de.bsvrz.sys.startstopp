@@ -80,4 +80,12 @@ public class SystemService {
 		startStopp.restartCurrentSkript();
 		return response;
 	}
+
+	@GET
+	@Path("applikationen")
+	public Response responseStartStoppSystemApplikationen() {
+		Response response = Response.status(Response.Status.NOT_IMPLEMENTED).build();
+		// TODO Applikationen aller Rechner ermitteln
+		return response;
+	}
 }

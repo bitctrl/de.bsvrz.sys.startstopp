@@ -118,6 +118,10 @@ public class StartStoppXMLParser {
 				Makrodefinitionen makrodefinitionen = new Makrodefinitionen();
 				makrodefinitionen.setName(attributes.getValue("name"));
 				makrodefinitionen.setWert(attributes.getValue("wert"));
+				if (destination.getGlobal() == null) {
+					destination.setGlobal(new Global());
+				}
+				destination.getGlobal().getMakrodefinitionen().add(makrodefinitionen);
 				break;
 			case protokolldatei:
 				break;

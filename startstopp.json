@@ -10,7 +10,64 @@
       "inkarnationsName" : "Parametrierung",
       "mitInkarnationsName" : true
     } ],
-    "makrodefinitionen" : [ ],
+    "makrodefinitionen" : [ {
+      "name" : "root",
+      "wert" : ".."
+    }, {
+      "name" : "dist",
+      "wert" : "%root%/distributionspakete"
+    }, {
+      "name" : "java",
+      "wert" : "java"
+    }, {
+      "name" : "rechner1.ip",
+      "wert" : "192.168.172.1"
+    }, {
+      "name" : "rechner2.ip",
+      "wert" : "192.168.172.2"
+    }, {
+      "name" : "authentifizierung.benutzer",
+      "wert" : "vrzanwendung"
+    }, {
+      "name" : "authentifizierung.passwortdatei",
+      "wert" : "%root%/skripte-bash/passwd"
+    }, {
+      "name" : "authentifizierung.default",
+      "wert" : "-benutzer=%authentifizierung.benutzer% -authentifizierung=%authentifizierung.passwortdatei%"
+    }, {
+      "name" : "debug.stderr",
+      "wert" : "NONE"
+    }, {
+      "name" : "debug.file",
+      "wert" : "CONFIG"
+    }, {
+      "name" : "debug.filePath",
+      "wert" : "-debugFilePath=%root%"
+    }, {
+      "name" : "debug.default",
+      "wert" : "-debugLevelStdErrText=%debug.stderr% -debugLevelFileText=%debug.file%"
+    }, {
+      "name" : "dav1.host",
+      "wert" : "localhost"
+    }, {
+      "name" : "dav1.appPort",
+      "wert" : "8083"
+    }, {
+      "name" : "dav1.davPort",
+      "wert" : "8082"
+    }, {
+      "name" : "dav1.einstellungen",
+      "wert" : "-davAppPort=%dav1.appPort% -davDavPort=%dav1.davPort% %debug.filePath%"
+    }, {
+      "name" : "dav1.mitAuthentifizierung",
+      "wert" : "-datenverteiler=%dav1.host%:%dav1.appPort% %authentifizierung.default% %debug.filePath%"
+    }, {
+      "name" : "dav1.ohneAuthentifizierung",
+      "wert" : "-datenverteiler=%dav1.host%:%dav1.appPort% %debug.filePath%"
+    }, {
+      "name" : "aoe.pid",
+      "wert" : "kv.aoe.test"
+    } ],
     "zugangDav" : {
       "adresse" : "%dav1.host%",
       "passWord" : "systeststst",
@@ -34,12 +91,12 @@
     "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     },
     "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     }
   }, {
     "applikation" : "%java%",
@@ -53,12 +110,12 @@
     "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     },
     "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     }
   }, {
     "applikation" : "%java%",
@@ -72,12 +129,12 @@
     "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     },
     "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     }
   }, {
     "applikation" : "%java%",
@@ -88,15 +145,19 @@
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ ],
+    "startBedingungen" : [ {
+      "vorgaenger" : "Parametrierung",
+      "warteart" : "ende",
+      "wartezeit" : "60"
+    } ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 1.0
+      "wiederholungen" : "1"
     },
     "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
-      "wiederholungen" : 2.0
+      "wiederholungen" : "2"
     }
   }, {
     "applikation" : "%java%",
@@ -107,15 +168,20 @@
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ ],
+    "startBedingungen" : [ {
+      "vorgaenger" : "Applikation07",
+      "warteart" : "ende",
+      "rechner" : "%rechner2%",
+      "wartezeit" : "20"
+    } ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 1.0
+      "wiederholungen" : "1"
     },
     "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
-      "wiederholungen" : 1.0
+      "wiederholungen" : "1"
     }
   }, {
     "applikation" : "%java%",
@@ -129,12 +195,12 @@
     "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     },
     "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     }
   }, {
     "applikation" : "%java%",
@@ -148,12 +214,12 @@
     "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     },
     "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
-      "wiederholungen" : 0.0
+      "wiederholungen" : "0"
     }
   } ],
   "metaDaten" : { }

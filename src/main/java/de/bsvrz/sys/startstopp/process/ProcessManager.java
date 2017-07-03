@@ -28,7 +28,11 @@ package de.bsvrz.sys.startstopp.process;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
+import de.bsvrz.sys.startstopp.api.ManagedApplikation;
+import de.bsvrz.sys.startstopp.api.ManagedSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
@@ -37,19 +41,33 @@ public class ProcessManager extends Thread {
 
 	private boolean stopped;
 	private Object lock = new Object();
+	private ManagerStatus managerStatus = new ManagerStatus();
+
+	private Map<String, ManagedApplikation> applikationen = new TreeMap<>();
+	private final StartStopp startStopp;
 
 	public ProcessManager() {
 		this(StartStopp.getInstance());
 	}
-	
+
 	public ProcessManager(StartStopp startStopp) {
 		super("ProcessManager");
+		this.startStopp = startStopp;
 	}
-	
+
 	@Override
 	public void run() {
+
+		try {
+			for (ManagedApplikation applikation : startStopp.getSkriptManager().getCurrentSkript().getApplikationen()) {
+				applikationen.put(applikation.getInkarnationsName(), applikation);
+			}
+		} catch (StartStoppException e1) {
+			e1.printStackTrace();
+		}
+
 		while (!stopped) {
-//			System.err.println("Überwache Inkarnationen");
+			// System.err.println("Überwache Inkarnationen");
 			try {
 				synchronized (lock) {
 					lock.wait(30000);
@@ -58,70 +76,61 @@ public class ProcessManager extends Thread {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} 
+		}
 	}
 
 	public List<Applikation> getApplikationen() {
 		// TODO Auto-generated method stub
-		
-		Applikation applikation = new Applikation();
-		applikation.setInkarnationsName("Heinz");
-		applikation.setStatus(Applikation.Status.STARTENWARTEN);
-		applikation.getArguments().add("Arg1");
-		applikation.setLetzteStartzeit("Letzte Startzeit");
-		applikation.setLetzteStoppzeit("Letzte Stoppzeit");
 
 		List<Applikation> result = new ArrayList<>();
-		result.add(applikation);
-		
+		for (ManagedApplikation applikation : applikationen.values()) {
+			result.add(applikation.getApplikation());
+		}
+
 		return result;
 	}
 
 	public Applikation getApplikation(String inkarnationsName) throws StartStoppException {
-		// TODO Auto-generated method stub
-		
-		if( "Datenverteiler".equals(inkarnationsName)) {
-			Applikation applikation = new Applikation();
-			applikation.setInkarnationsName("Datenverteiler");
-			applikation.setStatus(Applikation.Status.STARTENWARTEN);
-			applikation.getArguments().add("Arg1");
-			applikation.setLetzteStartzeit("Letzte Startzeit");
-			applikation.setLetzteStoppzeit("Letzte Stoppzeit");
-			return applikation;
+		ManagedApplikation managedApplikation = applikationen.get(inkarnationsName);
+		if (managedApplikation != null) {
+			return managedApplikation.getApplikation();
 		}
-		
-		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+
+		throw new StartStoppException(
+				"Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
 	public Applikation starteApplikation(String inkarnationsName) throws StartStoppException {
 		// TODO Auto-generated method stub
-		
 		Applikation applikation = getApplikation(inkarnationsName);
-		if( applikation != null) {
+		if (applikation != null) {
 			return applikation;
 		}
-		
-		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+
+		throw new StartStoppException(
+				"Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
 	public Applikation restarteApplikation(String inkarnationsName) throws StartStoppException {
 		// TODO Auto-generated method stub
 		Applikation applikation = getApplikation(inkarnationsName);
-		if( applikation != null) {
+		if (applikation != null) {
 			return applikation;
 		}
 
-		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+		throw new StartStoppException(
+				"Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
 	public Applikation stoppeApplikation(String inkarnationsName) throws StartStoppException {
 		// TODO Auto-generated method stub
 		Applikation applikation = getApplikation(inkarnationsName);
-		if( applikation != null) {
+		if (applikation != null) {
 			return applikation;
 		}
 
-		throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
+		throw new StartStoppException(
+				"Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
 	public void stopp() {
@@ -137,8 +146,26 @@ public class ProcessManager extends Thread {
 	}
 
 	public boolean isSkriptStopped() {
-		// TODO Auto-generated method stub
-		return false;
+		synchronized (managerStatus) {
+			return managerStatus.getState() == ManagerStatus.State.STOPPED;
+		}
 	}
 
+	public void updateSkript(ManagedSkript currentSkript, ManagedSkript newSkript) throws StartStoppException {
+		// TODO Auto-generated method stub
+	}
+
+	public Thread stoppeSkript(boolean restart) {
+
+		synchronized (managerStatus) {
+			if (managerStatus.getState() == ManagerStatus.State.STOPPING ) {
+				return null;
+			}
+			managerStatus.setState(ManagerStatus.State.STOPPING);
+		}
+
+		SkriptStopper stopper = new SkriptStopper(applikationen);
+		stopper.start();
+		return stopper;
+	}
 }

@@ -1,11 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://www.bitctrl.de/applikation.json",
   "type": "object",
   "properties": {
     "inkarnationsName": {
       "type": "string",
       "description": "der Name der Inkarnation"
+    },
+    "applikation": {
+      "type": "string",
+      "description": "der Applikationsname (ausführbare Datei)"
     },
     "arguments": {
       "type": "array",
@@ -43,6 +46,7 @@
   },
   "required": [
     "inkarnationsName",
+    "applikation",
     "status"
   ]
 }

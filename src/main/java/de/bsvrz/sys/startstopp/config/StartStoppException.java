@@ -26,7 +26,12 @@
 
 package de.bsvrz.sys.startstopp.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StartStoppException extends Exception {
+
+	private List<String> messages = new ArrayList<>();
 
 	public StartStoppException(String string) {
 		super(string);
@@ -36,4 +41,11 @@ public class StartStoppException extends Exception {
 		super(e);
 	}
 
+	protected void addMessages(List<String> messages) {
+		this.messages.addAll(messages);
+	}
+	
+	public List<String> getMessages() {
+		return messages;
+	}
 }

@@ -39,7 +39,6 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/skripte")
@@ -73,7 +72,7 @@ public class SkripteService {
 		} catch (StartStoppException e) {
 			Statusresponse statusResponse = new Statusresponse();
 			statusResponse.setCode(-1);
-			statusResponse.getMessages().add("Die StartStoppApplikation hat kein aktuelles Skript");
+			statusResponse.getMessages().add(e.getLocalizedMessage());
 			response = Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(statusResponse).build();
 		}
 
@@ -88,8 +87,7 @@ public class SkripteService {
 		Startstoppskriptstatus status;
 		
 		try {
-			Startstoppskript konfiguration = skriptManager.getCurrentSkript().getSkript();
-			status = skriptManager.checkStatus(konfiguration);
+			status = skriptManager.getCurrentSkriptStatus();
 
 		} catch (StartStoppException e) {
 			status = new Startstoppskriptstatus();
@@ -122,7 +120,7 @@ public class SkripteService {
 					"application/json");
 			responseBuilder.entity(newSkript);
 			return responseBuilder.build();
-		} catch (StartStoppStatusException e) {
+		} catch (StartStoppException e) {
 			Statusresponse status = new Statusresponse();
 			status.setCode(-1);
 			status.getMessages().addAll(e.getMessages());

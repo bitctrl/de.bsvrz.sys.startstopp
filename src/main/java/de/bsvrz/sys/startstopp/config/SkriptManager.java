@@ -26,6 +26,15 @@
 
 package de.bsvrz.sys.startstopp.config;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilterWriter;
+import java.io.StringWriter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import de.bsvrz.sys.startstopp.api.ManagedSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
@@ -33,9 +42,18 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
+/**
+ * 
+ * Das Modul zur Verwaltung des von StartStopp auszuführenden Skripts.
+ * 
+ * Das Skript wird interpretiert und für die Prozessverwaltung bereitgestellt.
+ * 
+ * @author BitCtrl Systems GmbH, Uwe Peuker
+ */
 public class SkriptManager {
 
 	private ManagedSkript currentSkript;
+	private StartStopp startStopp;
 
 	public SkriptManager() {
 		this(StartStopp.getInstance());
@@ -43,14 +61,30 @@ public class SkriptManager {
 
 	public SkriptManager(StartStopp startStopp) {
 
-		startStopp.getOptions().getSkriptDir();
+		this.startStopp = startStopp;
 
+		String skriptDir = startStopp.getOptions().getSkriptDir();
 		try {
-			Startstoppskript skript = StartStoppXMLParser
-					.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
+
+			ObjectMapper mapper = new ObjectMapper();
+			Startstoppskript skript = null;
+			try {
+				skript = mapper.readValue(new File(skriptDir + "/startstopp.json"), Startstoppskript.class);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (skript == null) {
+				skript = StartStoppXMLParser.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
+
+				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+				try (FileWriter writer = new FileWriter(skriptDir + "/startstopp.json")) {
+					mapper.writeValue(writer, skript);
+				}
+			}
 			currentSkript = new ManagedSkript(skript);
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 
@@ -61,24 +95,22 @@ public class SkriptManager {
 		return currentSkript;
 	}
 
-	public Startstoppskriptstatus checkStatus(Startstoppskript konfiguration) {
-		// TODO Auto-generated method stub
-		return currentSkript.getStatus();
+	public Startstoppskriptstatus getCurrentSkriptStatus() throws StartStoppException {
+		return getCurrentSkript().getSkriptStatus();
 	}
 
-	public Startstoppskript setNewSkript(Startstoppskript skript) throws StartStoppStatusException {
+	public Startstoppskript setNewSkript(Startstoppskript skript) throws StartStoppException {
 
 		ManagedSkript newSkript = new ManagedSkript(skript);
-		if (newSkript.getStatus().getStatus() == Startstoppskriptstatus.Status.INITIALIZED) {
-
-			// TODO Auto-generated method stub
-
+		newSkript.versionieren();
+		if (newSkript.getSkriptStatus().getStatus() == Startstoppskriptstatus.Status.INITIALIZED) {
+			startStopp.getProcessManager().updateSkript(currentSkript, newSkript);
 			return skript;
 		}
 
 		Statusresponse status = new Statusresponse();
 		status.setCode(-1);
-		status.getMessages().addAll(newSkript.getStatus().getMessages());
+		status.getMessages().addAll(newSkript.getSkriptStatus().getMessages());
 		throw new StartStoppStatusException("Skript konnte nicht übernommen und versioniert werden!", status);
 	}
 }

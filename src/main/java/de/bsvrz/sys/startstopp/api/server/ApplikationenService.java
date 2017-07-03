@@ -67,9 +67,9 @@ public class ApplikationenService {
 	}
 
 	@GET
-	@Path("{inkarnationsName}")
+	@Path("{inkarnationsname}")
 	@Produces("application/json")
-	public Response responseApplikation(@PathParam("inkarnationsName") String inkarnationsName) {
+	public Response responseApplikation(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
 			Applikation applikation = processManager.getApplikation(inkarnationsName);
@@ -83,9 +83,9 @@ public class ApplikationenService {
 	}
 
 	@POST
-	@Path("{inkarnationsName}/start")
+	@Path("{inkarnationsname}/start")
 	@Produces("application/json")
-	public Response responseApplikationStart(@PathParam("inkarnationsName") String inkarnationsName) {
+	public Response responseApplikationStart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
 			Applikation applikation = processManager.starteApplikation(inkarnationsName);
@@ -102,9 +102,9 @@ public class ApplikationenService {
 	}
 
 	@POST
-	@Path("{inkarnationsName}/restart")
+	@Path("{inkarnationsname}/restart")
 	@Produces("application/json")
-	public Response responseApplikationRestart(@PathParam("inkarnationsName") String inkarnationsName) {
+	public Response responseApplikationRestart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
 			Applikation applikation = processManager.restarteApplikation(inkarnationsName);
@@ -121,9 +121,9 @@ public class ApplikationenService {
 	}
 
 	@POST
-	@Path("{inkarnationsName}/stopp")
+	@Path("{inkarnationsname}/stopp")
 	@Produces("application/json")
-	public Response responseApplikationStopp(@PathParam("inkarnationsName") String inkarnationsName) {
+	public Response responseApplikationStopp(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
 			Applikation applikation = processManager.stoppeApplikation(inkarnationsName);

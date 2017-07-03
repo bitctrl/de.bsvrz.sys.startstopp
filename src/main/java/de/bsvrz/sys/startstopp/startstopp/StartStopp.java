@@ -90,7 +90,7 @@ public class StartStopp {
 			return status;
 		}
 		
-		if (skript.getStatus().getStatus() == Startstoppskriptstatus.Status.FAILURE) {
+		if (skript.getSkriptStatus().getStatus() == Startstoppskriptstatus.Status.FAILURE) {
 			status.setStatus(Startstoppstatus.Status.CONFIGERROR);
 		} else {
 			if (processManager.isSkriptRunning()) {
@@ -111,26 +111,24 @@ public class StartStopp {
 		apiServer = new ApiServer();
 	}
 
-	public void restartCurrentSkript() {
-		// TODO Auto-generated method stub
-
-	}
-
 	private void start() throws Exception {
 		processManager.start();
 		apiServer.start();
 	}
 
 	public void stoppApplikation() {
-		// TODO Auto-generated method stub
+		
 		new Thread() {
 			@Override
 			public void run() {
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				Thread stopper = processManager.stoppeSkript(false);
+				if( stopper != null) {
+					try {
+						stopper.join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				System.exit(0);
 			}
@@ -138,8 +136,10 @@ public class StartStopp {
 	}
 
 	public void stoppCurrentSkript() {
-		// TODO Auto-generated method stub
-
+		processManager.stoppeSkript(false);
 	}
 
+	public void restartCurrentSkript() {
+		processManager.stoppeSkript(true);
+	}
 }

@@ -9,7 +9,7 @@ Gruppe aller StartStopp-bezogenenen Ressourcen.
 ## Status von StartStopp [/ststapi/v1/system]
 Liefert den Status der StartStopp-Applikation.
 
-### Status von StartStopp abrufen [GET]
+### GET
 
 + Response 200 (application/json)
 
@@ -18,23 +18,34 @@ Liefert den Status der StartStopp-Applikation.
 ## StartStopp Applikation beenden [/ststapi/v1/system/exit]
 Beendet die StartStopp-Applikation.
 
-### StartStopp-Applikation beenden [POST]
+### POST
 
 + Response 202
 
 ## StartStopp-Konfiguration beenden [/ststapi/v1/system/stopp]
 Startet die StartStopp-Konfiguration neu.
 
-### Beenden [POST]
+### POST
 
 + Response 202
 
 ## StartStopp-Konfiguration neu starten [/ststapi/v1/system/restart]
 Startet die StartStopp-Konfiguration neu.
 
-### Neu starten [POST]
+### POST
 
 + Response 202
+
+## Alle Applikationen der bekannten Rechner abrufen [/ststapi/v1/system/applikationen]
+
+Liefert die Applikationen aller definierten Rechner, soweit diese verfügbar sind.
+
+### GET
+
++ Response 200
+
+    + Attributes(array[Applikation], fixed-type)
+
 
 # Group Skripte
 
@@ -42,9 +53,9 @@ Gruppe aller skriptbezogenenen Ressourcen.
 
 ## Aktuelles Skript [/ststapi/v1/skripte/current]
 
-Liefert das aktuell von StartStopp geladene Skript.
+Liefert oder schreibt das aktuell von StartStopp geladene Skript.
 
-### Aktuelles Skript lesen [GET]
+### GET
 
 + Response 200 (application/json)
 
@@ -54,7 +65,9 @@ Liefert das aktuell von StartStopp geladene Skript.
 
     + Attributes(StatusResponse)
 
-### Aktuelles Skript schreiben/versionieren [PUT]
+### PUT
+
+Das gesendete Skript wird geprüft, versioniert und aktiviert.
 
 + Request (application/json)
 
@@ -73,19 +86,21 @@ Liefert das aktuell von StartStopp geladene Skript.
 Liefert den Status des aktuell von StartStopp geladenen Skripts.
 
 
-### Status des aktuelles Skript lesen [GET]
+### GET
 
 + Response 200 (application/json)
 
    + Attributes(StartStoppSkriptStatus)
 
+
 # Group Applikation
 
 
 ## Alle Applikationen [/ststapi/v1/applikationen]
+
 Alle von StartStopp verwalteten Applikationen
 
-### Alle Applikationen ermitteln [GET]
+### GET
 
 + Response 200 (application/json)
 
@@ -99,7 +114,7 @@ Liefert den Status der referenzierten Applikation.
 
     + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
 
-### Aktuellen Status einer Applikation abrufen [GET]
+### GET
 
 + Response 200 (application/json)
 
@@ -112,7 +127,7 @@ Startet die referenzierte Applikation.
 
     + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
 
-### Applikation starten [POST]
+### POST
 
 + Response 200 (application/json)
 
@@ -129,7 +144,7 @@ Startet die referenzierte Applikation neu.
 
     + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
 
-### Applikation neu starten [POST]
+### POST
 
 + Response 200 (application/json)
 
@@ -146,7 +161,7 @@ Beendet die referenzierte Applikation.
 
     + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
 
-### Applikation beenden [POST]
+### POST
 
 + Response 200 (application/json)
 
@@ -155,6 +170,58 @@ Beendet die referenzierte Applikation.
 + Response 409 (application/json)
 
     + Attribute (StatusResponse)
+
+
+# Group Rechner
+
+## Rechner abrufen [/ststapi/v1/rechner]
+
+Alle bei StartStopp definierten Rechner
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(array[Rechner], fixed-type)
+
+## Skript des Rechners abrufen [/ststapi/v1/rechner/{rechnername}/skript]
+
++ Parameters
+
+    + rechnername: rechner2 (string, required) - der Name des Rechners.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(StartStoppSkript)
+
+## Applikationen des Rechners abrufen [/ststapi/v1/rechner/{rechnername}/applikationen]
+
++ Parameters
+
+    + rechnername: rechner2 (string, required) - der Name des Rechners.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(array[Applikation], fixed-type)
+
+## Applikation eines Rechners abrufen [/ststapi/v1/rechner/{rechnername}/applikationen/{inkarnationsname}]
+
++ Parameters
+
+    + rechnername: rechner2 (string, required) - der Name des Rechners.
+    + inkarnationsname: Parametrierung (string, required) - der Name der Inkarnation.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(array[Applikation], fixed-type)
+
+
 
 # Data Structures
 
@@ -270,6 +337,8 @@ Beendet die referenzierte Applikation.
 ## Applikation (object)
 
 + inkarnationsName: Parametrierung (string, required) - der Name der Inkarnation
++ rechner: localhost (string)
++ applikation: java (string, required) - der Applikationsname (ausführbare Datei)
 + arguments: `-datenverteiler=localhost:8083`, `-persistenz=parameter` (array[string], fixed-type) - die Argumente der Applikation
 + letzteStartzeit: `24.12.2016 12:01" (string) - die letzte Startzeit der Inkarnation
 + letzteStoppzeit: `06.12.2016 11:11" (string) - die letzte Stoppzeit der Inkarnation
