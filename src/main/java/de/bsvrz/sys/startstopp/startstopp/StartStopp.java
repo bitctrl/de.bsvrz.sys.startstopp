@@ -26,10 +26,10 @@
 
 package de.bsvrz.sys.startstopp.startstopp;
 
-import de.bsvrz.sys.startstopp.api.ManagedSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppstatus;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
+import de.bsvrz.sys.startstopp.config.ManagedSkript;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProcessManager;

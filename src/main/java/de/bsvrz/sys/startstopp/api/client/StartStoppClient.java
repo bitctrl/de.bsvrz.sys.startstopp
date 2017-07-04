@@ -46,6 +46,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppstatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
+import de.bsvrz.sys.startstopp.api.jsonschema.Versionierungsrequest;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
@@ -205,10 +206,13 @@ public class StartStoppClient {
 				+ response.getStatus() + ")");
 	}
 
-	public Startstoppskript setCurrentSkript(Startstoppskript skript) throws StartStoppException {
+	public Startstoppskript setCurrentSkript(String grund, Startstoppskript skript) throws StartStoppException {
 		Response response = null;
+		Versionierungsrequest request = new Versionierungsrequest();
+		request.setAenderungsgrund(grund);
+		request.setSkript(skript);
 		try {
-			response = createPutResponse("/skripte/current", skript);
+			response = createPutResponse("/skripte/current", request);
 			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(Startstoppskript.class);
 			}

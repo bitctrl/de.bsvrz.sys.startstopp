@@ -71,7 +71,7 @@ Das gesendete Skript wird geprüft, versioniert und aktiviert.
 
 + Request (application/json)
 
-    + Attributes(StartStoppSkript)
+    + Attributes(VersionierungsRequest)
 
 + Response 200 (application/json)
 
@@ -255,6 +255,7 @@ Alle bei StartStopp definierten Rechner
 
 + name: Hauptserver (string, required)
 + tcpAdresse: 127.0.0.1 (string, required)
++ port: 3000 (string, required, default)
 
 ## MakroDefinition
 
@@ -305,6 +306,10 @@ Alle bei StartStopp definierten Rechner
 ## Inkarnation
 
 + inkarnationsName (string, required)
++ inkarnationsTyp: dav (enum, default)
+    + dav (string)
+    + wrapped (string)
+    + extern (string)
 + applikation (string, required)
 + aufrufParameter (array[string], fixed-type)
 + startArt (StartArt)
@@ -333,6 +338,11 @@ Alle bei StartStopp definierten Rechner
   + erstelltAm (string)
   + erstelltDurch (string)
   + versionsNummer (string)
+
+## VersionierungsRequest
+
++ aenderungsgrund (string, required)
++ skript (StartStoppSkript, required)
 
 ## Applikation (object)
 

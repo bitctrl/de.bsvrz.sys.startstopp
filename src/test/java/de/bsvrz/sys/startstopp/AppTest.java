@@ -44,7 +44,7 @@ public class AppTest {
 			if (currentSkript != null) {
 				System.err.println("SET_SKRIPT_CURRENT");
 				try {
-					currentSkript = client.setCurrentSkript(currentSkript);
+					currentSkript = client.setCurrentSkript("Alles neu", currentSkript);
 					System.err.println(currentSkript);
 				} catch (StartStoppStatusException e) {
 					System.err.println(e.getLocalizedMessage());

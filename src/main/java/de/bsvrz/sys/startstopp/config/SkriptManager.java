@@ -26,15 +26,17 @@
 
 package de.bsvrz.sys.startstopp.config;
 
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import javax.swing.event.EventListenerList;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.bsvrz.sys.startstopp.api.ManagedSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
@@ -53,6 +55,7 @@ public class SkriptManager {
 
 	private ManagedSkript currentSkript;
 	private StartStopp startStopp;
+	private PropertyChangeSupport skriptChangeSupport = new PropertyChangeSupport(this);
 
 	public SkriptManager() {
 		this(StartStopp.getInstance());
@@ -99,18 +102,27 @@ public class SkriptManager {
 		return getCurrentSkript().getSkriptStatus();
 	}
 
-	public Startstoppskript setNewSkript(Startstoppskript skript) throws StartStoppException {
+	public Startstoppskript setNewSkript(String reason, Startstoppskript skript) throws StartStoppException {
 
 		ManagedSkript newSkript = new ManagedSkript(skript);
-		newSkript.versionieren();
 		if (newSkript.getSkriptStatus().getStatus() == Startstoppskriptstatus.Status.INITIALIZED) {
-			startStopp.getProcessManager().updateSkript(currentSkript, newSkript);
-			return skript;
+			newSkript.versionieren(reason);
+			skriptChangeSupport.firePropertyChange("currentSkript", currentSkript, newSkript);
+			currentSkript = newSkript;
+			return currentSkript.getSkript();
 		}
 
 		Statusresponse status = new Statusresponse();
 		status.setCode(-1);
 		status.getMessages().addAll(newSkript.getSkriptStatus().getMessages());
 		throw new StartStoppStatusException("Skript konnte nicht übernommen und versioniert werden!", status);
+	}
+	
+	public void addSkriptManagerListener(SkriptManagerListener listener) {
+		skriptChangeSupport.addPropertyChangeListener(listener);
+	}
+
+	public void removeSkriptManagerListener(SkriptManagerListener listener) {
+		skriptChangeSupport.removePropertyChangeListener(listener);
 	}
 }

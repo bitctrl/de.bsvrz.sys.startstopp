@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
+import de.bsvrz.sys.startstopp.api.jsonschema.Versionierungsrequest;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
@@ -105,17 +106,24 @@ public class SkripteService {
 	@PUT
 	@Path("current")
 	@Produces("application/json")
-	public Response responseSkripteCurrentPut(Startstoppskript skript) {
+	public Response responseSkripteCurrentPut(Versionierungsrequest request) {
 
-		if( skript == null) {
+		if( request == null || request.getSkript() == null) {
 			Statusresponse status = new Statusresponse();
 			status.setCode(-1);
 			status.getMessages().add("Es wurde kein Skript übermittelt!");
 			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
 		}
+
+		if( request.getAenderungsgrund().trim().isEmpty()) {
+			Statusresponse status = new Statusresponse();
+			status.setCode(-1);
+			status.getMessages().add("Es muss ein Änderungsgrund übergeben werden!");
+			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
+		}
 		
 		try {
-			Startstoppskript newSkript = skriptManager.setNewSkript(skript);
+			Startstoppskript newSkript = skriptManager.setNewSkript(request.getAenderungsgrund(), (Startstoppskript) request.getSkript());
 			Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type",
 					"application/json");
 			responseBuilder.entity(newSkript);

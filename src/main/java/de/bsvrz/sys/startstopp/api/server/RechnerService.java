@@ -26,19 +26,22 @@
 
 package de.bsvrz.sys.startstopp.api.server;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import de.bsvrz.sys.startstopp.api.ManagedSkript;
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
+import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
+import de.bsvrz.sys.startstopp.config.ManagedSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
@@ -61,7 +64,7 @@ public class RechnerService {
 
 		try {
 			ManagedSkript currentSkript = startStopp.getSkriptManager().getCurrentSkript();
-			List<Rechner> rechner = currentSkript.getSkript().getGlobal().getRechner();
+			Collection<Rechner> rechner = currentSkript.getResolvedRechner();
 			
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
@@ -78,24 +81,53 @@ public class RechnerService {
 	@GET
 	@Path("{rechnername}/skript")
 	public Response responseRechnerSkript(@PathParam("rechnername") String rechnerName) {
-		Response response = Response.status(Response.Status.NOT_IMPLEMENTED).build();
-		// TODO Skript von Remoterechner ermitteln
-		return response;
+
+		try {
+			ManagedSkript currentSkript = startStopp.getSkriptManager().getCurrentSkript();
+			Rechner rechner = currentSkript.getResolvedRechner(rechnerName);
+			StartStoppClient client = new StartStoppClient(rechner.getTcpAdresse(), Integer.parseInt(rechner.getPort()));
+			Startstoppskript remoteSkript = client.getCurrentSkript();
+			return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(remoteSkript).build();
+		} catch (StartStoppException e) {
+			Statusresponse statusResponse = new Statusresponse();
+			statusResponse.setCode(-1);
+			statusResponse.getMessages().add(e.getLocalizedMessage());
+			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(statusResponse).build();
+		}
 	}
 
 	@GET
 	@Path("{rechnername}/applikationen")
 	public Response responseRechnerApplikationen(@PathParam("rechnername") String rechnerName) {
-		Response response = Response.status(Response.Status.NOT_IMPLEMENTED).build();
-		// TODO Applikationen von Remoterechner ermitteln
-		return response;
+
+		try {
+			ManagedSkript currentSkript = startStopp.getSkriptManager().getCurrentSkript();
+			Rechner rechner = currentSkript.getResolvedRechner(rechnerName);
+			StartStoppClient client = new StartStoppClient(rechner.getTcpAdresse(), Integer.parseInt(rechner.getPort()));
+			List<Applikation> applikationen = client.getApplikationen();
+			return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(applikationen).build();
+		} catch (StartStoppException e) {
+			Statusresponse statusResponse = new Statusresponse();
+			statusResponse.setCode(-1);
+			statusResponse.getMessages().add(e.getLocalizedMessage());
+			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(statusResponse).build();
+		}
 	}
 
 	@GET
 	@Path("{rechnername}/applikationen/{inkarnationsname}")
 	public Response responseRechnerApplikation(@PathParam("rechnername") String rechnerName, @PathParam("inkarnationsname") String inkarnationsName) {
-		Response response = Response.status(Response.Status.NOT_IMPLEMENTED).build();
-		// TODO Applikation von Remoterechner ermitteln
-		return response;
+		try {
+			ManagedSkript currentSkript = startStopp.getSkriptManager().getCurrentSkript();
+			Rechner rechner = currentSkript.getResolvedRechner(rechnerName);
+			StartStoppClient client = new StartStoppClient(rechner.getTcpAdresse(), Integer.parseInt(rechner.getPort()));
+			Applikation applikation = client.getApplikation(inkarnationsName);
+			return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(applikation).build();
+		} catch (StartStoppException e) {
+			Statusresponse statusResponse = new Statusresponse();
+			statusResponse.setCode(-1);
+			statusResponse.getMessages().add(e.getLocalizedMessage());
+			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(statusResponse).build();
+		}
 	}
 }

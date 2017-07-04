@@ -3,7 +3,7 @@
     {
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"additionalProperties": false,
-	"id": "http://bitctrl.de/startstoppskript.schema.json",
+	"id": "http://bitctrl.de/startstoppskript.json",
 	"properties": {
 		"global": {
 			"$ref": "#definitions/global"
@@ -109,22 +109,6 @@
 			],
 			"type": "object"
 		},
-		"rechnerDefinition": {
-			"additionalProperties": false,
-			"properties": {
-				"name": {
-					"type": "string"
-				},
-				"tcpAdresse": {
-					"type": "string"
-				}
-			},
-			"required": [
-				"name",
-				"tcpAdresse"
-			],
-			"type": "object"
-		},
 		"global": {
 			"additionalProperties": false,
 			"properties": {
@@ -148,7 +132,7 @@
 				},
 				"rechner": {
 					"items": {
-						"$ref": "#definitions/rechnerDefinition"
+						"$ref": "rechner.json"
 					},
 					"type": "array"
 				}
@@ -269,6 +253,15 @@
 						"type": "string"
 					},
 					"type": "array"
+				},
+				"inkarnationsTyp": {
+					"type": "string",
+					"enum": [
+						"dav",
+						"wrapped",
+						"extern"
+					],
+					"default": "dav"
 				},
 				"inkarnationsName": {
 					"type": "string"
