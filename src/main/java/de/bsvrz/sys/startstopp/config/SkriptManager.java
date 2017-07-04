@@ -27,12 +27,11 @@
 package de.bsvrz.sys.startstopp.config;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.FilterWriter;
-import java.io.StringWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.bsvrz.sys.startstopp.api.ManagedSkript;
@@ -78,7 +77,8 @@ public class SkriptManager {
 				skript = StartStoppXMLParser.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
 
 				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-				try (FileWriter writer = new FileWriter(skriptDir + "/startstopp.json")) {
+				
+				try (Writer writer = new OutputStreamWriter(new FileOutputStream(skriptDir + "/startstopp.json"), "UTF-8")) {
 					mapper.writeValue(writer, skript);
 				}
 			}
