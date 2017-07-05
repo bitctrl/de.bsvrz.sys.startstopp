@@ -24,7 +24,7 @@
 			"type": "string"
 		},
 		"startArt": {
-			"$ref": "startart.json"
+			"$ref": "startArt.json"
 		},
 		"startBedingung": {
 			"$ref": "startBedingung.json"
