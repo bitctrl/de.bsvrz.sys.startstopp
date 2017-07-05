@@ -1,5 +1,8 @@
 title_page:
   align: left
+  
+title_page_logo:  
+  image: image:images/bitctrl_logo.png[]
 
 page:
   layout: portrait

@@ -76,24 +76,24 @@
     },
     "rechner" : [ {
       "name" : "rechner2",
-      "tcpAdresse" : "%rechner2.ip%"
+      "tcpAdresse" : "%rechner2.ip%",
+      "port" : "3000"
     } ]
   },
   "inkarnationen" : [ {
     "applikation" : "%java%",
     "aufrufParameter" : [ "-Xmx4G", "-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter", "%dav1.einstellungen%", "%debug.default%", "-benutzer=davnutzer", "-konfigurationsBenutzer=konfigurationnutzer", "-parametrierungsBenutzer=parametrierungnutzer", "-authentifizierung=%authentifizierung.passwortdatei%", "-datenverteilerId=111111111111111111", "-rechtePruefung=neu", "-verzögerungFürAndereDatenverteiler=600s" ],
+    "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Datenverteiler",
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
     },
-    "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
@@ -101,18 +101,17 @@
   }, {
     "applikation" : "%java%",
     "aufrufParameter" : [ "-Xmx4g", "-cp %dist%/de.bsvrz.puk.config/de.bsvrz.puk.config-runtime.jar de.bsvrz.puk.config.main.ConfigurationApp", "%dav1.ohneAuthentifizierung%", "%debug.default%", "-benutzer=konfigurationnutzer", "-authentifizierung=%authentifizierung.passwortdatei%", "-verwaltung=%root%/konfiguration/verwaltungsdaten.xml", "-benutzerverwaltung=%root%/konfiguration/benutzerverwaltung.xml" ],
+    "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Konfiguration",
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
     },
-    "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
@@ -120,18 +119,17 @@
   }, {
     "applikation" : "%java%",
     "aufrufParameter" : [ "-Xmx20g", "-jar %dist%/de.bsvrz.puk.param/de.bsvrz.puk.param-runtime.jar", "%dav1.ohneAuthentifizierung%", "%debug.default%", "-benutzer=parametrierungnutzer", "-authentifizierung=%authentifizierung.passwortdatei%", "-persistenzModul=de.bsvrz.puk.param.param.DerbyPersistenz", "-persistenz=%root%/parameter", "-cacheGroesse=200000", "-oldDefault=nein" ],
+    "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Parametrierung",
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
     },
-    "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
@@ -139,22 +137,22 @@
   }, {
     "applikation" : "%java%",
     "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application01", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation01",
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ {
+    "startBedingung" : {
       "vorgaenger" : "Parametrierung",
       "warteart" : "ende",
       "wartezeit" : "60"
-    } ],
+    },
     "startFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "1"
     },
-    "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
       "wiederholungen" : "2"
@@ -162,23 +160,23 @@
   }, {
     "applikation" : "%java%",
     "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation04",
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ {
+    "startBedingung" : {
       "vorgaenger" : "Applikation07",
       "warteart" : "ende",
       "rechner" : "%rechner2%",
       "wartezeit" : "20"
-    } ],
+    },
     "startFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "1"
     },
-    "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
       "wiederholungen" : "1"
@@ -186,18 +184,17 @@
   }, {
     "applikation" : "%java%",
     "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation05",
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
     },
-    "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
       "wiederholungen" : "0"
@@ -205,18 +202,17 @@
   }, {
     "applikation" : "%java%",
     "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation06",
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
       "intervall" : ""
     },
-    "startBedingungen" : [ ],
     "startFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
     },
-    "stoppBedingungen" : [ ],
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
       "wiederholungen" : "0"

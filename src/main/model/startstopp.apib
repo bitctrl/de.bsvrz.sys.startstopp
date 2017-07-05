@@ -248,8 +248,9 @@ Alle bei StartStopp definierten Rechner
 ## KernSystem
 
 + inkarnationsName: Parametrierung (string, required)
-+ wartezeit: 30 (number)
-+ mitInkarnationsName: true (boolean)
++ wartezeit: 0 (string, default)
++ mitInkarnationsName: false (boolean, default)
++ initialize: false (boolean, default)
 
 ## Rechner
 
@@ -313,9 +314,9 @@ Alle bei StartStopp definierten Rechner
 + applikation (string, required)
 + aufrufParameter (array[string], fixed-type)
 + startArt (StartArt)
-+ startBedingungen (array[StartBedingung], fixed-type)
++ startBedingung (StartBedingung)
 + startFehlerVerhalten (StartFehlerVerhalten)
-+ stoppBedingungen (array[StoppBedingung], fixed-type)
++ stoppBedingung (StoppBedingung)
 + stoppFehlerVerhalten (StoppFehlerVerhalten)
 
 

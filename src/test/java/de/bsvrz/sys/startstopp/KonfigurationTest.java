@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public class KonfigurationTest {
@@ -60,7 +60,7 @@ public class KonfigurationTest {
 	public void convertKonfiguration() throws ParserConfigurationException, SAXException, IOException,
 			XMLStreamException, TransformerFactoryConfigurationError, TransformerException {
 		for (String file : files) {
-				Startstoppskript skript = StartStoppXMLParser.getKonfigurationFrom(file);
+				StartStoppSkript skript = StartStoppXMLParser.getKonfigurationFrom(file);
 				
 				ObjectMapper objectMapper = new ObjectMapper();
 				

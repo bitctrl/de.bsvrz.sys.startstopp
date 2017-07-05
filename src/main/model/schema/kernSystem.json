@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"inkarnationsName": {
+			"type": "string"
+		},
+		"wartezeit": {
+			"type": "string",
+			"default": "0"
+		},
+		"mitInkarnationsName": {
+			"type": "boolean",
+			"default": false
+		},
+		"initialize": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"required": [
+		"inkarnationsName"
+	]
+}

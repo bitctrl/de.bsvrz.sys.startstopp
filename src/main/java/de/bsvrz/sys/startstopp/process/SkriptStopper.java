@@ -5,11 +5,11 @@ import java.util.Map;
 
 public class SkriptStopper extends Thread {
 
-	private final Map<String, ManagedApplikation> applikationen = new LinkedHashMap<>();
-	private final Map<String, ManagedApplikation> kernsystem = new LinkedHashMap<>();
+	private final Map<String, StartStoppApplikation> applikationen = new LinkedHashMap<>();
+	private final Map<String, StartStoppApplikation> kernsystem = new LinkedHashMap<>();
 
 	public SkriptStopper(ProcessManager processManager) {
-		for (ManagedApplikation applikation : processManager.getManagedApplikationen()) {
+		for (StartStoppApplikation applikation : processManager.getManagedApplikationen()) {
 			if (applikation.isKernsystem()) {
 				kernsystem.put(applikation.getInkarnationsName(), applikation);
 			} else {

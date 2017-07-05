@@ -42,11 +42,11 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.client.ClientConfig;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppstatus;
-import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
-import de.bsvrz.sys.startstopp.api.jsonschema.Versionierungsrequest;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
+import de.bsvrz.sys.startstopp.api.jsonschema.VersionierungsRequest;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
@@ -127,12 +127,12 @@ public class StartStoppClient {
 
 	/* System-Funktionen. */
 
-	public Startstoppstatus getStartStoppStatus() throws StartStoppException {
+	public StartStoppStatus getStartStoppStatus() throws StartStoppException {
 		Response response = null;
 		try {
 			response = createGetResponse("/system");
 			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-				return response.readEntity(Startstoppstatus.class);
+				return response.readEntity(StartStoppStatus.class);
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
@@ -187,53 +187,53 @@ public class StartStoppClient {
 
 	/* Skript-Funktionen. */
 
-	public Startstoppskript getCurrentSkript() throws StartStoppException {
+	public StartStoppSkript getCurrentSkript() throws StartStoppException {
 		Response response = null;
 		try {
 			response = createGetResponse("/skripte/current");
 			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-				return response.readEntity(Startstoppskript.class);
+				return response.readEntity(StartStoppSkript.class);
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
 		if ((response != null) && (response.getStatus() == Response.Status.SERVICE_UNAVAILABLE.getStatusCode())) {
 			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte abgerufen werden",
-					response.readEntity(Statusresponse.class));
+					response.readEntity(StatusResponse.class));
 		}
-		
+
 		throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden (Response: "
 				+ response.getStatus() + ")");
 	}
 
-	public Startstoppskript setCurrentSkript(String grund, Startstoppskript skript) throws StartStoppException {
+	public StartStoppSkript setCurrentSkript(String grund, StartStoppSkript skript) throws StartStoppException {
 		Response response = null;
-		Versionierungsrequest request = new Versionierungsrequest();
+		VersionierungsRequest request = new VersionierungsRequest();
 		request.setAenderungsgrund(grund);
 		request.setSkript(skript);
 		try {
 			response = createPutResponse("/skripte/current", request);
 			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-				return response.readEntity(Startstoppskript.class);
+				return response.readEntity(StartStoppSkript.class);
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
 		if ((response != null) && (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode())) {
 			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden",
-					response.readEntity(Statusresponse.class));
+					response.readEntity(StatusResponse.class));
 		}
 
 		throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden (Response: "
 				+ response.getStatus() + ")");
 	}
 
-	public Startstoppskriptstatus getCurrentSkriptStatus() throws StartStoppException {
+	public StartStoppSkriptStatus getCurrentSkriptStatus() throws StartStoppException {
 		Response response = null;
 		try {
 			response = createGetResponse("/skripte/current/status");
 			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-				return response.readEntity(Startstoppskriptstatus.class);
+				return response.readEntity(StartStoppSkriptStatus.class);
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
@@ -287,7 +287,7 @@ public class StartStoppClient {
 		if ((response != null) && (response.getStatus() == Response.Status.CONFLICT.getStatusCode())) {
 			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
 					+ "\"konnte nicht gestartet werden (Response: " + response.getStatus() + ")",
-					response.readEntity(Statusresponse.class));
+					response.readEntity(StatusResponse.class));
 		}
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
 				+ "\"konnte nicht gestartet werden (Response: " + response.getStatus() + ")");
@@ -306,7 +306,7 @@ public class StartStoppClient {
 		if ((response != null) && (response.getStatus() == Response.Status.CONFLICT.getStatusCode())) {
 			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
 					+ "\"konnte nicht neu gestartet werden (Response: " + response.getStatus() + ")",
-					response.readEntity(Statusresponse.class));
+					response.readEntity(StatusResponse.class));
 		}
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
 				+ "\"konnte nicht neu gestartet werden (Response: " + response.getStatus() + ")");
@@ -325,7 +325,7 @@ public class StartStoppClient {
 		if ((response != null) && (response.getStatus() == Response.Status.CONFLICT.getStatusCode())) {
 			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
 					+ "\"konnte nicht gestoppt gestartet werden (Response: " + response.getStatus() + ")",
-					response.readEntity(Statusresponse.class));
+					response.readEntity(StatusResponse.class));
 		}
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
 				+ "\"konnte nicht gestoppt werden (Response: " + response.getStatus() + ")");

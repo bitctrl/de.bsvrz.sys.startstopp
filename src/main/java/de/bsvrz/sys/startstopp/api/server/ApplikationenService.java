@@ -36,7 +36,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
+import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
@@ -94,7 +94,7 @@ public class ApplikationenService {
 			responseBuilder.entity(applikation);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
-			Statusresponse status = new Statusresponse();
+			StatusResponse status = new StatusResponse();
 			status.setCode(-1);
 			status.getMessages().add(e.getLocalizedMessage());
 			return Response.status(Response.Status.CONFLICT).entity(status).build();
@@ -113,7 +113,7 @@ public class ApplikationenService {
 			responseBuilder.entity(applikation);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
-			Statusresponse status = new Statusresponse();
+			StatusResponse status = new StatusResponse();
 			status.setCode(-1);
 			status.getMessages().add(e.getLocalizedMessage());
 			return Response.status(Response.Status.CONFLICT).entity(status).build();
@@ -132,7 +132,7 @@ public class ApplikationenService {
 			responseBuilder.entity(applikation);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
-			Statusresponse status = new Statusresponse();
+			StatusResponse status = new StatusResponse();
 			status.setCode(-1);
 			status.getMessages().add(e.getLocalizedMessage());
 			return Response.status(Response.Status.CONFLICT).entity(status).build();

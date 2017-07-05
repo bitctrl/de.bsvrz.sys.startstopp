@@ -237,7 +237,7 @@
 				<artifactId>jsonschema2pojo-maven-plugin</artifactId>
 				<version>0.4.37</version>
 				<configuration>
-					<sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
+					<sourceDirectory>${basedir}/src/main/model/schema</sourceDirectory>
 					<includeHashcodeAndEquals>true</includeHashcodeAndEquals>
 					<includeToString>true</includeToString>
 					<targetPackage>de.bsvrz.sys.startstopp.api.jsonschema</targetPackage>

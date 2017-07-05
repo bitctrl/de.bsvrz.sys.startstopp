@@ -26,10 +26,12 @@
 
 package de.bsvrz.sys.startstopp.startstopp;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppstatus;
+import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
+import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
-import de.bsvrz.sys.startstopp.config.ManagedSkript;
+import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProcessManager;
@@ -80,31 +82,34 @@ public class StartStopp {
 		return skriptManager;
 	}
 
-	public Startstoppstatus getStatus() {
-		Startstoppstatus status = new Startstoppstatus();
-		ManagedSkript skript = null;
+	public StartStoppStatus getStatus() {
+		StartStoppStatus status = new StartStoppStatus();
+		StartStoppKonfiguration skript = null;
 		try {
 			skript = skriptManager.getCurrentSkript();
 		} catch (StartStoppException e) {
-			status.setStatus(Startstoppstatus.Status.CONFIGERROR);
+			status.setStatus(StartStoppStatus.Status.CONFIGERROR);
 			return status;
 		}
 		
-		if (skript.getSkriptStatus().getStatus() == Startstoppskriptstatus.Status.FAILURE) {
-			status.setStatus(Startstoppstatus.Status.CONFIGERROR);
+		if (skript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
+			status.setStatus(StartStoppStatus.Status.CONFIGERROR);
 		} else {
 			if (processManager.isSkriptRunning()) {
-				status.setStatus(Startstoppstatus.Status.RUNNING);
+				status.setStatus(StartStoppStatus.Status.RUNNING);
 			} else if (processManager.isSkriptStopped()) {
-				status.setStatus(Startstoppstatus.Status.STOPPED);
+				status.setStatus(StartStoppStatus.Status.STOPPED);
 			} else {
-				status.setStatus(Startstoppstatus.Status.INITIALIZED);
+				status.setStatus(StartStoppStatus.Status.INITIALIZED);
 			}
 		}
 		return status;
 	}
 
 	private void init(String[] args) throws Exception {
+
+		Debug.init("StartStopp", new ArgumentList(args));
+
 		options = new StartStoppOptions(args);
 		skriptManager = new SkriptManager();
 		processManager = new ProcessManager();
@@ -126,20 +131,11 @@ public class StartStopp {
 					try {
 						stopper.join();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 				System.exit(0);
 			}
 		}.start();
-	}
-
-	public void stoppCurrentSkript() {
-		processManager.stoppeSkript(false);
-	}
-
-	public void restartCurrentSkript() {
-		processManager.stoppeSkript(true);
 	}
 }

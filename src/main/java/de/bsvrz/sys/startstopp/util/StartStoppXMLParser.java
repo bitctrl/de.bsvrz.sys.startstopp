@@ -38,16 +38,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Global;
-import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnationen;
-import de.bsvrz.sys.startstopp.api.jsonschema.Kernsysteme;
-import de.bsvrz.sys.startstopp.api.jsonschema.Makrodefinitionen;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
+import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.MetaDaten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingungen;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
-import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingungen;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
@@ -71,10 +71,10 @@ public class StartStoppXMLParser {
 			}
 		};
 
-		private Startstoppskript destination;
-		private Inkarnationen currentInkarnation;
+		private StartStoppSkript destination;
+		private Inkarnation currentInkarnation;
 
-		StartStoppParserHandler(Startstoppskript destination) {
+		StartStoppParserHandler(StartStoppSkript destination) {
 			this.destination = destination;
 		}
 
@@ -94,34 +94,34 @@ public class StartStoppXMLParser {
 			case global:
 				break;
 			case inkarnation:
-				currentInkarnation = new Inkarnationen();
+				currentInkarnation = new Inkarnation();
 				currentInkarnation.setInkarnationsName(attributes.getValue("name"));
 				break;
 			case kernsystem:
-				Kernsysteme kernsysteme = new Kernsysteme();
-				kernsysteme.setInkarnationsName(attributes.getValue("inkarnationsname"));
+				KernSystem kernsystem = new KernSystem();
+				kernsystem.setInkarnationsName(attributes.getValue("inkarnationsname"));
 				if (attributes.getValue("wartezeit") != null) {
 					// TODO Schema vervollständigen
 					// kernsysteme.setWarteZeit(attributes.getValue("wartezeit"));
 				}
 				if (attributes.getValue("mitInkarnationsname") != null) {
-					kernsysteme.setMitInkarnationsName(attributes.getValue("mitInkarnationsname").equals("ja"));
+					kernsystem.setMitInkarnationsName(attributes.getValue("mitInkarnationsname").equals("ja"));
 				}
 				if (destination.getGlobal() == null) {
 					destination.setGlobal(new Global());
 				}
-				destination.getGlobal().getKernsysteme().add(kernsysteme);
+				destination.getGlobal().getKernsysteme().add(kernsystem);
 				break;
 			case konfiguration:
 				break;
 			case makrodefinition:
-				Makrodefinitionen makrodefinitionen = new Makrodefinitionen();
-				makrodefinitionen.setName(attributes.getValue("name"));
-				makrodefinitionen.setWert(attributes.getValue("wert"));
+				MakroDefinition makrodefinition = new MakroDefinition();
+				makrodefinition.setName(attributes.getValue("name"));
+				makrodefinition.setWert(attributes.getValue("wert"));
 				if (destination.getGlobal() == null) {
 					destination.setGlobal(new Global());
 				}
-				destination.getGlobal().getMakrodefinitionen().add(makrodefinitionen);
+				destination.getGlobal().getMakrodefinitionen().add(makrodefinition);
 				break;
 			case protokolldatei:
 				break;
@@ -205,10 +205,10 @@ public class StartStoppXMLParser {
 				destination.getGlobal().getZugangDav().setPassWord(attributes.getValue("passwort"));
 				break;
 			case startbedingung:
-				StartBedingungen startBedingung = new StartBedingungen();
+				StartBedingung startBedingung = new StartBedingung();
 				startBedingung.setVorgaenger(attributes.getValue("vorgaenger"));
 				if (attributes.getValue("warteart") != null) {
-					startBedingung.setWarteart(StartBedingungen.Warteart.fromValue(attributes.getValue("warteart")));
+					startBedingung.setWarteart(StartBedingung.Warteart.fromValue(attributes.getValue("warteart")));
 				}
 				if (attributes.getValue("rechner") != null) {
 					startBedingung.setRechner(attributes.getValue("rechner"));
@@ -216,10 +216,10 @@ public class StartStoppXMLParser {
 				if (attributes.getValue("wartezeit") != null) {
 					startBedingung.setWartezeit(attributes.getValue("wartezeit"));
 				}
-				currentInkarnation.getStartBedingungen().add(startBedingung);
+				currentInkarnation.setStartBedingung(startBedingung);
 				break;
 			case stoppbedingung:
-				StoppBedingungen stoppBedingung = new StoppBedingungen();
+				StoppBedingung stoppBedingung = new StoppBedingung();
 				stoppBedingung.setNachfolger(attributes.getValue("nachfolger"));
 				if (attributes.getValue("rechner") != null) {
 					stoppBedingung.setRechner(attributes.getValue("rechner"));
@@ -227,7 +227,7 @@ public class StartStoppXMLParser {
 				if (attributes.getValue("wartezeit") != null) {
 					stoppBedingung.setWartezeit(attributes.getValue("wartezeit"));
 				}
-				currentInkarnation.getStoppBedingungen().add(stoppBedingung);
+				currentInkarnation.setStoppBedingung(stoppBedingung);
 				break;
 			case tagIsUndefined:
 				throw new IllegalArgumentException("Tag not supported: " + qName);
@@ -288,9 +288,9 @@ public class StartStoppXMLParser {
 		}
 	}
 
-	public static Startstoppskript getKonfigurationFrom(String resourceName) {
+	public static StartStoppSkript getKonfigurationFrom(String resourceName) {
 
-		Startstoppskript startStoppKonfiguration = new Startstoppskript();
+		StartStoppSkript startStoppKonfiguration = new StartStoppSkript();
 
 		try (InputStream stream = StartStoppXMLParser.class.getResourceAsStream(resourceName)) {
 			SAXParserFactory factory = SAXParserFactory.newInstance();

@@ -26,20 +26,19 @@
 
 package de.bsvrz.sys.startstopp.config;
 
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-
-import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
-import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
@@ -53,9 +52,9 @@ import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
  */
 public class SkriptManager {
 
-	private ManagedSkript currentSkript;
+	private StartStoppKonfiguration currentSkript;
 	private StartStopp startStopp;
-	private PropertyChangeSupport skriptChangeSupport = new PropertyChangeSupport(this);
+	private List<SkriptManagerListener> listeners = new ArrayList<>();
 
 	public SkriptManager() {
 		this(StartStopp.getInstance());
@@ -69,9 +68,9 @@ public class SkriptManager {
 		try {
 
 			ObjectMapper mapper = new ObjectMapper();
-			Startstoppskript skript = null;
+			StartStoppSkript skript = null;
 			try {
-				skript = mapper.readValue(new File(skriptDir + "/startstopp.json"), Startstoppskript.class);
+				skript = mapper.readValue(new File(skriptDir + "/startstopp.json"), StartStoppSkript.class);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -80,49 +79,62 @@ public class SkriptManager {
 				skript = StartStoppXMLParser.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
 
 				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-				
-				try (Writer writer = new OutputStreamWriter(new FileOutputStream(skriptDir + "/startstopp.json"), "UTF-8")) {
+
+				try (Writer writer = new OutputStreamWriter(new FileOutputStream(skriptDir + "/startstopp.json"),
+						"UTF-8")) {
 					mapper.writeValue(writer, skript);
 				}
 			}
-			currentSkript = new ManagedSkript(skript);
+			currentSkript = new StartStoppKonfiguration(skript);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public ManagedSkript getCurrentSkript() throws StartStoppException {
+	public StartStoppKonfiguration getCurrentSkript() throws StartStoppException {
 		if (currentSkript == null) {
 			throw new StartStoppException("Die StartStopp-Applikation hat kein aktuelles Skript geladen");
 		}
 		return currentSkript;
 	}
 
-	public Startstoppskriptstatus getCurrentSkriptStatus() throws StartStoppException {
+	public StartStoppSkriptStatus getCurrentSkriptStatus() throws StartStoppException {
 		return getCurrentSkript().getSkriptStatus();
 	}
 
-	public Startstoppskript setNewSkript(String reason, Startstoppskript skript) throws StartStoppException {
+	public StartStoppSkript setNewSkript(String reason, StartStoppSkript skript) throws StartStoppException {
 
-		ManagedSkript newSkript = new ManagedSkript(skript);
-		if (newSkript.getSkriptStatus().getStatus() == Startstoppskriptstatus.Status.INITIALIZED) {
+		StartStoppKonfiguration newSkript = new StartStoppKonfiguration(skript);
+		if (newSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
 			newSkript.versionieren(reason);
-			skriptChangeSupport.firePropertyChange("currentSkript", currentSkript, newSkript);
+			fireSkriptChanged(currentSkript, newSkript);
 			currentSkript = newSkript;
 			return currentSkript.getSkript();
 		}
 
-		Statusresponse status = new Statusresponse();
+		StatusResponse status = new StatusResponse();
 		status.setCode(-1);
 		status.getMessages().addAll(newSkript.getSkriptStatus().getMessages());
 		throw new StartStoppStatusException("Skript konnte nicht übernommen und versioniert werden!", status);
 	}
-	
+
+	private void fireSkriptChanged(StartStoppKonfiguration oldSkript, StartStoppKonfiguration newSkript) {
+		List<SkriptManagerListener> receivers;
+		synchronized (listeners) {
+			receivers = new ArrayList<>(listeners);
+		}
+
+		for (SkriptManagerListener listener : receivers) {
+			listener.skriptAktualisiert(oldSkript, newSkript);
+		}
+
+	}
+
 	public void addSkriptManagerListener(SkriptManagerListener listener) {
-		skriptChangeSupport.addPropertyChangeListener(listener);
+		listeners.add(listener);
 	}
 
 	public void removeSkriptManagerListener(SkriptManagerListener listener) {
-		skriptChangeSupport.removePropertyChangeListener(listener);
+		listeners.remove(listener);
 	}
 }

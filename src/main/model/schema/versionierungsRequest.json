@@ -6,7 +6,7 @@
       "type": "string"
     },
     "skript": {
-        "$ref": "startstoppskript.json"
+        "$ref": "startStoppSkript.json"
     }
    },
    "required": [

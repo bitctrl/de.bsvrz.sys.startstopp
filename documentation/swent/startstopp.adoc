@@ -1,0 +1,89 @@
+== StartStopp-Applikation
+
+Die Applikation
+
+[ditaa, "startstopp_module"]
+----
+        /------------------------------------------------------------------\
+        | /-----------------------------\    /---------------------------\ |
+        | | Modul Prozessverwaltung     |    | Modul Nutzerschnittstelle |<--->https
+        | | /-------------------\       |<-->| (REST-API)                | |
+<---------->| DAV-Kommunikation |       |    |                           |<--->http
+DAF-API | | \-------------------/       |    |                           | |
+        | \-----------------------------/    \---------------------------/ |
+        |               ^                                   ^              |
+        |               |                                   |              |
+        |               v                                   v              |
+        | /--------------------------------------------------------------\ |
+        | | Modul Skriptverwaltung                                       | |
+        | |                                                              | |
+        | \--------------------------------------------------------------/ |
+        \------------------------------------------------------------------/
+----
+
+=== Startparameter
+
+[cols="2*",options="autowidth, header"]
+|===
+|Parameter
+|Beschreibung
+
+|-startStoppKonfiguration=<StartStoppVerzeichnis>
+|Verzeichnis in dem sich eine Datei 'startstopp.json' befindet bzw. in die eine neue Version bei der Version abgelegt wird.
+ Wird kein Verzeichnis angegeben, wird das aktuelle Verzeichnis aus dem StartStopp gestartet wurde angenommen.
+
+|-port=<port>
+|Portnummer für den Zugriff auf die StartStopp-Applikation per Nutzerschnittstelle über eine https-Verbindung. Der Standardwert ist 3000.
+
+|-httpport=<port>
+|Portnummer für den Zugriff auf die StartStopp-Applikation per Nutzerschnittstelle per http-Verbindung. Wird der Port nicht definiert, ist nur die https-Verbindung möglich.
+
+|-inkarnationsName=<inkarnationsName>	(optional)
+|Inkarnationsname der StartStoppApplikation
+
+|===
+
+[plantuml]
+----
+title Initialisierung der StartStopp-Applikation \n
+
+start
+
+:Startoptionen auswerten;
+
+note right
+Alle verfügbaren Startoptionen sind mit Standardwerten belegt,
+zusätzliche Optionen werden ignoriert.
+end note
+
+:Skriptverwaltung initialisieren;
+
+note right
+Es wird das vorliegende Skript eingelesen und ausgewertet.
+end note
+
+:Prozessverwaltung initialisieren;
+
+note right
+Wenn ein gültiges Skript geladen werden konnte werden die Applikationen
+entsprechend der definierten Inkarnationen ausgeführt.
+end note
+
+if (Nutzerschnittstelle initialisieren) then (yes)
+    repeat
+    repeat while (Warte auf Anforderung zum Beenden?)
+
+    stop
+
+else (no)
+
+note right
+Wenn die angegebenen Ports nicht gebunden werden können,
+wird die StartStopp-Applikation nicht ausgeführt, da sie ansonsten
+nicht steuerbar wäre.
+end note
+
+    stop
+endif
+
+----

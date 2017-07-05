@@ -35,10 +35,23 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import de.bsvrz.sys.startstopp.startstopp.StartStopp;
+import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
+
 public class ApiServer {
 
+	private final StartStoppOptions options;
+
+	public ApiServer() {
+		this(StartStopp.getInstance().getOptions());
+	}
+
+	public ApiServer(StartStoppOptions options) {
+		this.options = options;
+	}
+
 	public void start() throws Exception {
-		URI baseUri = UriBuilder.fromUri("https://localhost/").port(9998).build();
+		URI baseUri = UriBuilder.fromUri("https://localhost/").port(options.getHttpsPort()).build();
 		ResourceConfig config = new ResourceConfig(SystemService.class, SkripteService.class,
 				ApplikationenService.class, RechnerService.class);
 
@@ -47,12 +60,13 @@ public class ApiServer {
 		sslContextFactory.setKeyStorePassword("startstopp");
 		sslContextFactory.setKeyManagerPassword("startstopp");
 		Server httpsServer = JettyHttpContainerFactory.createServer(baseUri, sslContextFactory, config);
-
-		baseUri = UriBuilder.fromUri("http://localhost/").port(9999).build();
-		Server httpServer = JettyHttpContainerFactory.createServer(baseUri, config);
-
 		httpsServer.start();
-		httpServer.start();
+
+		if (options.getHttpPort() > 0) {
+			baseUri = UriBuilder.fromUri("http://localhost/").port(options.getHttpPort()).build();
+			Server httpServer = JettyHttpContainerFactory.createServer(baseUri, config);
+			httpServer.start();
+		}
 	}
 
 }

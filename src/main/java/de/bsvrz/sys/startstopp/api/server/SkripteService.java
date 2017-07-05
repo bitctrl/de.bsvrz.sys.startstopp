@@ -34,10 +34,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.NoContentException;
 import javax.ws.rs.core.Response;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
-import de.bsvrz.sys.startstopp.api.jsonschema.Statusresponse;
-import de.bsvrz.sys.startstopp.api.jsonschema.Versionierungsrequest;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
+import de.bsvrz.sys.startstopp.api.jsonschema.VersionierungsRequest;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
@@ -64,17 +64,17 @@ public class SkripteService {
 		Response response;
 
 		try {
-			Startstoppskript konfiguration = skriptManager.getCurrentSkript().getSkript();
+			StartStoppSkript konfiguration = skriptManager.getCurrentSkript().getSkript();
 
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(konfiguration);
 			response = responseBuilder.build();
 		} catch (StartStoppException e) {
-			Statusresponse statusResponse = new Statusresponse();
-			statusResponse.setCode(-1);
-			statusResponse.getMessages().add(e.getLocalizedMessage());
-			response = Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(statusResponse).build();
+			StatusResponse StatusResponse = new StatusResponse();
+			StatusResponse.setCode(-1);
+			StatusResponse.getMessages().add(e.getLocalizedMessage());
+			response = Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(StatusResponse).build();
 		}
 
 		return response;
@@ -85,51 +85,49 @@ public class SkripteService {
 	@Produces("application/json")
 	public Response responseSkripteCurrentStatus() {
 
-		Startstoppskriptstatus status;
-		
+		StartStoppSkriptStatus status;
+
 		try {
 			status = skriptManager.getCurrentSkriptStatus();
 
 		} catch (StartStoppException e) {
-			status = new Startstoppskriptstatus();
-			status.setStatus(Startstoppskriptstatus.Status.FAILURE);
+			status = new StartStoppSkriptStatus();
+			status.setStatus(StartStoppSkriptStatus.Status.FAILURE);
 			status.getMessages().add(e.getLocalizedMessage());
 		}
 
-		Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type",
-				"application/json");
+		Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type", "application/json");
 		responseBuilder.entity(status);
 		return responseBuilder.build();
 	}
 
-
 	@PUT
 	@Path("current")
 	@Produces("application/json")
-	public Response responseSkripteCurrentPut(Versionierungsrequest request) {
+	public Response responseSkripteCurrentPut(VersionierungsRequest request) {
 
-		if( request == null || request.getSkript() == null) {
-			Statusresponse status = new Statusresponse();
+		if (request == null || request.getSkript() == null) {
+			StatusResponse status = new StatusResponse();
 			status.setCode(-1);
 			status.getMessages().add("Es wurde kein Skript übermittelt!");
 			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
 		}
 
-		if( request.getAenderungsgrund().trim().isEmpty()) {
-			Statusresponse status = new Statusresponse();
+		if (request.getAenderungsgrund().trim().isEmpty()) {
+			StatusResponse status = new StatusResponse();
 			status.setCode(-1);
 			status.getMessages().add("Es muss ein Änderungsgrund übergeben werden!");
 			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
 		}
-		
+
 		try {
-			Startstoppskript newSkript = skriptManager.setNewSkript(request.getAenderungsgrund(), (Startstoppskript) request.getSkript());
-			Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type",
-					"application/json");
+			StartStoppSkript newSkript = skriptManager.setNewSkript(request.getAenderungsgrund(),
+					(StartStoppSkript) request.getSkript());
+			Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type", "application/json");
 			responseBuilder.entity(newSkript);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
-			Statusresponse status = new Statusresponse();
+			StatusResponse status = new StatusResponse();
 			status.setCode(-1);
 			status.getMessages().addAll(e.getMessages());
 			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();

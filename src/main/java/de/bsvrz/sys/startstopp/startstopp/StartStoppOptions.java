@@ -26,14 +26,42 @@
 
 package de.bsvrz.sys.startstopp.startstopp;
 
+import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
+
 public class StartStoppOptions {
 
+	private static final String PARAM_STARTSTOPP_KONFIGURATION = "-startStoppKonfiguration=.";
+	private static final String PARAM_HTTPS_PORT= "-port=3000";
+	private static final String PARAM_HTTP_PORT= "-httpport=0";
+	private static final String PARAM_INKARNATIONSNAME = "-inkarnationsName=StartStopp";
+	
+	
+	private final String skriptDir;
+	private final int httpsPort;
+	private final int httpPort;
+	private final String inkarnationsName;
+
 	public StartStoppOptions(String[] args) {
-		// TODO Auto-generated constructor stub
+		ArgumentList argumentList = new ArgumentList(args);
+		skriptDir = argumentList.fetchArgument(PARAM_STARTSTOPP_KONFIGURATION).asString();
+		httpsPort = argumentList.fetchArgument(PARAM_HTTPS_PORT).intValue();
+		httpPort = argumentList.fetchArgument(PARAM_HTTP_PORT).intValue();
+		inkarnationsName = argumentList.fetchArgument(PARAM_INKARNATIONSNAME).asString();
+	}
+
+	public int getHttpPort() {
+		return httpPort;
+	}
+	
+	public int getHttpsPort() {
+		return httpsPort;
+	}
+	
+	public String getInkarnationsName() {
+		return inkarnationsName;
 	}
 
 	public String  getSkriptDir() {
-		// TODO Auto-generated method stub
-		return ".";
+		return skriptDir;
 	}
 }

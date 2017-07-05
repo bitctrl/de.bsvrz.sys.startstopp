@@ -4,34 +4,33 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnationen;
-import de.bsvrz.sys.startstopp.api.jsonschema.Makrodefinitionen;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
-import de.bsvrz.sys.startstopp.process.ManagedApplikation;
-import de.bsvrz.sys.startstopp.process.ManagedInkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.process.StartStoppInkarnation;
+import de.bsvrz.sys.startstopp.process.StartStoppApplikation;
 
-public class ManagedSkript {
+public class StartStoppKonfiguration {
 
-	private Startstoppskript skript;
-	private Startstoppskriptstatus skriptStatus = new Startstoppskriptstatus();
+	private StartStoppSkript skript;
+	private StartStoppSkriptStatus skriptStatus = new StartStoppSkriptStatus();
 	
-	public ManagedSkript(Startstoppskript skript) {
+	public StartStoppKonfiguration(StartStoppSkript skript) {
 		this.skript = skript;
 		skriptStatus.getMessages().addAll(pruefeVollstaendigkeit());
 		skriptStatus.getMessages().addAll(pruefeZirkularitaet());
 
 		if( skriptStatus.getMessages().isEmpty()) {
-			skriptStatus.setStatus(Startstoppskriptstatus.Status.INITIALIZED);
+			skriptStatus.setStatus(StartStoppSkriptStatus.Status.INITIALIZED);
 		} else {
-			skriptStatus.setStatus(Startstoppskriptstatus.Status.FAILURE);
+			skriptStatus.setStatus(StartStoppSkriptStatus.Status.FAILURE);
 		}
 	}
 
@@ -53,11 +52,11 @@ public class ManagedSkript {
 		return result;
 	}
 
-	public Startstoppskript getSkript() {
+	public StartStoppSkript getSkript() {
 		return skript;
 	}
 
-	public Startstoppskriptstatus getSkriptStatus() {
+	public StartStoppSkriptStatus getSkriptStatus() {
 		return skriptStatus;
 	}
 
@@ -66,14 +65,14 @@ public class ManagedSkript {
 		
 	}
 
-	public Collection<ManagedApplikation> getApplikationen() throws StartStoppException {
-		if( skriptStatus.getStatus() != Startstoppskriptstatus.Status.INITIALIZED) {
+	public Collection<StartStoppApplikation> getApplikationen() throws StartStoppException {
+		if( skriptStatus.getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
 			throw new StartStoppException("Das geladene StartStoppSkript ist nicht korrekt versioniert!");
 		}
 		
-		Collection<ManagedApplikation> result = new ArrayList<>();
-		for( Inkarnationen inkarnation : skript.getInkarnationen()) {
-			ManagedApplikation applikation = new ManagedApplikation(new ManagedInkarnation(this, inkarnation));
+		Collection<StartStoppApplikation> result = new ArrayList<>();
+		for( Inkarnation inkarnation : skript.getInkarnationen()) {
+			StartStoppApplikation applikation = new StartStoppApplikation(new StartStoppInkarnation(this, inkarnation));
 			result.add(applikation);
 		}
 		return result;
@@ -84,7 +83,7 @@ public class ManagedSkript {
 		Pattern pattern = Pattern.compile("%.*?%");
 		Map<String, String> result = new LinkedHashMap<>();
 
-		for (Makrodefinitionen makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
+		for (MakroDefinition makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
 			String name = makroDefinition.getName();
 			String wert = makroDefinition.getWert();
 			Set<String> usedMakros = new LinkedHashSet<>();
@@ -116,7 +115,7 @@ public class ManagedSkript {
 	}
 
 	private String getMakroValueFor(String key) {
-		for (Makrodefinitionen makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
+		for (MakroDefinition makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
 			if( key.equals(makroDefinition.getName())) {
 				return makroDefinition.getWert();
 			}
@@ -177,4 +176,23 @@ public class ManagedSkript {
 		
 		throw new StartStoppException("Ein Rechner mit dem Name \"" + rechnerName + "\" ist nicht definiert!");
 	}
+	
+	public String makroResolvedString(String wert) throws StartStoppException {
+		Map<String, String> resolvedMakros = getResolvedMakros();
+		Pattern pattern = Pattern.compile("%.*?%");
+		Matcher matcher = pattern.matcher(wert);
+		while (matcher.find()) {
+			String part = matcher.group();
+			String key = part.substring(1, part.length() - 1);
+			String replacement = resolvedMakros.get(key);
+			if (replacement == null) {
+				throw new StartStoppException("Das Makro " + key + "ist nicht definiert!");
+			}
+			wert = wert.replaceAll(part, replacement);
+		}
+
+		return wert;
+	}
+
+	
 }

@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"adresse": {
+			"type": "string"
+		},
+		"passWord": {
+			"type": "string"
+		},
+		"port": {
+			"type": "string"
+		},
+		"userName": {
+			"type": "string"
+		}
+	},
+	"required": [
+		"userName",
+		"passWord",
+		"adresse",
+		"port"
+	]
+}

@@ -8,6 +8,8 @@ v1.0, 2017-06-01
 
 include::overview.adoc[]
 
+include::startstopp.adoc[]
+
 include::skripts.adoc[]
 
 include::processes.adoc[]

@@ -4,9 +4,9 @@ import java.util.List;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppskriptstatus;
-import de.bsvrz.sys.startstopp.api.jsonschema.Startstoppstatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 
@@ -18,7 +18,7 @@ public class AppTest {
 			StartStoppClient client = new StartStoppClient("localhost", 9998);
 
 			System.err.println("STARTSTOPPSTATUS");
-			Startstoppstatus startStoppStatus = client.getStartStoppStatus();
+			StartStoppStatus startStoppStatus = client.getStartStoppStatus();
 			System.err.println(startStoppStatus);
 			System.err.println();
 
@@ -30,7 +30,7 @@ public class AppTest {
 			client.restartStartStopp();
 			System.err.println();
 
-			Startstoppskript currentSkript = null;
+			StartStoppSkript currentSkript = null;
 
 			System.err.println("SKRIPT_CURRENT");
 			try {
@@ -56,7 +56,7 @@ public class AppTest {
 			}
 
 			System.err.println("SKRIPT_CURRENT_STATUS");
-			Startstoppskriptstatus currentSkriptStatus = client.getCurrentSkriptStatus();
+			StartStoppSkriptStatus currentSkriptStatus = client.getCurrentSkriptStatus();
 			System.err.println(currentSkriptStatus);
 			System.err.println();
 
