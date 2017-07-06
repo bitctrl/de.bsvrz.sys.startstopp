@@ -5,15 +5,7 @@
 		"inkarnationsName": {
 			"type": "string"
 		},
-		"wartezeit": {
-			"type": "string",
-			"default": "0"
-		},
 		"mitInkarnationsName": {
-			"type": "boolean",
-			"default": false
-		},
-		"initialize": {
 			"type": "boolean",
 			"default": false
 		}

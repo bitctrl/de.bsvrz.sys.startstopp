@@ -43,7 +43,7 @@ DAF-API | | \-------------------/       |    |                           | |
 
 |===
 
-[plantuml]
+[plantuml, "init_startstopp"]
 ----
 title Initialisierung der StartStopp-Applikation \n
 
@@ -69,13 +69,13 @@ Wenn ein gültiges Skript geladen werden konnte werden die Applikationen
 entsprechend der definierten Inkarnationen ausgeführt.
 end note
 
-if (Nutzerschnittstelle initialisieren) then (yes)
+if (Nutzerschnittstelle initialisieren) then (JA)
     repeat
     repeat while (Warte auf Anforderung zum Beenden?)
 
     stop
 
-else (no)
+else (NEIN)
 
 note right
 Wenn die angegebenen Ports nicht gebunden werden können,

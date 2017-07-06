@@ -34,10 +34,15 @@
       "type": "string",
       "enum": [
         "installiert",
-        "startenwarten",
+        "kernsystem",
+        "startbedingung",
+        "startverzoegerung",
+        "starten",
         "gestartet",
         "initialisiert",
-        "wirdgestoppt",
+        "stoppbedingung",
+        "stoppverzoegerung",
+        "stoppen",
         "gestoppt",
         "abgebrochen"
       ],

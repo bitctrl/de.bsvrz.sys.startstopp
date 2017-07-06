@@ -23,6 +23,10 @@
 		"inkarnationsName": {
 			"type": "string"
 		},
+        "initialize": {
+            "type": "boolean",
+            "default": false
+        },
 		"startArt": {
 			"$ref": "startArt.json"
 		},

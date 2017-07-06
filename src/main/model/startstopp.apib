@@ -248,9 +248,7 @@ Alle bei StartStopp definierten Rechner
 ## KernSystem
 
 + inkarnationsName: Parametrierung (string, required)
-+ wartezeit: 0 (string, default)
 + mitInkarnationsName: false (boolean, default)
-+ initialize: false (boolean, default)
 
 ## Rechner
 
@@ -311,6 +309,7 @@ Alle bei StartStopp definierten Rechner
     + dav (string)
     + wrapped (string)
     + extern (string)
++ initialize: false (boolean, default)
 + applikation (string, required)
 + aufrufParameter (array[string], fixed-type)
 + startArt (StartArt)
@@ -355,9 +354,14 @@ Alle bei StartStopp definierten Rechner
 + letzteStoppzeit: `06.12.2016 11:11" (string) - die letzte Stoppzeit der Inkarnation
 + status: installiert (enum, required) - der Status der Inkarnation in StartStopp
   + installiert (string)
-  + startenwarten (string)
+  + kernsystem (string)
+  + startbedingung (string)
+  + startverzoegerung (string)
+  + starten (string)
   + gestartet (string)
   + initialisiert (string)
-  + wirdgestoppt (string)
+  + stoppbedingung (string)
+  + stoppverzoegerung (string)
+  + stoppen (string)
   + gestoppt (string)
   + abgebrochen (string)

@@ -33,11 +33,4 @@ public class StartStoppInkarnation extends Inkarnation {
 	public boolean isKernSystem() {
 		return kernSystem != null;
 	}
-
-	public boolean isSetInitialized() {
-		if( kernSystem == null) {
-			return false;
-		}
-		return kernSystem.getInitialize();
-	}
 }

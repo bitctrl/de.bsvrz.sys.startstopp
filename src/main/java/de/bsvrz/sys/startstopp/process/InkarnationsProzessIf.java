@@ -109,6 +109,21 @@ public interface InkarnationsProzessIf {
 	String getProzessAusgabe();
 
 	/**
+	 * liefert den zugewiesenen Inkarnationsname.
+	 * 
+	 * @return der Name
+	 */
+	String getInkarnationsName();
+
+	/**
+	 * Setzt den Inkarnationsnamen des Prozesses.
+	 * 
+	 * @param command der Name
+	 */
+	void setInkarnationsName(String command);
+
+	
+	/**
 	 * Gibt das auszuf&uuml;rende Programm des Prozesses zur&uuml;ck.
 	 * 
 	 * @return auszuf&uuml;rendes Programm 
