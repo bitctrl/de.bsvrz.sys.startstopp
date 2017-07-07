@@ -1,0 +1,52 @@
+== Skriptverwaltung
+
+Das Modul Skriptverwaltung hält das aktuell von der StartStopp-Applikation
+verwendete Skript.
+
+Das Skript ist im Betriebssystem im angegeben Verzeichnis als Datei
+__startstopp.json__ hinterlegt.
+
+NOTE: Aus Kompatibilitätsgründen wird die Datei __startstopp.xml__ eingelesen,
+      wenn kein JSON-File verfügbar ist. Die XML-Datei wird konvertiert und
+      im gleichen Verzeichnis abgelegt.
+
+Nach dem Einlesen der Skriptdatei wird deren Inhalt ausgewertet. Es wird geprüft:
+
+* ob alle Informationen vollständig sind,
+* ob zyklische Abhängigkeiten bei der Definition der Makros enthalten sind,
+* ob zyklische Abhängigkeiten bei den Start-Stopp-Regeln existieren
+* ob die Skriptpdatei versioniert wurde.
+
+Wenn alle Bedingungen erfüllt sind wird das geladene Skript als gültig markiert
+und kann von der Prozessverwaltung zur Ausführung der beschriebenen SWE (Inkarnationen)
+verwendet werden.
+
+[plantuml, "skript_verwaltung"]
+----
+
+title Initialisierung eines StartStopp-Skripts \n
+
+start
+
+:Laden der Skriptdatei;
+
+repeat
+if (Skript gültig) then(JA)
+    if (Skript versioniert) then(JA)
+        :Skript für Prozessverwaltung bereitstellen;
+    else(NEIN)
+    endif
+else(NEIN)
+endif
+
+:Warte auf neues Skript;
+
+repeat while (Neues Skript empfangen?)
+
+stop
+----
+
+Um ein neues oder geändertes Skript zu aktivieren, muss dieses über die
+StartStopp-API an StartStopp gesendet werden. Dort werden die oben genannten
+Prüfungen ausgeführt. Im Erfolgsfall wird das Skript versioniert und die
+Änderungen an die Prozessverwaltung weitergereicht.
