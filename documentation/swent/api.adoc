@@ -1,3 +1,0 @@
-== Programmierschnittstelle API
-
-Die API

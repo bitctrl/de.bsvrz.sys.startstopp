@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;

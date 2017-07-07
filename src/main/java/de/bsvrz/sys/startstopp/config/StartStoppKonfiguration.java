@@ -14,8 +14,8 @@ import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.process.StartStoppInkarnation;
-import de.bsvrz.sys.startstopp.process.StartStoppApplikation;
 
 public class StartStoppKonfiguration {
 
@@ -60,20 +60,19 @@ public class StartStoppKonfiguration {
 		return skriptStatus;
 	}
 
-	public void versionieren(String reason) throws StartStoppException {
-		// TODO Auto-generated method stub
-		
+	public StartStoppKonfiguration versionieren(String reason) throws StartStoppException {
+		throw new StartStoppException("Versionieren ist noch nicht omplementiert");
 	}
 
-	public Collection<StartStoppApplikation> getApplikationen() throws StartStoppException {
+	public Collection<StartStoppInkarnation> getInkarnationen() throws StartStoppException {
 		if( skriptStatus.getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
 			throw new StartStoppException("Das geladene StartStoppSkript ist nicht korrekt versioniert!");
 		}
 		
-		Collection<StartStoppApplikation> result = new ArrayList<>();
+		Collection<StartStoppInkarnation> result = new ArrayList<>();
 		for( Inkarnation inkarnation : skript.getInkarnationen()) {
-			StartStoppApplikation applikation = new StartStoppApplikation(new StartStoppInkarnation(this, inkarnation));
-			result.add(applikation);
+			StartStoppInkarnation startStoppInkarnation = new StartStoppInkarnation(this, inkarnation);
+			result.add(startStoppInkarnation);
 		}
 		return result;
 	}
@@ -194,5 +193,15 @@ public class StartStoppKonfiguration {
 		return wert;
 	}
 
+	public ZugangDav getResolvedZugangDav() throws StartStoppException {
+		ZugangDav zugangDav = getSkript().getGlobal().getZugangDav();
+		ZugangDav result = new ZugangDav();
+		result.setAdresse(makroResolvedString(zugangDav.getAdresse()));
+		result.setPassWord(makroResolvedString(zugangDav.getPassWord()));
+		result.setPort(makroResolvedString(zugangDav.getPort()));
+		result.setUserName(makroResolvedString(zugangDav.getUserName()));
+		return result;
+	}
+	
 	
 }

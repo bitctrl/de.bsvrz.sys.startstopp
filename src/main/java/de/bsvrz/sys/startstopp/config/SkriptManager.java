@@ -36,6 +36,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
@@ -52,6 +53,7 @@ import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
  */
 public class SkriptManager {
 
+	private static final Debug LOGGER = Debug.getLogger();
 	private StartStoppKonfiguration currentSkript;
 	private StartStopp startStopp;
 	private List<SkriptManagerListener> listeners = new ArrayList<>();
@@ -70,12 +72,17 @@ public class SkriptManager {
 			ObjectMapper mapper = new ObjectMapper();
 			StartStoppSkript skript = null;
 			try {
-				skript = mapper.readValue(new File(skriptDir + "/startstopp.json"), StartStoppSkript.class);
+				File src = new File(skriptDir + "/startstopp.json");
+				if (src.exists()) {
+					skript = mapper.readValue(src, StartStoppSkript.class);
+				} else {
+					LOGGER.warning("Die Skript-Datei \"" + src.getAbsolutePath() + "\" wurde nicht gefunden!");
+				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.warning("Fehler beim Einlesen des StartStopp-Skripts!", e);
 			}
 			if (skript == null) {
+				LOGGER.warning("Versuche XML-Datei zu konvertieren!");
 				skript = StartStoppXMLParser.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
 
 				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
@@ -87,7 +94,7 @@ public class SkriptManager {
 			}
 			currentSkript = new StartStoppKonfiguration(skript);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.warning("Fehler beim Einlesen des XML-StartStopp-Skripts!", e);
 		}
 	}
 
@@ -106,7 +113,8 @@ public class SkriptManager {
 
 		StartStoppKonfiguration newSkript = new StartStoppKonfiguration(skript);
 		if (newSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
-			newSkript.versionieren(reason);
+			newSkript = newSkript.versionieren(reason);
+			sichereSkriptVersion(newSkript);
 			fireSkriptChanged(currentSkript, newSkript);
 			currentSkript = newSkript;
 			return currentSkript.getSkript();
@@ -116,6 +124,11 @@ public class SkriptManager {
 		status.setCode(-1);
 		status.getMessages().addAll(newSkript.getSkriptStatus().getMessages());
 		throw new StartStoppStatusException("Skript konnte nicht übernommen und versioniert werden!", status);
+	}
+
+	private void sichereSkriptVersion(StartStoppKonfiguration newSkript) {
+		startStopp.getOptions().getSkriptDir();
+		// TODO Auto-generated method stub
 	}
 
 	private void fireSkriptChanged(StartStoppKonfiguration oldSkript, StartStoppKonfiguration newSkript) {

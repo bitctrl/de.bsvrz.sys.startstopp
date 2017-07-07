@@ -51,6 +51,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 
 public class StartStoppXMLParser {
 
@@ -100,10 +101,6 @@ public class StartStoppXMLParser {
 			case kernsystem:
 				KernSystem kernsystem = new KernSystem();
 				kernsystem.setInkarnationsName(attributes.getValue("inkarnationsname"));
-				if (attributes.getValue("wartezeit") != null) {
-					// TODO Schema vervollständigen
-					// kernsysteme.setWarteZeit(attributes.getValue("wartezeit"));
-				}
 				if (attributes.getValue("mitInkarnationsname") != null) {
 					kernsystem.setMitInkarnationsName(attributes.getValue("mitInkarnationsname").equals("ja"));
 				}
@@ -288,7 +285,7 @@ public class StartStoppXMLParser {
 		}
 	}
 
-	public static StartStoppSkript getKonfigurationFrom(String resourceName) {
+	public static StartStoppSkript getKonfigurationFrom(String resourceName) throws StartStoppException {
 
 		StartStoppSkript startStoppKonfiguration = new StartStoppSkript();
 
@@ -298,8 +295,7 @@ public class StartStoppXMLParser {
 
 			saxParser.parse(stream, new StartStoppParserHandler(startStoppKonfiguration));
 		} catch (SAXException | IOException | ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new StartStoppException(e);
 		}
 
 		return startStoppKonfiguration;

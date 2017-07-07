@@ -1,57 +1,51 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "inkarnationsName": {
-      "type": "string",
-      "description": "der Name der Inkarnation"
-    },
-    "applikation": {
-      "type": "string",
-      "description": "der Applikationsname (ausführbare Datei)"
-    },
-    "arguments": {
-      "type": "array",
-      "items": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "string"
-        }
-      ],
-      "description": "die Argumente der Applikation"
-    },
-    "letzteStartzeit": {
-      "type": "string",
-      "description": "die letzte Startzeit der Inkarnation"
-    },
-    "letzteStoppzeit": {
-      "type": "string",
-      "description": "die letzte Stoppzeit der Inkarnation"
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "installiert",
-        "kernsystem",
-        "startbedingung",
-        "startverzoegerung",
-        "starten",
-        "gestartet",
-        "initialisiert",
-        "stoppbedingung",
-        "stoppverzoegerung",
-        "stoppen",
-        "gestoppt",
-        "abgebrochen"
-      ],
-      "description": "der Status der Inkarnation in StartStopp"
-    }
-  },
-  "required": [
-    "inkarnationsName",
-    "applikation",
-    "status"
-  ]
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"inkarnationsName": {
+			"type": "string",
+			"description": "der Name der Inkarnation"
+		},
+		"applikation": {
+			"type": "string",
+			"description": "der Applikationsname (ausführbare Datei)"
+		},
+		"arguments": {
+			"type": "array",
+			"items": [
+				{
+					"type": "string"
+				},
+				{
+					"type": "string"
+				}
+			],
+			"description": "die Argumente der Applikation"
+		},
+		"letzteStartzeit": {
+			"type": "string",
+			"description": "die letzte Startzeit der Inkarnation"
+		},
+		"letzteStoppzeit": {
+			"type": "string",
+			"description": "die letzte Stoppzeit der Inkarnation"
+		},
+		"status": {
+			"type": "string",
+			"enum": [
+				"installiert",
+				"startenwarten",
+				"gestartet",
+				"initialisiert",
+				"stoppenwarten",
+				"gestoppt"
+			],
+			"description": "der Status der Inkarnation in StartStopp"
+		}
+	},
+	"required": [
+		"inkarnationsName",
+		"applikation",
+		"status"
+	]
 }

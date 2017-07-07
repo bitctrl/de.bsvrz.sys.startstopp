@@ -41,6 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public class KonfigurationTest {
@@ -58,7 +59,7 @@ public class KonfigurationTest {
 
 	@Test
 	public void convertKonfiguration() throws ParserConfigurationException, SAXException, IOException,
-			XMLStreamException, TransformerFactoryConfigurationError, TransformerException {
+			XMLStreamException, TransformerFactoryConfigurationError, TransformerException, StartStoppException {
 		for (String file : files) {
 				StartStoppSkript skript = StartStoppXMLParser.getKonfigurationFrom(file);
 				

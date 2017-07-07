@@ -70,9 +70,9 @@
     } ],
     "zugangDav" : {
       "adresse" : "%dav1.host%",
-      "passWord" : "systeststst",
+      "passWord" : "geheim",
       "port" : "%dav1.appPort%",
-      "userName" : "SystestStSt"
+      "userName" : "Tester"
     },
     "rechner" : [ {
       "name" : "rechner2",

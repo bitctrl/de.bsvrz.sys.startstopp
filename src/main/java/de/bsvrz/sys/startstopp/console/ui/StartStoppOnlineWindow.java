@@ -70,7 +70,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 			case 's':
 				builder = new ActionListDialogBuilder().setTitle("System");
 				builder.addActions(new StartStoppStoppAction(), new StartStoppRestartAction(),
-						new StartStoppUpdateAction(), new TerminalCloseAction(this));
+						new StartStoppUpdateAction(), new StartStoppExitAction(), new TerminalCloseAction(this));
 				builder.build().showDialog(getTextGUI());
 				break;
 			case 'p':
