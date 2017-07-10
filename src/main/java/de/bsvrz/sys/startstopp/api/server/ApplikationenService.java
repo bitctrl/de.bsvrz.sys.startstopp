@@ -126,7 +126,7 @@ public class ApplikationenService {
 	public Response responseApplikationStopp(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			Applikation applikation = processManager.stoppeApplikation(inkarnationsName);
+			Applikation applikation = processManager.stoppeApplikationOhnePruefung(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation);

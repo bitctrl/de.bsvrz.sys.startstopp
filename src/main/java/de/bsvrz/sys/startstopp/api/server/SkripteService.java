@@ -71,10 +71,10 @@ public class SkripteService {
 			responseBuilder.entity(konfiguration);
 			response = responseBuilder.build();
 		} catch (StartStoppException e) {
-			StatusResponse StatusResponse = new StatusResponse();
-			StatusResponse.setCode(-1);
-			StatusResponse.getMessages().add(e.getLocalizedMessage());
-			response = Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(StatusResponse).build();
+			StatusResponse statusResponse = new StatusResponse();
+			statusResponse.setCode(-1);
+			statusResponse.getMessages().add(e.getLocalizedMessage());
+			response = Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(statusResponse).build();
 		}
 
 		return response;

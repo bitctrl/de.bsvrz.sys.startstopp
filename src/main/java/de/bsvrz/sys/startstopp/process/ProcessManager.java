@@ -34,9 +34,11 @@ import java.util.List;
 import java.util.Map;
 
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
+import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.config.SkriptManagerListener;
@@ -168,8 +170,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 		return applikation.getApplikation();
 	}
 
-	public Applikation stoppeApplikation(String inkarnationsName) throws StartStoppException {
-		// TODO Auto-generated method stub
+	public Applikation stoppeApplikationOhnePruefung(String inkarnationsName) throws StartStoppException {
 		StartStoppApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation != null) {
 			applikation.stoppSystemProcess();
@@ -218,21 +219,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 		// TODO Änderungen berechnen und Applikationen aktualisieren
 	}
 
-	// public boolean isStartable(StartStoppApplikation managedApplikation) {
-	//
-	// if (!waitForKernsystemStart(managedApplikation)) {
-	// return false;
-	// }
-	//
-	// if (!waitForStartBedingung(managedApplikation)) {
-	// return false;
-	// }
-	//
-	// // TODO Auto-generated method stub
-	// return true;
-	// }
-
-	public StartStoppApplikation waitForStartBedingung(StartStoppApplikation managedApplikation) {
+	public Applikation waitForStartBedingung(StartStoppApplikation managedApplikation) {
 
 		StartBedingung bedingung = managedApplikation.getStartBedingung();
 		if (bedingung == null) {
@@ -241,37 +228,43 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 
 		String rechnerName = bedingung.getRechner();
 		if ((rechnerName != null) && !rechnerName.trim().isEmpty()) {
-			return waitForRemoteStartBedingung(rechnerName, bedingung);
+			return waitForRemoteStartBedingung(managedApplikation, rechnerName, bedingung);
 		}
 
 		StartStoppApplikation applikation = applikationen.get(bedingung.getVorgaenger());
 		if (applikation == null) {
 			LOGGER.warning("In der Startbedingung referenzierte Inkarnation \"" + bedingung.getVorgaenger()
 					+ "\" existiert nicht!");
-			return applikation;
+			return null;
 		}
 
+		if (canBeStartet(applikation.getApplikation(), bedingung)) {
+			return null;
+		}
+
+		LOGGER.info(managedApplikation.getInkarnationsName() + " muss auf " + applikation.getInkarnationsName()
+				+ " warten!");
+		return applikation.getApplikation();
+	}
+
+	private boolean canBeStartet(Applikation applikation, StartBedingung bedingung) {
 		switch (bedingung.getWarteart()) {
 		case BEGINN:
-			if (applikation.getStatus() != Status.GESTARTET) {
-				LOGGER.info(managedApplikation.getInkarnationsName() + " muss auf " + applikation.getInkarnationsName()
-						+ " warten!");
-				return applikation;
+			if ((applikation.getStatus() != Status.GESTARTET) && (applikation.getStatus() != Status.INITIALISIERT)) {
+				return false;
 			}
 			break;
 		case ENDE:
 			if (applikation.getStatus() != Status.INITIALISIERT) {
-				LOGGER.info(managedApplikation.getInkarnationsName() + " muss auf " + applikation.getInkarnationsName()
-						+ " warten!");
-				return applikation;
+				return false;
 			}
 			break;
 		}
 
-		return null;
+		return true;
 	}
 
-	public StartStoppApplikation waitForStoppBedingung(StartStoppApplikation managedApplikation) {
+	public Applikation waitForStoppBedingung(StartStoppApplikation managedApplikation) {
 
 		StoppBedingung bedingung = managedApplikation.getStoppBedingung();
 		if (bedingung == null) {
@@ -280,7 +273,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 
 		String rechnerName = bedingung.getRechner();
 		if ((rechnerName != null) && !rechnerName.trim().isEmpty()) {
-			return waitForRemoteStoppBedingung(rechnerName, bedingung);
+			return waitForRemoteStoppBedingung(managedApplikation, rechnerName, bedingung);
 		}
 
 		StartStoppApplikation applikation = applikationen.get(bedingung.getNachfolger());
@@ -290,6 +283,15 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 			return null;
 		}
 
+		if (canBeStopped(applikation.getApplikation())) {
+			return null;
+		}
+
+		return applikation.getApplikation();
+
+	}
+
+	private boolean canBeStopped(Applikation applikation) {
 		switch (applikation.getStatus()) {
 		case GESTOPPT:
 		case INSTALLIERT:
@@ -298,25 +300,58 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 		case GESTARTET:
 		case INITIALISIERT:
 		case STOPPENWARTEN:
-			return applikation;
+			return false;
 		default:
 			break;
+		}
+
+		return true;
+	}
+
+	private Applikation waitForRemoteStoppBedingung(StartStoppApplikation managedApplikation, String rechnerName, StoppBedingung bedingung) {
+		try {
+			Rechner rechner = currentSkript.getResolvedRechner(rechnerName);
+			StartStoppClient client = new StartStoppClient(rechner.getTcpAdresse(),
+					Integer.parseInt(rechner.getPort()));
+			Applikation applikation = client.getApplikation(bedingung.getNachfolger());
+
+			if (canBeStopped(applikation)) {
+				return null;
+			}
+			
+			LOGGER.info(managedApplikation.getInkarnationsName() + " muss auf " + applikation.getInkarnationsName()
+			+ " auf Rechner \"" + rechnerName + "\" warten!");
+			return applikation;
+
+		} catch (NumberFormatException | StartStoppException e) {
+			LOGGER.warning(e.getLocalizedMessage());
 		}
 
 		return null;
 	}
 
-	private StartStoppApplikation waitForRemoteStoppBedingung(String rechnerName, StoppBedingung bedingung) {
-		// TODO Auto-generated method stub
+	private Applikation waitForRemoteStartBedingung(StartStoppApplikation managedApplikation, String rechnerName, StartBedingung bedingung) {
+		try {
+			Rechner rechner = currentSkript.getResolvedRechner(rechnerName);
+			StartStoppClient client = new StartStoppClient(rechner.getTcpAdresse(),
+					Integer.parseInt(rechner.getPort()));
+			Applikation applikation = client.getApplikation(bedingung.getVorgaenger());
+
+			if (canBeStartet(applikation, bedingung)) {
+				return null;
+			}
+
+			LOGGER.info(managedApplikation.getInkarnationsName() + " muss auf " + applikation.getInkarnationsName()
+					+ " auf Rechner \"" + rechnerName + "\" warten!");
+			return applikation;
+		} catch (NumberFormatException | StartStoppException e) {
+			LOGGER.warning(e.getLocalizedMessage());
+		}
+
 		return null;
 	}
 
-	private StartStoppApplikation waitForRemoteStartBedingung(String rechnerName, StartBedingung bedingung) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public StartStoppApplikation waitForKernsystemStart(StartStoppApplikation managedApplikation) {
+	public Applikation waitForKernsystemStart(StartStoppApplikation managedApplikation) {
 		for (String name : kernSystem) {
 			if (name.equals(managedApplikation.getInkarnationsName())) {
 				return null;
@@ -327,14 +362,14 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 			case INITIALISIERT:
 				break;
 			default:
-				return managedApplikation;
+				return managedApplikation.getApplikation();
 			}
 		}
 
 		return null;
 	}
 
-	public StartStoppApplikation waitForKernsystemStopp(StartStoppApplikation startStoppApplikation) {
+	public Applikation waitForKernsystemStopp(StartStoppApplikation startStoppApplikation) {
 		boolean foundKernsoftwareApplikation = false;
 		for (String name : kernSystem) {
 			if (!foundKernsoftwareApplikation) {
@@ -347,7 +382,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 				case GESTARTET:
 				case INITIALISIERT:
 				case STOPPENWARTEN:
-					return app;
+					return app.getApplikation();
 				case GESTOPPT:
 				case INSTALLIERT:
 				case STARTENWARTEN:

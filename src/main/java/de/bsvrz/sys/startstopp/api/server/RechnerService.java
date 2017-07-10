@@ -71,10 +71,10 @@ public class RechnerService {
 			responseBuilder.entity(rechner);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
-			StatusResponse StatusResponse = new StatusResponse();
-			StatusResponse.setCode(-1);
-			StatusResponse.getMessages().add(e.getLocalizedMessage());
-			return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(StatusResponse).build();
+			StatusResponse statusResponse = new StatusResponse();
+			statusResponse.setCode(-1);
+			statusResponse.getMessages().add(e.getLocalizedMessage());
+			return Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(statusResponse).build();
 		}
 	}
 
@@ -89,10 +89,10 @@ public class RechnerService {
 			StartStoppSkript remoteSkript = client.getCurrentSkript();
 			return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(remoteSkript).build();
 		} catch (StartStoppException e) {
-			StatusResponse StatusResponse = new StatusResponse();
-			StatusResponse.setCode(-1);
-			StatusResponse.getMessages().add(e.getLocalizedMessage());
-			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(StatusResponse).build();
+			StatusResponse statusResponse = new StatusResponse();
+			statusResponse.setCode(-1);
+			statusResponse.getMessages().add(e.getLocalizedMessage());
+			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(statusResponse).build();
 		}
 	}
 
@@ -107,10 +107,10 @@ public class RechnerService {
 			List<Applikation> applikationen = client.getApplikationen();
 			return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(applikationen).build();
 		} catch (StartStoppException e) {
-			StatusResponse StatusResponse = new StatusResponse();
-			StatusResponse.setCode(-1);
-			StatusResponse.getMessages().add(e.getLocalizedMessage());
-			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(StatusResponse).build();
+			StatusResponse statusResponse = new StatusResponse();
+			statusResponse.setCode(-1);
+			statusResponse.getMessages().add(e.getLocalizedMessage());
+			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(statusResponse).build();
 		}
 	}
 
@@ -124,10 +124,10 @@ public class RechnerService {
 			Applikation applikation = client.getApplikation(inkarnationsName);
 			return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(applikation).build();
 		} catch (StartStoppException e) {
-			StatusResponse StatusResponse = new StatusResponse();
-			StatusResponse.setCode(-1);
-			StatusResponse.getMessages().add(e.getLocalizedMessage());
-			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(StatusResponse).build();
+			StatusResponse statusResponse = new StatusResponse();
+			statusResponse.setCode(-1);
+			statusResponse.getMessages().add(e.getLocalizedMessage());
+			return Response.status(Response.Status.SERVICE_UNAVAILABLE).type(MediaType.APPLICATION_JSON_TYPE).entity(statusResponse).build();
 		}
 	}
 }

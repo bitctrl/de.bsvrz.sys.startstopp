@@ -1,3 +1,29 @@
+/*
+ * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Copyright (C) 2007-2017 BitCtrl Systems GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Contact Information:<br>
+ * BitCtrl Systems GmbH<br>
+ * Weißenfelser Straße 67<br>
+ * 04229 Leipzig<br>
+ * Phone: +49 341-490670<br>
+ * mailto: info@bitctrl.de
+ */
+
 package de.bsvrz.sys.startstopp.config;
 
 import java.util.ArrayList;
@@ -12,8 +38,10 @@ import java.util.regex.Pattern;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.process.StartStoppInkarnation;
 
@@ -36,11 +64,81 @@ public class StartStoppKonfiguration {
 
 	private Collection<String> pruefeZirkularitaet() {
 		
-		// TODO Prüfung der Zirkularität implementieren
-		
 		Collection<String> result = new ArrayList<>();
-//		result.add("Zirkularitätsprüfung noch nicht implementiert");
+
+		try {
+			getResolvedMakros();
+		} catch (StartStoppException e) {
+			result.add(e.getLocalizedMessage());
+		}
+
+		for( Inkarnation inkarnation : skript.getInkarnationen()) {
+			try {
+				checkStartRules(inkarnation);
+			} catch (StartStoppException e) {
+				result.add(e.getLocalizedMessage());
+			}
+			try {
+				checkStopRules(inkarnation);
+			} catch (StartStoppException e) {
+				result.add(e.getLocalizedMessage());
+			}
+		}
 		return result;
+	}
+
+	private Inkarnation getInkarnation(String name) throws StartStoppException {
+		for( Inkarnation inkarnation : skript.getInkarnationen()) {
+			if(name.equals(inkarnation.getInkarnationsName())) {
+				return inkarnation;
+			}
+		}
+		throw new StartStoppException("Ein referenziertes Skript mit dem Name \"" + name + "\" ist nicht definiert");
+	}
+	
+	private void checkStartRules(Inkarnation inkarnation) throws StartStoppException {
+		Set<String> usedInkarnations = new LinkedHashSet<>();
+		usedInkarnations.add(inkarnation.getInkarnationsName());
+
+		Inkarnation currentInkarnation = inkarnation;
+		
+		while(currentInkarnation != null) {
+			StartBedingung startBedingung = currentInkarnation.getStartBedingung();
+			if( startBedingung == null) {
+				return;
+			}
+			String rechner = startBedingung.getRechner();
+			if( rechner != null && !rechner.trim().isEmpty()) {
+				return;
+			}
+			currentInkarnation = getInkarnation(startBedingung.getVorgaenger());
+			if( !usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
+				throw new StartStoppException("Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
+			}
+		}
+	}
+
+
+	private void checkStopRules(Inkarnation inkarnation) throws StartStoppException {
+		Set<String> usedInkarnations = new LinkedHashSet<>();
+		usedInkarnations.add(inkarnation.getInkarnationsName());
+
+		Inkarnation currentInkarnation = inkarnation;
+		
+		while(currentInkarnation != null) {
+			StoppBedingung stoppBedingung = currentInkarnation.getStoppBedingung();
+			if( stoppBedingung == null) {
+				return;
+			}
+			String rechner = stoppBedingung.getRechner();
+			if( rechner != null && !rechner.trim().isEmpty()) {
+				return;
+			}
+			currentInkarnation = getInkarnation(stoppBedingung.getNachfolger());
+			if( usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
+				throw new StartStoppException("Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
+			}
+		}
 	}
 
 	private Collection<String> pruefeVollstaendigkeit() {
@@ -61,7 +159,7 @@ public class StartStoppKonfiguration {
 	}
 
 	public StartStoppKonfiguration versionieren(String reason) throws StartStoppException {
-		throw new StartStoppException("Versionieren ist noch nicht omplementiert");
+		throw new StartStoppException("Versionieren ist noch nicht implementiert");
 	}
 
 	public Collection<StartStoppInkarnation> getInkarnationen() throws StartStoppException {
@@ -77,7 +175,7 @@ public class StartStoppKonfiguration {
 		return result;
 	}
 
-	public Map<String, String> getResolvedMakros() {
+	public Map<String, String> getResolvedMakros() throws StartStoppException {
 		
 		Pattern pattern = Pattern.compile("%.*?%");
 		Map<String, String> result = new LinkedHashMap<>();
@@ -90,15 +188,12 @@ public class StartStoppKonfiguration {
 			do {
 				boolean replaced = false;
 				Matcher matcher = pattern.matcher(wert);
-//				if( matcher.groupCount() == 0 ) {
-//					result.put(name, wert);
-//					break;
-//				}
 				while (matcher.find()) {
 					String part = matcher.group();
 					String key = part.substring(1, part .length() - 1);
-					usedMakros.add(key);
-					// TODO Zirkularität pruefen
+					if (!usedMakros.add(key)) {
+						throw new StartStoppException("Makros können wegen einer Rekursion nicht aufgelöst werden!");
+					}
 					String replacement = getMakroValueFor(key);
 					wert = wert.replaceAll(part, replacement);
 					replaced = true;
