@@ -50,10 +50,10 @@ public class StartStoppInkarnation extends Inkarnation {
 		setInkarnationsName(inkarnation.getInkarnationsName());
 		setInkarnationsTyp(inkarnation.getInkarnationsTyp());
 		setStartArt(inkarnation.getStartArt());
-		setStartBedingung(inkarnation.getStartBedingung());
-		setStartFehlerVerhalten(inkarnation.getStartFehlerVerhalten());
-		setStoppBedingung(inkarnation.getStoppBedingung());
-		setStoppFehlerVerhalten(inkarnation.getStoppFehlerVerhalten());
+		setStartBedingung(skript.getResolvedStartBedingung(inkarnation.getStartBedingung()));
+		setStartFehlerVerhalten(skript.getResolvedStartFehlerVerhalten(inkarnation.getStartFehlerVerhalten()));
+		setStoppBedingung(skript.getResolvedStoppBedingung(inkarnation.getStoppBedingung()));
+		setStoppFehlerVerhalten(skript.getResolvedStoppFehlerVerhalten(inkarnation.getStoppFehlerVerhalten()));
 	}
 
 	public boolean isKernSystem() {

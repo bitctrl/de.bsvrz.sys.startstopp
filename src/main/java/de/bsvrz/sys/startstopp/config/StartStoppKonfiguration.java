@@ -39,9 +39,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.process.StartStoppInkarnation;
 
@@ -49,13 +51,13 @@ public class StartStoppKonfiguration {
 
 	private StartStoppSkript skript;
 	private StartStoppSkriptStatus skriptStatus = new StartStoppSkriptStatus();
-	
+
 	public StartStoppKonfiguration(StartStoppSkript skript) {
 		this.skript = skript;
 		skriptStatus.getMessages().addAll(pruefeVollstaendigkeit());
 		skriptStatus.getMessages().addAll(pruefeZirkularitaet());
 
-		if( skriptStatus.getMessages().isEmpty()) {
+		if (skriptStatus.getMessages().isEmpty()) {
 			skriptStatus.setStatus(StartStoppSkriptStatus.Status.INITIALIZED);
 		} else {
 			skriptStatus.setStatus(StartStoppSkriptStatus.Status.FAILURE);
@@ -63,7 +65,7 @@ public class StartStoppKonfiguration {
 	}
 
 	private Collection<String> pruefeZirkularitaet() {
-		
+
 		Collection<String> result = new ArrayList<>();
 
 		try {
@@ -72,7 +74,7 @@ public class StartStoppKonfiguration {
 			result.add(e.getLocalizedMessage());
 		}
 
-		for( Inkarnation inkarnation : skript.getInkarnationen()) {
+		for (Inkarnation inkarnation : skript.getInkarnationen()) {
 			try {
 				checkStartRules(inkarnation);
 			} catch (StartStoppException e) {
@@ -87,56 +89,57 @@ public class StartStoppKonfiguration {
 		return result;
 	}
 
-	private Inkarnation getInkarnation(String name) throws StartStoppException {
-		for( Inkarnation inkarnation : skript.getInkarnationen()) {
-			if(name.equals(inkarnation.getInkarnationsName())) {
-				return inkarnation;
+	private StartStoppInkarnation getInkarnation(String name) throws StartStoppException {
+		for (Inkarnation inkarnation : skript.getInkarnationen()) {
+			if (name.equals(inkarnation.getInkarnationsName())) {
+				return new StartStoppInkarnation(this, inkarnation);
 			}
 		}
 		throw new StartStoppException("Ein referenziertes Skript mit dem Name \"" + name + "\" ist nicht definiert");
 	}
-	
+
 	private void checkStartRules(Inkarnation inkarnation) throws StartStoppException {
 		Set<String> usedInkarnations = new LinkedHashSet<>();
 		usedInkarnations.add(inkarnation.getInkarnationsName());
 
 		Inkarnation currentInkarnation = inkarnation;
-		
-		while(currentInkarnation != null) {
+
+		while (currentInkarnation != null) {
 			StartBedingung startBedingung = currentInkarnation.getStartBedingung();
-			if( startBedingung == null) {
+			if (startBedingung == null) {
 				return;
 			}
 			String rechner = startBedingung.getRechner();
-			if( rechner != null && !rechner.trim().isEmpty()) {
+			if (rechner != null && !rechner.trim().isEmpty()) {
 				return;
 			}
 			currentInkarnation = getInkarnation(startBedingung.getVorgaenger());
-			if( !usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
-				throw new StartStoppException("Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
+			if (!usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
+				throw new StartStoppException(
+						"Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
 			}
 		}
 	}
-
 
 	private void checkStopRules(Inkarnation inkarnation) throws StartStoppException {
 		Set<String> usedInkarnations = new LinkedHashSet<>();
 		usedInkarnations.add(inkarnation.getInkarnationsName());
 
 		Inkarnation currentInkarnation = inkarnation;
-		
-		while(currentInkarnation != null) {
+
+		while (currentInkarnation != null) {
 			StoppBedingung stoppBedingung = currentInkarnation.getStoppBedingung();
-			if( stoppBedingung == null) {
+			if (stoppBedingung == null) {
 				return;
 			}
 			String rechner = stoppBedingung.getRechner();
-			if( rechner != null && !rechner.trim().isEmpty()) {
+			if (rechner != null && !rechner.trim().isEmpty()) {
 				return;
 			}
 			currentInkarnation = getInkarnation(stoppBedingung.getNachfolger());
-			if( usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
-				throw new StartStoppException("Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
+			if (usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
+				throw new StartStoppException(
+						"Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
 			}
 		}
 	}
@@ -144,9 +147,9 @@ public class StartStoppKonfiguration {
 	private Collection<String> pruefeVollstaendigkeit() {
 
 		// TODO Prüfung der Vollständigkeit implementieren
-		
+
 		Collection<String> result = new ArrayList<>();
-//		result.add("Vollständigkeitsprüfung noch nicht implementiert");
+		// result.add("Vollständigkeitsprüfung noch nicht implementiert");
 		return result;
 	}
 
@@ -163,12 +166,12 @@ public class StartStoppKonfiguration {
 	}
 
 	public Collection<StartStoppInkarnation> getInkarnationen() throws StartStoppException {
-		if( skriptStatus.getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
+		if (skriptStatus.getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
 			throw new StartStoppException("Das geladene StartStoppSkript ist nicht korrekt versioniert!");
 		}
-		
+
 		Collection<StartStoppInkarnation> result = new ArrayList<>();
-		for( Inkarnation inkarnation : skript.getInkarnationen()) {
+		for (Inkarnation inkarnation : skript.getInkarnationen()) {
 			StartStoppInkarnation startStoppInkarnation = new StartStoppInkarnation(this, inkarnation);
 			result.add(startStoppInkarnation);
 		}
@@ -176,7 +179,7 @@ public class StartStoppKonfiguration {
 	}
 
 	public Map<String, String> getResolvedMakros() throws StartStoppException {
-		
+
 		Pattern pattern = Pattern.compile("%.*?%");
 		Map<String, String> result = new LinkedHashMap<>();
 
@@ -184,13 +187,13 @@ public class StartStoppKonfiguration {
 			String name = makroDefinition.getName();
 			String wert = makroDefinition.getWert();
 			Set<String> usedMakros = new LinkedHashSet<>();
-			
+
 			do {
 				boolean replaced = false;
 				Matcher matcher = pattern.matcher(wert);
 				while (matcher.find()) {
 					String part = matcher.group();
-					String key = part.substring(1, part .length() - 1);
+					String key = part.substring(1, part.length() - 1);
 					if (!usedMakros.add(key)) {
 						throw new StartStoppException("Makros können wegen einer Rekursion nicht aufgelöst werden!");
 					}
@@ -198,25 +201,24 @@ public class StartStoppKonfiguration {
 					wert = wert.replaceAll(part, replacement);
 					replaced = true;
 				}
-				if( !replaced) {
+				if (!replaced) {
 					result.put(name, wert);
 					break;
 				}
-			} while(true);
+			} while (true);
 		}
-		
+
 		return result;
 	}
 
-	private String getMakroValueFor(String key) {
+	private String getMakroValueFor(String key) throws StartStoppException {
 		for (MakroDefinition makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
-			if( key.equals(makroDefinition.getName())) {
+			if (key.equals(makroDefinition.getName())) {
 				return makroDefinition.getWert();
 			}
 		}
-		
-		// TODO als Fehler behandeln
-		return "";
+
+		throw new StartStoppException("Für das Makro \"" + key + "\" wurde kein Wert definiert");
 	}
 
 	public Collection<Rechner> getResolvedRechner() throws StartStoppException {
@@ -254,24 +256,29 @@ public class StartStoppKonfiguration {
 				port = port.replaceAll(part, replacement);
 			}
 			resolvedRechner.setPort(port);
-			
+
 			result.add(resolvedRechner);
 		}
 		return result;
 	}
 
 	public Rechner getResolvedRechner(String rechnerName) throws StartStoppException {
-		
-		for( Rechner rechner : getResolvedRechner()) {
-			if( rechner.getName().equals(rechnerName)) {
+
+		for (Rechner rechner : getResolvedRechner()) {
+			if (rechner.getName().equals(rechnerName)) {
 				return rechner;
 			}
 		}
-		
+
 		throw new StartStoppException("Ein Rechner mit dem Name \"" + rechnerName + "\" ist nicht definiert!");
 	}
-	
+
 	public String makroResolvedString(String wert) throws StartStoppException {
+		
+		if( wert == null) {
+			return null;
+		}
+		
 		Map<String, String> resolvedMakros = getResolvedMakros();
 		Pattern pattern = Pattern.compile("%.*?%");
 		Matcher matcher = pattern.matcher(wert);
@@ -297,6 +304,56 @@ public class StartStoppKonfiguration {
 		result.setUserName(makroResolvedString(zugangDav.getUserName()));
 		return result;
 	}
-	
-	
+
+	public StartBedingung getResolvedStartBedingung(StartBedingung startBedingung) throws StartStoppException {
+
+		if( startBedingung == null) {
+			return null;
+		}
+		
+		StartBedingung bedingung = new StartBedingung();
+		bedingung.setVorgaenger(startBedingung.getVorgaenger());
+		bedingung.setWarteart(startBedingung.getWarteart());
+		bedingung.setRechner(startBedingung.getRechner());
+		bedingung.setWartezeit(makroResolvedString(startBedingung.getWartezeit()));
+		return bedingung;
+	}
+
+	public StartFehlerVerhalten getResolvedStartFehlerVerhalten(StartFehlerVerhalten startFehlerVerhalten) {
+
+		if( startFehlerVerhalten == null) {
+			return null;
+		}
+		
+		StartFehlerVerhalten verhalten = new StartFehlerVerhalten();
+		verhalten.setOption(startFehlerVerhalten.getOption());
+		verhalten.setWiederholungen(startFehlerVerhalten.getWiederholungen());
+		return verhalten;
+	}
+
+	public StoppBedingung getResolvedStoppBedingung(StoppBedingung stoppBedingung) throws StartStoppException {
+
+		if( stoppBedingung == null) {
+			return null;
+		}
+		
+		StoppBedingung bedingung = new StoppBedingung();
+		bedingung.setNachfolger(stoppBedingung.getNachfolger());
+		bedingung.setRechner(stoppBedingung.getRechner());
+		bedingung.setWartezeit(makroResolvedString(stoppBedingung.getWartezeit()));
+		return bedingung;
+	}
+
+	public StoppFehlerVerhalten getResolvedStoppFehlerVerhalten(StoppFehlerVerhalten stoppFehlerVerhalten) {
+
+		if( stoppFehlerVerhalten == null) {
+			return null;
+		}
+		
+		StoppFehlerVerhalten verhalten = new StoppFehlerVerhalten();
+		verhalten.setOption(stoppFehlerVerhalten.getOption());
+		verhalten.setWiederholungen(stoppFehlerVerhalten.getWiederholungen());
+		return verhalten;
+	}
+
 }

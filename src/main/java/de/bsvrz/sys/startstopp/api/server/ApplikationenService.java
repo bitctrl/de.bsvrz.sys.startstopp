@@ -88,7 +88,7 @@ public class ApplikationenService {
 	public Response responseApplikationStart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			Applikation applikation = processManager.starteApplikation(inkarnationsName);
+			Applikation applikation = processManager.starteApplikationOhnePruefung(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation);

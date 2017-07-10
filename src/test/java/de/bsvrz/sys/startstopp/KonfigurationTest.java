@@ -71,7 +71,10 @@ public class KonfigurationTest {
 				//writing to console, can write to any output stream such as file
 				StringWriter stringEmp = new StringWriter();
 				objectMapper.writeValue(stringEmp, skript);
-				System.err.println(stringEmp);
+				
+//				StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(skript);
+//				Assert.assertTrue(file + ": " + konfiguration.getSkriptStatus().getMessages().toString(), konfiguration.getSkriptStatus().getMessages().isEmpty());
+//				Assert.assertEquals(konfiguration.getSkriptStatus().getStatus(), StartStoppSkriptStatus.Status.INITIALIZED);
 		}
 	}
 }

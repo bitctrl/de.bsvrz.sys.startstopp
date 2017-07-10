@@ -38,7 +38,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-public class StartStoppApplikation {
+public class StartStoppApplikation extends Applikation {
 
 	private enum TimerType {
 		NOTIMER, WARTETIMER, INTERVALLTIMER;
@@ -53,7 +53,7 @@ public class StartStoppApplikation {
 
 			switch (neuerStatus) {
 			case GESTOPPT:
-				setStatus(Applikation.Status.GESTOPPT);
+				updateStatus(Applikation.Status.GESTOPPT);
 				if (process != null) {
 					process.removeProzessListener(this);
 					process = null;
@@ -61,13 +61,13 @@ public class StartStoppApplikation {
 				break;
 			case GESTARTET:
 				if (inkarnation.getInitialize()) {
-					setStatus(Applikation.Status.INITIALISIERT);
+					updateStatus(Applikation.Status.INITIALISIERT);
 				} else {
-					setStatus(Applikation.Status.GESTARTET);
+					updateStatus(Applikation.Status.GESTARTET);
 				}
 				break;
 			case STARTFEHLER:
-				setStatus(Applikation.Status.GESTOPPT);
+				updateStatus(Applikation.Status.GESTOPPT);
 				if (process != null) {
 					process.removeProzessListener(this);
 					process = null;
@@ -79,7 +79,6 @@ public class StartStoppApplikation {
 		}
 	}
 
-	private Applikation applikation;
 	private StartStoppInkarnation inkarnation;
 	private SystemProcess process = null;
 
@@ -99,21 +98,12 @@ public class StartStoppApplikation {
 
 		this.processManager = processmanager;
 		this.inkarnation = inkarnation;
-		applikation = new Applikation();
-		applikation.setInkarnationsName(inkarnation.getInkarnationsName());
-		applikation.setStatus(Applikation.Status.INSTALLIERT);
-		applikation.setApplikation(inkarnation.getApplikation());
-		applikation.getArguments().addAll(inkarnation.getAufrufParameter());
-		applikation.setLetzteStartzeit("noch nie gestartet");
-		applikation.setLetzteStoppzeit("noch nie gestoppt");
-	}
-
-	public Applikation getApplikation() {
-		return applikation;
-	}
-
-	public String getInkarnationsName() {
-		return applikation.getInkarnationsName();
+		setInkarnationsName(inkarnation.getInkarnationsName());
+		updateStatus(Applikation.Status.INSTALLIERT);
+		setApplikation(inkarnation.getApplikation());
+		getArguments().addAll(inkarnation.getAufrufParameter());
+		setLetzteStartzeit("noch nie gestartet");
+		setLetzteStoppzeit("noch nie gestoppt");
 	}
 
 	public boolean isKernsystem() {
@@ -178,7 +168,7 @@ public class StartStoppApplikation {
 
 		Applikation applikation = processManager.waitForKernsystemStart(this);
 		if (applikation != null) {
-			setStatus(Applikation.Status.STARTENWARTEN);
+			updateStatus(Applikation.Status.STARTENWARTEN);
 			setReason("Warte auf Kernsystem: " + applikation.getInkarnationsName());
 			return;
 		}
@@ -187,7 +177,7 @@ public class StartStoppApplikation {
 			String davConnectionMsg = processManager.getDavConnectionMsg();
 			if (davConnectionMsg != null) {
 				LOGGER.info(getInkarnationsName() + ": " + davConnectionMsg);
-				setStatus(Applikation.Status.STARTENWARTEN);
+				updateStatus(Applikation.Status.STARTENWARTEN);
 				setReason(davConnectionMsg);
 				return;
 			}
@@ -197,13 +187,13 @@ public class StartStoppApplikation {
 		if (startBedingung != null) {
 			applikation = processManager.waitForStartBedingung(this);
 			if (applikation != null) {
-				setStatus(Applikation.Status.STARTENWARTEN);
+				updateStatus(Applikation.Status.STARTENWARTEN);
 				setReason("Warte auf : " + applikation.getInkarnationsName());
 				return;
 			}
 			int warteZeitInMsec = convertToWarteZeitInMsec(startBedingung.getWartezeit());
 			if (warteZeitInMsec > 0) {
-				setStatus(Applikation.Status.STARTENWARTEN);
+				updateStatus(Applikation.Status.STARTENWARTEN);
 				setWarteTimer(warteZeitInMsec);
 				return;
 			}
@@ -217,7 +207,7 @@ public class StartStoppApplikation {
 		Applikation applikation = processManager.waitForKernsystemStart(this);
 		if (applikation != null) {
 			setWarteTimer(0);
-			setStatus(Applikation.Status.STARTENWARTEN);
+			updateStatus(Applikation.Status.STARTENWARTEN);
 			setReason("Warte auf Kernsystem: " + applikation.getInkarnationsName());
 			return;
 		}
@@ -225,8 +215,9 @@ public class StartStoppApplikation {
 		if (!isKernsystem()) {
 			String davConnectionMsg = processManager.getDavConnectionMsg();
 			if (davConnectionMsg != null) {
+				setWarteTimer(0);
 				LOGGER.info(getInkarnationsName() + ": " + davConnectionMsg);
-				setStatus(Applikation.Status.STARTENWARTEN);
+				updateStatus(Applikation.Status.STARTENWARTEN);
 				setReason(davConnectionMsg);
 				return;
 			}
@@ -237,14 +228,14 @@ public class StartStoppApplikation {
 			applikation = processManager.waitForStartBedingung(this);
 			if (applikation != null) {
 				setWarteTimer(0);
-				setStatus(Applikation.Status.STARTENWARTEN);
+				updateStatus(Applikation.Status.STARTENWARTEN);
 				setReason("Warte auf : " + applikation.getInkarnationsName());
 				return;
 			}
 			if (timerType != TimerType.WARTETIMER) {
 				int warteZeitInMsec = convertToWarteZeitInMsec(startBedingung.getWartezeit());
 				if (warteZeitInMsec > 0) {
-					setStatus(Applikation.Status.STARTENWARTEN);
+					updateStatus(Applikation.Status.STARTENWARTEN);
 					setWarteTimer(warteZeitInMsec);
 					setReason("Wartezeit aktiv");
 					return;
@@ -260,7 +251,7 @@ public class StartStoppApplikation {
 		Applikation applikation = processManager.waitForKernsystemStopp(this);
 		if (applikation != null) {
 			setWarteTimer(0);
-			setStatus(Applikation.Status.STOPPENWARTEN);
+			updateStatus(Applikation.Status.STOPPENWARTEN);
 			setReason("Kernsystem wartet auf: " + applikation.getInkarnationsName());
 			return;
 		}
@@ -270,14 +261,14 @@ public class StartStoppApplikation {
 			applikation = processManager.waitForStoppBedingung(this);
 			if (applikation != null) {
 				setWarteTimer(0);
-				setStatus(Applikation.Status.STOPPENWARTEN);
+				updateStatus(Applikation.Status.STOPPENWARTEN);
 				setReason("Warte auf : " + applikation.getInkarnationsName());
 				return;
 			}
 			if (timerType != TimerType.WARTETIMER) {
 				int warteZeitInMsec = convertToWarteZeitInMsec(stoppBedingung.getWartezeit());
 				if (warteZeitInMsec > 0) {
-					setStatus(Applikation.Status.STOPPENWARTEN);
+					updateStatus(Applikation.Status.STOPPENWARTEN);
 					setWarteTimer(warteZeitInMsec);
 					setReason("Wartezeit aktiv");
 					return;
@@ -321,7 +312,7 @@ public class StartStoppApplikation {
 	}
 
 	private void starteApplikation() {
-		setStatus(Applikation.Status.GESTARTET);
+		updateStatus(Applikation.Status.GESTARTET);
 		process = new SystemProcess();
 		process.setInkarnationsName(inkarnation.getInkarnationsName());
 		process.setProgramm(inkarnation.getApplikation());
@@ -332,23 +323,23 @@ public class StartStoppApplikation {
 
 	private void stoppeApplikation(boolean force) {
 		if (process == null) {
-			setStatus(Applikation.Status.GESTOPPT);
+			updateStatus(Applikation.Status.GESTOPPT);
 			switch (inkarnation.getStartArt().getOption()) {
 			case INTERVALLABSOLUT:
 			case INTERVALLRELATIV:
 				if (force) {
-					setStatus(Applikation.Status.GESTOPPT);
+					updateStatus(Applikation.Status.GESTOPPT);
 				} else {
-					setStatus(Applikation.Status.STARTENWARTEN);
+					updateStatus(Applikation.Status.STARTENWARTEN);
 				}
 				break;
 			case AUTOMATISCH:
 			case MANUELL:
-				setStatus(Applikation.Status.GESTOPPT);
+				updateStatus(Applikation.Status.GESTOPPT);
 				break;
 			}
 		} else {
-			setStatus(Applikation.Status.STOPPENWARTEN);
+			updateStatus(Applikation.Status.STOPPENWARTEN);
 			process.stopp();
 			process = null;
 		}
@@ -368,10 +359,10 @@ public class StartStoppApplikation {
 		return builder.toString();
 	}
 
-	private void setStatus(Status status) {
+	private void updateStatus(Status status) {
 		Status oldStatus = getStatus();
 		if (oldStatus != status) {
-			applikation.setStatus(status);
+			setStatus(status);
 			fireStatusChanged(oldStatus, status);
 		}
 	}
@@ -390,10 +381,6 @@ public class StartStoppApplikation {
 		default:
 			break;
 		}
-	}
-
-	Applikation.Status getStatus() {
-		return applikation.getStatus();
 	}
 
 	public StartBedingung getStartBedingung() {
