@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 
@@ -86,8 +87,8 @@ public class AusgabeVerarbeitung extends Thread {
 	public AusgabeVerarbeitung(final String inkarnation, final Process prozess) {
 		this.inkarnation = inkarnation;
 		this.process = prozess;
-		processStdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-		processStdOutput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		processStdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.defaultCharset()));
+		processStdOutput = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()));
 
 		openFiles();
 		this.start();

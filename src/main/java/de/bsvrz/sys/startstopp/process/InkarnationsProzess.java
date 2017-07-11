@@ -27,6 +27,7 @@
 package de.bsvrz.sys.startstopp.process;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -349,7 +350,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 		Path path = Paths.get(ausgabeUmlenkung.getStdOutFile().toURI());
 		try {
-			String text = new String(Files.readAllBytes(path));
+			String text = new String(Files.readAllBytes(path), Charset.defaultCharset());
 			if (text.length() > 0) {
 				ausgaben.append("Standardausgabe: ");
 				ausgaben.append(text);
@@ -361,7 +362,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 		path = Paths.get(ausgabeUmlenkung.getStdErrFile().toURI());
 		try {
-			String text = new String(Files.readAllBytes(path));
+			String text = new String(Files.readAllBytes(path), Charset.defaultCharset());
 			if (text.length() > 0) {
 				ausgaben.append("Fehlerausgabe: ");
 				ausgaben.append(text);

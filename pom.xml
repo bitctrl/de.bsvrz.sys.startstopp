@@ -497,6 +497,7 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>3.0.3</version>
 				<configuration>
+				    <excludeFilterFile>src/main/config/findbugs-exclude.xml</excludeFilterFile>
 					<threshold>High</threshold>
 					<includeTests>true</includeTests>
 				</configuration>
@@ -613,15 +614,25 @@
 											<goal>build-classpath</goal>
 										</goals>
 									</pluginExecutionFilter>
-									<pluginExecutionFilter>
-                                        <groupId>org.codehaus.mojo</groupId>
-									    <artifactId>build-helper-maven-plugin</artifactId>
-									   <goals></goals>
-									</pluginExecutionFilter>
                                     <action>
                                         <ignore></ignore>
                                     </action>
 								</pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>build-helper-maven-plugin</artifactId>
+                                        <versionRange>
+                                            [1.0,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>regex-property</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
