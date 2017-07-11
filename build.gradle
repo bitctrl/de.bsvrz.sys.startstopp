@@ -1,0 +1,74 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'jsonschema2pojo'
+apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'com.github.jruby-gradle.base' 
+
+buildscript {
+
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:0.4.37'
+    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+    classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.4.0'
+  }
+}
+
+dependencies {
+    gems 'rubygems:asciidoctor-diagram:1.5.4'
+}
+
+asciidoctor { 
+
+    dependsOn jrubyPrepare
+    requires = ['asciidoctor-diagram']
+    gemPath = jrubyPrepare.outputDir
+    print("GemPath: " + gemPath)
+
+    sourceDir = file('src/main/asciidoc/swent')
+    sources {
+        include 'swent.adoc'
+    }
+    outputDir "${buildDir}/docs"
+    options doctype: 'book'
+    attributes 'source-highlighter': 'coderay',
+                toc                 : 'left',
+                idprefix            : '',
+                idseparator         : '-'
+}
+
+
+
+jsonSchema2Pojo.targetPackage = 'de.bsvrz.sys.startstopp.api.jsonschema'
+
+repositories {
+    mavenCentral() 
+    maven {
+        url 'http://dl.bintray.com/bitctrl/maven'
+    }
+}
+
+dependencies {
+
+    compile 'commons-lang:commons-lang:2.6'
+    compile 'com.googlecode.lanterna:lanterna:3.0.0-rc1'
+    compile 'net.java.dev.jna:jna:4.2.2'
+    compile 'org.json:json:20170516'
+    compile 'de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}'
+    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.application:' + kernsoftware_version
+    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.24'
+    compile 'org.glassfish.jersey.containers:jersey-container-jetty-http:2.24'
+    compile 'com.fasterxml.jackson.module:jackson-module-jsonSchema:' + jackson_version
+    compile 'com.fasterxml.jackson.core:jackson-databind:' + jackson_version
+    compile 'com.fasterxml.jackson.core:jackson-core:' + jackson_version
+    compile 'com.fasterxml.jackson.core:jackson-annotations:' + jackson_version
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:' + jackson_version
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jackson_version
+    testCompile 'junit:junit:4.12'       
+}
+
+mainClassName = 'de.bsvrz.sys.startstopp.startstopp.StartStopp'  
