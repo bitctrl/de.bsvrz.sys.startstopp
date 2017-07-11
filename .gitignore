@@ -13,4 +13,4 @@ src/main/resources/startstopp.html
 /.gradle/
 build
 .settings/org.eclipse.m2e.core.prefs
-.settings/org.eclipse.buildship.core.prefs
+
