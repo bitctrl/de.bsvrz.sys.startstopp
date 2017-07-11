@@ -31,6 +31,7 @@
 		<asciidoctorj.version>1.5.5</asciidoctorj.version>
 		<asciidoctorj.diagram.version>1.5.4</asciidoctorj.diagram.version>
 		<jruby.version>1.7.26</jruby.version>
+		<plugin.build-helper-maven-plugin.version>3.0.0</plugin.build-helper-maven-plugin.version>
 	</properties>
 
 	<licenses>
@@ -330,7 +331,7 @@
 									<customClasspathLayout>../${artifact.artifactId}/${artifact.artifactId}-runtime.${artifact.extension}</customClasspathLayout>
 								</manifest>
 								<manifestEntries>
-									<Class-Path>${project.artifactId}.jar ${nonBsvrzClasspath}</Class-Path>
+									<Class-Path>${project.artifactId}.jar ${manifestBsvrzClasspath}</Class-Path>
 								</manifestEntries>
 							</archive>
 						</configuration>
@@ -447,8 +448,48 @@
 							</excludeGroupIds>
 						</configuration>
 					</execution>
+                    <execution>
+                        <id>build-manifest-classpath</id>
+                        <goals>
+                            <goal>build-classpath</goal>
+                        </goals>
+                        <configuration>
+                            <outputProperty>manifestBsvrzClasspath</outputProperty>
+                            <prefix>lib</prefix>
+                            <fileSeparator>/</fileSeparator>
+                            <pathSeparator xml:space="preserve">@_@</pathSeparator>
+                            <includeScope>runtime</includeScope>
+                            <excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
+                                de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
+                                de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
+                                de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
+                                de.kappich, com.google.guava
+                            </excludeGroupIds>
+                        </configuration>
+                    </execution>
 				</executions>
 			</plugin>
+			<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${plugin.build-helper-maven-plugin.version}</version>
+                <executions>
+                 <execution>
+                    <id>fix-classpath-for-manifest</id>
+                    <phase>generate-sources</phase>
+                    <goals>
+                        <goal>build-helper:regex-property</goal>
+                    </goals>
+                    <configuration>
+                        <name>manifestBsvrzClasspath</name>
+                        <value>${manifestBsvrzClasspath}</value>
+                        <regex>@_@</regex>
+                        <replacement xml:space="preserve">&#x020;</replacement>
+                        <failIfNoMatch>false</failIfNoMatch>
+                    </configuration>
+                </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
