@@ -478,7 +478,7 @@
                     <id>fix-classpath-for-manifest</id>
                     <phase>generate-sources</phase>
                     <goals>
-                        <goal>build-helper:regex-property</goal>
+                        <goal>regex-property</goal>
                     </goals>
                     <configuration>
                         <name>manifestBsvrzClasspath</name>
