@@ -188,7 +188,8 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 				prozessStartFehler(ioe.getMessage());
 				return;
 			}
-
+			long startTime = System.currentTimeMillis();
+			
 			if (process == null) {
 				prozessStartFehler("Ursache unklar");
 			} else {
@@ -205,13 +206,12 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 				prozessGestartet(process, processInfo);
 
-				ueberwacheProzess();
+				ueberwacheProzess(startTime);
 			}
 		}
 
-		private void ueberwacheProzess() {
+		private void ueberwacheProzess(long startTime) {
 			getLogger().finer("Prozess der Inkarnation '" + getInkarnationsName() + "' wird überwacht");
-			long startTime = System.currentTimeMillis();
 
 			// Hier etwas warten, sonst sind die Startfehler nicht in der
 			// Ausgabeumlenkung!

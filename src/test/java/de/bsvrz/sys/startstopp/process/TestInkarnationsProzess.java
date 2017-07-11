@@ -167,7 +167,7 @@ public class TestInkarnationsProzess {
 
 		synchronized (sync) {
 			try {
-				sync.wait(200000);
+				sync.wait(2000);
 			} catch (InterruptedException e) {
 				Assert.fail();
 			}
@@ -177,7 +177,7 @@ public class TestInkarnationsProzess {
 		
 		synchronized (sync) {
 			try {
-				sync.wait(100000);
+				sync.wait(15000);
 			} catch (InterruptedException e) {
 				Assert.fail();
 			}
