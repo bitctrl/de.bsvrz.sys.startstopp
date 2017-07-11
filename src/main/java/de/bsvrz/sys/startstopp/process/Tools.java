@@ -76,7 +76,8 @@ public class Tools {
 	}
 
 	public static ProcessInfo findProcess(final String cmdLine) {
-		List<ProcessInfo> processesList = JProcesses.getProcessList();
+
+		List<ProcessInfo> processesList = JProcesses.get().fastMode().listProcesses();
 
 		for (final ProcessInfo processInfo : processesList) {
 			if (processInfo.getCommand().contains(cmdLine)) {
