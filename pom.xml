@@ -235,6 +235,11 @@
 			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.profesorfalken</groupId>
+			<artifactId>WMI4Java</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
 			<groupId>org.jprocesses</groupId>
 			<artifactId>jProcesses</artifactId>
 			<version>1.6.3</version>
@@ -248,7 +253,7 @@
 				<artifactId>jsonschema2pojo-maven-plugin</artifactId>
 				<version>0.4.37</version>
 				<configuration>
- 					<sourceDirectory>${basedir}/src/main/resources/json</sourceDirectory>
+					<sourceDirectory>${basedir}/src/main/resources/json</sourceDirectory>
 					<includeHashcodeAndEquals>true</includeHashcodeAndEquals>
 					<includeToString>true</includeToString>
 					<targetPackage>de.bsvrz.sys.startstopp.api.jsonschema</targetPackage>
@@ -433,48 +438,48 @@
 							</excludeGroupIds>
 						</configuration>
 					</execution>
-                    <execution>
-                        <id>build-manifest-classpath</id>
-                        <goals>
-                            <goal>build-classpath</goal>
-                        </goals>
-                        <configuration>
-                            <outputProperty>manifestBsvrzClasspath</outputProperty>
-                            <prefix>lib</prefix>
-                            <fileSeparator>/</fileSeparator>
-                            <pathSeparator xml:space="preserve">@_@</pathSeparator>
-                            <includeScope>runtime</includeScope>
-                            <excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
-                                de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
-                                de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
-                                de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
-                                de.kappich, com.google.guava
-                            </excludeGroupIds>
-                        </configuration>
-                    </execution>
+					<execution>
+						<id>build-manifest-classpath</id>
+						<goals>
+							<goal>build-classpath</goal>
+						</goals>
+						<configuration>
+							<outputProperty>manifestBsvrzClasspath</outputProperty>
+							<prefix>lib</prefix>
+							<fileSeparator>/</fileSeparator>
+							<pathSeparator xml:space="preserve">@_@</pathSeparator>
+							<includeScope>runtime</includeScope>
+							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
+								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
+								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
+								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
+								de.kappich, com.google.guava
+							</excludeGroupIds>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${plugin.build-helper-maven-plugin.version}</version>
-                <executions>
-                 <execution>
-                    <id>fix-classpath-for-manifest</id>
-                    <phase>generate-sources</phase>
-                    <goals>
-                        <goal>regex-property</goal>
-                    </goals>
-                    <configuration>
-                        <name>manifestBsvrzClasspath</name>
-                        <value>${manifestBsvrzClasspath}</value>
-                        <regex>@_@</regex>
-                        <replacement xml:space="preserve">&#x020;</replacement>
-                        <failIfNoMatch>false</failIfNoMatch>
-                    </configuration>
-                </execution>
-                </executions>
-            </plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${plugin.build-helper-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>fix-classpath-for-manifest</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>regex-property</goal>
+						</goals>
+						<configuration>
+							<name>manifestBsvrzClasspath</name>
+							<value>${manifestBsvrzClasspath}</value>
+							<regex>@_@</regex>
+							<replacement xml:space="preserve">&#x020;</replacement>
+							<failIfNoMatch>false</failIfNoMatch>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -497,7 +502,7 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>3.0.3</version>
 				<configuration>
-				    <excludeFilterFile>src/main/config/findbugs-exclude.xml</excludeFilterFile>
+					<excludeFilterFile>src/main/config/findbugs-exclude.xml</excludeFilterFile>
 					<threshold>High</threshold>
 					<includeTests>true</includeTests>
 				</configuration>
@@ -614,25 +619,25 @@
 											<goal>build-classpath</goal>
 										</goals>
 									</pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
+									<action>
+										<ignore></ignore>
+									</action>
 								</pluginExecution>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.mojo</groupId>
-                                        <artifactId>build-helper-maven-plugin</artifactId>
-                                        <versionRange>
-                                            [1.0,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>regex-property</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore></ignore>
-                                    </action>
-                                </pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>build-helper-maven-plugin</artifactId>
+										<versionRange>
+											[1.0,)
+										</versionRange>
+										<goals>
+											<goal>regex-property</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
