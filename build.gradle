@@ -68,6 +68,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-annotations:' + jackson_version
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:' + jackson_version
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jackson_version
+    compile 'org.jprocesses:jProcesses:1.6.3'
     testCompile 'junit:junit:4.12'       
 }
 
