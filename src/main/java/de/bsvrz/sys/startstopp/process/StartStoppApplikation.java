@@ -33,7 +33,6 @@ import java.util.TimerTask;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
@@ -80,7 +79,7 @@ public class StartStoppApplikation extends Applikation {
 	}
 
 	private StartStoppInkarnation inkarnation;
-	private SystemProcess process = null;
+	private InkarnationsProzessIf process = null;
 
 	public String getReason() {
 		return reason;
@@ -313,7 +312,7 @@ public class StartStoppApplikation extends Applikation {
 
 	private void starteApplikation() {
 		updateStatus(Applikation.Status.GESTARTET);
-		process = new SystemProcess();
+		process = new InkarnationsProzess();
 		process.setInkarnationsName(inkarnation.getInkarnationsName());
 		process.setProgramm(inkarnation.getApplikation());
 		process.setProgrammArgumente(getApplikationsArgumente());
