@@ -154,7 +154,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 	private void notifyListener() {
 		synchronized (prozessListener) {
-			for (InkarnationsProzessListener l : (new ArrayList<>(prozessListener))) {
+			for (InkarnationsProzessListener l : prozessListener) {
 				l.statusChanged(status);
 			}
 		}
