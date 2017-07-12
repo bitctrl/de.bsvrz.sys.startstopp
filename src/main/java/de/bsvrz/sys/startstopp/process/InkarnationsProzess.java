@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jutils.jprocesses.model.ProcessInfo;
@@ -47,28 +48,40 @@ import de.bsvrz.sys.funclib.debug.Debug;
 public class InkarnationsProzess implements InkarnationsProzessIf {
 
 	private Debug logger = Debug.getLogger();
-	
+
 	private List<InkarnationsProzessListener> prozessListener = new ArrayList<>();
 
-	/* (non-Javadoc)
-	 * @see testproc.InkarnationsProzessIf#addProzessListener(testproc.InkarnationsProzessListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see testproc.InkarnationsProzessIf#addProzessListener(testproc.
+	 * InkarnationsProzessListener)
 	 */
 	@Override
 	public void addProzessListener(final InkarnationsProzessListener listener) {
-		prozessListener.add(listener);
+		synchronized (prozessListener) {
+			prozessListener.add(listener);
+		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see testproc.InkarnationsProzessIf#removeProzessListener(testproc.InkarnationsProzessListener)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see testproc.InkarnationsProzessIf#removeProzessListener(testproc.
+	 * InkarnationsProzessListener)
 	 */
 	@Override
 	public void removeProzessListener(final InkarnationsProzessListener listener) {
-		prozessListener.remove(listener);
+		synchronized (prozessListener) {
+			prozessListener.remove(listener);
+		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see testproc.InkarnationsProzessIf#setLogger(de.bsvrz.sys.funclib.debug.Debug)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see testproc.InkarnationsProzessIf#setLogger(de.bsvrz.sys.funclib.debug.
+	 * Debug)
 	 */
 	@Override
 	public void setLogger(Debug logger) {
@@ -104,7 +117,9 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 	private String programmArgumente;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see testproc.InkarnationsProzessIf#getLastExitCode()
 	 */
 	@Override
@@ -112,7 +127,9 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		return lastExitCode;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see testproc.InkarnationsProzessIf#getStartFehler()
 	 */
 	@Override
@@ -120,7 +137,9 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		return startFehler;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see testproc.InkarnationsProzessIf#getStatus()
 	 */
 	@Override
@@ -134,26 +153,30 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 	}
 
 	private void notifyListener() {
-		for( InkarnationsProzessListener l : prozessListener) {
-			l.statusChanged(status);
+		synchronized (prozessListener) {
+			for (InkarnationsProzessListener l : (new ArrayList<>(prozessListener))) {
+				l.statusChanged(status);
+			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see testproc.InkarnationsProzessIf#stopAusgabeUmlenkung()
 	 */
 	@Override
 	public void stopAusgabeUmlenkung() {
-		if(ausgabeUmlenkung != null) {
+		if (ausgabeUmlenkung != null) {
 			ausgabeUmlenkung.setRunning(false);
 		}
 	}
-	
+
 	/**
 	 * Interne Klasse zum Starten einer Inkarnation. Der Startvorgang wird als
 	 * eigener Thread ausgeführt um zeitliche Abhängigkeiten (wie sleeps) zu
 	 * berücksichtigen.
-	 */	
+	 */
 	private class InkarnationProcessThread extends Thread {
 
 		private static final int STARTFEHLER_LAUFZEIT_ERKENNUNG = 5;
@@ -176,21 +199,21 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		private void starteInkarnation() {
 			getLogger().fine("Starte Inkarnation '" + getInkarnationsName() + "'");
 			StringBuilder cmdLine = new StringBuilder();
-			
+
 			try {
 				cmdLine.append(getProgramm());
-				if(getProgrammArgumente() != null && getProgrammArgumente().length()>0) {
+				if (getProgrammArgumente() != null && getProgrammArgumente().length() > 0) {
 					cmdLine.append(" ");
 					cmdLine.append(getProgrammArgumente());
 				}
-				
+
 				process = ProzessStarter.start(cmdLine.toString());
 			} catch (IOException ioe) {
 				prozessStartFehler(ioe.getMessage());
 				return;
 			}
 			long startTime = System.currentTimeMillis();
-			
+
 			if (process == null) {
 				prozessStartFehler("Ursache unklar");
 			} else {
@@ -201,8 +224,8 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 				if (processInfo == null) {
 					getLogger().error("Prozessinfo kann nicht bestimmt werden!");
 				} else {
-					getLogger().fine(
-							"Inkarnation '" + getInkarnationsName() + "' gestartet (Pid: " + processInfo.getPid() + ")");
+					getLogger().fine("Inkarnation '" + getInkarnationsName() + "' gestartet (Pid: "
+							+ processInfo.getPid() + ")");
 				}
 
 				prozessGestartet(process, processInfo);
@@ -226,12 +249,13 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			try {
 				int exitCode = process.waitFor();
 				stoppAusgabeUmlenkung();
-				getLogger().fine("Prozess der Inkarnation '" + getInkarnationsName() + "' beendet mit Code: " + exitCode);
+				getLogger()
+						.fine("Prozess der Inkarnation '" + getInkarnationsName() + "' beendet mit Code: " + exitCode);
 				long endTime = System.currentTimeMillis();
-				
-				if((endTime - startTime) < (STARTFEHLER_LAUFZEIT_ERKENNUNG * 1000)) {
-					getLogger().fine("Prozess der Inkarnation '" + getInkarnationsName() + "' lief weniger als " +
-							STARTFEHLER_LAUFZEIT_ERKENNUNG + "s");
+
+				if ((endTime - startTime) < (STARTFEHLER_LAUFZEIT_ERKENNUNG * 1000)) {
+					getLogger().fine("Prozess der Inkarnation '" + getInkarnationsName() + "' lief weniger als "
+							+ STARTFEHLER_LAUFZEIT_ERKENNUNG + "s");
 					lastExitCode = exitCode;
 					prozessStartFehler(getProzessAusgabe());
 				} else {
@@ -248,12 +272,12 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			ausgabeUmlenkung.interrupt();
 		}
 	}
-	
+
 	/**
 	 * Interne Klasse zum Stoppen einer Inkarnation. Der Stoppvorgang wird als
 	 * eigener Thread ausgeführt um zeitliche Abhängigkeiten (wie sleeps) zu
 	 * berücksichtigen.
-	 */		
+	 */
 	private class InkarnationProcessStopperThread extends Thread {
 
 		/**
@@ -273,30 +297,30 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		 */
 		private void stoppeInkarnation() {
 			getLogger().fine("Stoppe Inkarnation '" + getInkarnationsName() + "'");
-			
+
 			// erster Versuch
 			if (process != null && process.isAlive()) {
 				process.destroy();
 			}
-			
-			if( waitStop(2)) {
+
+			if (waitStop(2)) {
 				return;
 			}
-			
+
 			// zweiter Versuch
 			if (process != null && process.isAlive()) {
 				process.destroyForcibly();
 			}
-			
-			if( waitStop(2)) {
+
+			if (waitStop(2)) {
 				return;
 			}
-			
+
 			// TODO: 3 Versuch mit kill??
-			
+
 			return;
 		}
-		
+
 		private boolean waitStop(int seconds) {
 			int i = (seconds * 1000) / 100;
 			while (getStatus() != InkarnationsProzessStatus.GESTOPPT && (i-- > 0)) {
@@ -322,24 +346,28 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		setStatus(InkarnationsProzessStatus.GESTOPPT);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see testproc.InkarnationsProzessIf#start()
 	 */
 	@Override
 	public void start() {
-		if(getProgramm() == null || getProgramm().length() == 0) {
+		if (getProgramm() == null || getProgramm().length() == 0) {
 			throw new IllegalStateException("Kein Programm versorgt");
 		}
-		
-		if(getInkarnationsName() == null || getInkarnationsName().length() == 0) {
+
+		if (getInkarnationsName() == null || getInkarnationsName().length() == 0) {
 			throw new IllegalStateException("Kein Inkarnationsname versorgt");
 		}
-		
+
 		InkarnationProcessThread inkarnationProcessThread = new InkarnationProcessThread();
 		inkarnationProcessThread.start();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see testproc.InkarnationsProzessIf#getProzessAusgabe()
 	 */
 	@Override
@@ -356,8 +384,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 				ausgaben.append(text);
 			}
 		} catch (IOException e) {
-			getLogger().config(
-					"Inkarnation '" + getInkarnationsName() + "': " + e.getMessage());
+			getLogger().config("Inkarnation '" + getInkarnationsName() + "': " + e.getMessage());
 		}
 
 		path = Paths.get(ausgabeUmlenkung.getStdErrFile().toURI());
@@ -386,7 +413,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		if (process == null || (process != null && !process.isAlive())) {
 			return;
 		}
-		
+
 		InkarnationProcessStopperThread inkarnationProcessThread = new InkarnationProcessStopperThread();
 		inkarnationProcessThread.start();
 	}
@@ -409,7 +436,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 	@Override
 	public void setProgrammArgumente(String args) {
 		this.programmArgumente = args;
-		
+
 	}
 
 	@Override
