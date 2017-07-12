@@ -239,4 +239,39 @@ public class TestInkarnationsProzess {
 		
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
 	}
+	
+	@Test
+	public final void testStartMitUmlaut() {	
+		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
+		inkarnationsProzess.setProgramm("java");
+		inkarnationsProzess.setProgrammArgumente("-cp target/test-classes de.bsvrz.sys.startstopp.process.TestInkarnation -üUmlaut");
+		inkarnationsProzess.setInkarnationsName("Bubu");
+		Object sync = new Object();
+		status = null;
+		inkarnationsProzess.start();
+		
+		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
+			
+			@Override
+			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
+				synchronized (sync ) {
+					System.out.println("Neuer Status: " + neuerStatus);
+					status = neuerStatus;
+					sync.notify();
+				}
+			}
+		});
+
+		synchronized (sync) {
+			try {
+				sync.wait(200000);
+			} catch (InterruptedException e) {
+				Assert.fail();
+			}
+		}
+		
+		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
+		
+		Assert.assertNotNull("Pid", inkarnationsProzess.getPid());
+	}
 }

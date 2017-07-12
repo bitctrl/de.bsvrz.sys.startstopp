@@ -150,4 +150,11 @@ public interface InkarnationsProzessIf {
 	 * @param args Programmargumente (Kommandozeile) 
 	 */
 	void setProgrammArgumente(String args);
+	
+	/**
+	 * Gibt die Pid des Prozesses zur&uuml;ck.
+	 * 
+	 * @return  die Pid des Prozesses, <code>null</code> wenn der Prozess nicht gefunden werden konnte 
+	 */
+	Integer getPid();
 }

@@ -448,4 +448,12 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 	public void setInkarnationsName(String command) {
 		inkarnation = command;
 	}
+
+	@Override
+	public Integer getPid() {
+		if(processInfo != null) {
+			return Integer.parseInt(processInfo.getPid());
+		}
+		return null;
+	}
 }
