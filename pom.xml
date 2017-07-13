@@ -561,8 +561,9 @@
 							<sourceHighlighter>coderay</sourceHighlighter>
 							<sourceDocumentName>swent.adoc</sourceDocumentName>
 							<attributes>
-								<pdf-stylesdir>.</pdf-stylesdir>
-								<pdf-style>../themes/nerz</pdf-style>
+								<pdf-fontsdir>../themes/fonts/</pdf-fontsdir>
+								<pdf-stylesdir>../themes/</pdf-stylesdir>
+								<pdf-style>nerz</pdf-style>
 								<icons>font</icons>
 								<pagenums />
 								<toc />
