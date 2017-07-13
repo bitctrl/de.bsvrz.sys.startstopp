@@ -1,10 +1,3 @@
-allprojects {
-    tasks.withType(Test) {
-       systemProperty "file.encoding", "UTF-8"
-    }
-}
-
-
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'jsonschema2pojo'
@@ -24,33 +17,50 @@ buildscript {
     classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:0.4.37'
     classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
     classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.4.0'
+    classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
+    classpath 'org.asciidoctor:asciidoctorj-diagram:1.5.4'
   }
 }
 
-dependencies {
-    gems 'rubygems:asciidoctor-diagram:1.5.4'
+asciidoctorj {
+    version = '1.5.4'
 }
 
-asciidoctor { 
-
-    dependsOn jrubyPrepare
+def asciidoctor_common = { 
     requires = ['asciidoctor-diagram']
-    gemPath = jrubyPrepare.outputDir
-    print("GemPath: " + gemPath)
-
     sourceDir = file('src/main/asciidoc/swent')
     sources {
         include 'swent.adoc'
     }
     outputDir "${buildDir}/docs"
     options doctype: 'book'
+    backends = ['pdf','html']
     attributes 'source-highlighter': 'coderay',
                 toc                 : 'left',
                 idprefix            : '',
                 idseparator         : '-'
 }
 
+task('pdf', type: org.asciidoctor.gradle.AsciidoctorTask) {
+      configure asciidoctor_common
+      backends = ['pdf'] 
+      attributes 'pdf-stylesdir'     : '.',
+                'pdf-style'         : '../themes/nerz',
+                'icons'             : 'font',
+                'pagenums'          : '',
+                'imagesoutdir'      : outputDir,
+                'imagesdir'         : outputDir
+}
 
+task('html', type: org.asciidoctor.gradle.AsciidoctorTask) {
+      configure asciidoctor_common
+      backends = ['html5'] 
+}
+
+asciidoctor {
+    dependsOn 'html'
+    dependsOn 'pdf'
+}
 
 jsonSchema2Pojo.targetPackage = 'de.bsvrz.sys.startstopp.api.jsonschema'
 
