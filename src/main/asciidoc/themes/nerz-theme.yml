@@ -1,12 +1,15 @@
 title_page:
   align: left
-  
-title_page_logo:  
+
+title_page_logo:
   image: image:images/bitctrl_logo.png[]
 
 page:
   layout: portrait
-  margin: [0.75in, 1in, 0.75in, 1in]
+  margin: [3cm, 2cm, 4cm, 2cm]
+  margin_inner: 30mm
+  margin_outer: 30mm
+
   size: A4
 base:
   font_color: #000000
@@ -44,3 +47,7 @@ caption:
   align: center
   font_color: #FF0000
   font_size: 10
+sidebar:
+  padding: [0, 0, 0, 13cm]
+  font_size: 8
+  background_color: transparent

@@ -28,10 +28,6 @@ asciidoctorj {
 
 def asciidoctor_common = { 
     requires = ['asciidoctor-diagram']
-    sourceDir = file('src/main/asciidoc/swent')
-    sources {
-        include 'swent.adoc'
-    }
     outputDir "${buildDir}/docs"
     options doctype: 'book'
     backends = ['pdf','html']
@@ -41,7 +37,11 @@ def asciidoctor_common = {
                 idseparator         : '-'
 }
 
-task('pdf', type: org.asciidoctor.gradle.AsciidoctorTask) {
+task('pdf_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
+      sourceDir = file('src/main/asciidoc/swent')
+      sources {
+          include 'swent.adoc'
+      }
       configure asciidoctor_common
       backends = ['pdf'] 
       attributes 'pdf-stylesdir'     : '.',
@@ -52,14 +52,44 @@ task('pdf', type: org.asciidoctor.gradle.AsciidoctorTask) {
                 'imagesdir'         : outputDir
 }
 
-task('html', type: org.asciidoctor.gradle.AsciidoctorTask) {
+task('html_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
+      sourceDir = file('src/main/asciidoc/swent')
+      sources {
+          include 'swent.adoc'
+      }
+      configure asciidoctor_common
+      backends = ['html5'] 
+}
+task('pdf_afo', type: org.asciidoctor.gradle.AsciidoctorTask) {
+      sourceDir = file('src/main/asciidoc/afo')
+      sources {
+          include 'afo.adoc'
+      }
+      configure asciidoctor_common
+      backends = ['pdf'] 
+      attributes 'pdf-stylesdir'     : '.',
+                'pdf-style'         : '../themes/nerz',
+                'icons'             : 'font',
+                'pagenums'          : '',
+                'imagesoutdir'      : outputDir,
+                'imagesdir'         : outputDir
+}
+
+task('html_afo', type: org.asciidoctor.gradle.AsciidoctorTask) {
+      sourceDir = file('src/main/asciidoc/afo')
+      sources {
+          include 'afo.adoc'
+      }
       configure asciidoctor_common
       backends = ['html5'] 
 }
 
+
 asciidoctor {
-    dependsOn 'html'
-    dependsOn 'pdf'
+    dependsOn 'html_swent'
+    dependsOn 'pdf_swent'
+    dependsOn 'html_afo'
+    dependsOn 'pdf_afo'
 }
 
 jsonSchema2Pojo.targetPackage = 'de.bsvrz.sys.startstopp.api.jsonschema'

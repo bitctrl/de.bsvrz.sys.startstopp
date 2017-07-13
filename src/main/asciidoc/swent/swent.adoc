@@ -4,6 +4,9 @@ v1.0, 2017-06-01
 :toc: left
 :imagesdir: images
 :homepage: http://bitctrl.de
+:encoding: utf-8
+:toclevel: 4
+:sectnums:
 
 include::overview.adoc[]
 
