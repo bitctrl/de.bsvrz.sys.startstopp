@@ -151,8 +151,7 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.setInkarnationsName("Bubu");
 		Object sync = new Object();
 		status = null;
-		inkarnationsProzess.start();
-		
+
 		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
 			
 			@Override
@@ -164,10 +163,11 @@ public class TestInkarnationsProzess {
 				}
 			}
 		});
+		inkarnationsProzess.start();
 
 		synchronized (sync) {
 			try {
-				sync.wait(2000);
+				sync.wait(6000);
 			} catch (InterruptedException e) {
 				Assert.fail();
 			}
@@ -196,7 +196,6 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.setInkarnationsName("Test");
 		Object sync = new Object();
 		status = null;
-		inkarnationsProzess.start();
 		
 		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
 			
@@ -209,10 +208,11 @@ public class TestInkarnationsProzess {
 				}
 			}
 		});
+		inkarnationsProzess.start();
 
 		synchronized (sync) {
 			try {
-				sync.wait(2000);
+				sync.wait(6000);
 			} catch (InterruptedException e) {
 				Assert.fail();
 			}
