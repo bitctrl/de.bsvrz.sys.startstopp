@@ -1,14 +1,17 @@
-tasks.withType(Test) {
-    systemProperty "file.encoding", "UTF-8"
+allprojects {
+    tasks.withType(Test) {
+       systemProperty "file.encoding", "UTF-8"
+    }
 }
 
-compileJava.options.encoding = 'UTF-8'
 
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'jsonschema2pojo'
 apply plugin: 'org.asciidoctor.convert'
 apply plugin: 'com.github.jruby-gradle.base' 
+
+compileJava.options.encoding = 'UTF-8'
 
 buildscript {
 
