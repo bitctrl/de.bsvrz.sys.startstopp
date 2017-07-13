@@ -1,3 +1,11 @@
+font:
+  catalog:
+    OpenSans:
+      normal: OpenSans-Regular.ttf
+      italic: OpenSans-Italic.ttf
+      bold: OpenSans-Bold.ttf
+      bold_italic: OpenSans-BoldItalic.ttf
+    
 title_page:
   align: left
 
@@ -9,9 +17,9 @@ page:
   margin: [3cm, 2cm, 4cm, 2cm]
   margin_inner: 30mm
   margin_outer: 30mm
-
   size: A4
 base:
+  font_family: OpenSans
   font_color: #000000
   line_height_length: 17
   line_height: $base_line_height_length / $base_font_size

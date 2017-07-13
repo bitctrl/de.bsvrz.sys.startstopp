@@ -1,11 +1,3 @@
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'jsonschema2pojo'
-apply plugin: 'org.asciidoctor.convert'
-apply plugin: 'com.github.jruby-gradle.base' 
-
-compileJava.options.encoding = 'UTF-8'
-
 buildscript {
 
   repositories {
@@ -22,16 +14,30 @@ buildscript {
   }
 }
 
+plugins {
+    id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'jsonschema2pojo'
+apply plugin: 'org.asciidoctor.convert'
+apply plugin: 'com.github.jruby-gradle.base' 
+
+compileJava.options.encoding = 'UTF-8'
+
 asciidoctorj {
-    version = '1.5.4'
+    version = '1.5.5'
 }
 
 def asciidoctor_common = { 
+	
     requires = ['asciidoctor-diagram']
     outputDir "${buildDir}/docs"
     options doctype: 'book'
     backends = ['pdf','html']
-    attributes 'source-highlighter': 'coderay',
+    attributes  'build-gradle': file('build.gradle'),
+    			'source-highlighter': 'coderay',
                 toc                 : 'left',
                 idprefix            : '',
                 idseparator         : '-'
@@ -44,12 +50,15 @@ task('pdf_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
       }
       configure asciidoctor_common
       backends = ['pdf'] 
-      attributes 'pdf-stylesdir'     : '.',
-                'pdf-style'         : '../themes/nerz',
+      attributes 'pdf-stylesdir'     : '../themes/',
+                'pdf-style'         : 'nerz',
+                'pdf-fontsdir'		: '../themes/fonts/',
                 'icons'             : 'font',
+                'setanchors'		: '',
                 'pagenums'          : '',
                 'imagesoutdir'      : outputDir,
-                'imagesdir'         : outputDir
+                'imagesdir'         : outputDir,
+                'docinfo1'			: ''
 }
 
 task('html_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
@@ -67,12 +76,15 @@ task('pdf_afo', type: org.asciidoctor.gradle.AsciidoctorTask) {
       }
       configure asciidoctor_common
       backends = ['pdf'] 
-      attributes 'pdf-stylesdir'     : '.',
-                'pdf-style'         : '../themes/nerz',
+      attributes 'pdf-stylesdir'     : '../themes/',
+                'pdf-style'         : 'nerz',
+                'pdf-fontsdir'		: '../themes/fonts/',
                 'icons'             : 'font',
+                'setanchors'		: '',
                 'pagenums'          : '',
                 'imagesoutdir'      : outputDir,
-                'imagesdir'         : outputDir
+                'imagesdir'         : outputDir,
+                'docinfo1'			: ''
 }
 
 task('html_afo', type: org.asciidoctor.gradle.AsciidoctorTask) {
