@@ -48,6 +48,7 @@ caption:
   font_color: #FF0000
   font_size: 10
 sidebar:
-  padding: [0, 0, 0, 13cm]
-  font_size: 8
-  background_color: transparent
+  align: center
+  padding: [0, 2cm, 0, 2cm]
+  font_size: 10
+  background_color: #fefefe

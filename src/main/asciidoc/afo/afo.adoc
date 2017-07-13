@@ -23,7 +23,6 @@ Dieses Dokument steht unter der Creative-Commons-Lizenz Namensnennung - Weiterga
 gleichen Bedingungen 4.0 International. Um eine Kopie dieser Lizenz zu sehen, besuchen Sie
 http://creativecommons.org/licenses/by-sa/4.0/[].
 
-
 === Änderungsübersicht
 
 .Dokumentenverteiler
@@ -79,39 +78,58 @@ http://creativecommons.org/licenses/by-sa/4.0/[].
 
 |===
 
-== Abkürzungsverzeichnis
+=== Abkürzungsverzeichnis
 
 Siehe [AbkBSVRZ].
-Darüber hinaus werden folgende Abkürzungen verwendet:
-* BASt Bundesanstalt für Straßenwesen
-* BSVRZ Basis System VRZ
-* ERZ Einheitliche Rechnerzentralensoftware
-* NERZ Nutzer der ERZ, siehe auch www.nerz-ev.de
 
-== Definitionen
+Darüber hinaus werden folgende Abkürzungen verwendet:
+
+|=======
+| BASt  | Bundesanstalt für Straßenwesen             |
+| BSVRZ | Basis System VRZ                           |
+| ERZ   | Einheitliche Rechnerzentralensoftware      |
+| NERZ  | Nutzer der ERZ, siehe auch www.nerz-ev.de  |
+|=======
+
+=== Definitionen
 
 Siehe [GlossarBSVRZ].
 Darüber hinaus werden folgende Definitionen verwendet:
 --- ---
 
-== Referenzierte Dokumente / URLs
+=== Referenzierte Dokumente / URLs
 
 Die folgende Tabelle listet die im Dokument verwendeten Referenzen auf. Zum aktuellen Zeitpunkt sind die folgenden Archiv-URLs vorhanden:
-· NERZ-Archiv: http://www.nerz-ev.de/  Dokumente und Software
-[VMOD97] Der Bundesminister des Inneren, Entwicklungsstandard für ITSysteme
-des Bundes Vorgehensmodell, Juni 1997, KBSt,
-Koordinations- und Beratungsstelle der Bundesregierung für
-Informationstechnik in der Bundesverwaltung.
-[AbkBSVRZ] Abkürzungsverzeichnis BSVRZ Gesamt
-NERZ-Archiv: Abk_BSVRZ-Gesamt_FREI_V4.0_D2006-08-15.doc
-[GlossarBSVRZ] Glossar BSVRZ Gesamt
-NERZ-Archiv: SE-02.0002-Glos-0.4__Glossar__global__.pdf
-[AFoBSVRZGesamt] Anwenderforderungen des BSVRZ, ursprüngliche Gesamtfassung
-NERZ-Archiv: AFo_BSVRZ-Gesamt_FREI_V6.0_D2009-11-03.doc
-[SysArcBSVRZ] Systemarchitektur des BSVRZ
-NERZ-Archiv: SysArc_BSVRZ-Gesamt_FREI_V6.0_D2009-11-19.doc
-[AFoERZGlobal] Übergeordnete Anwenderforderungen zur ERZ
-NERZ-Archiv: AFo_ERZ-Global_FREI_V7.0_D2016-03-31.doc
+NERZ-Archiv: http://www.nerz-ev.de/ -> Dokumente und Software
+
+[cols="2*", options="autowidth"]
+|=======
+| [VMOD97] 
+| Der Bundesminister des Inneren, Entwicklungsstandard für ITSysteme des Bundes Vorgehensmodell, Juni 1997, KBSt,
+  Koordinations- und Beratungsstelle der Bundesregierung für
+  Informationstechnik in der Bundesverwaltung.
+
+| [AbkBSVRZ] 
+| Abkürzungsverzeichnis BSVRZ Gesamt
+  NERZ-Archiv: Abk_BSVRZ-Gesamt_FREI_V4.0_D2006-08-15.doc
+
+| [GlossarBSVRZ] 
+| Glossar BSVRZ Gesamt
+  NERZ-Archiv: SE-02.0002-Glos-0.4__Glossar__global__.pdf
+
+| [AFoBSVRZGesamt] 
+| Anwenderforderungen des BSVRZ, ursprüngliche Gesamtfassung
+  NERZ-Archiv: AFo_BSVRZ-Gesamt_FREI_V6.0_D2009-11-03.doc
+
+| [SysArcBSVRZ] 
+| Systemarchitektur des BSVRZ
+  NERZ-Archiv: SysArc_BSVRZ-Gesamt_FREI_V6.0_D2009-11-19.doc
+
+| [AFoERZGlobal] 
+| Übergeordnete Anwenderforderungen zur ERZ
+  NERZ-Archiv: AFo_ERZ-Global_FREI_V7.0_D2016-03-31.doc
+
+|=======
 
 == Zweck des Dokuments
 
@@ -124,26 +142,31 @@ Siehe [AFoERZGlobal]
 
 == IT-Sicherheitsziel
 
-Die Anwenderforderung GLO-1 (Systemverfügbarkeit), IT-S-1 (Kommunikation getrennter
-Systemkomponenten) und IT-S-2 (Zugriff auf Systemteile) aus dem Dokument [AFoERZGlobal] gilt für die in diesem Dokument beschriebenen Funktionen und ist entsprechend umzusetzen.
+****
+*GLO-1, IT-S-1 und IT-S-2* IT-Sicherheitsziel
+****
+
+Die Anwenderforderung *GLO-1* (Systemverfügbarkeit), *IT-S-1* (Kommunikation getrennter
+Systemkomponenten) und *IT-S-2* (Zugriff auf Systemteile) aus dem Dokument [AFoERZGlobal] gilt für die in diesem Dokument beschriebenen Funktionen und ist entsprechend umzusetzen.
 
 == Bedrohungs- und Risikoanalyse
 
-Die Anforderungen IT-S-3 bis IT-S-8 aus dem Dokument [AFoERZGlobal] gelten auch für die in
+****
+*IT-S-3 bis ITS-8* Bedrohung und Risiko
+****
+
+Die Anforderungen *IT-S-3* bis *IT-S-8* aus dem Dokument [AFoERZGlobal] gelten auch für die in
 diesem Dokument beschriebenen Funktionen.
 
 == IT-Sicherheit
 
-Die Anwenderforderung GLO-2 (Zugriffschutz) und IT-S-7 (Unberechtigter Zugriff auf
+****
+*GLO-2* und *IT-S-7* IT-Sicherheit
+****
+
+Die Anwenderforderung *GLO-2* (Zugriffschutz) und *IT-S-7* (Unberechtigter Zugriff auf
 Komponenten) aus dem Dokument [AFoERZGlobal] gilt für die in diesem Dokument beschriebenen
 Funktionen und ist entsprechend umzusetzen
-GLO-1, IT-S-1 und IT-S-2
-IT-Sicherheitsziel
-IT-S-3 bis ITS-8
-Bedrohung und Risiko
-GLO-2 und
-IT-S-7
-IT-Sicherheit
 
 == Fachliche Anforderungen
 
@@ -184,24 +207,27 @@ eingestuft
 
 ==== Mensch-Maschine-Schnittstelle
 
+****
+*BuV-1,BuV-2,BuV-4,BuV-6,BuV-12* Allgemeine Anforderungen Bedienung
+****
+
 Das spezifizierte Teilsystem ist ein Serversystem bzw. Serverprozess. Es verfügt über eine
 Schnittstelle zum Anwender, über die der Start-/Stopp-Vorgang parametriert und gesteuert werden
 kann. Die grundsätzlichen Anforderungen BuV-1 (Zugangsschutz) (teilweise), BuV-2
 (Bedienerfreundlichkeit), BuV-4 (Fehlermeldungen), BuV-6 (Fenster) und BuV-12 (Dialoge) aus
 [AFoERZGlobal] gelten auch für diese Schnittstelle. Die detaillierten Anforderungen an diese
 Schnittstelle sind in Kapitel 6.6.2 beschrieben.
-BuV-1,
-BuV-2,
-BuV-4,
-BuV-6,
-BuV-12
-Allgemeine
-Anforderungen
-Bedienung
 
 ==== Externe Kommunikation
 
-Die geforderten Funktionen haben keine externen Schnittstellen im Sinne der [SysArcBSVRZ] footnote:[Die Aufteilung der ursprünglichen Anwenderforderungen [AFoBSVRZGesamt] in einzelne (Teil-) Anwenderforderungen erfolgte im Rahmen der Zertifizierung der ERZ-Software, um eine gewährleisten. Zu diesem Zeitpunkt war die Systemarchitektur bereits vorhanden, die Aufteilung der ursprünglichen AFo-Gesamtfassung erfolgte entsprechend der Systemarchitektur. Aus diesem Grund wird hier auf die [SysArcBSVRZ] verwiesen, da sowohl im Rahmen der AFo-Aufteilung als auch für zukünftige Erweiterungen des Systems die dort festgelegte Systemarchitektur vorgeben ist.].
+Die geforderten Funktionen haben keine externen Schnittstellen im Sinne der [SysArcBSVRZ] 
+
+NOTE: Die Aufteilung der ursprünglichen Anwenderforderungen [AFoBSVRZGesamt] in
+      einzelne (Teil-) Anwenderforderungen erfolgte im Rahmen der Zertifizierung der ERZ-Software, um eine gewährleisten. 
+      Zu diesem Zeitpunkt war die Systemarchitektur bereits vorhanden, die Aufteilung der ursprünglichen AFo-Gesamtfassung 
+      erfolgte entsprechend der Systemarchitektur. Aus diesem Grund wird hier auf die [SysArcBSVRZ] verwiesen,
+      da sowohl im Rahmen der AFo-Aufteilung als auch für zukünftige Erweiterungen des Systems die dort 
+      festgelegte Systemarchitektur vorgeben ist.
 
 === Beschreibung der Funktionalität
 
@@ -210,20 +236,17 @@ Die geforderten Funktionen haben keine externen Schnittstellen im Sinne der [Sys
 ****
 *Sys-5* Start- und Stopp von Applikationen
 ****
-Der koordinierte Start/Stopp von Applikationen bzw. Prozessen mit den jeweiligen
-Aufrufparametern ist durch eine Applikation zu realisieren.
+
+*Der koordinierte Start/Stopp von Applikationen bzw. Prozessen mit den jeweiligen Aufrufparametern ist durch eine Applikation zu realisieren.*
 
 ****
 *Sys-StSt-1* Zentrale Konfigurationsdatei
 ****
-Die zum Starten bzw. Stoppen benötigten Informationen sind in einer zentralen
-plattformunabhängigen editierbaren Konfigurationsdatei zu sichern, die von der Start/Stopp-
-Applikation in der Initialisierungsphase ausgewertet wird. Die Informationen für das Starten und
-Stoppen von Applikationen werden je Rechner in einer xml-Datei „startstopp.xml“
-gespeichert. Für jede Applikation wird dort ein Datensatz angelegt, der die Informationen
-beschreibt. Durch die Verwendung eines geeigneten Zeichensatzes (z. B. UTF-8) ist sicher zu
-stellen, dass Start/Stopp unabhängig vom eingesetzten Betriebssystem, auch über
-Rechnergrenzen hinweg, arbeitet.
+*Die zum Starten bzw. Stoppen benötigten Informationen sind in einer zentralen plattformunabhängigen editierbaren Konfigurationsdatei zu sichern*,
+die von der Start/Stopp-Applikation in der Initialisierungsphase ausgewertet wird. *Die Informationen für das Starten und Stoppen von Applikationen 
+werden je Rechner in einer xml-Datei „startstopp.xml“ gespeichert.* Für jede Applikation wird dort ein Datensatz angelegt, der die Informationen
+beschreibt. *Durch die Verwendung eines geeigneten Zeichensatzes (z. B. UTF-8) ist sicher zu stellen, dass Start/Stopp unabhängig vom eingesetzten Betriebssystem, auch über
+Rechnergrenzen hinweg, arbeitet.*
 
 ****
 *Sys-StSt-2* Aufrufparameter
@@ -246,21 +269,13 @@ Informationen, die für alle Applikationen gelten:
 ****
 *Sys-StSt-4* Definition Kernsystem
 ****
-* Definition eines Kernsystems, welches laufen muss, bevor alle anderen Applikationen
-gestartet werden: Die Namen der zum Kernsystem gehörigen Applikationen werden in der
-Reihenfolge aufgeführt, in der sie gestartet werden müssen; evtl. definierte Start- bzw.
-Stoppabhängigkeiten werden ignoriert. Die Angabe eines Kernsystems ist optional.
+* Definition eines Kernsystems, welches laufen muss, bevor alle anderen Applikationen gestartet werden: Die Namen der zum Kernsystem gehörigen Applikationen werden in der Reihenfolge aufgeführt, in der sie gestartet werden müssen; evtl. definierte Start- bzw. Stoppabhängigkeiten werden ignoriert. Die Angabe eines Kernsystems ist optional.
 
 ****
 *Sys-StSt-5* Makros Aufrufparameter
 ****
 
-* Makros für Aufrufparameter. Diese Zeichenketten können in der Definition der
-Aufrufparameter im applikationsspezifischen Teil verwendet werden. Üblicherweise wird man
-hiermit Parameter zusammenfassen, die bei mehreren Applikationen benutzt werden. Ein
-Makro erhält einen Namen und einen Wert (= beliebige Zeichenkette). Bereits definierte Makros
-können ebenfalls verwendet werden. Zur Verwendung des Makros ist dessen Name eingebettet
-in %...% einzutragen.
+* Makros für Aufrufparameter. Diese Zeichenketten können in der Definition der Aufrufparameter im applikationsspezifischen Teil verwendet werden. Üblicherweise wird man hiermit Parameter zusammenfassen, die bei mehreren Applikationen benutzt werden. Ein Makro erhält einen Namen und einen Wert (= beliebige Zeichenkette). Bereits definierte Makros können ebenfalls verwendet werden. Zur Verwendung des Makros ist dessen Name eingebettet in %...% einzutragen.
 
 ****
 *Sys-StSt-6* Liste Rechner
@@ -588,10 +603,10 @@ abzusetzen.
 *Sys-StSt-39 (TSys-9)* Betriebsmeldung beim Starten oder Stoppen
 ****
 
-----
 Start/Stopp muss eine Betriebsmeldung absetzen, aus der hervorgeht, dass eine
 Applikation gestartet oder gestoppt wurde. In der Betriebsmeldung muss der zugehörige
 Zeitstempel enthalten sein.
+----
 Applikation KEx TLS gestartet. [Sys-StSt-St01]
 Applikation KEx TLS gestoppt. [Sys-StSt-St02]
 Applikationskennung Start/Stopp
@@ -922,8 +937,10 @@ Darüber hinaus gehende Anforderungen an die Qualität werden nicht gestellt.
 
 ==== Programmiersprache
 
-Als Standardprogrammiersprache ist Java 8 oder höher footnote:[Es ist in Abstimmung mit dem AG jeweils die im NERZ Systemen aktuell eingesetzte Version zu verwenden. Dies kann eine höhere Version als die aktuell eingesetzte Version Java 8. sein, es
-muss aber nicht immer die letzte aktuell verfügbare Version sein.] zu verwenden.
+Als Standardprogrammiersprache ist Java 8 oder höher zu verwenden.
+NOTE: Es ist in Abstimmung mit dem AG jeweils die im NERZ Systemen aktuell eingesetzte 
+      Version zu verwenden. Dies kann eine höhere Version als die aktuell eingesetzte Version Java 8. sein, es
+      muss aber nicht immer die letzte aktuell verfügbare Version sein.
 
 === Organisatorische Randbedingungen
 
