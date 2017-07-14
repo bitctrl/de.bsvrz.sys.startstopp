@@ -1,6 +1,7 @@
 == StartStopp-Applikation
 
-Die Applikation
+Die StartStopp-Applikation setzt sich aus den unten dargestellten Teilmodulen
+zusammen.
 
 [ditaa, "startstopp_module"]
 ----
@@ -20,6 +21,23 @@ DAF-API | | \-------------------/       |    |                           | |
         | \--------------------------------------------------------------/ |
         \------------------------------------------------------------------/
 ----
+
+* *Skriptverwaltung:* verwaltet die zentrale Skriptdatei mit der die Konfiguration des 
+           Datenverteilersystem beschrieben wird. Außerdem realisiert das Modul die 
+           Funktionen zur Prüfung der Konfiguration, zur Versionierung und zur Bereitstellung
+           der interpretierten Konfiguration für die Prozessverwaltung. 
+* *Prozessverwaltung:* verwaltet die im konfigurierten System vorgesehenen Prozeßinkarnationen
+           und deren Status und führt die Operationen zum Starten und Beenden der erforderlichen
+           Betriebssystemprozesse aus. Das Modul setzt auch die geforderte Bahandlung von 
+           Fehlern bei den oben genannten Operationen um.
+* *DAV-Kommunikation:* verwaltet den Zugriff auf das zugeordnete Datenverteilersystem. Das Modul
+           dient einerseits der Publikation des aktuellen Zustands des Startstopp-Systems und wertet
+           andererseits die über den Datenverteiler selbst publizierten Informationen zu Applikationen
+           am Datenverteiler aus.
+* *Nutzerschnittstelle:* erlaubt den Zugriff auf die SWE von außen. Über die Schnittstelle kann
+           unabhängig vom Datenverteiler der Zustand der von StartStopp verwalteten Inkarnationen
+           abgerufen werden. Außerdem bietet die Schnittstelle Funktionen zum Steuern der einzelnen
+           Inkarnationen oder der gesamten Konfiguration des Datenverteiler-Systems. 
 
 === Startparameter
 
@@ -45,6 +63,10 @@ DAF-API | | \-------------------/       |    |                           | |
 
 [plantuml, "init_startstopp"]
 ----
+
+skinparam componentstyle uml2
+skinparam monochrome true 
+
 title Initialisierung der StartStopp-Applikation \n
 
 start

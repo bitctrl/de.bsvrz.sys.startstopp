@@ -1,5 +1,7 @@
 == Skriptverwaltung
 
+=== Aufbau und Grundfunktion
+
 Das Modul Skriptverwaltung hält das aktuell von der StartStopp-Applikation
 verwendete Skript.
 
@@ -23,6 +25,9 @@ verwendet werden.
 
 [plantuml, "skript_verwaltung"]
 ----
+
+skinparam componentstyle uml2
+skinparam monochrome true
 
 title Initialisierung eines StartStopp-Skripts \n
 
@@ -50,3 +55,111 @@ Um ein neues oder geändertes Skript zu aktivieren, muss dieses über die
 StartStopp-API an StartStopp gesendet werden. Dort werden die oben genannten
 Prüfungen ausgeführt. Im Erfolgsfall wird das Skript versioniert und die
 Änderungen an die Prozessverwaltung weitergereicht.
+
+=== Versionierung
+
+Eine von StartStopp zu verwendende Konfigurationsdatei muss versioniert
+werden. Versionieren bedeutet hier, der Inhalt der Konfigurationsdatei wurde
+geprüft, enthält die erfoderlichen Metadaten.
+Die Sicherstellung der Versionierung erfolgt über den Eintrag der Versionsnummer
+des Skriptes in der Skriptdatei selbst in Kombination mit einer Checksumme 
+der Konfigurationsdatei.
+
+Es sind hier zwei Fälle zu unterscheiden:
+
+* Die Konfigurationsdatei wurde über die Schnittstelle der aktiven StartStopp-Applikation
+  an die SWE versendet und dort geprüft und aktiviert. Damit sollte eine konsistente
+  Konfiguration entstehen, die auch nach einem System-Neustart verwendbar ist.
+* die Konfigurationsdatei wurde händisch manipuliert. Im laufenden Betrieb hatr das keine
+  Auswirkungen auf das System. Nach einem Neustart wird die neue Konfiguration auf Grund 
+  der geänderten Checksumme als ungültig erkannt, was eine abschließende Versionierung 
+  und Aktivierung über die Nutzerschnittstelle erforderlich macht.
+
+Die Checksumme sowie die zugehörigen Versionen und Versionsinformationen werden in
+einer speziellen Verwaltungsdatei hinterlegt. Verwendet wird eine JSON-Datei mit folgendem Schema:
+
+[source,json]
+----
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"type": "object",
+	"properties": {
+		"name": { "type": "string" },
+		"version": { "type": "string" },
+		"erstelltDurch": { "type": "string" },
+		"aenderungsGrund": { "type": "string" },
+		"pruefsumme": { "type": "number" }
+	},
+	"required": [
+		"version",
+		"erstelltDurch",
+		"aenderungsGrund",
+		"pruefsumme"
+	]
+}
+----
+
+Enthalten sind die Attribute
+* *Version:* die Versionsnummer des Skripts. Als Versionsnummer wird der Zeitpunkt 
+   der erfolgreichen Versionierung verwendet, da die keine weitergehende Bedeutung 
+   und Semantik für diese Angabe erfoderlich ist.
+* *Name des Erstellers:* zur Nachvollziehbarkeit des Veranlassers einer Änderung.
+* *Grund der Änderung:* für die Dokumentation der Notwendigkeit der Änderung.
+* *Prüfsumme:* die von StartStopp gebildete Prüfsumme zur Sicherung der Dateien
+   gegen Manipulation von außen.
+* *Name:* ein optionaler Name für die Konfiguration.
+
+Bei der Versionierung über die StartStopp-API werden die Informationen zu Name,
+Ersteller und Änderungsgrund mit übertragen und mit den übrigen Informationen
+in der Konfigurationsdatei und der Versionsdatei aktualisiert.
+
+NOTE: Die bisher verwendeten historischen StartStopp-Konfigurationen werden nicht 
+      übernommen und konvertiert.
+
+=== Inhalt der Konfiguration
+
+NOTE: TODO Inhalt beschreiben
+
+=== Bereitstellung der Konfiguration
+
+Die Skriptverwaltung liefert das geladene Skript als geprüftes und korrekt
+versioniertes Skript an die Prozessverwaltung aus, um die definierten Inkarnationen
+für Software-Einheiten zu instantiieren und die entsprechenden Operationen
+zum Start der Betriebssystemprozesse auszuführen.
+
+Wenn kein gültiges Konfigurationsfile geladen wedren konnte, wird die Prozessverwaltung
+nicht versorgt, d.h. es werden keine Prozesse gestartet. Das Skript ist über die 
+StartStopp-API abrufbar und kann mit Hilfe eines geeigneten Clients geladen, 
+nöglicherweise korrigiert und abschließend zur Versionierung und Aktivierung an 
+StartStopp übergeben werden.
+
+=== Prüfung der Konfiguration
+
+==== Prüfung der Versionierung
+
+Die Versionierung wird nur für das initial geladene Skript ausgeführt, dazu werden
+die oben genannten Informationen ausgewertet. Eine Änderung der Konfigurationsdatei
+im laufenden Betrieb hat keine Auswirkungen.
+
+==== Prüfung auf zirkuläre Abhängigkeiten
+
+Innerhalb der Konfigurationsdatei werden folgende potentiellen zirkulären
+Abhängigkeiten geprüft:
+
+* zirkuläre Verwendung von Makrodefinitionen in anderen Makrodefinitionen
+* zirkuläre Abhängigkeiten von Start- und Stopp-Bedingungen
+
+NOTE: Bei der Auswertung der Zirkularität von Start- oder Stopp werden nur lokale
+      Regeln betrachtet, da die Konfigurationen von StartStopp-Instanzen auf 
+      entfernten Rechnern zum Zeitpunkt der Prüfung für die lokale StartStopp-Applikation 
+      nicht zur Verfügung stehen. Im realen Betrieb würde lokal eine Blockierung
+      der jeweils betroffenen Inkarnationen bestehen bleiben, die durch den 
+      Anwender durch die Anpassung einer der beiden Konfigurationen aufgelöst werden
+      muss.
+
+==== Prüfung auf Vollständigkeit
+
+NOTE: TODO Inhalt beschreiben
+   
+
+

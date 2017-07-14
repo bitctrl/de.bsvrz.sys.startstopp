@@ -85,12 +85,21 @@ Das gesendete Skript wird geprüft, versioniert und aktiviert.
 
 Liefert den Status des aktuell von StartStopp geladenen Skripts.
 
-
 ### GET
 
 + Response 200 (application/json)
 
    + Attributes(StartStoppSkriptStatus)
+
+## Versionierte Skripte [/ststapi/v1/skripte/versionen]
+
+Liefert eine Liste der Informationen versionierten Skripten
+
+### GET
+
++ Response 200 (application/json)
+
+   + Attributes(array[StartStoppVersion], fixed-type)
 
 
 # Group Applikation
@@ -338,11 +347,15 @@ Alle bei StartStopp definierten Rechner
   + erstelltAm (string)
   + erstelltDurch (string)
   + versionsNummer (string)
+  + name (string)
 
 ## VersionierungsRequest
 
++ name (string)
 + aenderungsgrund (string, required)
 + skript (StartStoppSkript, required)
++ veranlasser (string, required)
++ passwort (string, required)
 
 ## Applikation (object)
 
@@ -359,3 +372,11 @@ Alle bei StartStopp definierten Rechner
   + initialisiert (string)
   + stoppenwarten (string)
   + gestoppt (string)
+  
+## StartStoppVersion (object)
+
++ name (string)
++ version (string, required)
++ erstelltDurch (string, required)
++ aenderungsGrund (string, required)
++ pruefsumme( number, required)
