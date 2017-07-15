@@ -79,24 +79,9 @@ Die Checksumme sowie die zugehörigen Versionen und Versionsinformationen werden
 einer speziellen Verwaltungsdatei hinterlegt. Verwendet wird eine JSON-Datei mit folgendem Schema:
 
 [source,json]
+.Definition einer Version der StartStoppKonfiguration
 ----
-{
-	"$schema": "http://json-schema.org/draft-04/schema#",
-	"type": "object",
-	"properties": {
-		"name": { "type": "string" },
-		"version": { "type": "string" },
-		"erstelltDurch": { "type": "string" },
-		"aenderungsGrund": { "type": "string" },
-		"pruefsumme": { "type": "number" }
-	},
-	"required": [
-		"version",
-		"erstelltDurch",
-		"aenderungsGrund",
-		"pruefsumme"
-	]
-}
+include::../../resources/json/startStoppVersion.json[]
 ----
 
 Enthalten sind die Attribute
@@ -118,7 +103,115 @@ NOTE: Die bisher verwendeten historischen StartStopp-Konfigurationen werden nich
 
 === Inhalt der Konfiguration
 
-NOTE: TODO Inhalt beschreiben
+==== Grundstruktur einer Konfiguration
+
+Eine StartStopp-Konfiguration wird ein einem JSON-File definiert. Das Schema ist im folgenden
+dargestellt.
+
+[source,json]
+.Schema zur Definition eines StartStoppSkripts
+----
+include::../../resources/json/startStoppSkript.json[]
+----
+
+Die einzelnen Bestandteile sind:
+
+* *Metadaten* mit der Beschreibung der Versionierungsinformationen. Die Versionierungsinformationen sind 
+   optional, da die Struktur auch zum Versand über die StartStopp-API versehen wird. In einem versioeniertem
+   Skript sind die Metadaten wie oben bereits beschrieben befüllt. Die Befüllung der Daten und die
+   Prüfung übernimmt die StartStopp-Applikation selbst.
+* *Global* der Abschnitt enthält informationen, die für das gesamte Skript gültig sind
+* *Inkarnationen* ist die Liste der von der StartStopp-SWE zu verwaltenden Applikations-Inkarnationen.
+
+==== Globale Daten
+
+===== Allgemeines
+
+Die Definition der globalen Daten umfasst Einträge, die das Verhalten der SWE als ganzes bestimmen und
+Einträge mit  Definitionen die für die Beschreibung der einzelnen Inkarnationen wiederverwendet werden
+sollen.
+
+===== Kernsystem 
+
+Der Abschnitt enthält eine Liste der Inkarnationen, die logisch das Kernsystem auf dem lokalen Rechner bilden.
+
+[source,json]
+.Definition eines Elements des Kernsystems
+----
+include::../../resources/json/kernSystem.json[]
+----
+
+Die zum Kernsystem gehörenden Inkarnationen werden beim Start und beim Beenden gesondert behandelt und
+bilden implizit eine Start- bzw. Stoppbedingung für alle anderen Inkarnationen der Konfigiration.
+
+Ein Eintrag im Kernsystem wird durch den Inkarnationsname, der einem der Inkarnationsnamen in der im folgenden
+beschriebenen Liste der Inkarnationen entsprechen muss, und dem Attribut "mitInkarnationsName" beschrieben.
+
+Allen von StartStopp ausgeführten Applikationen wird standardmäßig als Startparameter der Inkarnationsname aus
+der StartStopp-Konfiguration mit ünergeben. Für die Komponenten des Kernsystems wird die Übergabe des Parameters
+unterdrückt, weil einige Datenverteiler-Komponenten, insbesondere der Datenverteiler selbst und die Konfiguration
+diesen Parameter nicht unterstützen.
+
+==== Makrodefinitionen
+
+Dieser Teil der globalen Daten enthält eine Liste mit Schlüssel-Wert-Paaren, die als Makro an anderen
+Stellen der Konfiguration oder zur Bildung komplexerer Makrodefinitionen eingesetzt werden können.
+
+[source,json]
+.Definition eines Makros
+----
+include::../../resources/json/makroDefinition.json[]
+----
+
+Die Makros werden von StartStopp expandiert und in dieder Form an die Prozeßverwaltung weitergereicht.
+Potentielle zyklische Makrodefinitionen werden vor der Versionierung eines StartStopp-Skripts geprüft
+und verhindern gegebenenfalls die Versionierung.
+
+==== Zugang zum Datenverteiler
+
+Die StartStopp-Applikation läuft zwar unabhängig von einem Datenverteiler-System, da dieser ja erst von der 
+SWE selbst gestartet wird. Zur Laufzeit werden jedoch Informationen aus der StartStopp-Applikation über einen
+zugeordneten Datenverteiler publiziert. Der Abschnitt beschreibt die für die Hersetllung der Datenverteilerverbindung
+notwendigen Zugangsdaten.
+
+[source,json]
+.Zugangsdaten zum Zieldatenverteiler
+----
+include::../../resources/json/zugangDav.json[]
+----
+
+Die Herstellung der Verbindung wird implizit auch als zusätzliche Bedingung für ein gestartetes Kernsystem gewertet.
+Das bedeutet, dass erst nach der Herstellung der Datenverteilerverbindung Applikationen gestartet werden, die
+nicht Bestandteil des oben definierten Kernsystems sind.
+
+==== Rechner
+
+Der Abschnitt Rechner enthält die Deifnition von anderen Datenverteilersystemen, die innerhalb con Start- und Stoppbedingungen
+von Inkarnationen der Konfigiration referenziert werden können.
+
+[source,json]
+.Definition eines Rechners
+----
+include::../../resources/json/rechner.json[]
+----
+
+Die StartStopp-SWE startet nur lokale Prozesse. Die hier getroffenen Angaben sind nur dazu erforderlich, um der
+StartStopp-SWE den Zugriff auf einen entfernten Rechner zu ermöglichen, weil eigene Inkarnationen von Inkarnationen
+auf dem entfernten Rechner abhängig sind.
+
+==== USV
+
+Die optinale Definition einer USV kann von der StartStopp-SWE genutzt werden, um das System im Falle eines
+Stromausfalles definiert beenden zu können.
+
+[source,json]
+.Definition der USV
+----
+include::../../resources/json/usv.json[]
+----
+
+Angegeben wird hier die PID eines USV-Objekts innerhalb des zugeordneten Datenverteilersystems, dass die notwendigen
+Informationen für den Zustand der Stromversorgung bereitstellt.
 
 === Bereitstellung der Konfiguration
 
@@ -159,7 +252,14 @@ NOTE: Bei der Auswertung der Zirkularität von Start- oder Stopp werden nur loka
 
 ==== Prüfung auf Vollständigkeit
 
-NOTE: TODO Inhalt beschreiben
-   
+Die StartStopp-Konfiguration wird inhaltlich weitestgehend auf Vollstänigkeit geprüft. Das umfasst im Wesentlichen
+die Punkte:
+
+* Angabe aller per JSON-Schema erforderlichen Attribute der Konfigurationsdatei
+* Vollständige Definition des Datenverteilerzugangs
+* vollständige Auflösbarkeit aller Makros
+* Korrekte Angabe aller Daten für die Ausführung der Inkarnationen, z.B. Zeitangaben bei Intervallstart
+* Verfügbarkeit aller Rechnerdefinitionen von Rechnern, die in Start- oder Stoppbedingungen referenziert werden
+
 
 

@@ -1,11 +1,13 @@
 == Prozessverwaltung
 
+=== Grundfunktionalität
+
 Die Prozessverwaltung liest das von der Skriptverwaltung bereitgestellte
 StartStopp-Skript. Wenn ein gültiges Skript zur Verfügung steht, werden für die
 definierten Inkarnationen Applikationen erzeugt und entsprechend den
 Abhängigkeiten und den Regeln ausgeführt.
 
-Die Applikationen werden als individuelle Threads ausgeführt und passen ihren
+Die Applikationen werden als individuelle Instanzen ausgeführt und passen ihren
 Status entsprechend den Bedingungen und den Rückmeldungen aus dem Betriebssystem
 an.
 
