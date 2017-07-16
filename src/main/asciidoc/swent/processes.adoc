@@ -34,6 +34,10 @@ Folgende Statuswerte sind für eine Applikation vorgesehen:
 
 [plantuml, "applikations_status"]
 ----
+
+skinparam componentstyle uml2
+skinparam monochrome true
+
 title Zustandsdiagramm für Applikationen in StartStopp \n
 
 [*] --> INSTALLIERT
@@ -56,3 +60,20 @@ note right of STARTENWARTEN
 end note
 
 ----
+
+=== Initialisierung
+
+Die Prozessverwaltung greift auf die in der von der Skrtipverwaltung übergebene Liste der definierten Inkarnationen
+zurück und legt für jede Inkarnation eine Instanz an. Der initiale Zustand einer Instanz ist INSTALLIERT.
+
+In Abhängigkeit von der Startart 
+
+=== Starten einer Applikation
+
+=== Stoppen einer Applikation
+
+=== Aktualisierung eines Skripts
+
+=== Beenden der Konfiguration
+
+

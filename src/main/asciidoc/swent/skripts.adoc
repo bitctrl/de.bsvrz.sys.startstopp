@@ -213,6 +213,36 @@ include::../../resources/json/usv.json[]
 Angegeben wird hier die PID eines USV-Objekts innerhalb des zugeordneten Datenverteilersystems, dass die notwendigen
 Informationen für den Zustand der Stromversorgung bereitstellt.
 
+==== Liste der Inkarnationen
+
+Dieser Abschnitt enthält die Liste der Inkarnationen die von der StartSTopp-Applikation verwaltet werden sollen.
+Die Reihenfolge der Einträge spielt hier keine Rolle, lediglich die in der oben genannten Liste der Kernsoftware-Systems
+beschriebenen Inkarnationen werden in der dort angegebenen Reihenfolge gestartet oder beendet.
+
+Eine Inkarnation wird mit folgender Struktur beschrieben:
+
+[source,json]
+.Definition eine Inkarnation
+----
+include::../../resources/json/inkarnation.json[]
+----
+
+Grundsätzlich werden folgende Inkarnationstypen unterschieden:
+
+* *dav* eine Standard-Datenverteilerapplikation, d.h. eine Applikation die sich mit dem Datenverteiler verbindet und dort
+   als Instanz eine Objekts vom Typ _typ.applikation_ verwaltet wird.
+* *wrapped* ein Programm das kein "normales" Datenverteilerprogramm ist, aber durch einen Wrapper ausgeführt wird, 
+   der die Datenverteilerfunktion als Applikation übernimmt
+* *extern* jedes andere Programm ohne Verbindung zum Datenverteilersystem
+
+Eine Identifikation der Inkarnation erfolgt innerhalb des lokalen Systems über den *Inkarnationsname*. Innerhalb des 
+Gesamtsystems wird eine Inkarnation durch die Kombination von Rechnername und Inkarnationsname identifiziert.
+
+Die *Applikation* definiert das für die Inkarnation auszuführende Programm, das Array "Aufrufparameter" enthält
+die Kommandozeilenargumente, die an das Programm übergeben werden. Als zusätzlicher Parameter wird der Inkarnationsname
+übergeben d.h. die Angabe muss hier nicht erfolgen. Der Inkarnationsname wird nicht übergeben, wenn die Inkarnation ein
+Teil des Kernsystems ist und die Übergabe dort abgeschaltet wurde oder wenn es sich um ein externes Programm handelt.
+
 === Bereitstellung der Konfiguration
 
 Die Skriptverwaltung liefert das geladene Skript als geprüftes und korrekt
