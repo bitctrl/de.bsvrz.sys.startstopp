@@ -1,0 +1,64 @@
+== Terminal - Bedienoberfläche
+
+Die StartStopp-SWE wird mit einer Bedienoberfläche ausgeliefert, die den
+Zugriff auf eine laufende StartStopp-Applikation erlaubt.
+
+Die Terminal-Applikation verwendet die StartStopp-API für die Kommmunikation
+und stellt alle dort definierten Funktionen zur Verfügung.
+
+Die Oberfläche wird auf Basis der offenen Bibliothek
+https://github.com/mabe02/lanterna[Lanterna] erstellt, die den Aufbau einer 
+ncurses-ähnlichen Applikation ermöglicht.
+
+image::ui_sample.png[Beispiel Terminal-UI (prototypisch)]
+
+In gesonderten Fenstern werden folgende Funktionen abgebildet:
+
+*Online-Funktionen*
+
+* *Online-Informationen zum System*
+** Anzeige des Systemstatus
+** Aktionen zum Steuern des StartStopp-System
+*** Beenden der laufenden Konfiguration
+*** Neustart der laufenden Konfiguration
+*** Beenden der StartStopp-Applikation
+* *Online-Informationen zu Inkarnationen*
+** Darstellung des aktuellen Status der Inkarnationen
+** Anzeige der Details zu einer ausgewählten Inkarnationen
+   in einem neuen Dialog
+** Ausführen von inkarnationsbezogenen Operationen
+*** Starten einer nicht laufenden Inkarnationen
+*** Neu starten eine laufenden Inkarnation
+*** Beenden einer laufenden Inkarnation
+* *Informationen zu Rechnern*
+** Anzeige der Liste der definierten Rechner
+** Anzeige der Inkarnationen mit ihrem aktuellen Status
+   auf einem entfernten Rechner
+
+Aktionen sind per Menü selektier- und ausführbar. Für 
+definierte Aktionen erfolgt eine Sicherheitsabfrage. 
+
+*Skript-Funktionen*
+
+* Anzeige des aktuellen Skripts
+* Möglichkeit zur Bearbeitung des Skripts
+* Aktion zum Versionieren und Aktivieren eines Skripts
+
+Für die Bearbeitung des Skripts stehen für die einzelnen
+Elemente gesonderte Dialoge zur Verfügung.
+
+Für Referenzen wie Makros oder Verweise auf Rechner werden
+Auswahllisten angeboten.
+
+Optionen mit ausgewählten Statuswerten sind per Combo-Box
+auswählbar.
+
+Das Editieren einer Konfiguration wird von der Editorseite
+weitestgehend so unterstützt, dass fehlerhafte Skripte
+möglichst gar nicht erst entstehen können und die 
+Versionierung und Aktivierung einer neuen Konfiguration
+mit einer minimalen Anzahl von Arbeitsschritten möglich ist.
+
+
+
+

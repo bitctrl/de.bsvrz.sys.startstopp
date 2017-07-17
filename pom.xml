@@ -557,12 +557,12 @@
 						</goals>
 						<configuration>
 							<backend>pdf</backend>
-							<sourceDirectory>src/main/asciidoc/swent</sourceDirectory>
+							<sourceDirectory>src/main/asciidoc</sourceDirectory>
 							<sourceHighlighter>coderay</sourceHighlighter>
 							<sourceDocumentName>swent.adoc</sourceDocumentName>
 							<attributes>
-								<pdf-fontsdir>../themes/fonts/</pdf-fontsdir>
-								<pdf-stylesdir>../themes/</pdf-stylesdir>
+								<pdf-fontsdir>themes/fonts/</pdf-fontsdir>
+								<pdf-stylesdir>themes/</pdf-stylesdir>
 								<pdf-style>nerz</pdf-style>
 								<icons>font</icons>
 								<pagenums />
@@ -581,7 +581,7 @@
 							<goal>process-asciidoc</goal>
 						</goals>
 						<configuration>
-							<sourceDirectory>src/main/asciidoc/swent</sourceDirectory>
+							<sourceDirectory>src/main/asciidoc</sourceDirectory>
 							<backend>html5</backend>
 							<sourceHighlighter>coderay</sourceHighlighter>
 							<sourceDocumentName>swent.adoc</sourceDocumentName>

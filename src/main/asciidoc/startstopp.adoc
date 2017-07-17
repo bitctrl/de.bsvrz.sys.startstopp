@@ -1,0 +1,115 @@
+== StartStopp-Applikation
+
+Die StartStopp-Applikation setzt sich aus den unten dargestellten Teilmodulen
+zusammen.
+
+[ditaa, "startstopp_module"]
+----
+        /------------------------------------------------------------------\
+        | /-----------------------------\    /---------------------------\ |
+        | | Modul Prozessverwaltung     |    | Modul Nutzerschnittstelle |<--->https
+        | | /-------------------\       |<-->| (REST-API)                | |
+<---------->| DAV-Kommunikation |       |    |                           |<--->http
+DAF-API | | \-------------------/       |    |                           | |
+        | \-----------------------------/    \---------------------------/ |
+        |               ^                                   ^              |
+        |               |                                   |              |
+        |               v                                   v              |
+        | /--------------------------------------------------------------\ |
+        | | Modul Skriptverwaltung                                       | |
+        | |                                                              | |
+        | \--------------------------------------------------------------/ |
+        \------------------------------------------------------------------/
+----
+
+* *Skriptverwaltung:* verwaltet die zentrale Skriptdatei mit der die Konfiguration des 
+           Datenverteilersystem beschrieben wird. Außerdem realisiert das Modul die 
+           Funktionen zur Prüfung der Konfiguration, zur Versionierung und zur Bereitstellung
+           der interpretierten Konfiguration für die Prozessverwaltung. 
+* *Prozessverwaltung:* verwaltet die im konfigurierten System vorgesehenen Prozeßinkarnationen
+           und deren Status und führt die Operationen zum Starten und Beenden der erforderlichen
+           Betriebssystemprozesse aus. Das Modul setzt auch die geforderte Bahandlung von 
+           Fehlern bei den oben genannten Operationen um.
+* *DAV-Kommunikation:* verwaltet den Zugriff auf das zugeordnete Datenverteilersystem. Das Modul
+           dient einerseits der Publikation des aktuellen Zustands des Startstopp-Systems und wertet
+           andererseits die über den Datenverteiler selbst publizierten Informationen zu Applikationen
+           am Datenverteiler aus.
+* *Nutzerschnittstelle:* erlaubt den Zugriff auf die SWE von außen. Über die Schnittstelle kann
+           unabhängig vom Datenverteiler der Zustand der von StartStopp verwalteten Inkarnationen
+           abgerufen werden. Außerdem bietet die Schnittstelle Funktionen zum Steuern der einzelnen
+           Inkarnationen oder der gesamten Konfiguration des Datenverteiler-Systems. 
+
+=== Startparameter
+
+[cols="2*",options="autowidth, header"]
+|===
+|Parameter
+|Beschreibung
+
+|-startStoppKonfiguration=<StartStoppVerzeichnis>
+|Verzeichnis in dem sich eine Datei 'startstopp.json' befindet bzw. in die eine neue Version bei der Version abgelegt wird.
+ Wird kein Verzeichnis angegeben, wird das aktuelle Verzeichnis aus dem StartStopp gestartet wurde angenommen.
+
+|-port=<port>
+|Portnummer für den Zugriff auf die StartStopp-Applikation per Nutzerschnittstelle über eine https-Verbindung. Der Standardwert ist 3000.
+
+|-httpport=<port>
+|Portnummer für den Zugriff auf die StartStopp-Applikation per Nutzerschnittstelle per http-Verbindung. Wird der Port nicht definiert, ist nur die https-Verbindung möglich.
+
+|-inkarnationsName=<inkarnationsName>	(optional)
+|Inkarnationsname der StartStoppApplikation
+
+|-rechner=<pid>	(optional)
+|Die PID eines Rechnerobjekts über das die Informationen zu den Inkarnationen über den Datenverteiler
+ publiziert werden.
+
+|===
+
+[plantuml, "init_startstopp"]
+----
+
+skinparam componentstyle uml2
+skinparam monochrome true 
+
+title Initialisierung der StartStopp-Applikation \n
+
+start
+
+:Startoptionen auswerten;
+
+note right
+Alle verfügbaren Startoptionen sind mit Standardwerten belegt,
+zusätzliche Optionen werden ignoriert.
+end note
+
+:Skriptverwaltung initialisieren;
+
+note right
+Es wird das vorliegende Skript eingelesen und ausgewertet.
+end note
+
+:Prozessverwaltung initialisieren;
+
+note right
+Wenn ein gültiges Skript geladen werden konnte werden die Applikationen
+entsprechend der definierten Inkarnationen ausgeführt.
+end note
+
+if (Nutzerschnittstelle initialisieren) then (JA)
+    repeat
+    repeat while (Warte auf Anforderung zum Beenden?)
+
+    stop
+
+else (NEIN)
+
+note right
+Wenn die angegebenen Ports nicht gebunden werden können,
+wird die StartStopp-Applikation nicht ausgeführt, da sie ansonsten
+nicht steuerbar wäre.
+end note
+
+    stop
+endif
+
+----
