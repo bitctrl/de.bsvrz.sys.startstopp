@@ -31,7 +31,7 @@ asciidoctorj {
 }
 
 def asciidoctor_common = { 
-	
+    sourceDir = file('src/main/asciidoc')
     requires = ['asciidoctor-diagram']
     outputDir "${buildDir}/docs"
     options doctype: 'book'
@@ -43,52 +43,73 @@ def asciidoctor_common = {
                 idseparator         : '-'
 }
 
-task('pdf_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sourceDir = file('src/main/asciidoc/swent')
-      sources {
-          include 'swent.adoc'
-      }
-      configure asciidoctor_common
-      backends = ['pdf'] 
-      attributes 'pdf-stylesdir'     : '../themes/',
-                'pdf-style'         : 'nerz',
-                'pdf-fontsdir'		: '../themes/fonts/',
-                'icons'             : 'font',
-                'setanchors'		: '',
-                'pagenums'          : '',
-                'imagesoutdir'      : outputDir,
-                'imagesdir'         : outputDir,
-                'docinfo1'			: ''
-}
-
 task('html_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sourceDir = file('src/main/asciidoc/swent')
+      sourceDir = file('src/main/asciidoc')
       sources {
           include 'swent.adoc'
       }
       configure asciidoctor_common
       backends = ['html5'] 
 }
+
+task('pdf_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
+      sourceDir = file('src/main/asciidoc')
+      sources {
+          include 'swent.adoc'
+      }
+      configure asciidoctor_common
+      backends = ['pdf'] 
+      attributes 'pdf-stylesdir'     : 'themes/',
+                'pdf-style'         : 'nerz',
+                'pdf-fontsdir'      : 'themes/fonts/',
+                'icons'             : 'font',
+                'setanchors'        : '',
+                'pagenums'          : '',
+                'imagesoutdir'      : 'images',
+                'imagesdir'         : 'images', 
+                'docinfo1'          : ''
+}
+
+
+task('docbook_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
+      sources {
+          include 'swent.adoc'
+      }
+      configure asciidoctor_common
+      backends = ['docbook'] 
+}
+
+task docx_swent (
+        dependsOn: [docbook_swent],
+        type: Exec
+) {
+    workingDir 'build/docs/docbook'
+    executable = "pandoc"
+    new File('build/docs/docx/').mkdirs()
+    args = ['-r','docbook',
+            '-t','docx',
+            '-o','../docx/swent.docx',
+                 'swent.xml']
+}
+
 task('pdf_afo', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sourceDir = file('src/main/asciidoc/afo')
       sources {
           include 'afo.adoc'
       }
       configure asciidoctor_common
       backends = ['pdf'] 
-      attributes 'pdf-stylesdir'     : '../themes/',
+      attributes 'pdf-stylesdir'     : 'themes/',
                 'pdf-style'         : 'nerz',
-                'pdf-fontsdir'		: '../themes/fonts/',
+                'pdf-fontsdir'		: 'themes/fonts/',
                 'icons'             : 'font',
                 'setanchors'		: '',
                 'pagenums'          : '',
-                'imagesoutdir'      : outputDir,
-                'imagesdir'         : outputDir,
+                'imagesoutdir'      : 'images',
+                'imagesdir'         : 'images',
                 'docinfo1'			: ''
 }
 
 task('html_afo', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sourceDir = file('src/main/asciidoc/afo')
       sources {
           include 'afo.adoc'
       }

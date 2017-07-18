@@ -1,0 +1,54 @@
+== Programmierschnittstelle API
+
+Die StartStopp-Applikation verfügt über eine REST-API-Schnittstelle über die 
+Infomationen zum System ermittelt und Aktionen zur Steuerung der StartStopp-Applikation
+selbst ausgeführt werden können:
+
+Für die Definition und Pflege der API wird die Beschreibungssprache
+API Blueprint verwendet, um die Erstellung der Dokumentation und 
+den automatischen Test mit den zur Verfügung stehenden Tools einfach
+umsetzen zu können. 
+
+Die Kommunikation erfolgt über einen eingebetten https-Server (optional http).
+
+Eine Anmeldung ist nicht vorgesehen, alle Operationen können durchgeführt werden,
+wenn der Zugriff auf die jeweiligen URL möglich ist.
+
+Eine Ausnahme bildet die Versionierung/Aktivierung einer neuen StartStopp-Konfiguration.
+Die ist nur möglich, wenn der Nutzer die korrekten Daten für eine Identifikation
+serverseitig liefert. 
+
+Die Funktionalität ist in Gruppen aufgeteilt, wobei folgende Hauptfunktionen
+unterstützt werden:
+
+* *Gruppe StartStopp*
+** Ermitteln des Status der StartStopp-Applikation
+** Beenden der StartStopp-Applikation 
+** Beenden der aktuellen StartStopp-Konfiguration
+** Neustart der StartStopp-Konfiguration
+** Abruf der Inkarnationen aller bekannten Rechner
+* *Gruppe Skripte*
+** Abruf des aktuellen Skripts
+** Setzen eines neuen Skripts (Prüfen, Versionieren, Aktivieren als einzelne Aktion)
+** ermitteln des Status des aktuellen Skripts
+** Abruf der Historie der versionierten Skripte
+* *Gruppe Applikation*
+** Abruf der Liste der Inkarnationen mit ihrem aktuellen Status
+** Abruf des Status und der Details zu einer Inkarnation
+** Manuelles starten einer Applikation
+** Manuelles neu starten einer Applikation
+** Manuelles beenden einer Applikation
+* *Gruppe Rechner*
+** Abruf der Liste der bekannten Rechner
+** Abruf des Skripts von einem Rechner
+** Abruf der Inkarnationen eines Rechners
+** Abruf des Status und der Details zu einer Inkarnation auf einem Rechner
+
+Im Folgenden ist die Beschreibung der API in der oben genannten Sprache dargestellt.
+Eine formatierte Dokumentation im HTML-Format liegt als Anhang vor. 
+
+.Beschreibung der StartStopp-API
+----
+include::../model/startstopp.apib[] 
+----
+

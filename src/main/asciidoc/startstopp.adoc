@@ -59,6 +59,10 @@ DAF-API | | \-------------------/       |    |                           | |
 |-inkarnationsName=<inkarnationsName>	(optional)
 |Inkarnationsname der StartStoppApplikation
 
+|-rechner=<pid>	(optional)
+|Die PID eines Rechnerobjekts über das die Informationen zu den Inkarnationen über den Datenverteiler
+ publiziert werden.
+
 |===
 
 [plantuml, "init_startstopp"]

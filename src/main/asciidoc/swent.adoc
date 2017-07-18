@@ -1,6 +1,6 @@
 = SWE StartStopp 2.0: Softwareentwurf
 Uwe Peuker <uwe.peuker@bitctrl.de>
-v1.0, 2017-06-01
+v1.0, 2017-07-17
 :toc: left
 :imagesdir: images
 :homepage: http://bitctrl.de
@@ -8,6 +8,8 @@ v1.0, 2017-06-01
 :toclevel: 4
 :sectnums:
 :source-highlighter: coderay
+:chapter-label:
+:toc-title: Inhaltsverzeichnis
 
 include::overview.adoc[]
 
