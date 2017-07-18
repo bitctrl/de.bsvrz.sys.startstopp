@@ -106,29 +106,15 @@ public class SkripteService {
 	@Produces("application/json")
 	public Response responseSkripteCurrentPut(VersionierungsRequest request) {
 
-		if (request == null || request.getSkript() == null) {
-			StatusResponse status = new StatusResponse();
-			status.setCode(-1);
-			status.getMessages().add("Es wurde kein Skript übermittelt!");
-			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
-		}
-
-		if (request.getAenderungsgrund().trim().isEmpty()) {
-			StatusResponse status = new StatusResponse();
-			status.setCode(-1);
-			status.getMessages().add("Es muss ein Änderungsgrund übergeben werden!");
-			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
-		}
-
 		try {
-			StartStoppSkript newSkript = skriptManager.setNewSkript(request.getAenderungsgrund(),
-					(StartStoppSkript) request.getSkript());
+			StartStoppSkript newSkript = skriptManager.setNewSkript(request);
 			Response.ResponseBuilder responseBuilder = Response.ok().header("Content-Type", "application/json");
 			responseBuilder.entity(newSkript);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
 			StatusResponse status = new StatusResponse();
 			status.setCode(-1);
+			status.getMessages().add(e.getLocalizedMessage());
 			status.getMessages().addAll(e.getMessages());
 			return Response.status(Response.Status.BAD_REQUEST).entity(status).build();
 		}

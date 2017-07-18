@@ -15,7 +15,7 @@
 			"type": "string"
 		},
 		"pruefsumme": {
-			"type": "number"
+			"type": "string"
 		}
 	},
 	"required": [
