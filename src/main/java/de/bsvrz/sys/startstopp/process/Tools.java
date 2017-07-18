@@ -27,7 +27,10 @@
 package de.bsvrz.sys.startstopp.process;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.jutils.jprocesses.JProcesses;
 import org.jutils.jprocesses.model.ProcessInfo;
 
@@ -80,11 +83,37 @@ public class Tools {
 		List<ProcessInfo> processesList = JProcesses.get().fastMode().listProcesses();
 
 		for (final ProcessInfo processInfo : processesList) {
-			if (processInfo.getCommand().contains(cmdLine)) {
+			if (isMatchingCommandLine(cmdLine, processInfo.getCommand())) {
 				return processInfo;
 			}
 		}
 
 		return null;
+	}
+	
+	public static boolean isMatchingCommandLine(final String inkCmdLine, final String proccmdLine) {
+		
+		if( StringUtils.isAsciiPrintable(inkCmdLine)) {
+			return proccmdLine.contains(inkCmdLine);
+		}
+		
+		String buildRegexp = buildRegexp(inkCmdLine);
+		
+		Matcher matcher = Pattern.compile(buildRegexp).matcher( proccmdLine );
+		return matcher.find();
+	}
+
+	private static String buildRegexp(String s) {
+		StringBuilder rstring = new StringBuilder();
+		
+	    for (int i = 0; i < s.length(); i++) { 
+	        if (s.charAt(i) > 127) { 
+	            rstring.append(".+");
+	        } else {
+	        	rstring.append(s.charAt(i));
+	        }
+	    }
+	        
+	    return rstring.toString();
 	}
 }
