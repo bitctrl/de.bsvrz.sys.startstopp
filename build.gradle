@@ -142,6 +142,8 @@ dependencies {
     compile 'org.json:json:20170516'
     compile 'de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}'
     compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.application:' + kernsoftware_version
+    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.crypt:' + kernsoftware_version
+    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.concurrent:' + kernsoftware_version
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.24'
     compile 'org.glassfish.jersey.containers:jersey-container-jetty-http:2.24'
     compile 'com.fasterxml.jackson.module:jackson-module-jsonSchema:' + jackson_version

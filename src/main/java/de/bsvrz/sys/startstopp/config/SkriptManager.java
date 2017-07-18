@@ -35,9 +35,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.file.CopyOption;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -51,12 +53,18 @@ import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Checksum;
 
-import javax.ws.rs.core.Response;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.bsvrz.dav.daf.communication.protocol.UserLogin;
+import de.bsvrz.dav.daf.communication.srpAuthentication.SrpClientAuthentication;
+import de.bsvrz.dav.daf.communication.srpAuthentication.SrpCryptoParameter;
+import de.bsvrz.dav.daf.communication.srpAuthentication.SrpUtilities;
+import de.bsvrz.dav.daf.communication.srpAuthentication.SrpVerifierAndUser;
+import de.bsvrz.dav.daf.communication.srpAuthentication.SrpVerifierData;
+import de.bsvrz.dav.daf.main.InconsistentLoginException;
+import de.bsvrz.dav.daf.main.authentication.ClientCredentials;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.MetaDaten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
@@ -239,6 +247,33 @@ public class SkriptManager {
 	}
 
 	private void checkAuthentification(String veranlasser, String passwort) {
+		
+//		ConfigAuthentication auth = new ConfigAuthentication("", null);
+//		auth.
+		
+
+		
+		
+		try {
+			String _secretToken = new BigInteger(64, new SecureRandom()).toString(16);
+			byte[] predictableSalt = SrpUtilities.generatePredictableSalt(SrpCryptoParameter.getDefaultInstance(), (veranlasser + _secretToken).getBytes(StandardCharsets.UTF_8));
+			SrpVerifierData createVerifier = SrpClientAuthentication.createVerifier(SrpCryptoParameter.getDefaultInstance(), veranlasser, ClientCredentials.ofString("geheim"), predictableSalt);
+			ClientCredentials token = SrpClientAuthentication.createLoginToken(createVerifier, veranlasser, passwort.toCharArray());
+			
+			SrpVerifierAndUser vu = new SrpVerifierAndUser(UserLogin.notAuthenticated(), createVerifier, true);
+
+			//			SrpCryptoParameter srpCryptoParameter = SrpCryptoParameter.getDefaultInstance();
+//			byte[] salt = SrpUtilities.generateRandomSalt(srpCryptoParameter);
+//			String hex = Long.toHexString(Clock.systemUTC().millis());
+//			salt = SrpUtilities.bytesFromHex(hex);
+//			ClientCredentials credentials = ClientCredentials.ofPassword(passwort.toCharArray());
+//			SrpVerifierData verifier = SrpClientAuthentication.createVerifier(srpCryptoParameter, veranlasser, credentials, salt);
+//			credentials = SrpClientAuthentication.createLoginToken(verifier, veranlasser, passwort.toCharArray());
+			System.err.println("Credentials: " + token);
+		} catch (InconsistentLoginException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
  		// TODO Auto-generated method stub
 	}
 
