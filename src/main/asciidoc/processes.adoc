@@ -63,10 +63,10 @@ end note
 
 === Initialisierung
 
-Die Prozessverwaltung greift auf die in der von der Skrtipverwaltung übergebene Liste der definierten Inkarnationen
+Die Prozessverwaltung greift auf die von der Skrtipverwaltung übergebene Liste der definierten Inkarnationen
 zurück und legt für jede Inkarnation eine Instanz an. Der initiale Zustand einer Instanz ist INSTALLIERT.
 
-In Abhängigkeit von der Startart wird die Inkarnation ausgeführt, d.h. ein entsprechender Betriebssystemprozeß gestartet.
+In Abhängigkeit von der Startart wird die Inkarnation ausgeführt, d. h. ein entsprechender Betriebssystemprozeß gestartet.
 Automatisch ausgeführt werden alle Inkarnationen, die die Startart *automatisch* haben, potentiell nachgestartet
 werden *zyklische* Inkarnationen.
 
@@ -76,10 +76,10 @@ Der Start einer Applikation versetzt diese in den Zustand *STARTENWARTEN*. In di
 folgenden Startbedingungen geprüft:
 
 * die Inkarnation gehört nicht zum Kernsystem: Der Start ist erst möglich wenn alle Komponenten
-  des Kernsystems den Zustand *INITILISIERT* erreicht haben und die StartStopp-Applikation eine 
+  des Kernsystems den Zustand *INITALISIERT* erreicht haben und die StartStopp-Applikation eine 
   Verbindung zum zugeordneten Datenverteilersystem hergestellt hat.
 * die Inkarnation gehört zum Kernsystem: Der Start ist erst möglich wenn alle Komponenten
-  die innerhalb des Kernsystems vor der Inkarnation definiert sind den Zustand *INITILISIERT* erreicht haben.
+  die innerhalb des Kernsystems vor der Inkarnation definiert sind den Zustand *INITALISIERT* erreicht haben.
 * die Inkarnation hat eine zugeordnete Startbedingung: Der Start der Inkarnation ist erst möglich, wenn
   die Startbedingung erfüllt ist und die potentiell festgelegt Verzögerungszeit abgelaufen ist.  
 
@@ -122,9 +122,9 @@ beeinflusst wurden. Folgende Fälle können entstehen:
   ausgewertet und finden ihre Anwendung wie oben definiert.
 * Eigenschaften der Inkarnation außer Applikation und Aufrufargumente wurden geändert: +
   Die betroffene Inkarnation wird als Inkarnation nicht weiter beeinflusst, es werden lediglich die neuen
-  Attribute (z.B. Stoppbedingungen) übernommen. 
+  Attribute (z. B. Stoppbedingungen) übernommen. 
 * eine Inkarnation ist in der aktuellen Konfiguration nicht enthalten: +
-  Die Inkarnation wird in die Verwaltung aufgenommen und wie beim initialen Start ausgeführt, d.h. alle 
+  Die Inkarnation wird in die Verwaltung aufgenommen und wie beim initialen Start ausgeführt, d. h. alle 
   Regeln und Bedingungen behalten ihre Gültigkeit.
 
 === Beenden der Konfiguration
@@ -135,10 +135,10 @@ Die StartStopp-Konfiguration kann komplett beendet werden. Das kann erfolgen:
 * das Beenden der StartStopp-Applikation selbst über die StartStopp-API
 * das Beenden der StartStopp-Applikation und der Konfiguration durch einen über ein zugeordnetes
   USV-Objekt geliefertes Stromversorgungsereignis.
-* das Beenden der StartStopp-Apoplikation über die Betriebssystem per Shutdown-Hook
+* das Beenden der StartStopp-Applikation über das Betriebssystem per Shutdown-Hook
 
-NOTE: Das Beenden der StartStopp-Applikation auf Betriebssystemebene kann nicht in jedem Fall sicher
-      abgefangen werden und sollte nur im normalen Betrieb nicht zur Anwendung kommen!
+Anmerkung: Das Beenden der StartStopp-Applikation auf Betriebssystemebene kann nicht in jedem Fall sicher
+      abgefangen werden und sollte im normalen Betrieb nicht zur Anwendung kommen!
 
 === Manuelles Starten und Stoppen von Inkarnationen
 
@@ -146,12 +146,12 @@ Die einzelnen Inkarnationen der StartStopp-Konfiguration können per StartStopp-
 gestartet und gestoppt werden.
 
 Beim manuellen Starten und Stoppen von Applikationen werden die Start- bzw. Stoppbedingungen nicht 
-ausgewertet, d.h. der Zustand *STARTENWARTEN* kann bedingungslos in den Zustand *GESTARTET* überführt
+ausgewertet, d. h. der Zustand *STARTENWARTEN* kann bedingungslos in den Zustand *GESTARTET* überführt
 werden. Das gleiche gilt für den Übergang von *STOPPENWARTEN* nach *GESTOPPT*.
 
-NOTE: Beim Stoppen wird der Betriebssystem gegebenenfalls per KILL-Signal angehalten. 
+Anmerkung: Beim Stoppen wird der Betriebssystemprozess gegebenenfalls per KILL-Signal angehalten. 
 
 Wird eine Inkarnation aus dem Zustand *STARTENWARTEN* manuell gestoppt, wird sie aus der Verwaltung
-der Inkarnationen als zu startender Prozeß entfernt, d.h. ein zyklisch auszuführender Prozeß wird nicht
+der Inkarnationen als zu startender Prozeß entfernt, d. h. ein zyklisch auszuführender Prozeß wird nicht
 mehr ausgeführt und muss erst wieder manuell gestartet werden.
  

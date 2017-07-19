@@ -13,7 +13,7 @@ Die Verbindung wird für folgende Aufgaben eingesetzt:
 Zur Zuordnung von den in der StartStopp-Applikation verwalteten Inkarnationen zu
 Applikationen, die innerhalb des Datenverteiler-Systems als dynamische Objekte vom 
 Typ *typ.applikation* repräsentiert werden, wird der übergebene Inkarnationsname
-verwendet, der aus Rechnername und definiertem Inkarnationsname einer Inkarnationengebildet 
+verwendet, der aus Rechnername und definiertem Inkarnationsnamen einer Inkarnation gebildet 
 wird. 
 
 === Stoppen von Applikationen
@@ -30,7 +30,7 @@ Implizit wird damit die verbundene Applikation beendet.
 Die StartStopp-SWE liest für alle Inkarnationen für das per Namensmatching ermittelte
 Systemobjekt die Daten der Attributgruppe *atg.applikationsFertigmeldung*. Wenn der Wert 
 "InitialisierungFertig" auf JA steht wird in der Inkarnation innerhalb der 
-StartStopp-Prozeßverwaltung der Zustandübergang vom Zustand *GESTARTET* zu *INITIALISIERT* 
+StartStopp-Prozessverwaltung der Zustandübergang vom Zustand *GESTARTET* zu *INITIALISIERT* 
 ausgeführt.
 
 === Publikation von Informationen 
@@ -38,7 +38,7 @@ ausgeführt.
 Der Zustand der von der StartStopp-Applikation verwalteten Inkarnationen wird in der
 Attributgruppe *atg.prozessInfo* am ermittelten Systemobjekt vom Typ *typ.rechner* publiziert.
 
-Der Rechner wird aus der lokalen Netzwerk-Konfiguration über die IP-Adresse oder den Hostname
+Der Rechner wird aus der lokalen Netzwerk-Konfiguration über die IP-Adresse oder den Hostnamen
 aus der Menge der im Datenverteiler konfigurierten Objekte ermittelt.
 
 Optional kann das Rechnerobjekt als PID auch als Aufrufparameter an die StartStopp-Applikation
