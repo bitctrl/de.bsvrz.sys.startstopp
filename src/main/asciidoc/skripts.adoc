@@ -328,7 +328,7 @@ Beim Auftreten eines Startfehlers gibt es folgende Handlungsmöglichkeiten, die 
 vorgegeben werden:
 
 * *beenden:* bei einem Startfehler werden alle von der lokalen StartStopp-Applikation bereits gestarten 
-      Inkarnationen beendet und die Ausführung der Prozeßverwaltung ausgesetzt.
+      Inkarnationen beendet und die Ausführung der Prozessverwaltung ausgesetzt.
 * *abbrechen:* bei einem Startfehler werden keine weiteren Applikationen der Startstopp-Konfiguration 
       ausgeführt.
 * *ignorieren* es wird keine weitere Fehlerbehandlung durchgeführt
