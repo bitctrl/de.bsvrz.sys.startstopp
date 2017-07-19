@@ -43,25 +43,37 @@ DAF-API | | \-------------------/       |    |                           | |
 
 [cols="2*",options="autowidth, header"]
 |===
-|Parameter
-|Beschreibung
+| Parameter
+| Beschreibung
 
-|-startStoppKonfiguration=<StartStoppVerzeichnis>
-|Verzeichnis in dem sich eine Datei 'startstopp.json' befindet bzw. in die eine neue Version bei der Version abgelegt wird.
+| -startStoppKonfiguration=<StartStoppVerzeichnis>
+| Verzeichnis in dem sich eine Datei 'startstopp.json' befindet bzw. in die eine neue Version bei der Version abgelegt wird.
  Wird kein Verzeichnis angegeben, wird das aktuelle Verzeichnis aus dem StartStopp gestartet wurde angenommen.
 
-|-port=<port>
-|Portnummer für den Zugriff auf die StartStopp-Applikation per Nutzerschnittstelle über eine https-Verbindung. Der Standardwert ist 3000.
+| -port=<port>
+| Portnummer für den Zugriff auf die StartStopp-Applikation per Nutzerschnittstelle über eine https-Verbindung. Der Standardwert ist 3000.
 
-|-httpport=<port>
-|Portnummer für den Zugriff auf die StartStopp-Applikation per Nutzerschnittstelle per http-Verbindung. Wird der Port nicht definiert, ist nur die https-Verbindung möglich.
+| -httpport=<port>
+| Portnummer für den Zugriff auf die StartStopp-Applikation per Nutzerschnittstelle per http-Verbindung. Wird der Port nicht definiert, ist nur die https-Verbindung möglich.
 
-|-inkarnationsName=<inkarnationsName>	(optional)
-|Inkarnationsname der StartStoppApplikation
+| -inkarnationsName=<inkarnationsName>	(optional)
+| Inkarnationsname der StartStoppApplikation
 
-|-rechner=<pid>	(optional)
-|Die PID eines Rechnerobjekts über das die Informationen zu den Inkarnationen über den Datenverteiler
+| -rechner=<pid>	(optional)
+| Die PID eines Rechnerobjekts über das die Informationen zu den Inkarnationen über  den Datenverteiler
  publiziert werden.
+
+| -benutzerKonfiguration=<filepath>
+| Der Pfad zur benutzerdaten.xml-Datei zur Offline-Überprüfung des Passworts
+  für die Versionierung
+  
+| -authentifizierung=<filepath>
+| Der Pfad zur passwd-Datei zur Offline-Überprüfung des Passworts
+  für die Versionierung (Fallback)
+
+| -master=<host>:<port>
+|  Definition des Master-Stopp für die Verifizierung des Passworts auf einem
+   anderen Rechnerknoten
 
 |===
 

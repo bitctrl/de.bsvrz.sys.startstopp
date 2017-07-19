@@ -23,7 +23,7 @@ Konfiguration zu ändern.
 Die folgende Tabelle zeigt die von der SWE zu erfüllenden
 Anforderungen.
 
-[options="header,autowidth"]
+[cols="2*", options="header,autowidth"]
 |===
 | Anforderung | Beschreibung                                       |
 | Sys-5       | Start- und Stopp von Applikationen                 |
