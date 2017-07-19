@@ -30,7 +30,7 @@ unterstützt werden:
 * *Gruppe Skripte*
 ** Abruf des aktuellen Skripts
 ** Setzen eines neuen Skripts (Prüfen, Versionieren, Aktivieren als einzelne Aktion)
-** ermitteln des Status des aktuellen Skripts
+** Ermitteln des Status des aktuellen Skripts
 ** Abruf der Historie der versionierten Skripte
 * *Gruppe Applikation*
 ** Abruf der Liste der Inkarnationen mit ihrem aktuellen Status
