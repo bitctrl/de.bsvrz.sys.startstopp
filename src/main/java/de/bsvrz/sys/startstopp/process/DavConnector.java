@@ -35,6 +35,9 @@ import de.bsvrz.dav.daf.main.ConnectionException;
 import de.bsvrz.dav.daf.main.DavConnectionListener;
 import de.bsvrz.dav.daf.main.InconsistentLoginException;
 import de.bsvrz.dav.daf.main.MissingParameterException;
+import de.bsvrz.dav.daf.main.config.ConfigurationTaskException;
+import de.bsvrz.dav.daf.main.config.DataModel;
+import de.bsvrz.dav.daf.main.config.management.UserAdministration;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
@@ -55,7 +58,6 @@ public class DavConnector extends Thread {
 		@Override
 		public void close(String error) {
 			System.err.println("Connection closed: " + error);
-
 		}
 	}
 
@@ -86,6 +88,14 @@ public class DavConnector extends Thread {
 	@Override
 	public void run() {
 
+		try {
+			Thread.sleep(40000);
+		} catch (InterruptedException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
+		
 		while (running) {
 
 			try {
@@ -94,13 +104,15 @@ public class DavConnector extends Thread {
 				}
 
 				if (!connection.isLoggedIn()) {
+					Debug.getLogger().info("Anmelden als \"" + zugangDav.getUserName() + "\" Passwort: \"" + zugangDav.getPassWord() + "\"");
 					connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
 				}
 			} catch (CommunicationError | ConnectionException | RuntimeException e) {
 				// TODO Auto-generated catch block
 				Debug.getLogger().warning(e.getLocalizedMessage());
 			} catch (InconsistentLoginException e1) {
-				running = false;
+				// running = false;
+				Debug.getLogger().warning(e1.getLocalizedMessage());
 			}
 
 			synchronized (lock) {
@@ -122,5 +134,31 @@ public class DavConnector extends Thread {
 			return "Verbindung zum Datenverteiler konnte noch nicht hergestellt werden!";
 		}
 		return "Anmeldedaten für den Datenverteiler sind nicht gültig!";
+	}
+
+	private boolean isOnline() {
+		if ((connection != null) && connection.isConnected() &&  connection.isLoggedIn()) {
+			return true;
+		}
+		
+		return false;
+	}
+
+	public boolean checkAuthentification(String veranlasser, String passwort) throws StartStoppException {
+		
+		if(!isOnline()) {
+			throw new StartStoppException("Es besteht keine Datenverteilerverbindung!");
+		}
+		
+		DataModel dataModel = connection.getDataModel();
+		UserAdministration userAdministration = dataModel.getUserAdministration();
+		try {
+			Debug.getLogger().warning("Prüfe Passwort: " + veranlasser + ": " + passwort);
+			boolean result = userAdministration.isUserAdmin(veranlasser, passwort, veranlasser);
+			Debug.getLogger().warning("Geprüft: " + result);
+			return result;
+		} catch (ConfigurationTaskException e) {
+			throw new StartStoppException(e);
+		}
 	}
 }

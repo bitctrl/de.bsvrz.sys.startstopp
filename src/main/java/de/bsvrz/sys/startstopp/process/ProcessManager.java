@@ -108,6 +108,10 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 		this.startStopp.getSkriptManager().removeSkriptManagerListener(this);
 	}
 
+	public DavConnector getDavConnector() {
+		return davConnector;
+	}
+
 	public List<Applikation> getApplikationen() {
 
 		List<Applikation> result = new ArrayList<>();

@@ -250,6 +250,8 @@ public class StartStoppClient {
 		try {
 			response = createGetResponse("/applikationen");
 			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+				return response.readEntity(new GenericType<List<Applikation>>() {
+				});
  			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);

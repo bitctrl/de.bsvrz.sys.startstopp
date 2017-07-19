@@ -204,6 +204,11 @@
             <version>${kernsoftware.version}</version>
         </dependency>
         <dependency>
+            <groupId>de.bsvrz.sys</groupId>
+            <artifactId>de.bsvrz.sys.funclib.timeout</artifactId>
+            <version>${kernsoftware.version}</version>
+        </dependency>
+        <dependency>
             <groupId>de.bsvrz.puk</groupId>
             <artifactId>de.bsvrz.puk.config</artifactId>
             <version>${kernsoftware.version}</version>

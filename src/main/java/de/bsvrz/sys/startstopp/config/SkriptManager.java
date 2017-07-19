@@ -46,12 +46,15 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CheckedOutputStream;
 import java.util.zip.Checksum;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,6 +68,10 @@ import de.bsvrz.dav.daf.communication.srpAuthentication.SrpVerifierAndUser;
 import de.bsvrz.dav.daf.communication.srpAuthentication.SrpVerifierData;
 import de.bsvrz.dav.daf.main.InconsistentLoginException;
 import de.bsvrz.dav.daf.main.authentication.ClientCredentials;
+import de.bsvrz.dav.daf.main.config.ConfigurationTaskException;
+import de.bsvrz.dav.daf.userManagement.UserManagement;
+import de.bsvrz.dav.daf.userManagement.UserManagementFileOffline;
+import de.bsvrz.dav.daf.userManagement.UserManagementFileOnline;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.MetaDaten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
@@ -121,8 +128,7 @@ public class SkriptManager {
 				skript = StartStoppXMLParser.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
 				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
-				try (FileOutputStream fileStream = new FileOutputStream(
-						getStartStoppSkriptFile());
+				try (FileOutputStream fileStream = new FileOutputStream(getStartStoppSkriptFile());
 						Writer writer = new OutputStreamWriter(fileStream, "UTF-8")) {
 					mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 					mapper.writeValue(writer, skript);
@@ -166,11 +172,10 @@ public class SkriptManager {
 		if (!versionDir.exists()) {
 			versionDir.mkdirs();
 		}
-		
+
 		return new File(versionDir, "startstopp_history.json");
 	}
 
-	
 	private void initSkriptHistory(String skriptDir) {
 
 		File historyFile = getStartStoppHistoryFile();
@@ -204,7 +209,7 @@ public class SkriptManager {
 	public StartStoppSkript setNewSkript(VersionierungsRequest request) throws StartStoppException {
 
 		checkRequest(request);
-		
+
 		StartStoppKonfiguration newSkript = new StartStoppKonfiguration(request.getSkript());
 		if (newSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
 			StartStoppKonfiguration oldSkript = currentSkript;
@@ -221,7 +226,7 @@ public class SkriptManager {
 	}
 
 	private void checkRequest(VersionierungsRequest request) throws StartStoppException {
-		
+
 		if (request == null || request.getSkript() == null) {
 			throw new StartStoppException("Es wurde kein Skript übermittelt!");
 		}
@@ -238,43 +243,71 @@ public class SkriptManager {
 		}
 
 		checkAuthentification(veranlasser, passwort);
-		
+
 		if (request.getAenderungsgrund() == null || request.getAenderungsgrund().trim().isEmpty()) {
 			throw new StartStoppException("Es muss ein Änderungsgrund übergeben werden!");
 		}
 
-		
 	}
 
-	private void checkAuthentification(String veranlasser, String passwort) {
-		
-//		ConfigAuthentication auth = new ConfigAuthentication("", null);
-//		auth.
-		
+	private void checkAuthentification(String veranlasser, String passwort) throws StartStoppException {
 
-		
+		if( startStopp.getOptions().getMasterHost() != null) {
+			// TODO Remote-Prüfung einbauen
+		}
 		
 		try {
-			String _secretToken = new BigInteger(64, new SecureRandom()).toString(16);
-			byte[] predictableSalt = SrpUtilities.generatePredictableSalt(SrpCryptoParameter.getDefaultInstance(), (veranlasser + _secretToken).getBytes(StandardCharsets.UTF_8));
-			SrpVerifierData createVerifier = SrpClientAuthentication.createVerifier(SrpCryptoParameter.getDefaultInstance(), veranlasser, ClientCredentials.ofString("geheim"), predictableSalt);
-			ClientCredentials token = SrpClientAuthentication.createLoginToken(createVerifier, veranlasser, passwort.toCharArray());
-			
-			SrpVerifierAndUser vu = new SrpVerifierAndUser(UserLogin.notAuthenticated(), createVerifier, true);
+			if (startStopp.getProcessManager().getDavConnector().checkAuthentification(veranlasser, passwort)) {
+				return;
+			}
 
-			//			SrpCryptoParameter srpCryptoParameter = SrpCryptoParameter.getDefaultInstance();
-//			byte[] salt = SrpUtilities.generateRandomSalt(srpCryptoParameter);
-//			String hex = Long.toHexString(Clock.systemUTC().millis());
-//			salt = SrpUtilities.bytesFromHex(hex);
-//			ClientCredentials credentials = ClientCredentials.ofPassword(passwort.toCharArray());
-//			SrpVerifierData verifier = SrpClientAuthentication.createVerifier(srpCryptoParameter, veranlasser, credentials, salt);
-//			credentials = SrpClientAuthentication.createLoginToken(verifier, veranlasser, passwort.toCharArray());
-			System.err.println("Credentials: " + token);
-		} catch (InconsistentLoginException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" ist kein Administrator!");
+		} catch (StartStoppException e) {
+			LOGGER.fine(e.getLocalizedMessage());
 		}
- 		// TODO Auto-generated method stub
+
+		try {
+			File userManagementFile = startStopp.getOptions().getUserManagementFile();
+			if (userManagementFile != null) {
+				UserManagementFileOffline offlineChecker = new UserManagementFileOffline(userManagementFile);
+				if (offlineChecker.validateClientCredentials(veranlasser,
+						ClientCredentials.ofPassword(passwort.toCharArray()), -1)) {
+					if (!offlineChecker.isUserAdmin(veranlasser)) {
+						try {
+							offlineChecker.close();
+						} catch (IOException e) {
+							LOGGER.warning(e.getLocalizedMessage());
+						}
+						throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" ist kein Administrator!");
+					}
+					try {
+						offlineChecker.close();
+					} catch (IOException e) {
+						LOGGER.warning(e.getLocalizedMessage());
+					}
+					return;
+				}
+			}
+		} catch (ParserConfigurationException | ConfigurationTaskException e) {
+			LOGGER.fine(e.getLocalizedMessage());
+		}
+
+		File passwdFile = startStopp.getOptions().getPasswdFile();
+		if( passwdFile != null) {
+			try {
+				Properties properties = new Properties();
+				properties.load(new FileInputStream(passwdFile));
+				String passwdValue = properties.getProperty(veranlasser);
+				if( passwort.equals(passwdValue)) {
+					// XXX Keine Admin-Prüfung
+					return;
+				}
+			} catch (IOException e) {
+				LOGGER.fine(e.getLocalizedMessage());
+			}
+		}
+		
+		throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" konnte nicht verifiziert werden!");
 	}
 
 	private void fireSkriptChanged(StartStoppKonfiguration oldSkript, StartStoppKonfiguration newSkript) {
@@ -303,10 +336,11 @@ public class SkriptManager {
 		Checksum checkSum = new CRC32();
 		File tempSkript = saveTempSkript(utcNow, skript, request, checkSum);
 		File tempHistoryFile = addNewHistory(utcNow, request, checkSum);
-		
+
 		try {
 			Files.copy(tempSkript.toPath(), getStartStoppSkriptFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-			Files.copy(tempHistoryFile.toPath(), getStartStoppHistoryFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(tempHistoryFile.toPath(), getStartStoppHistoryFile().toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			throw new StartStoppException(e);
 		} finally {
@@ -317,8 +351,9 @@ public class SkriptManager {
 		return skript;
 	}
 
-	private File addNewHistory(long utcNow, VersionierungsRequest request, Checksum checkSum) throws StartStoppException {
-	
+	private File addNewHistory(long utcNow, VersionierungsRequest request, Checksum checkSum)
+			throws StartStoppException {
+
 		File tempFile;
 		try {
 			tempFile = File.createTempFile("STARTSTOPP_HIST", null);
@@ -326,7 +361,7 @@ public class SkriptManager {
 		} catch (IOException e) {
 			throw new StartStoppException(e);
 		}
-		
+
 		StartStoppVersion version = new StartStoppVersion();
 		version.setAenderungsGrund(request.getAenderungsgrund());
 		version.setErstelltDurch(request.getVeranlasser());
@@ -347,8 +382,8 @@ public class SkriptManager {
 		return tempFile;
 	}
 
-	private File saveTempSkript(long utcNow, StartStoppKonfiguration skript, VersionierungsRequest request, Checksum checkSum)
-			throws StartStoppException {
+	private File saveTempSkript(long utcNow, StartStoppKonfiguration skript, VersionierungsRequest request,
+			Checksum checkSum) throws StartStoppException {
 
 		File tempFile;
 		try {
@@ -376,7 +411,7 @@ public class SkriptManager {
 			tempFile.delete();
 			throw new StartStoppException(e);
 		}
-		
+
 		return tempFile;
 	}
 }

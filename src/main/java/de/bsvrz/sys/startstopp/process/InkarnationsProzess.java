@@ -197,7 +197,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		 * Methode zum Starten einer Inkarnation.
 		 */
 		private void starteInkarnation() {
-			getLogger().fine("Starte Inkarnation '" + getInkarnationsName() + "'");
+			getLogger().info("Starte Inkarnation '" + getInkarnationsName() + "'");
 			StringBuilder cmdLine = new StringBuilder();
 
 			try {
@@ -207,6 +207,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 					cmdLine.append(getProgrammArgumente());
 				}
 
+				getLogger().info("Commandline: '" + cmdLine.toString() + "'");
 				process = ProzessStarter.start(cmdLine.toString());
 			} catch (IOException ioe) {
 				prozessStartFehler(ioe.getMessage());
