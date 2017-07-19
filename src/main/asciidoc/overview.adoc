@@ -7,7 +7,7 @@ auf einem Rechnerknoten zu verwalten, diese nach vorgegebenen Regeln auszuführe
 bzw. zu beenden.
 
 Die SWE läuft unabhängig vom Datenverteilersystem selbst, verbindet 
-sich aber mit einem vordeifnierten System, um den Status des verwalteten
+sich aber mit einem vordefinierten System, um den Status des verwalteten
 Systems über den Datenverteiler zu publizieren.
 
 Die Konfiguration des zu verwaltenden Systems erfolgt in einer zentralen
