@@ -264,11 +264,13 @@
 			<artifactId>jProcesses</artifactId>
 			<version>1.6.3</version>
 		</dependency>
+		<!-- 
 		<dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>srp6a</artifactId>
             <version>1.5.4</version>
         </dependency>
+         -->
 	</dependencies>
 
 	<build>
