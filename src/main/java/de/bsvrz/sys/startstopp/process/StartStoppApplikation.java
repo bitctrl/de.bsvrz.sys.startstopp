@@ -26,6 +26,8 @@
 
 package de.bsvrz.sys.startstopp.process;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -221,7 +223,7 @@ public class StartStoppApplikation extends Applikation {
 				return;
 			}
 		}
-		
+
 		StartBedingung startBedingung = getStartBedingung();
 		if (startBedingung != null) {
 			applikation = processManager.waitForStartBedingung(this);
@@ -351,6 +353,22 @@ public class StartStoppApplikation extends Applikation {
 				builder.append(' ');
 			}
 			builder.append(argument);
+		}
+
+		if (!isKernsystem() || inkarnation.getKernSystem().getMitInkarnationsName()) {
+			try {
+				String hostName = InetAddress.getLocalHost().getHostName();
+				if (builder.length() > 0) {
+					builder.append(' ');
+				}
+				builder.append("-inkarnationsName=");
+				builder.append(hostName);
+				builder.append('_');
+				builder.append(getInkarnationsName());
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		// TODO Inkarnationsname ergänzen

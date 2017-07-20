@@ -29,7 +29,6 @@ package de.bsvrz.sys.startstopp.startstopp;
 import java.io.File;
 
 import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
-import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList.Argument;
 import de.bsvrz.sys.funclib.debug.Debug;
 
 public class StartStoppOptions {

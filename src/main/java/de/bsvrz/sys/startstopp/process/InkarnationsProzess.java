@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.jutils.jprocesses.model.ProcessInfo;
@@ -304,7 +303,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 				process.destroy();
 			}
 
-			if (waitStop(2)) {
+			if (waitStop(60)) {
 				return;
 			}
 

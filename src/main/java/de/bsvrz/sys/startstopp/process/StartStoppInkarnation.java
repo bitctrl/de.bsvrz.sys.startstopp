@@ -35,6 +35,10 @@ public class StartStoppInkarnation extends Inkarnation {
 
 	private KernSystem kernSystem = null;
 
+	public KernSystem getKernSystem() {
+		return kernSystem;
+	}
+
 	public StartStoppInkarnation(StartStoppKonfiguration skript, Inkarnation inkarnation) throws StartStoppException {
 		
 		for (KernSystem kernSystem : skript.getSkript().getGlobal().getKernsysteme()) {
