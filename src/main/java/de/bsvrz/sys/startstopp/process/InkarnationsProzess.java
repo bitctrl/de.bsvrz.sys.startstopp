@@ -273,70 +273,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		}
 	}
 
-	/**
-	 * Interne Klasse zum Stoppen einer Inkarnation. Der Stoppvorgang wird als
-	 * eigener Thread ausgeführt um zeitliche Abhängigkeiten (wie sleeps) zu
-	 * berücksichtigen.
-	 */
-	private class InkarnationProcessStopperThread extends Thread {
-
-		/**
-		 * Konstruktor der Klasse
-		 */
-		public InkarnationProcessStopperThread() {
-			super();
-		}
-
-		@Override
-		public void run() {
-			stoppeInkarnation();
-		}
-
-		/**
-		 * Methode zum Stoppen einer Inkarnation.
-		 */
-		private void stoppeInkarnation() {
-			getLogger().fine("Stoppe Inkarnation '" + getInkarnationsName() + "'");
-
-			// erster Versuch
-			if (process != null && process.isAlive()) {
-				process.destroy();
-			}
-
-			if (waitStop(60)) {
-				return;
-			}
-
-			// zweiter Versuch
-			if (process != null && process.isAlive()) {
-				process.destroyForcibly();
-			}
-
-			if (waitStop(2)) {
-				return;
-			}
-
-			// TODO: 3 Versuch mit kill??
-
-			return;
-		}
-
-		private boolean waitStop(int seconds) {
-			int i = (seconds * 1000) / 100;
-			while (getStatus() != InkarnationsProzessStatus.GESTOPPT && (i-- > 0)) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-			return getStatus() == InkarnationsProzessStatus.GESTOPPT;
-
-		}
-	}
-
 	private void prozessGestartet(Process process, ProcessInfo processInfo) {
 		setStatus(InkarnationsProzessStatus.GESTARTET);
 	}
@@ -409,16 +345,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 	}
 
 	@Override
-	public void stopp() {
-		if (process == null || (process != null && !process.isAlive())) {
-			return;
-		}
-
-		InkarnationProcessStopperThread inkarnationProcessThread = new InkarnationProcessStopperThread();
-		inkarnationProcessThread.start();
-	}
-
-	@Override
 	public String getProgramm() {
 		return programm;
 	}
@@ -455,5 +381,22 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			return Integer.parseInt(processInfo.getPid());
 		}
 		return null;
+	}
+
+	@Override
+	public void terminate() {
+		if(Tools.isWindows()) {
+			int terminateWindowsProzess = Tools.terminateWindowsProzess(getPid());
+			if( terminateWindowsProzess != 0) {
+				getLogger().warning("Fehler beim Terminieren der Inkarnation '" + getInkarnationsName() + "': " + terminateWindowsProzess);
+			}
+		} else {
+			process.destroy();
+		}
+	}
+
+	@Override
+	public void kill() {
+		process.destroyForcibly();
 	}
 }

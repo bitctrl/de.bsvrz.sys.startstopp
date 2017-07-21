@@ -34,6 +34,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jutils.jprocesses.JProcesses;
 import org.jutils.jprocesses.model.ProcessInfo;
 
+import com.sun.jna.platform.win32.Kernel32;
+
 /**
  * Tools f&uuml;r die Inkarnationsprozesse.
  * 
@@ -115,5 +117,26 @@ public class Tools {
 	    }
 	        
 	    return rstring.toString();
+	}
+	
+	/**
+	 * Send CTRL-C to the process using a given PID
+	 * 
+	 * @param processID
+	 */
+	public static int terminateWindowsProzess(Integer pid) {
+		if(!isWindows()) {
+			throw new IllegalStateException("Das ist kein Windows-System");
+		}
+		
+		if(!Kernel32.INSTANCE.AttachConsole(pid)) {
+			return Kernel32.INSTANCE.GetLastError();
+		}
+
+		if(!Kernel32.INSTANCE.GenerateConsoleCtrlEvent(Kernel32.CTRL_C_EVENT, 0)) {
+			return Kernel32.INSTANCE.GetLastError();
+		}
+		
+		return 0;
 	}
 }

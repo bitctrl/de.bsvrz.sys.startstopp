@@ -187,7 +187,7 @@ public class TestInkarnationsProzess {
 	}
 	
 	@Test
-	public final void testStopp() {	
+	public final void testTerminiere() {	
 		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
@@ -227,7 +227,7 @@ public class TestInkarnationsProzess {
 			e1.printStackTrace();
 		}
 		
-		inkarnationsProzess.stopp();
+		inkarnationsProzess.terminate();
 		
 		synchronized (sync) {
 			try {
@@ -240,6 +240,59 @@ public class TestInkarnationsProzess {
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
 	}
 	
+	@Test
+	public final void testKill() {	
+		Debug logger = Debug.getLogger();
+		Debug.setHandlerLevel("StdErr", Level.FINE);
+		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
+		inkarnationsProzess.setProgramm("java");
+		inkarnationsProzess.setProgrammArgumente("-cp target/test-classes de.bsvrz.sys.startstopp.process.TestInkarnation");
+		inkarnationsProzess.setInkarnationsName("Test");
+		Object sync = new Object();
+		status = null;
+		
+		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
+			
+			@Override
+			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
+				synchronized (sync ) {
+					System.out.println("Neuer Status: " + neuerStatus);
+					status = neuerStatus;
+					sync.notify();
+				}
+			}
+		});
+		inkarnationsProzess.start();
+
+		synchronized (sync) {
+			try {
+				sync.wait(6000);
+			} catch (InterruptedException e) {
+				Assert.fail();
+			}
+		}
+		
+		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		inkarnationsProzess.kill();
+		
+		synchronized (sync) {
+			try {
+				sync.wait(2000);
+			} catch (InterruptedException e) {
+				Assert.fail();
+			}
+		}
+		
+		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
+	}	
 	@Test
 	public final void testStartMitUmlaut() {	
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());

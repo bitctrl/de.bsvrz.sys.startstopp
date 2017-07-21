@@ -97,9 +97,17 @@ public interface InkarnationsProzessIf {
 	void start();
 
 	/**
-	 * Stoppt den Prozess.
+	 * Terminiert den Prozess (weiche Variante).
+	 * <p>Unter Linux wird der Prozess &uuml;ber <code>Process.destroy</code> beendet (Signal 15).</p>
+	 * <p>Unter Windows wird ein CTRl-C-EVENT an den Konsolen-Prozess gesendet.</p>
 	 */
-	void stopp();
+	void terminate();
+	
+	/**
+	 * Beendet den Prozess (harte Variante).
+	 * <p>Der Prozess wird &uuml;ber <code>Process.destroyForcibly</code> beendet.</p>
+	 */
+	void kill();
 	
 	/**
 	 * Gibt die gespeicherten Standardausgaben und Standardfehlerausgaben des Prozesses zur&uuml;ck.
