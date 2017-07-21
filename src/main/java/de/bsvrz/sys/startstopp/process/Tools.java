@@ -122,7 +122,7 @@ public class Tools {
 	/**
 	 * Send CTRL-C to the process using a given PID
 	 * 
-	 * @param processID
+	 * @param pid
 	 */
 	public static int terminateWindowsProzess(Integer pid) {
 		if(!isWindows()) {
