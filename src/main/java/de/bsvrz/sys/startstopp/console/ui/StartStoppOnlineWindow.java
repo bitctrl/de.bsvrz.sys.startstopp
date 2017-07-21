@@ -117,7 +117,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				}
 				break;
 			default:
-				System.err.println(keyStroke);
+				// TODO System.err.println(keyStroke);
 				break;
 			}
 			break;
@@ -134,7 +134,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 	@Override
 	public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
 		// TODO Auto-generated method stub
-		System.err.println("Unhandled: " + keyStroke);
+		// System.err.println("Unhandled: " + keyStroke);
 	}
 
 	@Override

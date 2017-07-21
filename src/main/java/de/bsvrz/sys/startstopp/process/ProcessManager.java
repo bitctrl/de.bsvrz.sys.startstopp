@@ -26,6 +26,8 @@
 
 package de.bsvrz.sys.startstopp.process;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +42,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.config.SkriptManagerListener;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
@@ -58,7 +61,8 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	private SkriptStopper stopper;
 	private StartStoppKonfiguration currentSkript;
 	private ArrayList<String> kernSystem;
-	private DavConnector davConnector;
+	private DavConnector davConnector = new DavConnector(this);
+	private String inkarnationsPrefix;
 
 	public ProcessManager() {
 		this(StartStopp.getInstance());
@@ -67,26 +71,31 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	public ProcessManager(StartStopp startStopp) {
 		super("ProcessManager");
 		this.startStopp = startStopp;
+		davConnector.start();
 	}
 
 	@Override
 	public void run() {
 
+		startStopp.getSkriptManager().addSkriptManagerListener(this);
+
 		while (!stopped) {
 
 			if (currentSkript == null) {
 				try {
-					currentSkript = startStopp.getSkriptManager().getCurrentSkript();
-					davConnector = new DavConnector(currentSkript.getResolvedZugangDav());
-					davConnector.start();
-					kernSystem = new ArrayList<>();
-					for (KernSystem ks : currentSkript.getSkript().getGlobal().getKernsysteme()) {
-						kernSystem.add(ks.getInkarnationsName());
-					}
-					for (StartStoppInkarnation inkarnation : currentSkript.getInkarnationen()) {
-						StartStoppApplikation applikation = new StartStoppApplikation(this, inkarnation);
-						applikationen.put(applikation.getInkarnationsName(), applikation);
-						applikation.addManagedApplikationListener(this);
+					StartStoppKonfiguration skript = startStopp.getSkriptManager().getCurrentSkript();
+					if (skript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
+						currentSkript = skript;
+						davConnector.reconnect(currentSkript.getResolvedZugangDav());
+						kernSystem = new ArrayList<>();
+						for (KernSystem ks : currentSkript.getSkript().getGlobal().getKernsysteme()) {
+							kernSystem.add(ks.getInkarnationsName());
+						}
+						for (StartStoppInkarnation inkarnation : currentSkript.getInkarnationen()) {
+							StartStoppApplikation applikation = new StartStoppApplikation(this, inkarnation);
+							applikationen.put(applikation.getInkarnationsName(), applikation);
+							applikation.addManagedApplikationListener(this);
+						}
 					}
 				} catch (StartStoppException e) {
 					currentSkript = null;
@@ -215,10 +224,18 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	public void skriptAktualisiert(StartStoppKonfiguration oldValue, StartStoppKonfiguration newValue) {
 		if (currentSkript == null) {
 			synchronized (lock) {
-				lock.notifyAll();
+				lock.notify();
 			}
 		}
 
+		if (currentSkript != null) {
+			try {
+				davConnector.reconnect(currentSkript.getResolvedZugangDav());
+			} catch (StartStoppException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		// TODO Änderungen berechnen und Applikationen aktualisieren
 	}
 
@@ -404,11 +421,40 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	@Override
 	public void applicationStatusChanged(StartStoppApplikation managedApplikation, Status oldValue, Status newValue) {
 		synchronized (lock) {
-			lock.notifyAll();
+			lock.notify();
 		}
 	}
 
 	public String getDavConnectionMsg() {
 		return davConnector.getConnectionMsg();
+	}
+
+	public String getInkarnationsPrefix() {
+
+		if (inkarnationsPrefix == null) {
+
+			StringBuilder builder = new StringBuilder(200);
+			builder.append("StartStopp_");
+			String hostName;
+			try {
+				hostName = InetAddress.getLocalHost().getHostName();
+				builder.append(hostName);
+			} catch (UnknownHostException e) {
+				builder.append("unknown_host");
+			}
+			builder.append('_');
+			inkarnationsPrefix = builder.toString();
+		}
+
+		return inkarnationsPrefix;
+	}
+
+	public void updateFromDav(String inkarnationsName, boolean fertig) {
+		if (fertig) {
+			StartStoppApplikation applikation = applikationen.get(inkarnationsName);
+			if (applikation.getStatus() == StartStoppApplikation.Status.GESTARTET) {
+				applikation.updateStatus(StartStoppApplikation.Status.INITIALISIERT);
+			}
+		}
 	}
 }

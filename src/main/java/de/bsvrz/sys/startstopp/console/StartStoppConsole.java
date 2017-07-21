@@ -62,7 +62,7 @@ public class StartStoppConsole {
 //		factory.setTelnetPort(6500);
 //		factory.setForceTextTerminal(true);
 		Terminal term = factory.createTerminal();
-		System.err.println("Term: " + term.getClass());
+// 		System.err.println("Term: " + term.getClass());
 		Screen screen = new TerminalScreen(term);
 		WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
 

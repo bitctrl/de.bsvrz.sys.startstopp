@@ -111,8 +111,9 @@ public class StartStoppKonfiguration {
 			if (startBedingung == null) {
 				return;
 			}
-			String rechner = startBedingung.getRechner();
-			if (rechner != null && !rechner.trim().isEmpty()) {
+			String rechnerName = startBedingung.getRechner();
+			if (rechnerName != null && !rechnerName.trim().isEmpty()) {
+				checkRechner(currentInkarnation, rechnerName.trim());
 				return;
 			}
 			currentInkarnation = getInkarnation(startBedingung.getVorgaenger());
@@ -121,6 +122,16 @@ public class StartStoppKonfiguration {
 						"Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
 			}
 		}
+	}
+
+	private void checkRechner(Inkarnation inkarnation, String name) throws StartStoppException {
+		for( Rechner rechner : getResolvedRechner()) {
+			if (rechner.getName().equals(name)) {
+				return;
+			}
+		}
+		
+		throw new StartStoppException("Der in der Inkarnation \"" + inkarnation.getInkarnationsName() + "\" referenzierte Rechner \"" + name + "\" ist nicht in der Konfiguration definiert");
 	}
 
 	private void checkStopRules(Inkarnation inkarnation) throws StartStoppException {
@@ -136,6 +147,7 @@ public class StartStoppKonfiguration {
 			}
 			String rechner = stoppBedingung.getRechner();
 			if (rechner != null && !rechner.trim().isEmpty()) {
+				checkRechner(currentInkarnation, rechner.trim());
 				return;
 			}
 			currentInkarnation = getInkarnation(stoppBedingung.getNachfolger());

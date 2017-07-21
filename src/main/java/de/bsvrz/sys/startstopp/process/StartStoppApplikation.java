@@ -341,8 +341,8 @@ public class StartStoppApplikation extends Applikation {
 			}
 		} else {
 			updateStatus(Applikation.Status.STOPPENWARTEN);
-			process.stopp();
-			process = null;
+			process.kill();
+			// TODO process = null;
 		}
 	}
 
@@ -356,27 +356,15 @@ public class StartStoppApplikation extends Applikation {
 		}
 
 		if (!isKernsystem() || inkarnation.getKernSystem().getMitInkarnationsName()) {
-			try {
-				String hostName = InetAddress.getLocalHost().getHostName();
-				if (builder.length() > 0) {
-					builder.append(' ');
-				}
-				builder.append("-inkarnationsName=");
-				builder.append(hostName);
-				builder.append('_');
-				builder.append(getInkarnationsName());
-			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			builder.append(" -inkarnationsName=");
+			builder.append(processManager.getInkarnationsPrefix());
+			builder.append(getInkarnationsName());
 		}
-
-		// TODO Inkarnationsname ergänzen
 
 		return builder.toString();
 	}
 
-	private void updateStatus(Status status) {
+	void updateStatus(Status status) {
 		Status oldStatus = getStatus();
 		if (oldStatus != status) {
 			setStatus(status);

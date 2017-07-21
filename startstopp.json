@@ -82,7 +82,7 @@
   },
   "inkarnationen" : [ {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx4G", "-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter", "%dav1.einstellungen%", "%debug.default%", "-benutzer=TestDatenverteilerBenutzer", "-konfigurationsBenutzer=configuration", "-parametrierungsBenutzer=parameter", "-authentifizierung=%authentifizierung.passwortdatei%", "-datenverteilerId=10000", "-rechtePruefung=neu", "-verzögerungFürAndereDatenverteiler=600s" ],
+    "aufrufParameter" : [ "-Xmx4G", "-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter", "%dav1.einstellungen%", "%debug.default%", "-benutzer=TestDatenverteilerBenutzer", "-konfigurationsBenutzer=configuration", "-parametrierungsBenutzer=parameter", "-authentifizierung=%authentifizierung.passwortdatei%", "-datenverteilerId=10000", "-rechtePruefung=nein", "-verzögerungFürAndereDatenverteiler=600s" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Datenverteiler",
     "initialize" : false,
@@ -175,7 +175,7 @@
     "startBedingung" : {
       "vorgaenger" : "Applikation07",
       "warteart" : "ende",
-      "rechner" : "%rechner2%",
+      "rechner" : "rechner2",
       "wartezeit" : "20"
     },
     "startFehlerVerhalten" : {
@@ -227,8 +227,8 @@
   } ],
   "metaDaten" : {
     "aenderungsGrund" : "Alles neu",
-    "erstelltAm" : "2017-07-20T11:43:37.162",
+    "erstelltAm" : "2017-07-21T11:55:15.656",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1500543817162"
+    "versionsNummer" : "1500630915656"
   }
 }
