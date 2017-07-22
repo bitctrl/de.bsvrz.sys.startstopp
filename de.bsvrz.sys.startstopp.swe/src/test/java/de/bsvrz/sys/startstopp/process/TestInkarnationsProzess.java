@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
 
+import org.hamcrest.core.SubstringMatcher;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -27,8 +28,9 @@ public class TestInkarnationsProzess {
 	public static void setUpBeforeClass() throws Exception {
 //		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
-		URL location = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation();
-		classPath = location.toURI().getPath();
+		String startPath = System.getProperty("user.dir");
+		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		classPath = classPath.replace(startPath, "").substring(1);
 		Debug.getLogger().info("Set classpath to: " + classPath);
 	}
 
