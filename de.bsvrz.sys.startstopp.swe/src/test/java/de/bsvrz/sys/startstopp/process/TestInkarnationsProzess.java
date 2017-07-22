@@ -1,6 +1,8 @@
 package de.bsvrz.sys.startstopp.process;
 
 
+import java.net.URI;
+import java.net.URL;
 import java.util.logging.Level;
 
 import org.junit.After;
@@ -25,7 +27,8 @@ public class TestInkarnationsProzess {
 	public static void setUpBeforeClass() throws Exception {
 //		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
-		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		URL location = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation();
+		classPath = location.toURI().getPath();
 		Debug.getLogger().info("Set classpath to: " + classPath);
 	}
 
