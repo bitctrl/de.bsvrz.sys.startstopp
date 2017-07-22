@@ -7,123 +7,16 @@ buildscript {
 
   dependencies {
     classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:0.4.37'
-    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
-    classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.4.0'
-    classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
-    classpath 'org.asciidoctor:asciidoctorj-diagram:1.5.4'
   }
 }
 
-plugins {
-    id 'org.asciidoctor.convert' version '1.5.3'
-}
 
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'jsonschema2pojo'
-apply plugin: 'org.asciidoctor.convert'
-apply plugin: 'com.github.jruby-gradle.base' 
 
 compileJava.options.encoding = 'UTF-8'
 
-asciidoctorj {
-    version = '1.5.5'
-}
-
-def asciidoctor_common = { 
-    sourceDir = file('src/main/asciidoc')
-    requires = ['asciidoctor-diagram']
-    outputDir "${buildDir}/docs"
-    options doctype: 'book'
-    backends = ['pdf','html']
-    attributes  'build-gradle': file('build.gradle'),
-    			'source-highlighter': 'coderay',
-                toc                 : 'left',
-                idprefix            : '',
-                idseparator         : '-'
-}
-
-task('html_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sourceDir = file('src/main/asciidoc')
-      sources {
-          include 'swent.adoc'
-      }
-      configure asciidoctor_common
-      backends = ['html5'] 
-}
-
-task('pdf_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sourceDir = file('src/main/asciidoc')
-      sources {
-          include 'swent.adoc'
-      }
-      configure asciidoctor_common
-      backends = ['pdf'] 
-      attributes 'pdf-stylesdir'     : 'themes/',
-                'pdf-style'         : 'nerz',
-                'pdf-fontsdir'      : 'themes/fonts/',
-                'icons'             : 'font',
-                'setanchors'        : '',
-                'pagenums'          : '',
-                'imagesoutdir'      : 'images',
-                'imagesdir'         : 'images', 
-                'docinfo1'          : ''
-}
-
-
-task('docbook_swent', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sources {
-          include 'swent.adoc'
-      }
-      configure asciidoctor_common
-      backends = ['docbook'] 
-}
-
-task docx_swent (
-        dependsOn: [docbook_swent],
-        type: Exec
-) {
-    workingDir 'build/docs/docbook'
-    executable = "pandoc"
-    new File('build/docs/docx/').mkdirs()
-    args = ['-r','docbook',
-            '-t','docx',
-            '-o','../docx/swent.docx',
-                 'swent.xml']
-}
-
-task('pdf_afo', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sources {
-          include 'afo.adoc'
-      }
-      configure asciidoctor_common
-      backends = ['pdf'] 
-      attributes 'pdf-stylesdir'     : 'themes/',
-                'pdf-style'         : 'nerz',
-                'pdf-fontsdir'		: 'themes/fonts/',
-                'icons'             : 'font',
-                'setanchors'		: '',
-                'pagenums'          : '',
-                'imagesoutdir'      : 'images',
-                'imagesdir'         : 'images',
-                'docinfo1'			: ''
-}
-
-task('html_afo', type: org.asciidoctor.gradle.AsciidoctorTask) {
-      sources {
-          include 'afo.adoc'
-      }
-      configure asciidoctor_common
-      backends = ['html5'] 
-}
-
-
-asciidoctor {
-    dependsOn 'html_swent'
-    dependsOn 'pdf_swent'
-    dependsOn 'html_afo'
-    dependsOn 'pdf_afo'
-}
 
 jsonSchema2Pojo.targetPackage = 'de.bsvrz.sys.startstopp.api.jsonschema'
 
