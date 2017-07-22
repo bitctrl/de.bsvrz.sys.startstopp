@@ -19,11 +19,14 @@ import de.bsvrz.sys.startstopp.process.InkarnationsProzessStatus;
 public class TestInkarnationsProzess {
 	
 	private InkarnationsProzessStatus status;
+	private static String classPath;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 //		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
+		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		Debug.getLogger().info("Set classpath to: " + classPath);
 	}
 
 	@AfterClass
@@ -147,7 +150,7 @@ public class TestInkarnationsProzess {
 	public final void testStart() {	
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
 		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-cp " + TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().getPath() + " de.bsvrz.sys.startstopp.process.TestInkarnation");
+		inkarnationsProzess.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		inkarnationsProzess.setInkarnationsName("Bubu");
 		Object sync = new Object();
 		status = null;
@@ -192,7 +195,7 @@ public class TestInkarnationsProzess {
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
 		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-cp " + TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().getPath() + " de.bsvrz.sys.startstopp.process.TestInkarnation");
+		inkarnationsProzess.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		inkarnationsProzess.setInkarnationsName("Test");
 		Object sync = new Object();
 		status = null;
@@ -246,7 +249,7 @@ public class TestInkarnationsProzess {
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
 		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-cp " + TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().getPath() + " de.bsvrz.sys.startstopp.process.TestInkarnation");
+		inkarnationsProzess.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		inkarnationsProzess.setInkarnationsName("Test");
 		Object sync = new Object();
 		status = null;
@@ -297,7 +300,7 @@ public class TestInkarnationsProzess {
 	public final void testStartMitUmlaut() {	
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
 		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-cp " + TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().getPath() + " de.bsvrz.sys.startstopp.process.TestInkarnation -üUmlaut");
+		inkarnationsProzess.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation -üUmlaut");
 		inkarnationsProzess.setInkarnationsName("Bubu");
 		Object sync = new Object();
 		status = null;
