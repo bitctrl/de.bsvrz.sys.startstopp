@@ -29,7 +29,7 @@ public class TestInkarnationsProzess {
 //		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		String startPath = System.getProperty("user.dir");
-		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 		classPath = classPath.replace(startPath, "").substring(1);
 		Debug.getLogger().info("Set classpath to: " + classPath);
 	}
