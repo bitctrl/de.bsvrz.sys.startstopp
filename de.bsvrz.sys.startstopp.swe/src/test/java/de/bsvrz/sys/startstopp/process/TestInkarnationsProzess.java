@@ -1,6 +1,5 @@
 package de.bsvrz.sys.startstopp.process;
 
-
 import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
@@ -20,13 +19,13 @@ import de.bsvrz.sys.startstopp.process.InkarnationsProzessListener;
 import de.bsvrz.sys.startstopp.process.InkarnationsProzessStatus;
 
 public class TestInkarnationsProzess {
-	
+
 	private InkarnationsProzessStatus status;
 	private static String classPath;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-//		Debug logger = Debug.getLogger();
+		// Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		String startPath = System.getProperty("user.dir");
 		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
@@ -64,7 +63,7 @@ public class TestInkarnationsProzess {
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
 		Assert.assertTrue("Startfehler", inkarnationsProzess.getStartFehler().contains("error=2"));
 	}
-	
+
 	@Test
 	public final void testStartFehler_MainClassNotFound() {
 		Debug logger = Debug.getLogger();
@@ -73,7 +72,8 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.setProgramm("java bubu");
 		inkarnationsProzess.setInkarnationsName("Test");
 		inkarnationsProzess.start();
-		while (inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTOPPT || inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTARTET) {
+		while (inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTOPPT
+				|| inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTARTET) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -81,12 +81,13 @@ public class TestInkarnationsProzess {
 				e.printStackTrace();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
-		Assert.assertTrue("Fehlermeldung", inkarnationsProzess.getProzessAusgabe().contains("Hauptklasse"));
+		String ausgabe = inkarnationsProzess.getProzessAusgabe().toLowerCase();
+		Assert.assertTrue("Fehlermeldung", ausgabe.contains("hauptklasse") || ausgabe.contains("mainclass"));
 		Assert.assertEquals("Exitcode", 1, inkarnationsProzess.getLastExitCode());
 	}
-	
+
 	@Test
 	public final void testStartFehler_InvalidOption() {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
@@ -94,7 +95,8 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.setProgrammArgumente("-invalidOption=");
 		inkarnationsProzess.setInkarnationsName("Test");
 		inkarnationsProzess.start();
-		while (inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTOPPT || inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTARTET) {
+		while (inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTOPPT
+				|| inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTARTET) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -102,14 +104,14 @@ public class TestInkarnationsProzess {
 				e.printStackTrace();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
 		Assert.assertTrue("Fehlermeldung", inkarnationsProzess.getProzessAusgabe().contains("fatal exception"));
 		Assert.assertEquals("Exitcode", 1, inkarnationsProzess.getLastExitCode());
 	}
 
 	@Test
-	public final void testStartFehler_Listener() {	
+	public final void testStartFehler_Listener() {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
 		inkarnationsProzess.setProgramm("java");
 		inkarnationsProzess.setProgrammArgumente("-invalidOption=");
@@ -117,12 +119,12 @@ public class TestInkarnationsProzess {
 		Object sync = new Object();
 		status = null;
 		inkarnationsProzess.start();
-		
+
 		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-			
+
 			@Override
 			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync ) {
+				synchronized (sync) {
 					System.out.println("Neuer Status: " + neuerStatus);
 					status = neuerStatus;
 					sync.notify();
@@ -137,9 +139,9 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
-		
+
 		synchronized (sync) {
 			try {
 				sync.wait(2000);
@@ -147,24 +149,25 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, status);
 	}
-	
+
 	@Test
-	public final void testStart() {	
+	public final void testStart() {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
 		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
+		inkarnationsProzess
+				.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		inkarnationsProzess.setInkarnationsName("Bubu");
 		Object sync = new Object();
 		status = null;
 
 		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-			
+
 			@Override
 			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync ) {
+				synchronized (sync) {
 					System.out.println("Neuer Status: " + neuerStatus);
 					status = neuerStatus;
 					sync.notify();
@@ -180,9 +183,9 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
-		
+
 		synchronized (sync) {
 			try {
 				sync.wait(15000);
@@ -190,26 +193,27 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
 	}
-	
+
 	@Test
-	public final void testTerminiere() {	
+	public final void testTerminiere() {
 		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
 		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
+		inkarnationsProzess
+				.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		inkarnationsProzess.setInkarnationsName("Test");
 		Object sync = new Object();
 		status = null;
-		
+
 		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-			
+
 			@Override
 			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync ) {
+				synchronized (sync) {
 					System.out.println("Neuer Status: " + neuerStatus);
 					status = neuerStatus;
 					sync.notify();
@@ -225,18 +229,18 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
-		
+
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		inkarnationsProzess.terminate();
-		
+
 		synchronized (sync) {
 			try {
 				sync.wait(2000);
@@ -244,26 +248,27 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
 	}
-	
+
 	@Test
-	public final void testKill() {	
+	public final void testKill() {
 		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
 		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
+		inkarnationsProzess
+				.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		inkarnationsProzess.setInkarnationsName("Test");
 		Object sync = new Object();
 		status = null;
-		
+
 		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-			
+
 			@Override
 			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync ) {
+				synchronized (sync) {
 					System.out.println("Neuer Status: " + neuerStatus);
 					status = neuerStatus;
 					sync.notify();
@@ -279,18 +284,18 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
-		
+
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		inkarnationsProzess.kill();
-		
+
 		synchronized (sync) {
 			try {
 				sync.wait(2000);
@@ -298,24 +303,26 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
-	}	
+	}
+
 	@Test
-	public final void testStartMitUmlaut() {	
+	public final void testStartMitUmlaut() {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
 		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation -üUmlaut");
+		inkarnationsProzess
+				.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation -üUmlaut");
 		inkarnationsProzess.setInkarnationsName("Bubu");
 		Object sync = new Object();
 		status = null;
 		inkarnationsProzess.start();
-		
+
 		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-			
+
 			@Override
 			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync ) {
+				synchronized (sync) {
 					System.out.println("Neuer Status: " + neuerStatus);
 					status = neuerStatus;
 					sync.notify();
@@ -330,9 +337,9 @@ public class TestInkarnationsProzess {
 				Assert.fail();
 			}
 		}
-		
+
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
-		
+
 		Assert.assertNotNull("Pid", inkarnationsProzess.getPid());
 	}
 }
