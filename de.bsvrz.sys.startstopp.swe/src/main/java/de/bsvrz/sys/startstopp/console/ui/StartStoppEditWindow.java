@@ -80,7 +80,9 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 				builder.addActions(new EditorSaveAction(), new EditorCloseAction(this));
 				builder.build().showDialog(getTextGUI());
 				break;
-			
+
+			default:
+				break;
 			}
 			break;
 

@@ -28,6 +28,8 @@ package de.bsvrz.sys.startstopp.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -55,22 +57,42 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 
 public class StartStoppXMLParser {
 
-	private static class StartStoppParserHandler extends DefaultHandler {
+	private enum Tags {
+		tagIsUndefined,
+		konfiguration,
+		startStopp,
+		global,
+		makrodefinition,
+		kernsystem,
+		zugangdav,
+		rechner,
+		protokolldatei,
+		applikationen,
+		inkarnation,
+		applikation,
+		aufrufparameter,
+		startart,
+		standardAusgabe,
+		standardFehlerAusgabe,
+		startFehlerverhalten,
+		stoppFehlerverhalten,
+		usv,
+		startbedingung,
+		stoppbedingung;
 
-		private enum Tags {
-			tagIsUndefined, konfiguration, startStopp, global, makrodefinition, kernsystem, zugangdav, rechner,
-			protokolldatei, applikationen, inkarnation, applikation, aufrufparameter, startart, standardAusgabe,
-			standardFehlerAusgabe, startFehlerverhalten, stoppFehlerverhalten, usv, startbedingung, stoppbedingung;
-
-			static Tags getTag(String tagStr) {
-				for (Tags tag : values()) {
-					if (tag.name().equalsIgnoreCase(tagStr)) {
-						return tag;
-					}
+		static Tags getTag(String tagStr) {
+			for (Tags tag : values()) {
+				if (tag.name().equalsIgnoreCase(tagStr)) {
+					return tag;
 				}
-				return Tags.tagIsUndefined;
 			}
-		};
+			return Tags.tagIsUndefined;
+		}
+	}
+
+	private Set<String> suppressInkarnationsName = new LinkedHashSet<>();
+
+	private class StartStoppParserHandler extends DefaultHandler {
 
 		private StartStoppSkript destination;
 		private Inkarnation currentInkarnation;
@@ -102,7 +124,12 @@ public class StartStoppXMLParser {
 				KernSystem kernsystem = new KernSystem();
 				kernsystem.setInkarnationsName(attributes.getValue("inkarnationsname"));
 				if (attributes.getValue("mitInkarnationsname") != null) {
-					kernsystem.setMitInkarnationsName(attributes.getValue("mitInkarnationsname").equals("ja"));
+					boolean mitInkarnationsName = attributes.getValue("mitInkarnationsname").equals("ja");
+					if( !mitInkarnationsName) {
+						suppressInkarnationsName.add(kernsystem.getInkarnationsName());
+					}
+				} else {
+					suppressInkarnationsName.add(kernsystem.getInkarnationsName());
 				}
 				if (destination.getGlobal() == null) {
 					destination.setGlobal(new Global());
@@ -285,7 +312,7 @@ public class StartStoppXMLParser {
 		}
 	}
 
-	public static StartStoppSkript getKonfigurationFrom(String resourceName) throws StartStoppException {
+	public StartStoppSkript getKonfigurationFrom(String resourceName) throws StartStoppException {
 
 		StartStoppSkript startStoppKonfiguration = new StartStoppSkript();
 
@@ -298,6 +325,14 @@ public class StartStoppXMLParser {
 			throw new StartStoppException(e);
 		}
 
+		for( String item : suppressInkarnationsName) {
+			for( Inkarnation inkarnation : startStoppKonfiguration.getInkarnationen()) {
+				if( item.equals(inkarnation.getInkarnationsName())) {
+					inkarnation.setMitInkarnationsName(false);
+				}
+			}
+		}
+		
 		return startStoppKonfiguration;
 	}
 }

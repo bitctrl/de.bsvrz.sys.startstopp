@@ -26,7 +26,7 @@ import de.bsvrz.dav.daf.main.config.SystemObject;
 public class ApplikationStatusHandler
 		implements DynamicObjectCreatedListener, InvalidationListener, ClientReceiverInterface {
 
-	private class ApplikationStatus {
+	private static class ApplikationStatus {
 
 		private String name;
 		private SystemObject appObj;

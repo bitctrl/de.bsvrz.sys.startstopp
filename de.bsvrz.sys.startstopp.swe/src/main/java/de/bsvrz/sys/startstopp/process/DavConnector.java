@@ -39,7 +39,6 @@ import de.bsvrz.dav.daf.main.InconsistentLoginException;
 import de.bsvrz.dav.daf.main.MissingParameterException;
 import de.bsvrz.dav.daf.main.config.ConfigurationTaskException;
 import de.bsvrz.dav.daf.main.config.DataModel;
-import de.bsvrz.dav.daf.main.config.DynamicObjectType;
 import de.bsvrz.dav.daf.main.config.management.UserAdministration;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;

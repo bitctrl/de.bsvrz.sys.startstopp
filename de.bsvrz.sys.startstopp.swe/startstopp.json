@@ -1,14 +1,11 @@
 {
   "global" : {
     "kernsysteme" : [ {
-      "inkarnationsName" : "Datenverteiler",
-      "mitInkarnationsName" : false
+      "inkarnationsName" : "Datenverteiler"
     }, {
-      "inkarnationsName" : "Konfiguration",
-      "mitInkarnationsName" : false
+      "inkarnationsName" : "Konfiguration"
     }, {
-      "inkarnationsName" : "Parametrierung",
-      "mitInkarnationsName" : true
+      "inkarnationsName" : "Parametrierung"
     } ],
     "makrodefinitionen" : [ {
       "name" : "root",
@@ -27,7 +24,7 @@
       "wert" : "192.168.172.2"
     }, {
       "name" : "authentifizierung.benutzer",
-      "wert" : "vrzanwendung"
+      "wert" : "AutostartApplikation"
     }, {
       "name" : "authentifizierung.passwortdatei",
       "wert" : "%root%/skripte-dosshell/passwd"
@@ -72,7 +69,7 @@
       "adresse" : "%dav1.host%",
       "passWord" : "geheim",
       "port" : "%dav1.appPort%",
-      "userName" : "Tester"
+      "userName" : "TestDatenverteilerBenutzer"
     },
     "rechner" : [ {
       "name" : "rechner2",
@@ -82,10 +79,11 @@
   },
   "inkarnationen" : [ {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx4G", "-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter", "%dav1.einstellungen%", "%debug.default%", "-benutzer=TestDatenverteilerBenutzer", "-konfigurationsBenutzer=configuration", "-parametrierungsBenutzer=parameter", "-authentifizierung=%authentifizierung.passwortdatei%", "-datenverteilerId=10000", "-rechtePruefung=nein", "-verzögerungFürAndereDatenverteiler=600s" ],
+    "aufrufParameter" : [ "-Xmx4G", "-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter", "%dav1.einstellungen%", "%debug.default%", "-benutzer=TestDatenverteilerBenutzer", "-konfigurationsBenutzer=configuration", "-parametrierungsBenutzer=parameter", "-authentifizierung=%authentifizierung.passwortdatei%", "-datenverteilerId=10000", "-rechtePruefung=neu", "-verzögerungFürAndereDatenverteiler=600s" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Datenverteiler",
     "initialize" : false,
+    "mitInkarnationsName" : false,
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
@@ -105,6 +103,7 @@
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Konfiguration",
     "initialize" : false,
+    "mitInkarnationsName" : false,
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
@@ -124,8 +123,9 @@
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Parametrierung",
     "initialize" : false,
+    "mitInkarnationsName" : true,
     "startArt" : {
-      "option" : "manuell",
+      "option" : "automatisch",
       "neuStart" : false,
       "intervall" : ""
     },
@@ -143,6 +143,7 @@
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation01",
     "initialize" : false,
+    "mitInkarnationsName" : true,
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
@@ -167,6 +168,7 @@
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation04",
     "initialize" : false,
+    "mitInkarnationsName" : true,
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
@@ -192,6 +194,7 @@
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation05",
     "initialize" : false,
+    "mitInkarnationsName" : true,
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
@@ -211,6 +214,7 @@
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation06",
     "initialize" : false,
+    "mitInkarnationsName" : true,
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : false,
@@ -227,8 +231,8 @@
   } ],
   "metaDaten" : {
     "aenderungsGrund" : "Alles neu",
-    "erstelltAm" : "2017-07-24T08:51:52.745",
+    "erstelltAm" : "2017-07-24T15:54:39.467",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1500879112745"
+    "versionsNummer" : "1500904479467"
   }
 }

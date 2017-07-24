@@ -4,10 +4,6 @@
 	"properties": {
 		"inkarnationsName": {
 			"type": "string"
-		},
-		"mitInkarnationsName": {
-			"type": "boolean",
-			"default": false
 		}
 	},
 	"required": [

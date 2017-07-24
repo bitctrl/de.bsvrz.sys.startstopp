@@ -61,7 +61,7 @@ public class KonfigurationTest {
 	public void convertKonfiguration() throws ParserConfigurationException, SAXException, IOException,
 			XMLStreamException, TransformerFactoryConfigurationError, TransformerException, StartStoppException {
 		for (String file : files) {
-				StartStoppSkript skript = StartStoppXMLParser.getKonfigurationFrom(file);
+				StartStoppSkript skript = new StartStoppXMLParser().getKonfigurationFrom(file);
 				
 				ObjectMapper objectMapper = new ObjectMapper();
 				

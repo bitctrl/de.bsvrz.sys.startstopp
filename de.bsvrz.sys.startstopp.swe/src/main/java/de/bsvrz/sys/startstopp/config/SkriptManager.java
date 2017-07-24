@@ -113,7 +113,7 @@ public class SkriptManager {
 			}
 			if (skript == null) {
 				LOGGER.warning("Versuche XML-Datei zu konvertieren!");
-				skript = StartStoppXMLParser.getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
+				skript = new StartStoppXMLParser().getKonfigurationFrom("testkonfigurationen/startStopp01_1.xml");
 				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
 				try (FileOutputStream fileStream = new FileOutputStream(getStartStoppSkriptFile());
@@ -240,10 +240,10 @@ public class SkriptManager {
 
 	private void checkAuthentification(String veranlasser, String passwort) throws StartStoppException {
 
-		if( startStopp.getOptions().getMasterHost() != null) {
+		if (startStopp.getOptions().getMasterHost() != null) {
 			// TODO Remote-Prüfung einbauen
 		}
-		
+
 		try {
 			if (startStopp.getProcessManager().getDavConnector().checkAuthentification(veranlasser, passwort)) {
 				return;
@@ -281,12 +281,12 @@ public class SkriptManager {
 		}
 
 		File passwdFile = startStopp.getOptions().getPasswdFile();
-		if( passwdFile != null) {
-			try {
+		if (passwdFile != null) {
+			try (InputStream input = new FileInputStream(passwdFile)) {
 				Properties properties = new Properties();
-				properties.load(new FileInputStream(passwdFile));
+				properties.load(input);
 				String passwdValue = properties.getProperty(veranlasser);
-				if( passwort.equals(passwdValue)) {
+				if (passwort.equals(passwdValue)) {
 					// XXX Keine Admin-Prüfung
 					return;
 				}
@@ -294,7 +294,7 @@ public class SkriptManager {
 				LOGGER.fine(e.getLocalizedMessage());
 			}
 		}
-		
+
 		throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" konnte nicht verifiziert werden!");
 	}
 

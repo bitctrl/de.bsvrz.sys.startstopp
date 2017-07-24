@@ -1,21 +1,18 @@
 {
-    "aenderungsgrund": "Alles neu",
-    "veranlasser": "Tester",
-    "passwort": "geheim",
+	"aenderungsgrund": "Alles neu",
+	"veranlasser": "Tester",
+	"passwort": "geheim",
 	"skript": {
 		"global": {
 			"kernsysteme": [
 				{
-					"inkarnationsName": "Datenverteiler",
-					"mitInkarnationsName": false
+					"inkarnationsName": "Datenverteiler"
 				},
 				{
-					"inkarnationsName": "Konfiguration",
-					"mitInkarnationsName": false
+					"inkarnationsName": "Konfiguration"
 				},
 				{
-					"inkarnationsName": "Parametrierung",
-					"mitInkarnationsName": true
+					"inkarnationsName": "Parametrierung"
 				}
 			],
 			"makrodefinitionen": [
@@ -41,7 +38,7 @@
 				},
 				{
 					"name": "authentifizierung.benutzer",
-					"wert": "vrzanwendung"
+					"wert": "AutostartApplikation"
 				},
 				{
 					"name": "authentifizierung.passwortdatei",
@@ -100,7 +97,7 @@
 				"adresse": "%dav1.host%",
 				"passWord": "geheim",
 				"port": "%dav1.appPort%",
-				"userName": "Tester"
+				"userName": "TestDatenverteilerBenutzer"
 			},
 			"rechner": [
 				{
@@ -123,12 +120,13 @@
 					"-parametrierungsBenutzer=parameter",
 					"-authentifizierung=%authentifizierung.passwortdatei%",
 					"-datenverteilerId=10000",
-					"-rechtePruefung=nein",
+					"-rechtePruefung=neu",
 					"-verzögerungFürAndereDatenverteiler=600s"
 				],
 				"inkarnationsTyp": "dav",
 				"inkarnationsName": "Datenverteiler",
 				"initialize": false,
+				"mitInkarnationsName": false,
 				"startArt": {
 					"option": "automatisch",
 					"neuStart": false,
@@ -158,6 +156,7 @@
 				"inkarnationsTyp": "dav",
 				"inkarnationsName": "Konfiguration",
 				"initialize": false,
+				"mitInkarnationsName": false,
 				"startArt": {
 					"option": "automatisch",
 					"neuStart": false,
@@ -189,8 +188,9 @@
 				"inkarnationsTyp": "dav",
 				"inkarnationsName": "Parametrierung",
 				"initialize": false,
+				"mitInkarnationsName": true,
 				"startArt": {
-					"option": "manuell",
+					"option": "automatisch",
 					"neuStart": false,
 					"intervall": ""
 				},
@@ -214,6 +214,7 @@
 				"inkarnationsTyp": "dav",
 				"inkarnationsName": "Applikation01",
 				"initialize": false,
+				"mitInkarnationsName": true,
 				"startArt": {
 					"option": "automatisch",
 					"neuStart": false,
@@ -244,6 +245,7 @@
 				"inkarnationsTyp": "dav",
 				"inkarnationsName": "Applikation04",
 				"initialize": false,
+				"mitInkarnationsName": true,
 				"startArt": {
 					"option": "automatisch",
 					"neuStart": false,
@@ -275,6 +277,7 @@
 				"inkarnationsTyp": "dav",
 				"inkarnationsName": "Applikation05",
 				"initialize": false,
+				"mitInkarnationsName": true,
 				"startArt": {
 					"option": "automatisch",
 					"neuStart": false,
@@ -300,6 +303,7 @@
 				"inkarnationsTyp": "dav",
 				"inkarnationsName": "Applikation06",
 				"initialize": false,
+				"mitInkarnationsName": true,
 				"startArt": {
 					"option": "automatisch",
 					"neuStart": false,
@@ -316,10 +320,7 @@
 			}
 		],
 		"metaDaten": {
-			"aenderungsGrund": "Willi",
-			"erstelltAm": "2017-07-18T17:19:00.239",
-			"erstelltDurch": "Tester",
-			"versionsNummer": "1500391140239"
+			
 		}
 	}
 }

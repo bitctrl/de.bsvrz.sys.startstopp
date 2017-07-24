@@ -1,10 +1,7 @@
 package de.bsvrz.sys.startstopp.process;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.logging.Level;
 
-import org.hamcrest.core.SubstringMatcher;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -13,10 +10,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.process.InkarnationsProzess;
-import de.bsvrz.sys.startstopp.process.InkarnationsProzessIf;
-import de.bsvrz.sys.startstopp.process.InkarnationsProzessListener;
-import de.bsvrz.sys.startstopp.process.InkarnationsProzessStatus;
 
 public class TestInkarnationsProzess {
 

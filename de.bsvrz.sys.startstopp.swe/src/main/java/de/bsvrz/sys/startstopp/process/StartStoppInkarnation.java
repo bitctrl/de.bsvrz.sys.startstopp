@@ -54,6 +54,7 @@ public class StartStoppInkarnation extends Inkarnation {
 		setInkarnationsName(inkarnation.getInkarnationsName());
 		setInkarnationsTyp(inkarnation.getInkarnationsTyp());
 		setStartArt(inkarnation.getStartArt());
+		setMitInkarnationsName(inkarnation.getMitInkarnationsName());
 		setStartBedingung(skript.getResolvedStartBedingung(inkarnation.getStartBedingung()));
 		setStartFehlerVerhalten(skript.getResolvedStartFehlerVerhalten(inkarnation.getStartFehlerVerhalten()));
 		setStoppBedingung(skript.getResolvedStoppBedingung(inkarnation.getStoppBedingung()));

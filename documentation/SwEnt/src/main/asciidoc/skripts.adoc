@@ -145,12 +145,7 @@ Die zum Kernsystem gehörenden Inkarnationen werden beim Start und beim Beenden 
 bilden implizit eine Start- bzw. Stoppbedingung für alle anderen Inkarnationen der Konfiguration.
 
 Ein Eintrag im Kernsystem wird durch den Inkarnationsnamen, der einem der Inkarnationsnamen in der in Kap. 3.3.7
-beschriebenen Liste der Inkarnationen entsprechen muss, und dem Attribut "mitInkarnationsName" beschrieben.
-
-Allen von StartStopp ausgeführten Applikationen wird standardmäßig als Startparameter der Inkarnationsname aus
-der StartStopp-Konfiguration mit übergeben. Für die Komponenten des Kernsystems wird die Übergabe des Parameters
-unterdrückt, weil einige Datenverteiler-Komponenten, insbesondere der Datenverteiler selbst und die Konfiguration
-diesen Parameter nicht unterstützen.
+beschriebenen Liste der Inkarnationen entsprechen muss beschrieben.
 
 ==== Makrodefinitionen
 
@@ -253,6 +248,12 @@ Anmerkung: Dieses Attribut sollte für Datenverteiler-Applikationen unnötig sei
       Datenverteiler-Applikationen ein SystemObjekt mit dem Typ "typ.applikation" erzeugen und eine
       Initialisierungsmeldung über den Datenverteiler publizieren.
 
+Allen von StartStopp ausgeführten Applikationen wird standardmäßig als Startparameter der Inkarnationsname aus
+der StartStopp-Konfiguration mit übergeben. 
+Über den Parameter *mitInkarnationsName* kann die Übergabe desselben unterdrückt werden. Insbesondere für die Komponenten 
+des Kernsystems ist das von Bedeutung, weil einige Datenverteiler-Komponenten, insbesondere der Datenverteiler 
+selbst und die Konfiguration diesen Parameter nicht unterstützen.  
+      
 Die Inkarnation wird weiterhin durch folgende Attribute näher definiert:
 
 * Startart

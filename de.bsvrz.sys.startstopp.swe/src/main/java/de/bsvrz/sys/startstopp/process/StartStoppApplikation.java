@@ -26,8 +26,6 @@
 
 package de.bsvrz.sys.startstopp.process;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -355,7 +353,7 @@ public class StartStoppApplikation extends Applikation {
 			builder.append(argument);
 		}
 
-		if (!isKernsystem() || inkarnation.getKernSystem().getMitInkarnationsName()) {
+		if (inkarnation.getMitInkarnationsName()) {
 			builder.append(" -inkarnationsName=");
 			builder.append(processManager.getInkarnationsPrefix());
 			builder.append(getInkarnationsName());

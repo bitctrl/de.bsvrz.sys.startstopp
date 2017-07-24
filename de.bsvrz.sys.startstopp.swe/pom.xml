@@ -442,7 +442,7 @@
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
-								de.kappich, com.google.guava
+								de.kappich, com.google.guava, com.nimbusds
 							</excludeGroupIds>
 						</configuration>
 					</execution>
@@ -459,7 +459,7 @@
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
-								de.kappich, com.google.guava
+								de.kappich, com.google.guava, com.nimbusds
 							</excludeGroupIds>
 						</configuration>
 					</execution>
@@ -478,7 +478,7 @@
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
-								de.kappich, com.google.guava
+								de.kappich, com.google.guava, com.nimbusds
 							</excludeGroupIds>
 						</configuration>
 					</execution>
