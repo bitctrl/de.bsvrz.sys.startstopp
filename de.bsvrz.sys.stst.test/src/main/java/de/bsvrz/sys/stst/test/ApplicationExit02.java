@@ -2,6 +2,7 @@ package de.bsvrz.sys.stst.test;
 
 import de.bsvrz.dav.daf.main.ClientDavInterface;
 import de.bsvrz.sys.funclib.application.StandardApplication;
+import de.bsvrz.sys.funclib.application.StandardApplicationRunner;
 import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
 
 public class ApplicationExit02 implements StandardApplication {
@@ -16,5 +17,8 @@ public class ApplicationExit02 implements StandardApplication {
 	public void initialize(ClientDavInterface connection) throws Exception {
 		// die Applikation tut nichts
 	}
-
+	
+	public static void main(String[] args) {
+		StandardApplicationRunner.run(new ApplicationExit02(), args);
+	}
 }

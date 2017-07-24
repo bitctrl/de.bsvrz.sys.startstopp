@@ -2,6 +2,7 @@ package de.bsvrz.sys.stst.test;
 
 import de.bsvrz.dav.daf.main.ClientDavInterface;
 import de.bsvrz.sys.funclib.application.StandardApplication;
+import de.bsvrz.sys.funclib.application.StandardApplicationRunner;
 import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
 
 public class Application05 implements StandardApplication {
@@ -17,4 +18,7 @@ public class Application05 implements StandardApplication {
 		// die Applikation tut nichts
 	}
 
+	public static void main(String[] args) {
+		StandardApplicationRunner.run(new Application05(), args);
+	}
 }

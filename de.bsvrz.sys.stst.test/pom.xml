@@ -241,7 +241,6 @@
 							</excludes>
 							<archive>
 								<manifest>
-									<mainClass>de.bsvrz.sys.startstopp.startstopp.StartStopp</mainClass>
 									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 									<addClasspath>true</addClasspath>
 									<classpathLayoutType>custom</classpathLayoutType>

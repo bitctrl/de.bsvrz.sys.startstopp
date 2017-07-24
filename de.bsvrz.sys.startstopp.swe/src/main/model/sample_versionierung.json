@@ -207,7 +207,7 @@
 				"applikation": "%java%",
 				"aufrufParameter": [
 					"-Xmx512m",
-					"-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application01",
+					"-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application01",
 					"%dav1.mitAuthentifizierung%",
 					"-debugLevelStdErrText=NONE -debugLevelFileText=FINE"
 				],
@@ -237,7 +237,7 @@
 				"applikation": "%java%",
 				"aufrufParameter": [
 					"-Xmx512m",
-					"-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04",
+					"-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04",
 					"%dav1.mitAuthentifizierung%",
 					"-debugLevelStdErrText=NONE -debugLevelFileText=FINE"
 				],
@@ -268,7 +268,7 @@
 				"applikation": "%java%",
 				"aufrufParameter": [
 					"-Xmx512m",
-					"-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05",
+					"-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05",
 					"%dav1.mitAuthentifizierung%",
 					"-debugLevelStdErrText=NONE -debugLevelFileText=FINE"
 				],
@@ -293,7 +293,7 @@
 				"applikation": "%java%",
 				"aufrufParameter": [
 					"-Xmx512m",
-					"-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04",
+					"-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04",
 					"%dav1.mitAuthentifizierung%",
 					"-debugLevelStdErrText=NONE -debugLevelFileText=FINE"
 				],
