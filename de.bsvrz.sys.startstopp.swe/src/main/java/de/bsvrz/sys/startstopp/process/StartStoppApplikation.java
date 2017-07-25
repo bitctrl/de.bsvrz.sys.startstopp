@@ -26,8 +26,11 @@
 
 package de.bsvrz.sys.startstopp.process;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,11 +42,16 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 
 public class StartStoppApplikation extends Applikation {
 
-	private enum TimerType {
-		NOTIMER, WARTETIMER, INTERVALLTIMER;
-	}
+	public class WarteTask extends TimerTask {
+		@Override
+		public void run() {
+			updateStatus(TimerType.WARTETIMER);
+		}
 
-	private static final Debug LOGGER = Debug.getLogger();
+		public boolean isActive() {
+			return System.currentTimeMillis() < scheduledExecutionTime();
+		}
+	}
 
 	public class SystemProzessListener implements InkarnationsProzessListener {
 
@@ -78,17 +86,20 @@ public class StartStoppApplikation extends Applikation {
 		}
 	}
 
+	private enum TimerType {
+		NOTIMER, WARTETIMER, INTERVALLTIMER;
+	}
+
+	private static final Debug LOGGER = Debug.getLogger();
+
 	private StartStoppInkarnation inkarnation;
 	private InkarnationsProzessIf process = null;
 
-	public String getReason() {
-		return reason;
-	}
-
 	private List<ManagedApplikationListener> listeners = new ArrayList<>();
+
 	private String reason;
 	private Timer timer;
-	private TimerTask warteTask;
+	private WarteTask warteTask;
 	private TimerTask intervallTask;
 	private ProcessManager processManager;
 	private SystemProzessListener systemProzessListener = new SystemProzessListener();
@@ -105,53 +116,69 @@ public class StartStoppApplikation extends Applikation {
 		setLetzteStoppzeit("noch nie gestoppt");
 	}
 
-	public boolean isKernsystem() {
-		return inkarnation.isKernSystem();
+	public void addManagedApplikationListener(ManagedApplikationListener listener) {
+		listeners.add(listener);
 	}
 
-	public void stoppSystemProcess() throws StartStoppException {
+	private int convertToWarteZeitInMsec(String warteZeitStr) {
+		// TODO Auto-generated method stub
+		return Integer.parseInt(warteZeitStr) * 1000;
+	}
 
-		switch (getStatus()) {
-		case INSTALLIERT:
-		case GESTOPPT:
-		case STOPPENWARTEN:
-			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestartet werden");
+	public void dispose() {
+		if (warteTask != null) {
+			warteTask.cancel();
+		}
+		if (intervallTask != null) {
+			intervallTask.cancel();
+		}
+		if (timer != null) {
+			timer.cancel();
+		}
+		if (process != null) {
+			process.removeProzessListener(systemProzessListener);
+		}
+	}
 
-		case GESTARTET:
-		case INITIALISIERT:
-		case STARTENWARTEN:
-			break;
-		default:
-			break;
+	private void fireStatusChanged(Applikation.Status oldStatus, Applikation.Status newStatus) {
+		List<ManagedApplikationListener> receiver;
+		synchronized (listeners) {
+			receiver = new ArrayList<>(listeners);
 		}
 
-		stoppeApplikation(true);
-	}
-
-	public void updateStatus() {
-		updateStatus(TimerType.NOTIMER);
-	}
-
-	private void updateStatus(TimerType timerType) {
-
-		switch (getStatus()) {
-		case GESTARTET:
-		case GESTOPPT:
-		case INITIALISIERT:
-			LOGGER.finest(getStatus() + ": " + getInkarnationsName() + " keine Aktualisierung möglich");
-			break;
-		case INSTALLIERT:
-			handleInstalliertState(processManager);
-			break;
-		case STARTENWARTEN:
-			handleStartenWartenState(processManager, timerType);
-			break;
-		case STOPPENWARTEN:
-			handleStoppenWartenState(processManager, timerType);
-			break;
-		default:
-			break;
+		for (ManagedApplikationListener listener : receiver) {
+			listener.applicationStatusChanged(this, oldStatus, newStatus);
 		}
+	}
+
+	private String getApplikationsArgumente() {
+		StringBuilder builder = new StringBuilder(1024);
+		for (String argument : inkarnation.getAufrufParameter()) {
+			if (builder.length() > 0) {
+				builder.append(' ');
+			}
+			builder.append(argument);
+		}
+
+		if (inkarnation.getMitInkarnationsName()) {
+			builder.append(" -inkarnationsName=");
+			builder.append(processManager.getInkarnationsPrefix());
+			builder.append(getInkarnationsName());
+		}
+
+		return builder.toString();
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public StartBedingung getStartBedingung() {
+		return inkarnation.getStartBedingung();
+	}
+
+	public StoppBedingung getStoppBedingung() {
+		return inkarnation.getStoppBedingung();
 	}
 
 	private void handleInstalliertState(ProcessManager processManager) {
@@ -165,10 +192,10 @@ public class StartStoppApplikation extends Applikation {
 			return;
 		}
 
-		Applikation applikation = processManager.waitForKernsystemStart(this);
-		if (applikation != null) {
+		Set<Applikation> applikationen = processManager.waitForKernsystemStart(this);
+		if (!applikationen.isEmpty()) {
 			updateStatus(Applikation.Status.STARTENWARTEN);
-			setReason("Warte auf Kernsystem: " + applikation.getInkarnationsName());
+			setReason("Warte auf Kernsystem: " + listApplikationen(applikationen));
 			return;
 		}
 
@@ -184,10 +211,10 @@ public class StartStoppApplikation extends Applikation {
 
 		StartBedingung startBedingung = getStartBedingung();
 		if (startBedingung != null) {
-			applikation = processManager.waitForStartBedingung(this);
-			if (applikation != null) {
+			applikationen = processManager.waitForStartBedingung(this);
+			if (!applikationen.isEmpty()) {
 				updateStatus(Applikation.Status.STARTENWARTEN);
-				setReason("Warte auf : " + applikation.getInkarnationsName());
+				setReason("Warte auf : " + listApplikationen(applikationen));
 				return;
 			}
 			int warteZeitInMsec = convertToWarteZeitInMsec(startBedingung.getWartezeit());
@@ -203,11 +230,11 @@ public class StartStoppApplikation extends Applikation {
 
 	private void handleStartenWartenState(ProcessManager processManager, TimerType timerType) {
 
-		Applikation applikation = processManager.waitForKernsystemStart(this);
-		if (applikation != null) {
+		Set<Applikation> applikationen = processManager.waitForKernsystemStart(this);
+		if (!applikationen.isEmpty()) {
 			setWarteTimer(0);
 			updateStatus(Applikation.Status.STARTENWARTEN);
-			setReason("Warte auf Kernsystem: " + applikation.getInkarnationsName());
+			setReason("Warte auf Kernsystem: " + listApplikationen(applikationen));
 			return;
 		}
 
@@ -224,58 +251,104 @@ public class StartStoppApplikation extends Applikation {
 
 		StartBedingung startBedingung = getStartBedingung();
 		if (startBedingung != null) {
-			applikation = processManager.waitForStartBedingung(this);
-			if (applikation != null) {
+			applikationen = processManager.waitForStartBedingung(this);
+			if (!applikationen.isEmpty()) {
 				setWarteTimer(0);
 				updateStatus(Applikation.Status.STARTENWARTEN);
-				setReason("Warte auf : " + applikation.getInkarnationsName());
+				setReason("Warte auf : " + listApplikationen(applikationen));
 				return;
 			}
 			if (timerType != TimerType.WARTETIMER) {
+				if (warteTaskIsActive()) {
+					updateStatus(Applikation.Status.STARTENWARTEN);
+					return;
+				}
 				int warteZeitInMsec = convertToWarteZeitInMsec(startBedingung.getWartezeit());
 				if (warteZeitInMsec > 0) {
 					updateStatus(Applikation.Status.STARTENWARTEN);
 					setWarteTimer(warteZeitInMsec);
-					setReason("Wartezeit aktiv");
+					setReason("Wartezeit bis " + DateFormat.getDateTimeInstance()
+							.format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
 					return;
 				}
 			}
 		}
 
+		if (warteTaskIsActive()) {
+			return;
+		}
+
 		starteApplikation();
+		setReason("");
+	}
+
+	private boolean warteTaskIsActive() {
+		return (warteTask != null) && warteTask.isActive();
 	}
 
 	private void handleStoppenWartenState(ProcessManager processManager, TimerType timerType) {
 
-		Applikation applikation = processManager.waitForKernsystemStopp(this);
-		if (applikation != null) {
+		Set<Applikation> applikationen = processManager.waitForKernsystemStopp(this);
+		if (!applikationen.isEmpty()) {
 			setWarteTimer(0);
 			updateStatus(Applikation.Status.STOPPENWARTEN);
-			setReason("Kernsystem wartet auf: " + applikation.getInkarnationsName());
+			setReason("Kernsystem wartet auf: " + listApplikationen(applikationen));
 			return;
 		}
 
 		StoppBedingung stoppBedingung = getStoppBedingung();
 		if (stoppBedingung != null) {
-			applikation = processManager.waitForStoppBedingung(this);
-			if (applikation != null) {
+			applikationen = processManager.waitForStoppBedingung(this);
+			if (!applikationen.isEmpty()) {
 				setWarteTimer(0);
 				updateStatus(Applikation.Status.STOPPENWARTEN);
-				setReason("Warte auf : " + applikation.getInkarnationsName());
+				setReason("Warte auf : " + listApplikationen(applikationen));
 				return;
 			}
 			if (timerType != TimerType.WARTETIMER) {
+				if (warteTaskIsActive()) {
+					updateStatus(Applikation.Status.STOPPENWARTEN);
+					return;
+				}
 				int warteZeitInMsec = convertToWarteZeitInMsec(stoppBedingung.getWartezeit());
 				if (warteZeitInMsec > 0) {
 					updateStatus(Applikation.Status.STOPPENWARTEN);
 					setWarteTimer(warteZeitInMsec);
-					setReason("Wartezeit aktiv");
+					setReason("Wartezeit bis " + DateFormat.getDateTimeInstance()
+							.format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
 					return;
 				}
 			}
 		}
 
+		if (warteTaskIsActive()) {
+			return;
+		}
+
 		stoppeApplikation(false);
+	}
+
+	public boolean isKernsystem() {
+		return inkarnation.isKernSystem();
+	}
+
+	private String listApplikationen(Set<Applikation> applikationen) {
+		StringBuilder builder = new StringBuilder(200);
+		for (Applikation applikation : applikationen) {
+			if (builder.length() > 0) {
+				builder.append(',');
+			}
+			builder.append(applikation.getInkarnationsName());
+		}
+		return builder.toString();
+	}
+
+	public void removeManagedApplikationListener(ManagedApplikationListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void setReason(String reason) {
+		this.reason = reason;
 	}
 
 	private void setWarteTimer(int warteZeitInMsec) {
@@ -292,22 +365,9 @@ public class StartStoppApplikation extends Applikation {
 			return;
 		}
 
-		warteTask = new TimerTask() {
-			@Override
-			public void run() {
-				updateStatus(TimerType.WARTETIMER);
-			}
-		};
+		warteTask = new WarteTask();
+
 		timer.schedule(warteTask, warteZeitInMsec);
-	}
-
-	private void setReason(String reason) {
-		this.reason = reason;
-	}
-
-	private int convertToWarteZeitInMsec(String warteZeitStr) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	private void starteApplikation() {
@@ -318,6 +378,22 @@ public class StartStoppApplikation extends Applikation {
 		process.setProgrammArgumente(getApplikationsArgumente());
 		process.addProzessListener(systemProzessListener);
 		process.start();
+	}
+
+	public void startSystemProcess() throws StartStoppException {
+		switch (getStatus()) {
+		case INSTALLIERT:
+		case GESTOPPT:
+		case STARTENWARTEN:
+			starteApplikation();
+			break;
+		case GESTARTET:
+		case INITIALISIERT:
+		case STOPPENWARTEN:
+			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestartet werden");
+		default:
+			break;
+		}
 	}
 
 	private void stoppeApplikation(boolean force) {
@@ -344,25 +420,30 @@ public class StartStoppApplikation extends Applikation {
 		}
 	}
 
-	private String getApplikationsArgumente() {
-		StringBuilder builder = new StringBuilder(1024);
-		for (String argument : inkarnation.getAufrufParameter()) {
-			if (builder.length() > 0) {
-				builder.append(' ');
-			}
-			builder.append(argument);
+	public void stoppSystemProcess() throws StartStoppException {
+
+		switch (getStatus()) {
+		case INSTALLIERT:
+		case GESTOPPT:
+		case STOPPENWARTEN:
+			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestartet werden");
+
+		case GESTARTET:
+		case INITIALISIERT:
+		case STARTENWARTEN:
+			break;
+		default:
+			break;
 		}
 
-		if (inkarnation.getMitInkarnationsName()) {
-			builder.append(" -inkarnationsName=");
-			builder.append(processManager.getInkarnationsPrefix());
-			builder.append(getInkarnationsName());
-		}
-
-		return builder.toString();
+		stoppeApplikation(true);
 	}
 
-	void updateStatus(Status status) {
+	public void updateStatus() {
+		updateStatus(TimerType.NOTIMER);
+	}
+
+	public void updateStatus(Status status) {
 		Status oldStatus = getStatus();
 		if (oldStatus != status) {
 			setStatus(status);
@@ -370,61 +451,29 @@ public class StartStoppApplikation extends Applikation {
 		}
 	}
 
-	public void startSystemProcess() throws StartStoppException {
+	private void updateStatus(TimerType timerType) {
+
 		switch (getStatus()) {
-		case INSTALLIERT:
-		case GESTOPPT:
-		case STARTENWARTEN:
-			starteApplikation();
-			break;
 		case GESTARTET:
+		case GESTOPPT:
 		case INITIALISIERT:
+			LOGGER.finest(getStatus() + ": " + getInkarnationsName() + " keine Aktualisierung möglich");
+			break;
+		case INSTALLIERT:
+			handleInstalliertState(processManager);
+			break;
+		case STARTENWARTEN:
+			handleStartenWartenState(processManager, timerType);
+			break;
 		case STOPPENWARTEN:
-			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestartet werden");
+			handleStoppenWartenState(processManager, timerType);
+			break;
 		default:
 			break;
 		}
 	}
 
-	public StartBedingung getStartBedingung() {
-		return inkarnation.getStartBedingung();
-	}
-
-	public StoppBedingung getStoppBedingung() {
-		return inkarnation.getStoppBedingung();
-	}
-
-	public void addManagedApplikationListener(ManagedApplikationListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeManagedApplikationListener(ManagedApplikationListener listener) {
-		listeners.remove(listener);
-	}
-
-	private void fireStatusChanged(Applikation.Status oldStatus, Applikation.Status newStatus) {
-		List<ManagedApplikationListener> receiver;
-		synchronized (listeners) {
-			receiver = new ArrayList<>(listeners);
-		}
-
-		for (ManagedApplikationListener listener : receiver) {
-			listener.applicationStatusChanged(this, oldStatus, newStatus);
-		}
-	}
-
-	public void dispose() {
-		if (warteTask != null) {
-			warteTask.cancel();
-		}
-		if (intervallTask != null) {
-			intervallTask.cancel();
-		}
-		if (timer != null) {
-			timer.cancel();
-		}
-		if (process != null) {
-			process.removeProzessListener(systemProzessListener);
-		}
+	public boolean isTransMitter() {
+		return inkarnation.isTransMitter();
 	}
 }

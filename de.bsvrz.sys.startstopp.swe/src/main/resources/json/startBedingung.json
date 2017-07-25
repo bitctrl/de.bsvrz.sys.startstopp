@@ -3,8 +3,11 @@
 	"type": "object",
 	"properties": {
 		"vorgaenger": {
-			"type": "string"
-		},
+            "type": "array",
+            "items": {
+               "type": "string"
+            }
+         },
 		"warteart": {
 			"type": "string",
 			"enum": [

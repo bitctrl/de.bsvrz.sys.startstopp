@@ -64,4 +64,32 @@ public class StartStoppInkarnation extends Inkarnation {
 	public boolean isKernSystem() {
 		return kernSystem != null;
 	}
+	
+	public boolean isTransMitter() {
+		for( String parameter : getAufrufParameter()) {
+			if( parameter.contains("de.bsvrz.dav.dav.main.Transmitter")) {
+				return true;
+			}
+
+			if( parameter.contains("de.bsvrz.dav.dav-runtime.jar")) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	public boolean isConfiguration() {
+		for( String parameter : getAufrufParameter()) {
+			if( parameter.contains("de.bsvrz.puk.config.main.ConfigurationApp")) {
+				return true;
+			}
+
+			if( parameter.contains("de.bsvrz.puk.config-runtime.jar")) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

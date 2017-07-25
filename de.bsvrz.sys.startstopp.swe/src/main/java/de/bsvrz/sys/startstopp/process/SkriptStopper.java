@@ -29,6 +29,10 @@ package de.bsvrz.sys.startstopp.process;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.tools.Tool;
+
+import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+
 public class SkriptStopper extends Thread {
 
 	private final Map<String, StartStoppApplikation> applikationen = new LinkedHashMap<>();
@@ -36,9 +40,9 @@ public class SkriptStopper extends Thread {
 	private ProcessManager processManager;
 
 	public SkriptStopper(ProcessManager processManager) {
-		
+
 		this.processManager = processManager;
-		
+
 		for (StartStoppApplikation applikation : processManager.getManagedApplikationen()) {
 			if (applikation.isKernsystem()) {
 				kernsystem.put(applikation.getInkarnationsName(), applikation);
@@ -51,14 +55,27 @@ public class SkriptStopper extends Thread {
 	@Override
 	public void run() {
 		// TODO Herunterfahren implementieren
-		for( String name : applikationen.keySet()) {
-			System.err.println("Beende App: " + name);
+		for (StartStoppApplikation applikation : applikationen.values()) {
+			applikation.updateStatus(Applikation.Status.STOPPENWARTEN);
 		}
-		for( String name : kernsystem.keySet()) {
-			System.err.println("Beende Kernsystem: " + name);
+
+		boolean stopped = false;
+		if (Tools.isWindows()) {
+			for (StartStoppApplikation applikation : kernsystem.values()) {
+				if (applikation.isTransMitter()) {
+					applikation.updateStatus(Applikation.Status.STOPPENWARTEN);
+					stopped = true;
+					break;
+				}
+			}
 		}
-		
-		processManager.stopp();
-		
+
+		if (!stopped) {
+			for (StartStoppApplikation applikation : kernsystem.values()) {
+				applikation.updateStatus(Applikation.Status.STOPPENWARTEN);
+			}
+		}
+
+		processManager.stopperFinished();
 	}
 }

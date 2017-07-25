@@ -41,7 +41,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public class KonfigurationTest {
@@ -61,7 +63,16 @@ public class KonfigurationTest {
 	public void convertKonfiguration() throws ParserConfigurationException, SAXException, IOException,
 			XMLStreamException, TransformerFactoryConfigurationError, TransformerException, StartStoppException {
 		for (String file : files) {
-				StartStoppSkript skript = new StartStoppXMLParser().getKonfigurationFrom(file);
+				StartStoppSkript skript = new StartStoppXMLParser().getKonfigurationFromRessource(file);
+				
+				StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(skript);
+				if (konfiguration.getSkriptStatus().getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
+					System.err.println("\nKonfigurationsfehler: " + file);
+					System.err.println("======================================================\n");
+					for (String line : konfiguration.getSkriptStatus().getMessages()) {
+						System.err.println(line);
+					}
+				}
 				
 				ObjectMapper objectMapper = new ObjectMapper();
 				

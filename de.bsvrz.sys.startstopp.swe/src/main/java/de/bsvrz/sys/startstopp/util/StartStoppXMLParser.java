@@ -26,6 +26,8 @@
 
 package de.bsvrz.sys.startstopp.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashSet;
@@ -125,7 +127,7 @@ public class StartStoppXMLParser {
 				kernsystem.setInkarnationsName(attributes.getValue("inkarnationsname"));
 				if (attributes.getValue("mitInkarnationsname") != null) {
 					boolean mitInkarnationsName = attributes.getValue("mitInkarnationsname").equals("ja");
-					if( !mitInkarnationsName) {
+					if (!mitInkarnationsName) {
 						suppressInkarnationsName.add(kernsystem.getInkarnationsName());
 					}
 				} else {
@@ -230,7 +232,16 @@ public class StartStoppXMLParser {
 				break;
 			case startbedingung:
 				StartBedingung startBedingung = new StartBedingung();
-				startBedingung.setVorgaenger(attributes.getValue("vorgaenger"));
+
+				if (attributes.getValue("vorgaenger") != null) {
+					String[] vorgaengerStr = attributes.getValue("vorgaenger").split("\\s");
+					for (String vorgaenger : vorgaengerStr) {
+						if (!vorgaenger.trim().isEmpty()) {
+							startBedingung.getVorgaenger().add(vorgaenger.trim());
+						}
+					}
+				}
+
 				if (attributes.getValue("warteart") != null) {
 					startBedingung.setWarteart(StartBedingung.Warteart.fromValue(attributes.getValue("warteart")));
 				}
@@ -244,7 +255,15 @@ public class StartStoppXMLParser {
 				break;
 			case stoppbedingung:
 				StoppBedingung stoppBedingung = new StoppBedingung();
-				stoppBedingung.setNachfolger(attributes.getValue("nachfolger"));
+
+				if (attributes.getValue("nachfolger") != null) {
+					String[] nachFolgerStr = attributes.getValue("nachfolger").split("\\s");
+					for (String nachfolger : nachFolgerStr) {
+						if (!nachfolger.trim().isEmpty()) {
+							stoppBedingung.getNachfolger().add(nachfolger.trim());
+						}
+					}
+				}
 				if (attributes.getValue("rechner") != null) {
 					stoppBedingung.setRechner(attributes.getValue("rechner"));
 				}
@@ -312,27 +331,45 @@ public class StartStoppXMLParser {
 		}
 	}
 
-	public StartStoppSkript getKonfigurationFrom(String resourceName) throws StartStoppException {
-
-		StartStoppSkript startStoppKonfiguration = new StartStoppSkript();
+	public StartStoppSkript getKonfigurationFromRessource(String resourceName) throws StartStoppException {
 
 		try (InputStream stream = StartStoppXMLParser.class.getResourceAsStream(resourceName)) {
+			return parseStream(stream);
+		} catch (IOException e) {
+			throw new StartStoppException(e);
+		}
+	}
+
+	public StartStoppSkript getSkriptFromFile(File file) throws StartStoppException {
+
+		try (InputStream stream = new FileInputStream(file)) {
+			return parseStream(stream);
+		} catch (IOException e) {
+			throw new StartStoppException(e);
+		}
+	}
+
+	private StartStoppSkript parseStream(InputStream stream) throws StartStoppException {
+
+		StartStoppSkript konfiguration = new StartStoppSkript();
+		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
 
-			saxParser.parse(stream, new StartStoppParserHandler(startStoppKonfiguration));
+			saxParser.parse(stream, new StartStoppParserHandler(konfiguration));
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			throw new StartStoppException(e);
 		}
 
-		for( String item : suppressInkarnationsName) {
-			for( Inkarnation inkarnation : startStoppKonfiguration.getInkarnationen()) {
-				if( item.equals(inkarnation.getInkarnationsName())) {
+		for (String item : suppressInkarnationsName) {
+			for (Inkarnation inkarnation : konfiguration.getInkarnationen()) {
+				if (item.equals(inkarnation.getInkarnationsName())) {
 					inkarnation.setMitInkarnationsName(false);
 				}
 			}
 		}
-		
-		return startStoppKonfiguration;
+
+		return konfiguration;
 	}
+
 }

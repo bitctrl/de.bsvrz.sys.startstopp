@@ -3,7 +3,10 @@
 	"type": "object",
 	"properties": {
 		"nachfolger": {
-			"type": "string"
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
 		},
 		"rechner": {
 			"type": "string"

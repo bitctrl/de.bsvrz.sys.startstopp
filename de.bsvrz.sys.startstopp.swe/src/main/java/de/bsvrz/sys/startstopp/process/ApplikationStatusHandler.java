@@ -20,6 +20,7 @@ import de.bsvrz.dav.daf.main.config.DataModel;
 import de.bsvrz.dav.daf.main.config.DynamicObject;
 import de.bsvrz.dav.daf.main.config.DynamicObjectType;
 import de.bsvrz.dav.daf.main.config.DynamicObjectType.DynamicObjectCreatedListener;
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.dav.daf.main.config.InvalidationListener;
 import de.bsvrz.dav.daf.main.config.SystemObject;
 
@@ -129,12 +130,15 @@ public class ApplikationStatusHandler
 		String name = data.getTextValue("Inkarnationsname").getText();
 		boolean fertig = data.getUnscaledValue("InitialisierungFertig").intValue() == 1;
 
+		Debug.getLogger().info("Aktualisierung vom Dav: " + name + " ist fertig: " + fertig);
+
 		if (!name.isEmpty()) {
 			ApplikationStatus status = new ApplikationStatus(name, appObj, fertig);
 			applikationStatus.put(name, status);
 			if (name.startsWith(processManager.getInkarnationsPrefix())) {
-				processManager.updateFromDav(name.substring(processManager.getInkarnationsPrefix().length()),
-						status.fertig);
+				String processMgrInkarnation = name.substring(processManager.getInkarnationsPrefix().length());
+				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
+				processManager.updateFromDav(processMgrInkarnation, status.fertig);
 			}
 		}
 	}

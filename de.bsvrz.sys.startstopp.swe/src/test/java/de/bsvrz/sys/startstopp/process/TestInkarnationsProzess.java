@@ -1,5 +1,6 @@
 package de.bsvrz.sys.startstopp.process;
 
+import java.io.File;
 import java.util.logging.Level;
 
 import org.junit.After;
@@ -20,9 +21,9 @@ public class TestInkarnationsProzess {
 	public static void setUpBeforeClass() throws Exception {
 		// Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
-		String startPath = System.getProperty("user.dir");
+		String startPath = new File(System.getProperty("user.dir")).toURI().getPath();
 		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-		classPath = classPath.replace(startPath, "").substring(1);
+		classPath = classPath.replace(startPath, "");
 		Debug.getLogger().info("Set classpath to: " + classPath);
 	}
 

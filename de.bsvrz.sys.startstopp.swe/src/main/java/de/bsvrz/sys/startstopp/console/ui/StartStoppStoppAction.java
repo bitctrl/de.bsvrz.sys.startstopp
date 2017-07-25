@@ -26,11 +26,19 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
+import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+
 public class StartStoppStoppAction implements Runnable {
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		try {
+			StartStoppConsole.getInstance().getClient().stoppStartStopp();
+		} catch (StartStoppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

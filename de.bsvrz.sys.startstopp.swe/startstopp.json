@@ -150,7 +150,7 @@
       "intervall" : ""
     },
     "startBedingung" : {
-      "vorgaenger" : "Parametrierung",
+      "vorgaenger" : [ "Parametrierung" ],
       "warteart" : "ende",
       "wartezeit" : "60"
     },
@@ -175,7 +175,7 @@
       "intervall" : ""
     },
     "startBedingung" : {
-      "vorgaenger" : "Applikation07",
+      "vorgaenger" : [ "Applikation07" ],
       "warteart" : "ende",
       "rechner" : "rechner2",
       "wartezeit" : "20"
@@ -231,8 +231,8 @@
   } ],
   "metaDaten" : {
     "aenderungsGrund" : "Alles neu",
-    "erstelltAm" : "2017-07-24T15:54:39.467",
+    "erstelltAm" : "2017-07-25T13:25:55.493",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1500904479467"
+    "versionsNummer" : "1500981955493"
   }
 }

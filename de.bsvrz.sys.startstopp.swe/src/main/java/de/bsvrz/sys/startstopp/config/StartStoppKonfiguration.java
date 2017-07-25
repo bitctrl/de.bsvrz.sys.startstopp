@@ -31,9 +31,13 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.eclipse.jetty.util.ConcurrentArrayQueue;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
@@ -54,7 +58,7 @@ public class StartStoppKonfiguration {
 	private StartStoppSkriptStatus skriptStatus = new StartStoppSkriptStatus();
 	private String checkSumme = "";
 
-	StartStoppKonfiguration(StartStoppSkript skript) {
+	public StartStoppKonfiguration(StartStoppSkript skript) {
 		this.skript = skript;
 		skriptStatus.getMessages().addAll(pruefeVollstaendigkeit());
 		skriptStatus.getMessages().addAll(pruefeZirkularitaet());
@@ -92,6 +96,11 @@ public class StartStoppKonfiguration {
 	}
 
 	private StartStoppInkarnation getInkarnation(String name) throws StartStoppException {
+
+		if( name == null) {
+			throw new StartStoppException("Inkarnationsname fehlt!");
+		}
+		
 		for (Inkarnation inkarnation : skript.getInkarnationen()) {
 			if (name.equals(inkarnation.getInkarnationsName())) {
 				return new StartStoppInkarnation(this, inkarnation);
@@ -101,25 +110,34 @@ public class StartStoppKonfiguration {
 	}
 
 	private void checkStartRules(Inkarnation inkarnation) throws StartStoppException {
+
 		Set<String> usedInkarnations = new LinkedHashSet<>();
-		usedInkarnations.add(inkarnation.getInkarnationsName());
+		Queue<Inkarnation> mustBeChecked = new ConcurrentArrayQueue<>();
+		mustBeChecked.add(inkarnation);
 
-		Inkarnation currentInkarnation = inkarnation;
+		while (!mustBeChecked.isEmpty()) {
 
-		while (currentInkarnation != null) {
+			Inkarnation currentInkarnation = mustBeChecked.poll();
+			if (!usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
+				throw new StartStoppException(
+						"Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
+			}
+
 			StartBedingung startBedingung = currentInkarnation.getStartBedingung();
 			if (startBedingung == null) {
-				return;
+				continue;
 			}
 			String rechnerName = startBedingung.getRechner();
 			if (rechnerName != null && !rechnerName.trim().isEmpty()) {
 				checkRechner(currentInkarnation, rechnerName.trim());
-				return;
+				continue;
 			}
-			currentInkarnation = getInkarnation(startBedingung.getVorgaenger());
-			if (!usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
-				throw new StartStoppException(
-						"Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
+			try {
+				for( String vorgaenger : startBedingung.getVorgaenger()) {
+					mustBeChecked.add(getInkarnation(vorgaenger));
+				}
+			} catch (StartStoppException e) {
+				throw new StartStoppException(currentInkarnation.getInkarnationsName() + ": StartRegel hat keinen Vorgänger!");
 			}
 		}
 	}
@@ -135,25 +153,35 @@ public class StartStoppKonfiguration {
 	}
 
 	private void checkStopRules(Inkarnation inkarnation) throws StartStoppException {
+
 		Set<String> usedInkarnations = new LinkedHashSet<>();
-		usedInkarnations.add(inkarnation.getInkarnationsName());
+		Queue<Inkarnation> mustBeChecked = new ConcurrentLinkedQueue<>();
+		mustBeChecked.add(inkarnation);
+		
 
-		Inkarnation currentInkarnation = inkarnation;
-
-		while (currentInkarnation != null) {
+		while (!mustBeChecked.isEmpty()) {
+			
+			Inkarnation currentInkarnation = mustBeChecked.poll();
+			if (!usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
+				throw new StartStoppException(
+						"Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
+			}
+			
 			StoppBedingung stoppBedingung = currentInkarnation.getStoppBedingung();
 			if (stoppBedingung == null) {
-				return;
+				continue;
 			}
 			String rechner = stoppBedingung.getRechner();
 			if (rechner != null && !rechner.trim().isEmpty()) {
 				checkRechner(currentInkarnation, rechner.trim());
-				return;
+				continue;
 			}
-			currentInkarnation = getInkarnation(stoppBedingung.getNachfolger());
-			if (usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
-				throw new StartStoppException(
-						"Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
+			try {
+				for( String nachfolger : stoppBedingung.getNachfolger()) {
+					mustBeChecked.add(getInkarnation(nachfolger));
+				}
+			} catch (StartStoppException e) {
+				throw new StartStoppException(currentInkarnation.getInkarnationsName() + ": StopRegel hat keinen Nachfolger!");
 			}
 		}
 	}

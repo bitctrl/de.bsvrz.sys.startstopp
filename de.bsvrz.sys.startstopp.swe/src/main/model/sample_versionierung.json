@@ -221,7 +221,9 @@
 					"intervall": ""
 				},
 				"startBedingung": {
-					"vorgaenger": "Parametrierung",
+					"vorgaenger": [
+						"Parametrierung"
+					],
 					"warteart": "ende",
 					"wartezeit": "60"
 				},
@@ -252,7 +254,9 @@
 					"intervall": ""
 				},
 				"startBedingung": {
-					"vorgaenger": "Applikation07",
+					"vorgaenger": [
+						"Applikation07"
+					],
 					"warteart": "ende",
 					"rechner": "rechner2",
 					"wartezeit": "20"
