@@ -1,3 +1,29 @@
+/*
+ * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Copyright (C) 2007-2017 BitCtrl Systems GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Contact Information:<br>
+ * BitCtrl Systems GmbH<br>
+ * Weißenfelser Straße 67<br>
+ * 04229 Leipzig<br>
+ * Phone: +49 341-490670<br>
+ * mailto: info@bitctrl.de
+ */
+
 package de.bsvrz.sys.startstopp.process;
 
 import java.io.File;
@@ -40,7 +66,7 @@ public class TestInkarnationsProzess {
 	}
 
 	@Test
-	public final void testStartFehler_NoSuchFileOrDirecory() {
+	public final void testStartFehlerNoSuchFileOrDirecory() {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
 		inkarnationsProzess.setProgramm("bubu");
 		inkarnationsProzess.setInkarnationsName("Test");
@@ -59,7 +85,7 @@ public class TestInkarnationsProzess {
 	}
 
 	@Test
-	public final void testStartFehler_MainClassNotFound() {
+	public final void testStartFehlerMainClassNotFound() {
 		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
@@ -83,7 +109,7 @@ public class TestInkarnationsProzess {
 	}
 
 	@Test
-	public final void testStartFehler_InvalidOption() {
+	public final void testStartFehlerInvalidOption() {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
 		inkarnationsProzess.setProgramm("java");
 		inkarnationsProzess.setProgrammArgumente("-invalidOption=");
@@ -105,7 +131,7 @@ public class TestInkarnationsProzess {
 	}
 
 	@Test
-	public final void testStartFehler_Listener() {
+	public final void testStartFehlerListener() {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
 		inkarnationsProzess.setProgramm("java");
 		inkarnationsProzess.setProgrammArgumente("-invalidOption=");
@@ -193,8 +219,16 @@ public class TestInkarnationsProzess {
 
 	@Test
 	public final void testTerminiere() {
+
 		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
+
+		
+		if( Tools.isWindows()) {
+			logger.warning("TODO: Test not supported for Windows-Environment");
+			return;
+		}
+		
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
 		inkarnationsProzess.setProgramm("java");
 		inkarnationsProzess

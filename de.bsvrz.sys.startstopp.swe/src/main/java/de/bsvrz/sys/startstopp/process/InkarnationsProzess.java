@@ -183,7 +183,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		/**
 		 * Konstruktor der Klasse.
 		 */
-		public InkarnationProcessThread() {
+		InkarnationProcessThread() {
 			super();
 		}
 

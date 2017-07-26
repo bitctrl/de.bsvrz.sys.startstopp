@@ -97,10 +97,10 @@ public class StartStoppKonfiguration {
 
 	private StartStoppInkarnation getInkarnation(String name) throws StartStoppException {
 
-		if( name == null) {
+		if (name == null) {
 			throw new StartStoppException("Inkarnationsname fehlt!");
 		}
-		
+
 		for (Inkarnation inkarnation : skript.getInkarnationen()) {
 			if (name.equals(inkarnation.getInkarnationsName())) {
 				return new StartStoppInkarnation(this, inkarnation);
@@ -133,23 +133,25 @@ public class StartStoppKonfiguration {
 				continue;
 			}
 			try {
-				for( String vorgaenger : startBedingung.getVorgaenger()) {
+				for (String vorgaenger : startBedingung.getVorgaenger()) {
 					mustBeChecked.add(getInkarnation(vorgaenger));
 				}
 			} catch (StartStoppException e) {
-				throw new StartStoppException(currentInkarnation.getInkarnationsName() + ": StartRegel hat keinen Vorgänger!");
+				throw new StartStoppException(
+						currentInkarnation.getInkarnationsName() + ": StartRegel hat keinen Vorgänger!");
 			}
 		}
 	}
 
 	private void checkRechner(Inkarnation inkarnation, String name) throws StartStoppException {
-		for( Rechner rechner : getResolvedRechner()) {
+		for (Rechner rechner : getResolvedRechner()) {
 			if (rechner.getName().equals(name)) {
 				return;
 			}
 		}
-		
-		throw new StartStoppException("Der in der Inkarnation \"" + inkarnation.getInkarnationsName() + "\" referenzierte Rechner \"" + name + "\" ist nicht in der Konfiguration definiert");
+
+		throw new StartStoppException("Der in der Inkarnation \"" + inkarnation.getInkarnationsName()
+				+ "\" referenzierte Rechner \"" + name + "\" ist nicht in der Konfiguration definiert");
 	}
 
 	private void checkStopRules(Inkarnation inkarnation) throws StartStoppException {
@@ -157,16 +159,15 @@ public class StartStoppKonfiguration {
 		Set<String> usedInkarnations = new LinkedHashSet<>();
 		Queue<Inkarnation> mustBeChecked = new ConcurrentLinkedQueue<>();
 		mustBeChecked.add(inkarnation);
-		
 
 		while (!mustBeChecked.isEmpty()) {
-			
+
 			Inkarnation currentInkarnation = mustBeChecked.poll();
 			if (!usedInkarnations.add(currentInkarnation.getInkarnationsName())) {
 				throw new StartStoppException(
 						"Regeln für \"" + inkarnation.getInkarnationsName() + "\" sind rekursiv!");
 			}
-			
+
 			StoppBedingung stoppBedingung = currentInkarnation.getStoppBedingung();
 			if (stoppBedingung == null) {
 				continue;
@@ -177,21 +178,49 @@ public class StartStoppKonfiguration {
 				continue;
 			}
 			try {
-				for( String nachfolger : stoppBedingung.getNachfolger()) {
+				for (String nachfolger : stoppBedingung.getNachfolger()) {
 					mustBeChecked.add(getInkarnation(nachfolger));
 				}
 			} catch (StartStoppException e) {
-				throw new StartStoppException(currentInkarnation.getInkarnationsName() + ": StopRegel hat keinen Nachfolger!");
+				throw new StartStoppException(
+						currentInkarnation.getInkarnationsName() + ": StopRegel hat keinen Nachfolger!");
 			}
 		}
 	}
 
 	private Collection<String> pruefeVollstaendigkeit() {
 
-		// TODO Prüfung der Vollständigkeit implementieren
-
 		Collection<String> result = new ArrayList<>();
-		// result.add("Vollständigkeitsprüfung noch nicht implementiert");
+
+		/* Prüfung der Datenverteilerzugangsdaten. */
+		ZugangDav zugangDav = skript.getGlobal().getZugangDav();
+		if (zugangDav == null) {
+			result.add("Keine Datenverteiler-Zugangsdaten definiert!");
+		} else {
+			if ((zugangDav.getAdresse() == null) || zugangDav.getAdresse().trim().isEmpty()) {
+				result.add("Keine Adresse für den Datenverteiler-Zugang definiert!");
+			}
+			if ((zugangDav.getPort() == null) || zugangDav.getPort().trim().isEmpty()) {
+				result.add("Kein Port für den Datenverteiler-Zugang definiert!");
+			}
+			if ((zugangDav.getUserName() == null) || zugangDav.getUserName().trim().isEmpty()) {
+				result.add("Kein Nutzername für den Datenverteiler-Zugang definiert!");
+			}
+			if ((zugangDav.getPassWord() == null) || zugangDav.getPassWord().trim().isEmpty()) {
+				result.add("Kein Passwort für den Datenverteiler-Zugang definiert!");
+			}
+		}
+
+		// Angabe aller per JSON-Schema erforderlichen Attribute der Konfigurationsdatei
+		// Vollständige Definition des Datenverteilerzugangs
+		// Vollständige Auflösbarkeit aller Makros
+		// Korrekte Angabe aller Daten für die Ausführung der Inkarnationen, z. B.
+		// Zeitangaben bei Intervallstart
+		// Verfügbarkeit aller Rechnerdefinitionen von Rechnern, die in Start- oder
+		// Stoppbedingungen referenziert werden
+
+		// TODO Prüfung vervollständigen
+
 		return result;
 	}
 
@@ -202,7 +231,6 @@ public class StartStoppKonfiguration {
 	public StartStoppSkriptStatus getSkriptStatus() {
 		return skriptStatus;
 	}
-
 
 	public Collection<StartStoppInkarnation> getInkarnationen() throws StartStoppException {
 		if (skriptStatus.getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
@@ -313,11 +341,11 @@ public class StartStoppKonfiguration {
 	}
 
 	public String makroResolvedString(String wert) throws StartStoppException {
-		
-		if( wert == null) {
+
+		if (wert == null) {
 			return null;
 		}
-		
+
 		Map<String, String> resolvedMakros = getResolvedMakros();
 		Pattern pattern = Pattern.compile("%.*?%");
 		Matcher matcher = pattern.matcher(wert);
@@ -346,10 +374,10 @@ public class StartStoppKonfiguration {
 
 	public StartBedingung getResolvedStartBedingung(StartBedingung startBedingung) throws StartStoppException {
 
-		if( startBedingung == null) {
+		if (startBedingung == null) {
 			return null;
 		}
-		
+
 		StartBedingung bedingung = new StartBedingung();
 		bedingung.setVorgaenger(startBedingung.getVorgaenger());
 		bedingung.setWarteart(startBedingung.getWarteart());
@@ -360,10 +388,10 @@ public class StartStoppKonfiguration {
 
 	public StartFehlerVerhalten getResolvedStartFehlerVerhalten(StartFehlerVerhalten startFehlerVerhalten) {
 
-		if( startFehlerVerhalten == null) {
+		if (startFehlerVerhalten == null) {
 			return null;
 		}
-		
+
 		StartFehlerVerhalten verhalten = new StartFehlerVerhalten();
 		verhalten.setOption(startFehlerVerhalten.getOption());
 		verhalten.setWiederholungen(startFehlerVerhalten.getWiederholungen());
@@ -372,10 +400,10 @@ public class StartStoppKonfiguration {
 
 	public StoppBedingung getResolvedStoppBedingung(StoppBedingung stoppBedingung) throws StartStoppException {
 
-		if( stoppBedingung == null) {
+		if (stoppBedingung == null) {
 			return null;
 		}
-		
+
 		StoppBedingung bedingung = new StoppBedingung();
 		bedingung.setNachfolger(stoppBedingung.getNachfolger());
 		bedingung.setRechner(stoppBedingung.getRechner());
@@ -385,10 +413,10 @@ public class StartStoppKonfiguration {
 
 	public StoppFehlerVerhalten getResolvedStoppFehlerVerhalten(StoppFehlerVerhalten stoppFehlerVerhalten) {
 
-		if( stoppFehlerVerhalten == null) {
+		if (stoppFehlerVerhalten == null) {
 			return null;
 		}
-		
+
 		StoppFehlerVerhalten verhalten = new StoppFehlerVerhalten();
 		verhalten.setOption(stoppFehlerVerhalten.getOption());
 		verhalten.setWiederholungen(stoppFehlerVerhalten.getWiederholungen());

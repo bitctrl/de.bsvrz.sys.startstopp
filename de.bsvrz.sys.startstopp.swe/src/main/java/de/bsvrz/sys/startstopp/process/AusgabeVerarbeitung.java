@@ -1,27 +1,29 @@
 /*
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Copyright (C) 2007-2017 BitCtrl Systems GmbH
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
- * Contact Information:
- * Dambach-Werke GmbH
- * Elektronische Leitsysteme
- * Fritz-Minhardt-Str. 1
- * 76456 Kuppenheim
- * Phone: +49-7222-402-0
- * Fax: +49-7222-402-200
- * mailto: info@els.dambach.de
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Contact Information:<br>
+ * BitCtrl Systems GmbH<br>
+ * Weißenfelser Straße 67<br>
+ * 04229 Leipzig<br>
+ * Phone: +49 341-490670<br>
+ * mailto: info@bitctrl.de
  */
+
 
 package de.bsvrz.sys.startstopp.process;
 
@@ -42,7 +44,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
  */
 public class AusgabeVerarbeitung extends Thread {
 
-	private static final Debug logger = Debug.getLogger();
+	private static final Debug LOGGER = Debug.getLogger();
 
 	/**
 	 * Verweis auf Inkarnation f&uuml;r die Ausgaben ausgewertet werden
@@ -115,7 +117,7 @@ public class AusgabeVerarbeitung extends Thread {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				logger.error("Fehler beim Lesen der Ausgaben der Inkarnation '" + inkarnation + "': " + e.getMessage());
+				LOGGER.error("Fehler beim Lesen der Ausgaben der Inkarnation '" + inkarnation + "': " + e.getMessage());
 			}
 
 			if (input != null && stdOutStream != null) {
@@ -132,7 +134,7 @@ public class AusgabeVerarbeitung extends Thread {
 				try {
 					sleep(1000);
 				} catch (InterruptedException e) {
-					logger.fine("Lesen der Ausgabeströme der Inkarnation '" + inkarnation + "' unterbrochen");
+					LOGGER.fine("Lesen der Ausgabeströme der Inkarnation '" + inkarnation + "' unterbrochen");
 				}
 			}
 
@@ -165,7 +167,7 @@ public class AusgabeVerarbeitung extends Thread {
 		try {
 			stdErrStream = new PrintStream(new FileOutputStream(stdErrFile));
 		} catch (final IOException ex) {
-			logger.error("Datei zum Speichern der Ausgaben der Inkarnation '" + inkarnation + "': "
+			LOGGER.error("Datei zum Speichern der Ausgaben der Inkarnation '" + inkarnation + "': "
 					+ stdErrFile.getAbsolutePath() + " konnte nicht geöffnet werden: " + ex.getMessage());
 		}
 
@@ -178,7 +180,7 @@ public class AusgabeVerarbeitung extends Thread {
 		try {
 			stdOutStream = new PrintStream(new FileOutputStream(stdOutFile));
 		} catch (final IOException ex) {
-			logger.error("Datei zum Speichern der Fehler-Ausgaben der Inkarnation '" + inkarnation + "': "
+			LOGGER.error("Datei zum Speichern der Fehler-Ausgaben der Inkarnation '" + inkarnation + "': "
 					+ stdErrFile.getAbsolutePath() + " konnte nicht geöffnet werden: " + ex.getMessage());
 		}
 	}
