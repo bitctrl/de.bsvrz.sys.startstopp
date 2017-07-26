@@ -307,6 +307,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 			if (applikation == null) {
 				LOGGER.warning("In der Stoppbedingung referenzierte Inkarnation \"" + bedingung.getNachfolger()
 						+ "\" existiert nicht!");
+				continue;
 			}
 
 			if (!canBeStopped(applikation)) {

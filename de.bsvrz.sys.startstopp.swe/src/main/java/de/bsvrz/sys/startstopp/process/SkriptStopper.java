@@ -29,8 +29,6 @@ package de.bsvrz.sys.startstopp.process;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.tools.Tool;
-
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 
 public class SkriptStopper extends Thread {
