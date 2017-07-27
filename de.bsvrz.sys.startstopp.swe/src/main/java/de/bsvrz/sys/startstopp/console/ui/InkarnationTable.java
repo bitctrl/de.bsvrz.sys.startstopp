@@ -33,6 +33,8 @@ import com.googlecode.lanterna.gui2.table.Table;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
@@ -40,50 +42,18 @@ public class InkarnationTable extends Table<Object> {
 
 	private static final Debug LOGGER = Debug.getLogger();
 	
-	private final class Simulator extends Thread {
+	private List<Inkarnation> inkarnations = new ArrayList<>();
 
-		private Simulator() {
-			super("StatusUpdater");
-			setDaemon(true);
-		}
+	public InkarnationTable(StartStoppSkript skript) throws StartStoppException {
+		super("Name");
 
-		public void run() {
-
-			while (true) {
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					LOGGER.warning(e.getLocalizedMessage());
-				}
-				for (int row = 0; row < getTableModel().getRowCount(); row++) {
-					Applikation applikation = inkarnations.get(row);
-					try {
-						applikation = StartStoppConsole.getInstance().getClient().getApplikation(applikation.getInkarnation().getInkarnationsName());
-					} catch (StartStoppException e) {
-						LOGGER.warning(e.getLocalizedMessage());
-					}
-					getTableModel().setCell(1, row, applikation.getStatus());
-				}
-			}
-		}
-	}
-
-	private List<Applikation> inkarnations = new ArrayList<>();
-
-	public InkarnationTable() throws StartStoppException {
-		super("Name", "Status", "Startzeit");
-
-		for (Applikation inkarnation : StartStoppConsole.getInstance().getClient().getApplikationen()) {
-			getTableModel().addRow(inkarnation.getInkarnation().getInkarnationsName(), inkarnation.getStatus(),
-					inkarnation.getLetzteStartzeit());
+		for (Inkarnation inkarnation : skript.getInkarnationen()) {
+			getTableModel().addRow(inkarnation.getInkarnationsName());
 			inkarnations.add(inkarnation);
 		}
-
-		Thread simulator = new Simulator();
-		simulator.start();
 	}
 	
-	public Applikation getSelectedOnlineInkarnation() {
+	public Inkarnation getSelectedOnlineInkarnation() {
 		int row = getSelectedRow();
 		if(( row < 0 ) || (row >= inkarnations.size())) {
 			return null;

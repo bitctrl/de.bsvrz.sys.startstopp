@@ -31,7 +31,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.gui2.AbstractComponent;
 import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Border;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.GridLayout.Alignment;
@@ -42,16 +44,30 @@ import com.googlecode.lanterna.gui2.WindowListener;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class StartStoppEditWindow extends BasicWindow implements WindowListener {
-	private InkarnationTable table;
+	private InkarnationTable inkarnationTable;
+	private StartStoppSkript skript;
+	private MakroTable makroTable;
+	
+
+
 
 	public StartStoppEditWindow() throws StartStoppException {
 		super("StartStopp - Editor");
 
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+		skript = StartStoppConsole.getInstance().getClient()
+				.getCurrentSkript();
+		
+		showInkarnationTable();
+		addWindowListener(this);
+	}
 
+	private void showInkarnationTable() throws StartStoppException {
 		Panel panel = new Panel();
 		panel.setLayoutManager(new GridLayout(1));
 		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
@@ -60,25 +76,62 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
-		table = new InkarnationTable();
-		table.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
-		panel.addComponent(table.withBorder(Borders.singleLine()));
-
-		addWindowListener(this);
-
+		inkarnationTable = new InkarnationTable(skript);
+		inkarnationTable.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
+		inkarnationTable.setPreferredSize(TerminalSize.ONE);
+		panel.addComponent(inkarnationTable.withBorder(Borders.singleLine()));
+	
 		setComponent(panel);
+		
 	}
 
+	private void showMakroTable() throws StartStoppException {
+		Panel panel = new Panel();
+		panel.setLayoutManager(new GridLayout(1));
+		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
+
+		Label infoLabel = new Label("s-System   i-Inkarnation e-Bearbeiten");
+		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
+		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
+
+		makroTable = new MakroTable(skript);
+		makroTable.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
+		makroTable.setPreferredSize(TerminalSize.ONE);
+
+		panel.addComponent(makroTable.withBorder(Borders.singleLine()));
+		setComponent(panel);
+
+		makroTable.setVisibleRows(getSize().getRows() - 7);
+	}
+	
 	@Override
 	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
 		// TODO Auto-generated method stub
 		switch (keyStroke.getKeyType()) {
 		case Character:
-			switch (keyStroke.getCharacter()) {
+ 			switch (keyStroke.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
 				builder.addActions(new EditorSaveAction(), new EditorCloseAction(this));
 				builder.build().showDialog(getTextGUI());
+				break;
+
+			case 'm':
+				try {
+					showMakroTable();
+				} catch (StartStoppException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+				
+			case 'i':
+				try {
+					showInkarnationTable();
+				} catch (StartStoppException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 
 			default:
@@ -102,7 +155,7 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 
 	@Override
 	public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
-		table.setVisibleRows(newSize.getRows() - 2);
+		inkarnationTable.setVisibleRows(newSize.getRows() - 2);
 
 	}
 

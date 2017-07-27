@@ -37,8 +37,8 @@ import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class OnlineInkarnationTable extends Table<Object> {
 
-	private final class Simulator extends Thread {
-		private Simulator() {
+	private final class Updater extends Thread {
+		private Updater() {
 			super("StatusUpdater");
 			setDaemon(true);
 		}
@@ -78,8 +78,8 @@ public class OnlineInkarnationTable extends Table<Object> {
 			inkarnations.add(inkarnation);
 		}
 
-		Thread simulator = new Simulator();
-		simulator.start();
+		Thread updater = new Updater();
+		updater.start();
 	}
 
 	public Applikation getSelectedOnlineInkarnation() {
