@@ -359,10 +359,8 @@ Alle bei StartStopp definierten Rechner
 
 ## Applikation (object)
 
-+ inkarnationsName: Parametrierung (string, required) - der Name der Inkarnation
++ inkarnation (Inkarnation, required) - die verwendete Inkarnation
 + rechner: localhost (string)
-+ applikation: java (string, required) - der Applikationsname (ausführbare Datei)
-+ arguments: `-datenverteiler=localhost:8083`, `-persistenz=parameter` (array[string], fixed-type) - die Argumente der Applikation
 + letzteStartzeit: `24.12.2016 12:01" (string) - die letzte Startzeit der Inkarnation
 + letzteStoppzeit: `06.12.2016 11:11" (string) - die letzte Stoppzeit der Inkarnation
 + status: installiert (enum, required) - der Status der Inkarnation in StartStopp
@@ -372,6 +370,8 @@ Alle bei StartStopp definierten Rechner
   + initialisiert (string)
   + stoppenwarten (string)
   + gestoppt (string)
++ startMeldung `undefiniert' (string, required)
+
   
 ## StartStoppVersion (object)
 

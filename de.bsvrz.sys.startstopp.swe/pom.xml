@@ -281,7 +281,7 @@
 					<sourceDirectory>${basedir}/src/main/resources/json</sourceDirectory>
 					<includeHashcodeAndEquals>true</includeHashcodeAndEquals>
 					<includeToString>true</includeToString>
-					<includeAdditionalProperties>false</includeAdditionalProperties>
+					<includeAdditionalProperties>true</includeAdditionalProperties>
 					<targetPackage>de.bsvrz.sys.startstopp.api.jsonschema</targetPackage>
 				</configuration>
 				<executions>

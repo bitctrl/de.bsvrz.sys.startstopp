@@ -41,6 +41,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
@@ -90,7 +91,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 						davConnector.reconnect(aktuelleKonfiguration.getResolvedZugangDav());
 						for (StartStoppInkarnation inkarnation : aktuelleKonfiguration.getInkarnationen()) {
 							StartStoppApplikation applikation = new StartStoppApplikation(this, inkarnation);
-							applikationen.put(applikation.getInkarnationsName(), applikation);
+							applikationen.put(applikation.getInkarnation().getInkarnationsName(), applikation);
 							applikation.addManagedApplikationListener(this);
 						}
 					}
@@ -99,7 +100,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 				}
 			}
 			for (StartStoppApplikation applikation : applikationen.values()) {
-				LOGGER.info("Prüfe " + applikation.getInkarnationsName());
+				LOGGER.info("Prüfe " + applikation.getInkarnation().getInkarnationsName());
 				applikation.updateStatus();
 			}
 
@@ -130,7 +131,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	public Applikation getApplikation(String inkarnationsName) throws StartStoppException {
 		StartStoppApplikation managedApplikation = applikationen.get(inkarnationsName);
 		if (managedApplikation != null) {
-			return managedApplikation.getApplikation();
+			return managedApplikation;
 		}
 
 		throw new StartStoppException(
@@ -250,11 +251,12 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 			if (applikation == null) {
 				LOGGER.warning("In der Startbedingung referenzierte Inkarnation \"" + bedingung.getVorgaenger()
 						+ "\" existiert nicht!");
+				continue;
 			}
 
-			if (!canBeStartet(applikation.getApplikation(), bedingung)) {
-				result.add(applikation.getApplikation());
-				LOGGER.info(managedApplikation.getInkarnationsName() + " muss auf " + applikation.getInkarnationsName()
+			if (!canBeStartet(applikation, bedingung)) {
+				result.add(applikation);
+				LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf " + applikation.getInkarnation().getInkarnationsName()
 						+ " warten!");
 			}
 		}
@@ -300,8 +302,8 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 				continue;
 			}
 
-			if (!canBeStopped(applikation.getApplikation())) {
-				result.add(applikation.getApplikation());
+			if (!canBeStopped(applikation)) {
+				result.add(applikation);
 			}
 		}
 
@@ -336,8 +338,8 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 				Applikation applikation = client.getApplikation(nachfolger);
 				if (!canBeStopped(applikation)) {
 					result.add(applikation);
-					LOGGER.info(managedApplikation.getInkarnationsName() + " muss auf "
-							+ applikation.getInkarnationsName() + " auf Rechner \"" + rechnerName + "\" warten!");
+					LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf "
+							+ applikation.getInkarnation().getInkarnationsName() + " auf Rechner \"" + rechnerName + "\" warten!");
 				}
 			}
 
@@ -363,14 +365,16 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 
 				if (!canBeStartet(applikation, bedingung)) {
 					result.add(applikation);
-					LOGGER.info(managedApplikation.getInkarnationsName() + " muss auf "
-							+ applikation.getInkarnationsName() + " auf Rechner \"" + rechnerName + "\" warten!");
+					LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf "
+							+ applikation.getInkarnation().getInkarnationsName() + " auf Rechner \"" + rechnerName + "\" warten!");
 				}
 			}
 		} catch (NumberFormatException | StartStoppException e) {
 			LOGGER.warning(e.getLocalizedMessage());
 			Applikation dummyApplikation = new Applikation();
-			dummyApplikation.setInkarnationsName(rechnerName);
+			Inkarnation inkarnation = new Inkarnation();
+			inkarnation.setInkarnationsName(rechnerName);
+			dummyApplikation.setInkarnation(inkarnation);
 			result.add(dummyApplikation);
 		}
 
@@ -382,7 +386,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 		Set<Applikation> result = new LinkedHashSet<>();
 		
 		for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
-			if (ks.getInkarnationsName().equals(managedApplikation.getInkarnationsName())) {
+			if (ks.getInkarnationsName().equals(managedApplikation.getInkarnation().getInkarnationsName())) {
 				return result;
 			}
 			StartStoppApplikation app = applikationen.get(ks.getInkarnationsName());
@@ -391,7 +395,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 			case INITIALISIERT:
 				break;
 			default:
-				result.add(managedApplikation.getApplikation());
+				result.add(managedApplikation);
 			}
 		}
 
@@ -405,7 +409,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 
 		for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
 			if (!foundKernsoftwareApplikation) {
-				if (ks.getInkarnationsName().equals(startStoppApplikation.getInkarnationsName())) {
+				if (ks.getInkarnationsName().equals(startStoppApplikation.getInkarnation().getInkarnationsName())) {
 					foundKernsoftwareApplikation = true;
 				}
 			} else {
@@ -414,7 +418,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 				case GESTARTET:
 				case INITIALISIERT:
 				case STOPPENWARTEN:
-					result.add(app.getApplikation());
+					result.add(app);
 				case GESTOPPT:
 				case INSTALLIERT:
 				case STARTENWARTEN:
@@ -465,13 +469,12 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 			if (applikation.getStatus() == Applikation.Status.GESTARTET) {
 				applikation.updateStatus(Applikation.Status.INITIALISIERT);
 			} else {
-				LOGGER.warning(applikation.getInkarnationsName() + " ist im Status " + applikation.getStatus());
+				LOGGER.warning(applikation.getInkarnation().getInkarnationsName() + " ist im Status " + applikation.getStatus());
 			}
 		}
 	}
 
 	public void stopperFinished() {
 		// TODO Auto-generated method stub
-		
 	}
 }

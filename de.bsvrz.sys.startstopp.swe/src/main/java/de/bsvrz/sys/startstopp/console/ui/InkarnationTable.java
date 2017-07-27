@@ -58,7 +58,7 @@ public class InkarnationTable extends Table<Object> {
 				for (int row = 0; row < getTableModel().getRowCount(); row++) {
 					Applikation applikation = inkarnations.get(row);
 					try {
-						applikation = StartStoppConsole.getInstance().getClient().getApplikation(applikation.getInkarnationsName());
+						applikation = StartStoppConsole.getInstance().getClient().getApplikation(applikation.getInkarnation().getInkarnationsName());
 					} catch (StartStoppException e) {
 						LOGGER.warning(e.getLocalizedMessage());
 					}
@@ -74,7 +74,7 @@ public class InkarnationTable extends Table<Object> {
 		super("Name", "Status", "Startzeit");
 
 		for (Applikation inkarnation : StartStoppConsole.getInstance().getClient().getApplikationen()) {
-			getTableModel().addRow(inkarnation.getInkarnationsName(), inkarnation.getStatus(),
+			getTableModel().addRow(inkarnation.getInkarnation().getInkarnationsName(), inkarnation.getStatus(),
 					inkarnation.getLetzteStartzeit());
 			inkarnations.add(inkarnation);
 		}

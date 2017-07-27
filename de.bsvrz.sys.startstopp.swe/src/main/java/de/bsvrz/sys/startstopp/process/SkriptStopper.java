@@ -29,10 +29,13 @@ package de.bsvrz.sys.startstopp.process;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 
 public class SkriptStopper extends Thread {
 
+	private static final Debug LOGGER = Debug.getLogger();
 	private final Map<String, StartStoppApplikation> applikationen = new LinkedHashMap<>();
 	private final Map<String, StartStoppApplikation> kernsystem = new LinkedHashMap<>();
 	private ProcessManager processManager;
@@ -43,9 +46,9 @@ public class SkriptStopper extends Thread {
 
 		for (StartStoppApplikation applikation : processManager.getManagedApplikationen()) {
 			if (applikation.isKernsystem()) {
-				kernsystem.put(applikation.getInkarnationsName(), applikation);
+				kernsystem.put(applikation.getInkarnation().getInkarnationsName(), applikation);
 			} else {
-				this.applikationen.put(applikation.getInkarnationsName(), applikation);
+				this.applikationen.put(applikation.getInkarnation().getInkarnationsName(), applikation);
 			}
 		}
 	}
@@ -60,9 +63,14 @@ public class SkriptStopper extends Thread {
 		boolean stopped = false;
 		if (Tools.isWindows()) {
 			for (StartStoppApplikation applikation : kernsystem.values()) {
-				if (applikation.isTransMitter()) {
-					applikation.updateStatus(Applikation.Status.STOPPENWARTEN);
-					stopped = true;
+				if (applikation.isTransmitter()) {
+					try {
+						processManager
+								.stoppeApplikationOhnePruefung(applikation.getInkarnation().getInkarnationsName());
+						stopped = true;
+					} catch (StartStoppException e) {
+						LOGGER.warning(e.getLocalizedMessage());
+					}
 					break;
 				}
 			}

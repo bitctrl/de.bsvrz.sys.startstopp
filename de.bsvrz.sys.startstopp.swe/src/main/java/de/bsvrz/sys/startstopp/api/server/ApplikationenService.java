@@ -63,7 +63,7 @@ public class ApplikationenService {
 		
 		List<Applikation> applikationen = new ArrayList<>();
 		for( StartStoppApplikation applikation : processManager.getApplikationen()) {
-			applikationen.add(applikation.getApplikation());
+			applikationen.add(applikation);
 		}
 
 		Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
@@ -97,7 +97,7 @@ public class ApplikationenService {
 			StartStoppApplikation applikation = processManager.starteApplikationOhnePruefung(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
-			responseBuilder.entity(applikation.getApplikation());
+			responseBuilder.entity(applikation);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
 			StatusResponse status = new StatusResponse();
@@ -116,7 +116,7 @@ public class ApplikationenService {
 			StartStoppApplikation applikation = processManager.restarteApplikation(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
-			responseBuilder.entity(applikation.getApplikation());
+			responseBuilder.entity(applikation);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
 			StatusResponse status = new StatusResponse();
@@ -135,7 +135,7 @@ public class ApplikationenService {
 			StartStoppApplikation applikation = processManager.stoppeApplikationOhnePruefung(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
-			responseBuilder.entity(applikation.getApplikation());
+			responseBuilder.entity(applikation);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
 			StatusResponse status = new StatusResponse();

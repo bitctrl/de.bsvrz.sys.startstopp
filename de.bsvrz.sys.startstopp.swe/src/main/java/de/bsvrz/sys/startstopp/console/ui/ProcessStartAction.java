@@ -41,7 +41,7 @@ public class ProcessStartAction implements Runnable {
 	@Override
 	public void run() {
 		try {
-			StartStoppConsole.getInstance().getClient().starteApplikation(inkarnation.getInkarnationsName());
+			StartStoppConsole.getInstance().getClient().starteApplikation(inkarnation.getInkarnation().getInkarnationsName());
 		} catch (StartStoppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

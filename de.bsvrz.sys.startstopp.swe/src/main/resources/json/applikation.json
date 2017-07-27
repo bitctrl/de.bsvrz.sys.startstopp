@@ -2,25 +2,9 @@
 	"$schema": "http://json-schema.org/draft-04/schema#",
 	"type": "object",
 	"properties": {
-		"inkarnationsName": {
-			"type": "string",
-			"description": "der Name der Inkarnation"
-		},
-		"applikation": {
-			"type": "string",
-			"description": "der Applikationsname (ausführbare Datei)"
-		},
-		"arguments": {
-			"type": "array",
-			"items": [
-				{
-					"type": "string"
-				},
-				{
-					"type": "string"
-				}
-			],
-			"description": "die Argumente der Applikation"
+		"inkarnation": {
+			"$ref": "inkarnation.json",
+			"description": "die Inkarnation"
 		},
 		"letzteStartzeit": {
 			"type": "string",
@@ -41,11 +25,16 @@
 				"gestoppt"
 			],
 			"description": "der Status der Inkarnation in StartStopp"
-		}
+		},
+        "startMeldung": {
+            "type": "string",
+            "description": "eine Meldung zum aktuellen Ausführungsstatus",
+            "default": "undefiniert"
+        }
 	},
 	"required": [
-		"inkarnationsName",
-		"applikation",
-		"status"
+		"inkarnation",
+		"status",
+		"startMeldung"
 	]
 }

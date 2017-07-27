@@ -32,16 +32,16 @@ import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class ProcessStoppAction implements Runnable {
 
-	private Applikation inkarnation;
+	private Applikation applikation;
 
-	public ProcessStoppAction(Applikation inkarnation) {
-		this.inkarnation = inkarnation;
+	public ProcessStoppAction(Applikation applikation) {
+		this.applikation = applikation;
 	}
 
 	@Override
 	public void run() {
 		try {
-			StartStoppConsole.getInstance().getClient().stoppeApplikation(inkarnation.getInkarnationsName());
+			StartStoppConsole.getInstance().getClient().stoppeApplikation(applikation.getInkarnation().getInkarnationsName());
 		} catch (StartStoppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

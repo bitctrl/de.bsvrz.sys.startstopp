@@ -50,7 +50,7 @@ public class ProcessDetailAction implements Runnable {
 
 	@Override
 	public void run() {
-		BasicWindow window = new BasicWindow("Details: " + inkarnation.getInkarnationsName());
+		BasicWindow window = new BasicWindow("Details: " + inkarnation.getInkarnation().getInkarnationsName());
 		window.setHints(Collections.singleton(Hint.EXPANDED));
 		window.addWindowListener(new WindowListenerAdapter() {
 			@Override

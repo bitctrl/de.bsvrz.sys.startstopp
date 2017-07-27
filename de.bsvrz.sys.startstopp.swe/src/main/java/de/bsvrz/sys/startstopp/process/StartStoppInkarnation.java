@@ -65,7 +65,7 @@ public class StartStoppInkarnation extends Inkarnation {
 		return kernSystem != null;
 	}
 	
-	public boolean isTransMitter() {
+	public boolean isTransmitter() {
 		for( String parameter : getAufrufParameter()) {
 			if( parameter.contains("de.bsvrz.dav.dav.main.Transmitter")) {
 				return true;
