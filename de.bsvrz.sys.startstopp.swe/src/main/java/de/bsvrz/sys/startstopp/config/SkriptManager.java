@@ -85,7 +85,7 @@ public class SkriptManager {
 	private final List<SkriptManagerListener> listeners = new ArrayList<>();
 	private final SortedMap<Long, StartStoppVersion> versions = new TreeMap<>();
 
-	private StartStoppKonfiguration currentSkript;
+	private StartStoppKonfiguration aktuelleKonfiguration;
 
 	public SkriptManager() {
 		this(StartStopp.getInstance());
@@ -130,16 +130,16 @@ public class SkriptManager {
 
 			}
 
-			currentSkript = new StartStoppKonfiguration(skript);
-			currentSkript.setCheckSumme(Long.toString(checkSumme.getValue()));
-			if (currentSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
-				String version = currentSkript.getSkript().getMetaDaten().getVersionsNummer();
+			aktuelleKonfiguration = new StartStoppKonfiguration(skript);
+			aktuelleKonfiguration.setCheckSumme(Long.toString(checkSumme.getValue()));
+			if (aktuelleKonfiguration.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
+				String version = aktuelleKonfiguration.getSkript().getMetaDaten().getVersionsNummer();
 				if (versions.isEmpty() || !versions.get(versions.lastKey()).getVersion().equals(version)) {
-					currentSkript.setSkriptStatus(StartStoppSkriptStatus.Status.FAILURE,
+					aktuelleKonfiguration.setSkriptStatus(StartStoppSkriptStatus.Status.FAILURE,
 							"Die Konfiguration wurde nicht korrekt versioniert!");
 				} else {
-					if (!versions.get(versions.lastKey()).getPruefsumme().equals(currentSkript.getCheckSumme())) {
-						currentSkript.setSkriptStatus(StartStoppSkriptStatus.Status.FAILURE,
+					if (!versions.get(versions.lastKey()).getPruefsumme().equals(aktuelleKonfiguration.getCheckSumme())) {
+						aktuelleKonfiguration.setSkriptStatus(StartStoppSkriptStatus.Status.FAILURE,
 								"Checksumme der Konfigurationsdatei ist nicht korrekt!");
 					}
 				}
@@ -184,10 +184,10 @@ public class SkriptManager {
 	}
 
 	public StartStoppKonfiguration getCurrentSkript() throws StartStoppException {
-		if (currentSkript == null) {
+		if (aktuelleKonfiguration == null) {
 			throw new StartStoppException("Die StartStopp-Applikation hat kein aktuelles Skript geladen");
 		}
-		return currentSkript;
+		return aktuelleKonfiguration;
 	}
 
 	public StartStoppSkriptStatus getCurrentSkriptStatus() throws StartStoppException {
@@ -200,11 +200,11 @@ public class SkriptManager {
 
 		StartStoppKonfiguration newSkript = new StartStoppKonfiguration(request.getSkript());
 		if (newSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
-			StartStoppKonfiguration oldSkript = currentSkript;
+			StartStoppKonfiguration oldSkript = aktuelleKonfiguration;
 			newSkript = versionieren(newSkript, request);
-			currentSkript = newSkript;
-			fireSkriptChanged(oldSkript, currentSkript);
-			return currentSkript.getSkript();
+			aktuelleKonfiguration = newSkript;
+			fireSkriptChanged(oldSkript, aktuelleKonfiguration);
+			return aktuelleKonfiguration.getSkript();
 		}
 
 		StatusResponse status = new StatusResponse();
@@ -383,12 +383,13 @@ public class SkriptManager {
 
 		LocalDateTime localDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(utcNow), ZoneId.systemDefault());
 
-		MetaDaten metaDaten = skript.getSkript().getMetaDaten();
+		MetaDaten metaDaten = new MetaDaten();
 		metaDaten.setAenderungsGrund(request.getAenderungsgrund());
 		metaDaten.setErstelltAm(localDate.toString());
 		metaDaten.setErstelltDurch(request.getVeranlasser());
 		metaDaten.setName(request.getName());
 		metaDaten.setVersionsNummer(Long.toString(utcNow));
+		skript.getSkript().setMetaDaten(metaDaten);
 
 		ObjectMapper mapper = new ObjectMapper();
 		try (CheckedOutputStream checkedStream = new CheckedOutputStream(new FileOutputStream(tempFile), checkSum);

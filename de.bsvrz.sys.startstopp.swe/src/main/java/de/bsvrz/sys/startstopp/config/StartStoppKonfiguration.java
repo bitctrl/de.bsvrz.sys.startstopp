@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -40,6 +41,7 @@ import java.util.regex.Pattern;
 import org.eclipse.jetty.util.ConcurrentArrayQueue;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
@@ -58,8 +60,12 @@ public class StartStoppKonfiguration {
 	private StartStoppSkriptStatus skriptStatus = new StartStoppSkriptStatus();
 	private String checkSumme = "";
 
+
 	public StartStoppKonfiguration(StartStoppSkript skript) {
 		this.skript = skript;
+		
+
+		
 		skriptStatus.getMessages().addAll(pruefeVollstaendigkeit());
 		skriptStatus.getMessages().addAll(pruefeZirkularitaet());
 
@@ -434,5 +440,13 @@ public class StartStoppKonfiguration {
 
 	public void setCheckSumme(String checkSumme) {
 		this.checkSumme = checkSumme;
+	}
+
+	public List<KernSystem> getKernSysteme() {
+		List<KernSystem> result = new ArrayList<>();
+		if( skript.getGlobal() != null) {
+			result.addAll(skript.getGlobal().getKernsysteme());
+		}
+		return result;
 	}
 }

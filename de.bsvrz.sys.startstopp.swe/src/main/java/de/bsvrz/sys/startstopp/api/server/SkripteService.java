@@ -65,7 +65,6 @@ public class SkripteService {
 
 		try {
 			StartStoppSkript konfiguration = skriptManager.getCurrentSkript().getSkript();
-
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(konfiguration);
