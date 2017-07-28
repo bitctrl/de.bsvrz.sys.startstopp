@@ -217,7 +217,7 @@
     "mitInkarnationsName" : true,
     "startArt" : {
       "option" : "automatisch",
-      "neuStart" : false,
+      "neuStart" : true,
       "intervall" : ""
     },
     "startFehlerVerhalten" : {
@@ -231,8 +231,8 @@
   } ],
   "metaDaten" : {
     "aenderungsGrund" : "Alles neu",
-    "erstelltAm" : "2017-07-25T13:25:55.493",
+    "erstelltAm" : "2017-07-28T14:42:14.156",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1500981955493"
+    "versionsNummer" : "1501245734156"
   }
 }

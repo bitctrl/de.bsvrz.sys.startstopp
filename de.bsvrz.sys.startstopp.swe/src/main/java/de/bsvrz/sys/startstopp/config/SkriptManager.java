@@ -68,6 +68,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppVersion;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.api.jsonschema.VersionierungsRequest;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
+import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
 import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 /**
@@ -250,7 +251,7 @@ public class SkriptManager {
 			}
 
 			throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" ist kein Administrator!");
-		} catch (StartStoppException e) {
+		} catch (StartStoppDavException e) {
 			LOGGER.fine(e.getLocalizedMessage());
 		}
 

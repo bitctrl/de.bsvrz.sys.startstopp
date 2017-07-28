@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.client.ClientConfig;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
@@ -52,6 +53,8 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 
 public class StartStoppClient {
+
+	private static final Debug LOGGER = Debug.getLogger();
 
 	private class StartStoppHostnameVerifier implements HostnameVerifier {
 
@@ -71,28 +74,16 @@ public class StartStoppClient {
 	}
 
 	private StartStoppHostnameVerifier verifier = new StartStoppHostnameVerifier();
-	private final String startStoppHostName;
-	private final Client client;
+	private String startStoppHostName;
+	private Client client;
 	private int port;
 
+	public StartStoppClient() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public StartStoppClient(String startStoppHostName, int port) throws StartStoppException {
-
-		this.startStoppHostName = startStoppHostName;
-		this.port = port;
-
-		SslContextFactory sslContextFactory = new SslContextFactory();
-		sslContextFactory.setKeyStorePath(ApiServer.class.getResource("keystore.jks").toExternalForm());
-		sslContextFactory.setKeyStorePassword("startstopp");
-		sslContextFactory.setKeyManagerPassword("startstopp");
-		try {
-			sslContextFactory.start();
-		} catch (Exception e) {
-			throw new StartStoppException(e);
-		}
-
-		SSLContext sslContext = sslContextFactory.getSslContext();
-		client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-				.withConfig(new ClientConfig().register(Applikation.class)).build();
+		setConnection(startStoppHostName, port);
 	}
 
 	private Response createPostResponse(String string) {
@@ -206,9 +197,14 @@ public class StartStoppClient {
 				+ response.getStatus() + ")");
 	}
 
-	public StartStoppSkript setCurrentSkript(String grund, StartStoppSkript skript) throws StartStoppException {
+	public StartStoppSkript setCurrentSkript(String veranlasser, String passwort, String name, String grund, StartStoppSkript skript) throws StartStoppException {
 		Response response = null;
 		VersionierungsRequest request = new VersionierungsRequest();
+		request.setVeranlasser(veranlasser);
+		request.setPasswort(passwort);
+		if( name != null) {
+			request.setName(name);
+		}
 		request.setAenderungsgrund(grund);
 		request.setSkript(skript);
 		try {
@@ -254,7 +250,11 @@ public class StartStoppClient {
 				});
  			}
 		} catch (Exception e) {
-			throw new StartStoppException(e);
+			LOGGER.fine(e.getLocalizedMessage());
+		}
+		if( response == null) {
+			throw new StartStoppException(
+					"Keine Verbindung zu StartStopp!");
 		}
 		throw new StartStoppException(
 				"Applikationen konnten nicht abgerufen werden (Response: " + response.getStatus() + ")");
@@ -268,7 +268,11 @@ public class StartStoppClient {
 				return response.readEntity(Applikation.class);
 			}
 		} catch (Exception e) {
-			throw new StartStoppException(e);
+			LOGGER.fine(e.getLocalizedMessage());
+		}
+		if( response == null) {
+			throw new StartStoppException(
+					"Keine Verbindung zu StartStopp!");
 		}
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
 				+ "\"konnte nicht abgerufen werden (Response: " + response.getStatus() + ")");
@@ -329,6 +333,25 @@ public class StartStoppClient {
 		}
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
 				+ "\"konnte nicht gestoppt werden (Response: " + response.getStatus() + ")");
+	}
+
+	public void setConnection(String host, int port) throws StartStoppException {
+		this.startStoppHostName = host;
+		this.port = port;
+
+		SslContextFactory sslContextFactory = new SslContextFactory();
+		sslContextFactory.setKeyStorePath(ApiServer.class.getResource("keystore.jks").toExternalForm());
+		sslContextFactory.setKeyStorePassword("startstopp");
+		sslContextFactory.setKeyManagerPassword("startstopp");
+		try {
+			sslContextFactory.start();
+		} catch (Exception e) {
+			throw new StartStoppException(e);
+		}
+
+		SSLContext sslContext = sslContextFactory.getSslContext();
+		client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
+				.withConfig(new ClientConfig().register(Applikation.class)).build();
 	}
 
 }

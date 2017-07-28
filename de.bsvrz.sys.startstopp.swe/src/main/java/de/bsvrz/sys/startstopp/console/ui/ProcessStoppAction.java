@@ -26,22 +26,21 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class ProcessStoppAction implements Runnable {
 
-	private Applikation applikation;
+	private String applikation;
 
-	public ProcessStoppAction(Applikation applikation) {
+	public ProcessStoppAction(String applikation) {
 		this.applikation = applikation;
 	}
 
 	@Override
 	public void run() {
 		try {
-			StartStoppConsole.getInstance().getClient().stoppeApplikation(applikation.getInkarnation().getInkarnationsName());
+			StartStoppConsole.getInstance().getClient().stoppeApplikation(applikation);
 		} catch (StartStoppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

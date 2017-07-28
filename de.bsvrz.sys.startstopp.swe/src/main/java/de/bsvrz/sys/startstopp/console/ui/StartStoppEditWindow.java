@@ -26,14 +26,19 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.AbstractComponent;
 import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Border;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.GridLayout.Alignment;
@@ -42,6 +47,7 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListener;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
@@ -53,9 +59,6 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 	private StartStoppSkript skript;
 	private MakroTable makroTable;
 	
-
-
-
 	public StartStoppEditWindow() throws StartStoppException {
 		super("StartStopp - Editor");
 
@@ -112,7 +115,7 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
  			switch (keyStroke.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addActions(new EditorSaveAction(), new EditorCloseAction(this));
+				builder.addActions(new EditorSaveAction(getTextGUI(), skript), new EditorCloseAction(this));
 				builder.build().showDialog(getTextGUI());
 				break;
 
@@ -134,7 +137,30 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 				}
 				break;
 
+			case 'l':
+				FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
+				fileDialogBuilder.setTitle("StartStopp-Konfiguration auswählen");
+				fileDialogBuilder.setActionLabel("Laden");
+				File selectedFile = fileDialogBuilder.build().showDialog(getTextGUI());
+				if(( selectedFile != null ) && selectedFile.exists()) {
+					try (InputStream stream = new FileInputStream(selectedFile)) {
+						ObjectMapper mapper = new ObjectMapper();
+						skript = mapper.readValue(stream, StartStoppSkript.class);
+					} catch (JsonParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (JsonMappingException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				break;
+				
 			default:
+				System.err.println(getClass().getSimpleName() + ": " + keyStroke);
 				break;
 			}
 			break;

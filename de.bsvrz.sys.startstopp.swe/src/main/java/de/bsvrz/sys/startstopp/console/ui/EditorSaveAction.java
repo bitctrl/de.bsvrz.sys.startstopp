@@ -26,12 +26,45 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+
 public class EditorSaveAction implements Runnable {
+
+	private StartStoppSkript skript;
+	private WindowBasedTextGUI textGui;
+
+	public EditorSaveAction(WindowBasedTextGUI textGui, StartStoppSkript skript) {
+		this.skript = skript;
+		this.textGui = textGui;
+	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		UrlasserDialog dialog = new UrlasserDialog("Versionieren");
+		Object showDialog = dialog.showDialog(textGui);
+		if (showDialog.equals(MessageDialogButton.OK)) {
+			try {
+				StartStoppConsole.getInstance().getClient().setCurrentSkript(dialog.getVeranlasser(), dialog.getPasswort(), null, dialog.getGrund(), skript);
+			} catch (StartStoppException e) {
 
+				StringBuilder text = new StringBuilder(e.getLocalizedMessage());
+				for( String msg : e.getMessages()) {
+					text.append('\n');
+					text.append(msg);
+				}
+				
+				MessageDialogBuilder builder = new MessageDialogBuilder();
+				builder.setTitle("Fehler");
+				builder.setText(text.toString());
+				builder.build().showDialog(textGui);
+			}
+		}
 	}
 
 	@Override

@@ -43,7 +43,6 @@ import com.googlecode.lanterna.gui2.WindowListener;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
 public class StartStoppOnlineWindow extends BasicWindow implements WindowListener {
@@ -63,7 +62,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
 		table = new OnlineInkarnationTable();
-		table.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
+		table.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		panel.addComponent(table.withBorder(Borders.singleLine()));
 
 		addWindowListener(this);
@@ -101,7 +100,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				break;
 			case 'p':
 				builder = new ActionListDialogBuilder().setTitle("System");
-				Applikation inkarnation = table.getSelectedOnlineInkarnation();
+				String inkarnation = table.getSelectedOnlineInkarnation();
 				builder.addActions(new ProcessStartAction(inkarnation), new ProcessRestartAction(inkarnation),
 						new ProcessStoppAction(inkarnation), new ProcessDetailAction(this.getTextGUI(), inkarnation));
 				builder.build().showDialog(getTextGUI());
@@ -117,7 +116,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				}
 				break;
 			default:
-				// TODO System.err.println(keyStroke);
+				System.err.println(getClass().getSimpleName() + ": " + keyStroke);
 				break;
 			}
 			break;

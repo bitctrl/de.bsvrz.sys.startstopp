@@ -32,11 +32,9 @@ import java.util.List;
 import com.googlecode.lanterna.gui2.table.Table;
 
 import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class InkarnationTable extends Table<Object> {
 

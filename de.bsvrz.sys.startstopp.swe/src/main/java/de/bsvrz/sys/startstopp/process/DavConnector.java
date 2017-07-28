@@ -43,6 +43,7 @@ import de.bsvrz.dav.daf.main.config.management.UserAdministration;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
 
 public class DavConnector extends Thread {
 
@@ -138,7 +139,7 @@ public class DavConnector extends Thread {
 	public boolean checkAuthentification(String veranlasser, String passwort) throws StartStoppException {
 
 		if (!isOnline()) {
-			throw new StartStoppException("Es besteht keine Datenverteilerverbindung!");
+			throw new StartStoppDavException();
 		}
 
 		DataModel dataModel = connection.get().getDataModel();

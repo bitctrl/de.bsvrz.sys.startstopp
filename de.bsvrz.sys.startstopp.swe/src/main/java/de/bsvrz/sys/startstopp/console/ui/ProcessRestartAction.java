@@ -26,11 +26,9 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-
 public class ProcessRestartAction implements Runnable {
 
-	public ProcessRestartAction(Applikation inkarnation) {
+	public ProcessRestartAction(String inkarnation) {
 		// TODO Auto-generated constructor stub
 	}
 

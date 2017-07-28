@@ -12,6 +12,8 @@ public class MakroTable extends Table<Object> {
 	public MakroTable(StartStoppSkript skript) {
 		super("Name", "Wert");
 
+		setCellSelection(true);
+		
 		this.skript = skript;
 		for (MakroDefinition makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
 			getTableModel().addRow(makroDefinition.getName(), makroDefinition.getWert());

@@ -27,15 +27,79 @@
 package de.bsvrz.sys.startstopp.console.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.gui2.table.TableModel;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class OnlineInkarnationTable extends Table<Object> {
+
+	private static class ApplikationenTableModell extends TableModel<Object> {
+
+		public ApplikationenTableModell() {
+			super("Inkarnation", "Status", "Startzeit");
+		}
+
+		public void setApplikationen(List<Applikation> applikationen) {
+
+			while (getRowCount() > 0) {
+				removeRow(0);
+			}
+
+			for (Applikation applikation : applikationen) {
+				addRow(getValues(applikation));
+			}
+		}
+
+		public void updateApplikationen(List<Applikation> applikationen) {
+			for (int idx = 0; idx < applikationen.size(); idx++) {
+				Applikation applikation = applikationen.get(idx);
+				if (getRowCount() <= idx) {
+					addRow(applikation.getInkarnation().getInkarnationsName(), applikation.getStatus(),
+							applikation.getLetzteStartzeit());
+				} else if (getCell(0, idx).equals(applikation.getInkarnation().getInkarnationsName())) {
+					setCell(1, idx, applikation.getStatus());
+					setCell(2, idx, applikation.getLetzteStartzeit());
+				} else {
+					insertRow(idx, getValues(applikation));
+				}
+			}
+
+			while (getRowCount() > applikationen.size()) {
+				removeRow(getRowCount() - 1);
+			}
+		}
+
+		private Collection<Object> getValues(Applikation applikation) {
+			Collection<Object> result = new ArrayList<>();
+			result.add(applikation.getInkarnation().getInkarnationsName());
+			result.add(applikation.getStatus());
+			result.add(applikation.getLetzteStartzeit());
+			return result;
+		}
+
+	}
+
+	private static class EmptyTableModell extends TableModel<Object> {
+
+		public EmptyTableModell() {
+			super("Meldungen");
+		}
+
+		public void addMessage(String string) {
+			addRow(string);
+		}
+
+		public void setMessage(String message) {
+			setCell(0, 0, message);
+		}
+	}
 
 	private final class Updater extends Thread {
 		private Updater() {
@@ -52,43 +116,63 @@ public class OnlineInkarnationTable extends Table<Object> {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				for (int row = 0; row < getTableModel().getRowCount(); row++) {
-					Applikation applikation = inkarnations.get(row);
-					try {
-						applikation = StartStoppConsole.getInstance().getClient()
-								.getApplikation(applikation.getInkarnation().getInkarnationsName());
-					} catch (StartStoppException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+
+				try {
+					List<Applikation> applikationen = StartStoppConsole.getInstance().getClient().getApplikationen();
+
+					boolean showApplikationen = true;
+					if( applikationen.isEmpty()) {
+						StartStoppSkriptStatus skriptStatus = StartStoppConsole.getInstance().getClient().getCurrentSkriptStatus();
+						if( skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
+							emtpyTableModell.setMessage(skriptStatus.getMessages().get(0));
+							setTableModel(emtpyTableModell);
+							showApplikationen = false;
+						}
+					} 
+					
+					if( showApplikationen) {
+					applikationenTableModell.updateApplikationen(applikationen);
+					setTableModel(applikationenTableModell);
 					}
-					getTableModel().setCell(1, row, applikation.getStatus());
+				} catch (StartStoppException e) {
+					emtpyTableModell.setMessage(e.getLocalizedMessage());
+					setTableModel(emtpyTableModell);
 				}
 			}
 		}
 	}
 
-	private List<Applikation> inkarnations = new ArrayList<>();
+	private EmptyTableModell emtpyTableModell = new EmptyTableModell();
+	private ApplikationenTableModell applikationenTableModell = new ApplikationenTableModell();
 
-	public OnlineInkarnationTable() throws StartStoppException {
-		super("Name", "Status", "Startzeit");
+	public OnlineInkarnationTable() {
+		super("");
 
-		for (Applikation inkarnation : StartStoppConsole.getInstance().getClient().getApplikationen()) {
-			getTableModel().addRow(inkarnation.getInkarnation().getInkarnationsName(), inkarnation.getStatus(),
-					inkarnation.getLetzteStartzeit());
-			inkarnations.add(inkarnation);
+		setTableModel(emtpyTableModell);
+		emtpyTableModell.addMessage("Unbekannter Status");
+
+		try {
+			applikationenTableModell.setApplikationen(StartStoppConsole.getInstance().getClient().getApplikationen());
+			setTableModel(applikationenTableModell);
+		} catch (StartStoppException e) {
+			System.err.println(e.getLocalizedMessage());
 		}
 
 		Thread updater = new Updater();
 		updater.start();
 	}
 
-	public Applikation getSelectedOnlineInkarnation() {
-		int row = getSelectedRow();
-		if ((row < 0) || (row >= inkarnations.size())) {
+	public String getSelectedOnlineInkarnation() {
+
+		if (getTableModel() != applikationenTableModell) {
 			return null;
 		}
 
-		return inkarnations.get(row);
-	}
+		int row = getSelectedRow();
+		if ((row < 0) || (row >= getTableModel().getRowCount())) {
+			return null;
+		}
 
+		return (String) getTableModel().getCell(0, row);
+	}
 }

@@ -70,7 +70,7 @@ public class AppTest {
 			if (currentSkript != null) {
 				System.err.println("SET_SKRIPT_CURRENT");
 				try {
-					currentSkript = client.setCurrentSkript("Alles neu", currentSkript);
+					currentSkript = client.setCurrentSkript("Tester", "geheim", null, "Alles neu", currentSkript);
 					System.err.println(currentSkript);
 				} catch (StartStoppStatusException e) {
 					System.err.println(e.getLocalizedMessage());

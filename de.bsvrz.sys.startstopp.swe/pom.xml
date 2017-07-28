@@ -193,26 +193,26 @@
 			<artifactId>de.bsvrz.sys.funclib.application</artifactId>
 			<version>${kernsoftware.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>de.bsvrz.sys</groupId>
-            <artifactId>de.bsvrz.sys.funclib.crypt</artifactId>
-            <version>${kernsoftware.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.bsvrz.sys</groupId>
-            <artifactId>de.bsvrz.sys.funclib.concurrent</artifactId>
-            <version>${kernsoftware.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.bsvrz.sys</groupId>
-            <artifactId>de.bsvrz.sys.funclib.timeout</artifactId>
-            <version>${kernsoftware.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.bsvrz.puk</groupId>
-            <artifactId>de.bsvrz.puk.config</artifactId>
-            <version>${kernsoftware.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>de.bsvrz.sys</groupId>
+			<artifactId>de.bsvrz.sys.funclib.crypt</artifactId>
+			<version>${kernsoftware.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.bsvrz.sys</groupId>
+			<artifactId>de.bsvrz.sys.funclib.concurrent</artifactId>
+			<version>${kernsoftware.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.bsvrz.sys</groupId>
+			<artifactId>de.bsvrz.sys.funclib.timeout</artifactId>
+			<version>${kernsoftware.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.bsvrz.puk</groupId>
+			<artifactId>de.bsvrz.puk.config</artifactId>
+			<version>${kernsoftware.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
@@ -265,10 +265,10 @@
 			<version>1.6.3</version>
 		</dependency>
 		<dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>srp6a</artifactId>
-            <version>2.0.0</version>
-        </dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>srp6a</artifactId>
+			<version>2.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -511,7 +511,7 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.17</version>
 				<configuration>
-				    <propertyExpansion>config_loc=${basedir}/src/main/config/</propertyExpansion>
+					<propertyExpansion>config_loc=${basedir}/src/main/config/</propertyExpansion>
 					<configLocation>src/main/config/checkstyle.xml</configLocation>
 					<headerFile>src/main/config/java.header</headerFile>
 					<includeTestSourceDirectory>true</includeTestSourceDirectory>
