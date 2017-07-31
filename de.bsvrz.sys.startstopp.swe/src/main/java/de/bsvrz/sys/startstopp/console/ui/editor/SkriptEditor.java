@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui;
+package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,18 +54,18 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
-public class StartStoppEditWindow extends BasicWindow implements WindowListener {
+public class SkriptEditor extends BasicWindow implements WindowListener {
 	private InkarnationTable inkarnationTable;
 	private StartStoppSkript skript;
 	private MakroTable makroTable;
-	
-	public StartStoppEditWindow() throws StartStoppException {
+	private RechnerTable rechnerTable;
+
+	public SkriptEditor() throws StartStoppException {
 		super("StartStopp - Editor");
 
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
-		skript = StartStoppConsole.getInstance().getClient()
-				.getCurrentSkript();
-		
+		skript = StartStoppConsole.getInstance().getClient().getCurrentSkript();
+
 		showInkarnationTable();
 		addWindowListener(this);
 	}
@@ -80,12 +80,13 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
 		inkarnationTable = new InkarnationTable(skript);
-		inkarnationTable.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
+		inkarnationTable.setLayoutData(
+				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		inkarnationTable.setPreferredSize(TerminalSize.ONE);
 		panel.addComponent(inkarnationTable.withBorder(Borders.singleLine()));
-	
+
 		setComponent(panel);
-		
+
 	}
 
 	private void showMakroTable() throws StartStoppException {
@@ -98,7 +99,8 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
 		makroTable = new MakroTable(skript);
-		makroTable.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
+		makroTable.setLayoutData(
+				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		makroTable.setPreferredSize(TerminalSize.ONE);
 
 		panel.addComponent(makroTable.withBorder(Borders.singleLine()));
@@ -106,13 +108,34 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 
 		makroTable.setVisibleRows(getSize().getRows() - 7);
 	}
+
+	private void showRechnerTable() throws StartStoppException {
+		Panel panel = new Panel();
+		panel.setLayoutManager(new GridLayout(1));
+		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
+
+		Label infoLabel = new Label("s-System   i-Inkarnation e-Bearbeiten");
+		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
+		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
+
+		rechnerTable = new RechnerTable(getTextGUI(), skript);
+		rechnerTable.setLayoutData(
+				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
+		rechnerTable.setPreferredSize(TerminalSize.ONE);
+
+		panel.addComponent(rechnerTable.withBorder(Borders.singleLine()));
+		setComponent(panel);
+
+		rechnerTable.setVisibleRows(getSize().getRows() - 7);
+	}
+
 	
 	@Override
 	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
 		// TODO Auto-generated method stub
 		switch (keyStroke.getKeyType()) {
 		case Character:
- 			switch (keyStroke.getCharacter()) {
+			switch (keyStroke.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
 				builder.addActions(new EditorSaveAction(getTextGUI(), skript), new EditorCloseAction(this));
@@ -127,7 +150,7 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 					e.printStackTrace();
 				}
 				break;
-				
+
 			case 'i':
 				try {
 					showInkarnationTable();
@@ -137,12 +160,22 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 				}
 				break;
 
+			case 'r':
+				try {
+					showRechnerTable();
+				} catch (StartStoppException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+
+				
 			case 'l':
 				FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
 				fileDialogBuilder.setTitle("StartStopp-Konfiguration auswählen");
 				fileDialogBuilder.setActionLabel("Laden");
 				File selectedFile = fileDialogBuilder.build().showDialog(getTextGUI());
-				if(( selectedFile != null ) && selectedFile.exists()) {
+				if ((selectedFile != null) && selectedFile.exists()) {
 					try (InputStream stream = new FileInputStream(selectedFile)) {
 						ObjectMapper mapper = new ObjectMapper();
 						skript = mapper.readValue(stream, StartStoppSkript.class);
@@ -158,7 +191,15 @@ public class StartStoppEditWindow extends BasicWindow implements WindowListener 
 					}
 				}
 				break;
-				
+
+			case 'e':
+				InkarnationEditor inkarnationEditor;
+				inkarnationEditor = new InkarnationEditor();
+				inkarnationEditor.showDialog(getTextGUI());
+				break;
+
+			// TODO Inkarnationsdetails anzeigen
+
 			default:
 				System.err.println(getClass().getSimpleName() + ": " + keyStroke);
 				break;

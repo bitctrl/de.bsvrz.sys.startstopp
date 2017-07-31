@@ -75,6 +75,10 @@
       "name" : "rechner2",
       "tcpAdresse" : "%rechner2.ip%",
       "port" : "3000"
+    }, {
+      "name" : "rechner2",
+      "tcpAdresse" : "localhost",
+      "port" : "3000"
     } ]
   },
   "inkarnationen" : [ {
@@ -230,9 +234,9 @@
     }
   } ],
   "metaDaten" : {
-    "aenderungsGrund" : "Alles neu",
-    "erstelltAm" : "2017-07-28T14:42:14.156",
+    "aenderungsGrund" : "Zwei Rechner",
+    "erstelltAm" : "2017-07-31T14:50:44.035",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1501245734156"
+    "versionsNummer" : "1501505444035"
   }
 }

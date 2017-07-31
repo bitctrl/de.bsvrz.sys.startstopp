@@ -24,24 +24,40 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui;
+package de.bsvrz.sys.startstopp.console.ui.editor;
 
-public class EditorCloseAction implements Runnable {
+import java.util.ArrayList;
+import java.util.List;
 
-	private StartStoppEditWindow startStoppEditWindow;
+import com.googlecode.lanterna.gui2.table.Table;
 
-	public EditorCloseAction(StartStoppEditWindow startStoppEditWindow) {
-		this.startStoppEditWindow = startStoppEditWindow;
-	}
+import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-	@Override
-	public void run() {
-		startStoppEditWindow.close();
+public class InkarnationTable extends Table<Object> {
+
+	private static final Debug LOGGER = Debug.getLogger();
+	
+	private List<Inkarnation> inkarnations = new ArrayList<>();
+
+	public InkarnationTable(StartStoppSkript skript) throws StartStoppException {
+		super("Name");
+
+		for (Inkarnation inkarnation : skript.getInkarnationen()) {
+			getTableModel().addRow(inkarnation.getInkarnationsName());
+			inkarnations.add(inkarnation);
+		}
 	}
 	
-	@Override
-	public String toString() {
-		return "Verlassen";
+	public Inkarnation getSelectedOnlineInkarnation() {
+		int row = getSelectedRow();
+		if(( row < 0 ) || (row >= inkarnations.size())) {
+			return null;
+		}
+		
+		return inkarnations.get(row);
 	}
 
 }

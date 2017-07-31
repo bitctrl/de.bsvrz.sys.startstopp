@@ -44,6 +44,7 @@ import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
 public class StartStoppOnlineWindow extends BasicWindow implements WindowListener {
 	private OnlineInkarnationTable table;
@@ -106,9 +107,9 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				builder.build().showDialog(getTextGUI());
 				break;
 			case 'e':
-				StartStoppEditWindow editWindow;
+				SkriptEditor editWindow;
 				try {
-					editWindow = new StartStoppEditWindow();
+					editWindow = new SkriptEditor();
 					getTextGUI().addWindow(editWindow);
 				} catch (StartStoppException e) {
 					// TODO Auto-generated catch block

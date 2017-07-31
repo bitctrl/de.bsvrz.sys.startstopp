@@ -24,7 +24,7 @@ public class UrlasserDialog extends DialogWindow {
 	private Button okButton;
 	private Button cancelButton;
 
-	protected UrlasserDialog(String title) {
+	public UrlasserDialog(String title) {
 		super(title);
 
 		setHints(Collections.singleton(Hint.CENTERED));
