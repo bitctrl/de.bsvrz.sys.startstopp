@@ -81,7 +81,7 @@ public class StartStoppConsole {
 		private StartStoppConsoleOptions options;
 		private StartStoppClient client;
 
-		public StartStoppModule(String[] args) {
+		StartStoppModule(String[] args) {
 			options = new StartStoppConsoleOptions(args);
 			client = new StartStoppClient(options.getHost(), options.getPort());
 		}

@@ -287,6 +287,9 @@
 					<includeHashcodeAndEquals>true</includeHashcodeAndEquals>
 					<includeToString>true</includeToString>
 					<includeAdditionalProperties>true</includeAdditionalProperties>
+					<generateBuilders>true</generateBuilders>
+					<includeConstructors>true</includeConstructors>
+					<serializable>true</serializable>
 					<targetPackage>de.bsvrz.sys.startstopp.api.jsonschema</targetPackage>
 				</configuration>
 				<executions>

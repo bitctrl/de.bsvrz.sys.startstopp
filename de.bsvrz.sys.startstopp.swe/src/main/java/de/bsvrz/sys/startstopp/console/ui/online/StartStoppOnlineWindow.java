@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -49,12 +48,6 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.StartStoppUiFactory;
-import de.bsvrz.sys.startstopp.console.ui.StartStoppExitAction;
-import de.bsvrz.sys.startstopp.console.ui.StartStoppRestartAction;
-import de.bsvrz.sys.startstopp.console.ui.StartStoppStoppAction;
-import de.bsvrz.sys.startstopp.console.ui.StartStoppUpdateAction;
-import de.bsvrz.sys.startstopp.console.ui.TerminalCloseAction;
-import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
 @Singleton
 public class StartStoppOnlineWindow extends BasicWindow implements WindowListener {

@@ -215,7 +215,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 
 			case 'e':
 				InkarnationEditor inkarnationEditor;
-				inkarnationEditor = new InkarnationEditor();
+				inkarnationEditor = new InkarnationEditor(inkarnationTable.getSelectedOnlineInkarnation());
 				inkarnationEditor.showDialog(getTextGUI());
 				break;
 

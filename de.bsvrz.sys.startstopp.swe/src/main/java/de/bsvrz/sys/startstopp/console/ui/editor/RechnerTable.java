@@ -1,4 +1,32 @@
+/*
+ * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Copyright (C) 2007-2017 BitCtrl Systems GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Contact Information:<br>
+ * BitCtrl Systems GmbH<br>
+ * Weißenfelser Straße 67<br>
+ * 04229 Leipzig<br>
+ * Phone: +49 341-490670<br>
+ * mailto: info@bitctrl.de
+ */
+
 package de.bsvrz.sys.startstopp.console.ui.editor;
+
+import java.util.Arrays;
 
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
@@ -25,14 +53,11 @@ public class RechnerTable extends Table<String> {
 			public void run() {
 				int row = getSelectedRow();
 				Rechner rechner = skript.getGlobal().getRechner().get(row);
-				RechnerEditor editor = new RechnerEditor(skript, rechner); 
-				Rechner result = editor.showDialog(gui);
-				if (result != null) {
-					rechner.setName(result.getName());
+				RechnerEditor editor = new RechnerEditor(skript, rechner);
+				MessageDialogButton result = editor.showDialog(gui);
+				if (result == MessageDialogButton.OK) {
 					getTableModel().setCell(0, row, rechner.getName());
-					rechner.setTcpAdresse(result.getTcpAdresse());
 					getTableModel().setCell(1, row, rechner.getTcpAdresse());
-					rechner.setPort(result.getPort());
 					getTableModel().setCell(2, row, rechner.getPort());
 				}
 			}
@@ -58,9 +83,11 @@ public class RechnerTable extends Table<String> {
 				rechner.setTcpAdresse("");
 				rechner.setPort("");
 				RechnerEditor editor = new RechnerEditor(skript, rechner);
-				Rechner newRechner = editor.showDialog(gui);
-				if (newRechner != null) {
-					skript.getGlobal().getRechner().add(row, newRechner);
+				MessageDialogButton result = editor.showDialog(gui);
+				if (result == MessageDialogButton.OK) {
+					skript.getGlobal().getRechner().add(row, rechner);
+					getTableModel().insertRow(row,
+							Arrays.asList(rechner.getName(), rechner.getTcpAdresse(), rechner.getPort()));
 				}
 				break;
 			case '-':
@@ -69,14 +96,14 @@ public class RechnerTable extends Table<String> {
 				builder.addButton(MessageDialogButton.No);
 				builder.setTitle("Rechner löschen");
 				builder.setText("Soll der ausgewählte Rechner wirklich gelöscht werden?");
-				MessageDialogButton result = builder.build().showDialog(gui);
+				result = builder.build().showDialog(gui);
 				if (result.equals(MessageDialogButton.Yes)) {
 					int deleteRow = getSelectedRow();
 					skript.getGlobal().getRechner().remove(deleteRow);
 					getTableModel().removeRow(deleteRow);
 				}
 				break;
-			default: 
+			default:
 			}
 		}
 

@@ -26,9 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import javax.inject.Inject;
-
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
 public class ApplikationStoppAction extends ApplikationAction {
