@@ -33,6 +33,9 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,23 +53,42 @@ import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class SkriptEditor extends BasicWindow implements WindowListener {
 	private InkarnationTable inkarnationTable;
 	private StartStoppSkript skript;
 	private MakroTable makroTable;
 	private RechnerTable rechnerTable;
+	private StartStoppClient client;
 
-	public SkriptEditor() throws StartStoppException {
+	@Inject
+	private EditorSaveAction saveAction;
+
+	@Inject
+	private EditorCloseAction closeAction;
+	
+	@Inject
+	public SkriptEditor(StartStoppClient client) throws StartStoppException {
 		super("StartStopp - Editor");
+		this.client = client;
+	}
 
+	@PostConstruct
+	@Inject
+	void init() {
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
-		skript = StartStoppConsole.getInstance().getClient().getCurrentSkript();
 
-		showInkarnationTable();
+		try {
+			skript = client.getCurrentSkript();
+			showInkarnationTable();
+			saveAction.setSkript(skript);
+		} catch (StartStoppException e) {
+			Debug.getLogger().warning(e.getLocalizedMessage());
+		}
 		addWindowListener(this);
 	}
 
@@ -98,7 +120,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
-		makroTable = new MakroTable(skript);
+		makroTable = new MakroTable(getTextGUI(), skript);
 		makroTable.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		makroTable.setPreferredSize(TerminalSize.ONE);
@@ -129,7 +151,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		rechnerTable.setVisibleRows(getSize().getRows() - 7);
 	}
 
-	
+
 	@Override
 	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
 		// TODO Auto-generated method stub
@@ -138,7 +160,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 			switch (keyStroke.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addActions(new EditorSaveAction(getTextGUI(), skript), new EditorCloseAction(this));
+				builder.addActions(saveAction, closeAction);
 				builder.build().showDialog(getTextGUI());
 				break;
 
@@ -169,7 +191,6 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 				}
 				break;
 
-				
 			case 'l':
 				FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
 				fileDialogBuilder.setTitle("StartStopp-Konfiguration auswählen");
@@ -222,7 +243,9 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 
 	@Override
 	public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
-		inkarnationTable.setVisibleRows(newSize.getRows() - 2);
+		if (inkarnationTable != null) {
+			inkarnationTable.setVisibleRows(newSize.getRows() - 2);
+		}
 
 	}
 

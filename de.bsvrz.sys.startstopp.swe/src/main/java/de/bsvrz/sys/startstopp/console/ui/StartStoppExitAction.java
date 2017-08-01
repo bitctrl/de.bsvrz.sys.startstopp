@@ -27,14 +27,13 @@
 package de.bsvrz.sys.startstopp.console.ui;
 
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
-public class StartStoppExitAction implements Runnable {
+public class StartStoppExitAction extends StartStoppAction {
 
 	@Override
 	public void run() {
 		try {
-			StartStoppConsole.getInstance().getClient().exitStartStopp();
+			client.exitStartStopp();
 		} catch (StartStoppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

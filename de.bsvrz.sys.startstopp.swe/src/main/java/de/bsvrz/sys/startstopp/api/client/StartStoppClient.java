@@ -28,6 +28,7 @@ package de.bsvrz.sys.startstopp.api.client;
 
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -52,6 +53,7 @@ import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 
+@Singleton
 public class StartStoppClient {
 
 	private static final Debug LOGGER = Debug.getLogger();
@@ -75,43 +77,59 @@ public class StartStoppClient {
 
 	private StartStoppHostnameVerifier verifier = new StartStoppHostnameVerifier();
 	private String startStoppHostName;
-	private Client client;
+	private Client connector;
 	private int port;
 
-	public StartStoppClient() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public StartStoppClient(String startStoppHostName, int port) throws StartStoppException {
-		setConnection(startStoppHostName, port);
+	public StartStoppClient(String host, int port) {
+		this.startStoppHostName = host;
+		this.port = port;
 	}
 
-	private Response createPostResponse(String string) {
+	private Client getConnector() throws StartStoppException {
+		if (connector == null) {
+			SslContextFactory sslContextFactory = new SslContextFactory();
+			sslContextFactory.setKeyStorePath(ApiServer.class.getResource("keystore.jks").toExternalForm());
+			sslContextFactory.setKeyStorePassword("startstopp");
+			sslContextFactory.setKeyManagerPassword("startstopp");
+			try {
+				sslContextFactory.start();
+			} catch (Exception e) {
+				throw new StartStoppException(e);
+			}
+
+			SSLContext sslContext = sslContextFactory.getSslContext();
+			connector = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
+					.withConfig(new ClientConfig().register(Applikation.class)).build();
+		}
+		return connector;
+	}
+
+	private Response createPostResponse(String string) throws StartStoppException {
 		return createPostResponse(string, null);
 	}
 
-	private Response createPostResponse(String path, Object object) {
+	private Response createPostResponse(String path, Object object) throws StartStoppException {
 		Entity<?> entity = null;
 		if (object != null) {
 			entity = Entity.entity(object, MediaType.APPLICATION_JSON_TYPE);
 		}
-		Response response = client.target("https://" + startStoppHostName + ":" + port + "/ststapi/v1" + path)
+		Response response = getConnector().target("https://" + startStoppHostName + ":" + port + "/ststapi/v1" + path)
 				.request(MediaType.APPLICATION_JSON).post(entity);
 		return response;
 	}
 
-	private Response createPutResponse(String path, Object object) {
+	private Response createPutResponse(String path, Object object) throws StartStoppException {
 		Entity<?> entity = null;
 		if (object != null) {
 			entity = Entity.entity(object, MediaType.APPLICATION_JSON_TYPE);
 		}
-		Response response = client.target("https://" + startStoppHostName + ":" + port + "/ststapi/v1" + path)
+		Response response = getConnector().target("https://" + startStoppHostName + ":" + port + "/ststapi/v1" + path)
 				.request(MediaType.APPLICATION_JSON).put(entity);
 		return response;
 	}
 
-	private Response createGetResponse(String path) {
-		Response response = client.target("https://" + startStoppHostName + ":" + port + "/ststapi/v1" + path)
+	private Response createGetResponse(String path) throws StartStoppException {
+		Response response = getConnector().target("https://" + startStoppHostName + ":" + port + "/ststapi/v1" + path)
 				.request(MediaType.APPLICATION_JSON).get(Response.class);
 		return response;
 	}
@@ -197,12 +215,13 @@ public class StartStoppClient {
 				+ response.getStatus() + ")");
 	}
 
-	public StartStoppSkript setCurrentSkript(String veranlasser, String passwort, String name, String grund, StartStoppSkript skript) throws StartStoppException {
+	public StartStoppSkript setCurrentSkript(String veranlasser, String passwort, String name, String grund,
+			StartStoppSkript skript) throws StartStoppException {
 		Response response = null;
 		VersionierungsRequest request = new VersionierungsRequest();
 		request.setVeranlasser(veranlasser);
 		request.setPasswort(passwort);
-		if( name != null) {
+		if (name != null) {
 			request.setName(name);
 		}
 		request.setAenderungsgrund(grund);
@@ -248,13 +267,12 @@ public class StartStoppClient {
 			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(new GenericType<List<Applikation>>() {
 				});
- 			}
+			}
 		} catch (Exception e) {
 			LOGGER.fine(e.getLocalizedMessage());
 		}
-		if( response == null) {
-			throw new StartStoppException(
-					"Keine Verbindung zu StartStopp!");
+		if (response == null) {
+			throw new StartStoppException("Keine Verbindung zu StartStopp!");
 		}
 		throw new StartStoppException(
 				"Applikationen konnten nicht abgerufen werden (Response: " + response.getStatus() + ")");
@@ -270,9 +288,8 @@ public class StartStoppClient {
 		} catch (Exception e) {
 			LOGGER.fine(e.getLocalizedMessage());
 		}
-		if( response == null) {
-			throw new StartStoppException(
-					"Keine Verbindung zu StartStopp!");
+		if (response == null) {
+			throw new StartStoppException("Keine Verbindung zu StartStopp!");
 		}
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
 				+ "\"konnte nicht abgerufen werden (Response: " + response.getStatus() + ")");
@@ -336,22 +353,7 @@ public class StartStoppClient {
 	}
 
 	public void setConnection(String host, int port) throws StartStoppException {
-		this.startStoppHostName = host;
-		this.port = port;
 
-		SslContextFactory sslContextFactory = new SslContextFactory();
-		sslContextFactory.setKeyStorePath(ApiServer.class.getResource("keystore.jks").toExternalForm());
-		sslContextFactory.setKeyStorePassword("startstopp");
-		sslContextFactory.setKeyManagerPassword("startstopp");
-		try {
-			sslContextFactory.start();
-		} catch (Exception e) {
-			throw new StartStoppException(e);
-		}
-
-		SSLContext sslContext = sslContextFactory.getSslContext();
-		client = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-				.withConfig(new ClientConfig().register(Applikation.class)).build();
 	}
 
 }

@@ -26,19 +26,15 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-public class ProcessRestartAction implements Runnable {
+public abstract class ApplikationAction extends StartStoppAction {
 
-	public ProcessRestartAction(String inkarnation) {
-		// TODO Auto-generated constructor stub
+	private String inkarnation;
+
+	public void setInkarnation(String inkarnation) {
+		this.inkarnation = inkarnation;
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-
-	}
-	@Override
-	public String toString() {
-		return "Neu starten";
+	public String getInkarnation() {
+		return inkarnation;
 	}
 }

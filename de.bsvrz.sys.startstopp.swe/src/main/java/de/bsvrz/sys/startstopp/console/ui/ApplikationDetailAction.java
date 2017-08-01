@@ -24,27 +24,35 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui.editor;
+package de.bsvrz.sys.startstopp.console.ui;
 
-import javax.inject.Inject;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class EditorCloseAction implements Runnable {
+import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.Window.Hint;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.WindowListenerAdapter;
+import com.googlecode.lanterna.input.KeyStroke;
 
-	private SkriptEditor startStoppEditWindow;
-
-	@Inject
-	public EditorCloseAction(SkriptEditor startStoppEditWindow) {
-		this.startStoppEditWindow = startStoppEditWindow;
-	}
+public class ApplikationDetailAction extends ApplikationAction {
 
 	@Override
 	public void run() {
-		startStoppEditWindow.close();
-	}
-	
-	@Override
-	public String toString() {
-		return "Verlassen";
+		BasicWindow window = new BasicWindow("Details: " + getInkarnation());
+		window.setHints(Collections.singleton(Hint.EXPANDED));
+		window.addWindowListener(new WindowListenerAdapter() {
+			@Override
+			public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
+				window.close();
+			}
+		});
+		gui.addWindow(window);
 	}
 
+	@Override
+	public String toString() {
+		return "Details anzeigen";
+	}
 }

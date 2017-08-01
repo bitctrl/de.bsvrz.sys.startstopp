@@ -26,30 +26,16 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
-
-public class ProcessStoppAction implements Runnable {
-
-	private String applikation;
-
-	public ProcessStoppAction(String applikation) {
-		this.applikation = applikation;
-	}
+class ApplikationRestartAction extends ApplikationAction {
 
 	@Override
 	public void run() {
-		try {
-			StartStoppConsole.getInstance().getClient().stoppeApplikation(applikation);
-		} catch (StartStoppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// TODO Auto-generated method stub
 
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Anhalten";
+		return "Neu starten";
 	}
 }

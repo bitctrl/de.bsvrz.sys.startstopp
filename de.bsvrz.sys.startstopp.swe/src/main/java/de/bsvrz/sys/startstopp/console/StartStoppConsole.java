@@ -28,6 +28,15 @@ package de.bsvrz.sys.startstopp.console;
 
 import java.io.IOException;
 
+import javax.annotation.PostConstruct;
+
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.screen.Screen;
@@ -37,49 +46,68 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.StartStoppOnlineWindow;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppUiFactory;
+import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow;
 
+@Singleton
 public class StartStoppConsole {
 
-	private static StartStoppConsole instance;
-	private StartStoppClient client;
+	@Singleton
+	private static class TextGuiProvider implements Provider<WindowBasedTextGUI> {
 
-	public static StartStoppConsole getInstance() {
-		return instance;
-	}
-
-	public StartStoppClient getClient() {
-		return client;
-	}
-
-	public StartStoppConsole() throws StartStoppException {
-		client = new StartStoppClient("localhost", 3000);
-	}
-
-	void run() throws IOException, StartStoppException {
+		WindowBasedTextGUI gui;
 		
-		DefaultTerminalFactory factory = new DefaultTerminalFactory();
-//		factory.setTelnetPort(6500);
-//		factory.setForceTextTerminal(true);
-		Terminal term = factory.createTerminal();
-// 		System.err.println("Term: " + term.getClass());
-		Screen screen = new TerminalScreen(term);
-		WindowBasedTextGUI gui = new MultiWindowTextGUI(screen);
+		@Override
+		public WindowBasedTextGUI get() {
+			if( gui == null) {
+				try {
+					DefaultTerminalFactory factory = new DefaultTerminalFactory();
+					Terminal term = factory.createTerminal();
+					Screen screen = new TerminalScreen(term);
+					gui = new MultiWindowTextGUI(screen);
+					screen.startScreen();
+				} catch (IOException e) {
+					throw new IllegalStateException("Die UI kann nicht initialisiert werden!", e);
 
-		screen.startScreen();
+				}
+			}
+			return gui;
+		}
 
-		StartStoppOnlineWindow onlineWindow = new StartStoppOnlineWindow();
+	}
+
+	private static class StartStoppModule implements Module {
+
+		private StartStoppConsoleOptions options;
+		private StartStoppClient client;
+
+		public StartStoppModule(String[] args) {
+			options = new StartStoppConsoleOptions(args);
+			client = new StartStoppClient(options.getHost(), options.getPort());
+		}
+		
+		@Override
+		public void configure(Binder binder) {
+			binder.bind(StartStoppConsoleOptions.class).toInstance(options);
+			binder.bind(StartStoppClient.class).toInstance(client);
+			binder.bind(WindowBasedTextGUI.class).toProvider(TextGuiProvider.class);
+			binder.bind(StartStoppUiFactory.class).toInstance(new StartStoppUiFactory());
+		}
+	}
+	
+	@PostConstruct
+	@Inject
+	void run(WindowBasedTextGUI gui, StartStoppOnlineWindow onlineWindow) throws IOException, StartStoppException {
+		gui.getScreen().startScreen();
 		gui.addWindow(onlineWindow);
-
 		onlineWindow.waitUntilClosed();
-
-		screen.stopScreen();
+		gui.getScreen().stopScreen();
 		System.exit(0);
 	}
 	
 	public static void main(String[] args) throws IOException, InterruptedException, StartStoppException {
-		instance = new StartStoppConsole();
-		instance.run();
+		Injector injector = Guice.createInjector(new StartStoppModule(args));
+		injector.getInstance(StartStoppConsole.class);
 	}
 
 }

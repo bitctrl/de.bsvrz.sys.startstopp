@@ -26,17 +26,15 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-public class TerminalCloseAction implements Runnable {
+import com.googlecode.lanterna.gui2.Window;
 
-	private StartStoppOnlineWindow startStoppOnlineWindow;
-
-	public TerminalCloseAction(StartStoppOnlineWindow startStoppOnlineWindow) {
-		this.startStoppOnlineWindow = startStoppOnlineWindow;
-	}
+public class TerminalCloseAction extends StartStoppAction {
 
 	@Override
 	public void run() {
-		startStoppOnlineWindow.close();
+		for( Window window : gui.getWindows()) {
+			window.close();
+		}
 	}
 	
 	@Override

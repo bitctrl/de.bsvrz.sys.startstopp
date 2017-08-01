@@ -24,11 +24,15 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui;
+package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Inject;
+
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.bundle.LanternaThemes;
@@ -44,13 +48,27 @@ import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppUiFactory;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppExitAction;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppRestartAction;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppStoppAction;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppUpdateAction;
+import de.bsvrz.sys.startstopp.console.ui.TerminalCloseAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
+@Singleton
 public class StartStoppOnlineWindow extends BasicWindow implements WindowListener {
+
+	@Inject
+	private StartStoppUiFactory uiFactory;
+
 	private OnlineInkarnationTable table;
 
-	public StartStoppOnlineWindow() throws StartStoppException {
+	@Inject
+	public StartStoppOnlineWindow(OnlineInkarnationTable table) throws StartStoppException {
 		super("StartStopp - Online");
+
+		this.table = table;
 
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
 
@@ -62,8 +80,8 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
-		table = new OnlineInkarnationTable();
-		table.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
+		table.setLayoutData(
+				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		panel.addComponent(table.withBorder(Borders.singleLine()));
 
 		addWindowListener(this);
@@ -94,27 +112,17 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				builder.build().showDialog(getTextGUI());
 				break;
 			case 's':
-				builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addActions(new StartStoppStoppAction(), new StartStoppRestartAction(),
-						new StartStoppUpdateAction(), new StartStoppExitAction(), new TerminalCloseAction(this));
-				builder.build().showDialog(getTextGUI());
+				uiFactory.createSystemMenue().showDialog(getTextGUI());
 				break;
 			case 'p':
-				builder = new ActionListDialogBuilder().setTitle("System");
 				String inkarnation = table.getSelectedOnlineInkarnation();
-				builder.addActions(new ProcessStartAction(inkarnation), new ProcessRestartAction(inkarnation),
-						new ProcessStoppAction(inkarnation), new ProcessDetailAction(this.getTextGUI(), inkarnation));
-				builder.build().showDialog(getTextGUI());
+				if (inkarnation != null) {
+					uiFactory.createApplikationsMenue(inkarnation).showDialog(getTextGUI());
+				}
+
 				break;
 			case 'e':
-				SkriptEditor editWindow;
-				try {
-					editWindow = new SkriptEditor();
-					getTextGUI().addWindow(editWindow);
-				} catch (StartStoppException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				getTextGUI().addWindow(uiFactory.getSkriptEditor());
 				break;
 			default:
 				System.err.println(getClass().getSimpleName() + ": " + keyStroke);

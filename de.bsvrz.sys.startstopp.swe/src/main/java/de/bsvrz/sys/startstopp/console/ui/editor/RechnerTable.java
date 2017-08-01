@@ -25,7 +25,7 @@ public class RechnerTable extends Table<String> {
 			public void run() {
 				int row = getSelectedRow();
 				Rechner rechner = skript.getGlobal().getRechner().get(row);
-				RechnerEditor editor = new RechnerEditor(skript, rechner);
+				RechnerEditor editor = new RechnerEditor(skript, rechner); 
 				Rechner result = editor.showDialog(gui);
 				if (result != null) {
 					rechner.setName(result.getName());
@@ -76,7 +76,7 @@ public class RechnerTable extends Table<String> {
 					getTableModel().removeRow(deleteRow);
 				}
 				break;
-			default:
+			default: 
 			}
 		}
 

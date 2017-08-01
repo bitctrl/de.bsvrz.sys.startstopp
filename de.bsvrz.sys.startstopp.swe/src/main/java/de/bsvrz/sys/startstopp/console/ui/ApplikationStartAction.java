@@ -26,41 +26,22 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import java.util.Collections;
-import java.util.concurrent.atomic.AtomicBoolean;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.Window.Hint;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.WindowListenerAdapter;
-import com.googlecode.lanterna.input.KeyStroke;
-
-public class ProcessDetailAction implements Runnable {
-
-	private WindowBasedTextGUI gui;
-	private String inkarnation;
-
-	public ProcessDetailAction(WindowBasedTextGUI gui, String inkarnation) {
-		this.gui = gui;
-		this.inkarnation = inkarnation;
-	}
+public class ApplikationStartAction extends ApplikationAction {
 
 	@Override
 	public void run() {
-		BasicWindow window = new BasicWindow("Details: " + inkarnation);
-		window.setHints(Collections.singleton(Hint.EXPANDED));
-		window.addWindowListener(new WindowListenerAdapter() {
-			@Override
-			public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-				window.close();
-			}
-		});
-		gui.addWindow(window);
+		try {
+			client.starteApplikation(getInkarnation());
+		} catch (StartStoppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "Details anzeigen";
+		return "Starten";
 	}
 }

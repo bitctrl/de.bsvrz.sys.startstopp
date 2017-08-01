@@ -24,27 +24,28 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui.editor;
+package de.bsvrz.sys.startstopp.console.ui;
 
 import javax.inject.Inject;
 
-public class EditorCloseAction implements Runnable {
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-	private SkriptEditor startStoppEditWindow;
-
-	@Inject
-	public EditorCloseAction(SkriptEditor startStoppEditWindow) {
-		this.startStoppEditWindow = startStoppEditWindow;
-	}
+public class ApplikationStoppAction extends ApplikationAction {
 
 	@Override
 	public void run() {
-		startStoppEditWindow.close();
+		try {
+			client.stoppeApplikation(getInkarnation());
+		} catch (StartStoppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	@Override
 	public String toString() {
-		return "Verlassen";
+		return "Anhalten";
 	}
-
 }

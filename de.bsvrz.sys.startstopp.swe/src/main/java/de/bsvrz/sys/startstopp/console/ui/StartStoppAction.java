@@ -26,29 +26,17 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+import javax.inject.Inject;
 
-public class ProcessStartAction implements Runnable {
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
-	private String inkarnation;
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 
-	public ProcessStartAction(String inkarnation) {
-		this.inkarnation = inkarnation;
-	}
+public abstract class StartStoppAction implements Runnable {
 
-	@Override
-	public void run() {
-		try {
-			StartStoppConsole.getInstance().getClient().starteApplikation(inkarnation);
-		} catch (StartStoppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	@Inject
+	protected WindowBasedTextGUI gui;
 
-	@Override
-	public String toString() {
-		return "Starten";
-	}
+	@Inject
+	protected StartStoppClient client;
 }

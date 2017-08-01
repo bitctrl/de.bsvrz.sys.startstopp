@@ -24,84 +24,24 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui;
+package de.bsvrz.sys.startstopp.console.ui.online;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.gui2.table.TableModel;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
+import com.googlecode.lanterna.gui2.table.Table;
+
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class OnlineInkarnationTable extends Table<Object> {
 
-	private static class ApplikationenTableModell extends TableModel<Object> {
-
-		public ApplikationenTableModell() {
-			super("Inkarnation", "Status", "Startzeit");
-		}
-
-		public void setApplikationen(List<Applikation> applikationen) {
-
-			while (getRowCount() > 0) {
-				removeRow(0);
-			}
-
-			for (Applikation applikation : applikationen) {
-				addRow(getValues(applikation));
-			}
-		}
-
-		public void updateApplikationen(List<Applikation> applikationen) {
-			for (int idx = 0; idx < applikationen.size(); idx++) {
-				Applikation applikation = applikationen.get(idx);
-				if (getRowCount() <= idx) {
-					addRow(applikation.getInkarnation().getInkarnationsName(), applikation.getStatus(),
-							applikation.getLetzteStartzeit());
-				} else if (getCell(0, idx).equals(applikation.getInkarnation().getInkarnationsName())) {
-					setCell(1, idx, applikation.getStatus());
-					setCell(2, idx, applikation.getLetzteStartzeit());
-				} else {
-					insertRow(idx, getValues(applikation));
-				}
-			}
-
-			while (getRowCount() > applikationen.size()) {
-				removeRow(getRowCount() - 1);
-			}
-		}
-
-		private Collection<Object> getValues(Applikation applikation) {
-			Collection<Object> result = new ArrayList<>();
-			result.add(applikation.getInkarnation().getInkarnationsName());
-			result.add(applikation.getStatus());
-			result.add(applikation.getLetzteStartzeit());
-			return result;
-		}
-
-	}
-
-	private static class EmptyTableModell extends TableModel<Object> {
-
-		public EmptyTableModell() {
-			super("Meldungen");
-		}
-
-		public void addMessage(String string) {
-			addRow(string);
-		}
-
-		public void setMessage(String message) {
-			setCell(0, 0, message);
-		}
-	}
-
 	private final class Updater extends Thread {
+
 		private Updater() {
 			super("StatusUpdater");
 			setDaemon(true);
@@ -118,11 +58,11 @@ public class OnlineInkarnationTable extends Table<Object> {
 				}
 
 				try {
-					List<Applikation> applikationen = StartStoppConsole.getInstance().getClient().getApplikationen();
+					List<Applikation> applikationen = client.getApplikationen();
 
 					boolean showApplikationen = true;
 					if( applikationen.isEmpty()) {
-						StartStoppSkriptStatus skriptStatus = StartStoppConsole.getInstance().getClient().getCurrentSkriptStatus();
+						StartStoppSkriptStatus skriptStatus = client.getCurrentSkriptStatus();
 						if( skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
 							emtpyTableModell.setMessage(skriptStatus.getMessages().get(0));
 							setTableModel(emtpyTableModell);
@@ -142,17 +82,26 @@ public class OnlineInkarnationTable extends Table<Object> {
 		}
 	}
 
-	private EmptyTableModell emtpyTableModell = new EmptyTableModell();
-	private ApplikationenTableModell applikationenTableModell = new ApplikationenTableModell();
+	private final MessagesTableModell emtpyTableModell;
+	private final ApplikationenTableModell applikationenTableModell;
 
-	public OnlineInkarnationTable() {
+	private StartStoppClient client;
+
+	@Inject
+	public OnlineInkarnationTable(StartStoppClient client, MessagesTableModell messagesModell, ApplikationenTableModell applikationenModell) {
 		super("");
-
+		this.client = client;
+		this.applikationenTableModell = applikationenModell;
+		this.emtpyTableModell = messagesModell;
 		setTableModel(emtpyTableModell);
 		emtpyTableModell.addMessage("Unbekannter Status");
+	}
 
+	@PostConstruct
+	@Inject
+	void init() {
 		try {
-			applikationenTableModell.setApplikationen(StartStoppConsole.getInstance().getClient().getApplikationen());
+			applikationenTableModell.setApplikationen(client.getApplikationen());
 			setTableModel(applikationenTableModell);
 		} catch (StartStoppException e) {
 			System.err.println(e.getLocalizedMessage());

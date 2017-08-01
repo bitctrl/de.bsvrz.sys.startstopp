@@ -26,32 +26,34 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
+import javax.inject.Inject;
+
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.UrlasserDialog;
 
 public class EditorSaveAction implements Runnable {
 
 	private StartStoppSkript skript;
+
+	@Inject
 	private WindowBasedTextGUI textGui;
 
-	public EditorSaveAction(WindowBasedTextGUI textGui, StartStoppSkript skript) {
-		this.skript = skript;
-		this.textGui = textGui;
-	}
-
+	@Inject
+	private StartStoppClient client;
+	
 	@Override
 	public void run() {
 		UrlasserDialog dialog = new UrlasserDialog("Versionieren");
 		Object showDialog = dialog.showDialog(textGui);
 		if (showDialog.equals(MessageDialogButton.OK)) {
 			try {
-				StartStoppConsole.getInstance().getClient().setCurrentSkript(dialog.getVeranlasser(), dialog.getPasswort(), null, dialog.getGrund(), skript);
+				client.setCurrentSkript(dialog.getVeranlasser(), dialog.getPasswort(), null, dialog.getGrund(), skript);
 			} catch (StartStoppException e) {
 
 				StringBuilder text = new StringBuilder(e.getLocalizedMessage());
@@ -71,5 +73,9 @@ public class EditorSaveAction implements Runnable {
 	@Override
 	public String toString() {
 		return "Sichern";
+	}
+
+	public void setSkript(StartStoppSkript skript) {
+		this.skript = skript;
 	}
 }

@@ -26,7 +26,7 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-public class StartStoppRestartAction implements Runnable {
+public class StartStoppRestartAction extends StartStoppAction {
 
 	@Override
 	public void run() {
