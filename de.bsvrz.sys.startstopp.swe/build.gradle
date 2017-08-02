@@ -45,7 +45,7 @@ jsonSchema2Pojo {
   classNameSuffix = ""
   fileExtensions = [] as String[]
   includeConstructors = true
-  parcelable = false
+   parcelable = false
   serializable = true
   includeAccessors = true
   dateType = "java.time.LocalDate"
