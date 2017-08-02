@@ -45,15 +45,9 @@ jsonSchema2Pojo {
   classNameSuffix = ""
   fileExtensions = [] as String[]
   includeConstructors = true
-   parcelable = false
+  parcelable = false
   serializable = true
   includeAccessors = true
-  includeGetters = false
-  includeSetters = false
-  includeDynamicAccessors = false
-  includeDynamicGetters = false
-  includeDynamicSetters = false
-  includeDynamicBuilders = false
   dateType = "java.time.LocalDate"
   dateTimeType = "java.time.LocalDateTime"
 }
