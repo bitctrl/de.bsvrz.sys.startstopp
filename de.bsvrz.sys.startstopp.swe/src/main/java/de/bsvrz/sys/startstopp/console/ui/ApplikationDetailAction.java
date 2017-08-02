@@ -29,17 +29,33 @@ package de.bsvrz.sys.startstopp.console.ui;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Inject;
+
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.Window.Hint;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.input.KeyStroke;
 
-public class ApplikationDetailAction extends ApplikationAction {
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 
+public class ApplikationDetailAction implements Runnable {
+
+	@Inject
+	private WindowBasedTextGUI gui;
+	
+	private Inkarnation inkarnation;
+
+	@Inject
+	public ApplikationDetailAction(@Assisted Inkarnation inkarnation) {
+		this.inkarnation = inkarnation;
+	}
+	
 	@Override
 	public void run() {
-		BasicWindow window = new BasicWindow("Details: " + getInkarnation());
+		BasicWindow window = new BasicWindow("Details: " + inkarnation.getInkarnationsName());
 		window.setHints(Collections.singleton(Hint.EXPANDED));
 		window.addWindowListener(new WindowListenerAdapter() {
 			@Override

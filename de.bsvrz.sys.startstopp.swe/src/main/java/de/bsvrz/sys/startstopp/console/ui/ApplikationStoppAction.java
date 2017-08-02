@@ -26,14 +26,29 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-public class ApplikationStoppAction extends ApplikationAction {
+public class ApplikationStoppAction implements Runnable {
 
+	@Inject
+	private StartStoppClient client;
+	
+	private Inkarnation inkarnation;
+	
+	@Inject
+	public ApplikationStoppAction(@Assisted Inkarnation inkarnation) {
+		this.inkarnation = inkarnation;
+	}
+	
 	@Override
 	public void run() {
 		try {
-			client.stoppeApplikation(getInkarnation());
+			client.stoppeApplikation(inkarnation.getInkarnationsName());
 		} catch (StartStoppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

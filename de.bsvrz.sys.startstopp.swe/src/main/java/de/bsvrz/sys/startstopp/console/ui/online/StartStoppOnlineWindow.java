@@ -46,15 +46,19 @@ import com.googlecode.lanterna.gui2.WindowListener;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.StartStoppUiFactory;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 @Singleton
 public class StartStoppOnlineWindow extends BasicWindow implements WindowListener {
 
+	@Inject 
+	private GuiComponentFactory uiFactory;
+	
 	@Inject
-	private StartStoppUiFactory uiFactory;
-
+	private StartStoppClient client;
+	
 	private OnlineInkarnationTable table;
 
 	@Inject
@@ -105,17 +109,33 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				builder.build().showDialog(getTextGUI());
 				break;
 			case 's':
-				uiFactory.createSystemMenue().showDialog(getTextGUI());
+				builder = new ActionListDialogBuilder().setTitle("System");
+				builder.addAction(uiFactory.createStartStoppStoppAction());
+				builder.addAction(uiFactory.createStartStoppRestartAction());
+				builder.addAction(uiFactory.createStartStoppExitAction());
+				builder.addAction(uiFactory.createTerminalCloseAction());
+				builder.build().showDialog(getTextGUI());
 				break;
 			case 'p':
 				String inkarnation = table.getSelectedOnlineInkarnation();
 				if (inkarnation != null) {
-					uiFactory.createApplikationsMenue(inkarnation).showDialog(getTextGUI());
+					
+					builder = new ActionListDialogBuilder().setTitle("Applikation");
+					builder.addAction(uiFactory.createApplikationStartAction(inkarnation));
+					builder.addAction(uiFactory.createApplikationRestartAction(inkarnation));
+					builder.addAction(uiFactory.createApplikationStoppAction(inkarnation));
+					builder.addAction(uiFactory.createApplikationDetailAction(inkarnation));
+					builder.build().showDialog(getTextGUI());
 				}
 
 				break;
 			case 'e':
-				getTextGUI().addWindow(uiFactory.getSkriptEditor());
+				try {
+					getTextGUI().addWindow(uiFactory.createSkriptEditor(client.getCurrentSkript()));
+				} catch (StartStoppException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				break;
 			default:
 				System.err.println(getClass().getSimpleName() + ": " + keyStroke);

@@ -26,8 +26,18 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-class ApplikationRestartAction extends ApplikationAction {
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+
+class ApplikationRestartAction implements Runnable {
+
+	@Inject
+	ApplikationRestartAction(@Assisted Inkarnation inkarnation) {
+		// TODO Auto-generated constructor stub
+	}
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub

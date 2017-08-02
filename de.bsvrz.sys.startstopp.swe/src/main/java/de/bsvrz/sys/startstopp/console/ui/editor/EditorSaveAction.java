@@ -28,6 +28,7 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import javax.inject.Inject;
 
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
@@ -39,13 +40,18 @@ import de.bsvrz.sys.startstopp.console.ui.UrlasserDialog;
 
 public class EditorSaveAction implements Runnable {
 
-	private StartStoppSkript skript;
+	private final StartStoppSkript skript;
 
 	@Inject
 	private WindowBasedTextGUI textGui;
 
 	@Inject
 	private StartStoppClient client;
+
+	@Inject
+	public EditorSaveAction(@Assisted StartStoppSkript skript) {
+		this.skript = skript;
+	}
 	
 	@Override
 	public void run() {
@@ -73,9 +79,5 @@ public class EditorSaveAction implements Runnable {
 	@Override
 	public String toString() {
 		return "Sichern";
-	}
-
-	public void setSkript(StartStoppSkript skript) {
-		this.skript = skript;
 	}
 }

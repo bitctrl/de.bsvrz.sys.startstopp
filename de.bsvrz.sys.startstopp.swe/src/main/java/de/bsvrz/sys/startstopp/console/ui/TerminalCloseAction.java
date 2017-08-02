@@ -26,10 +26,22 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
+import javax.inject.Inject;
+
 import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
-public class TerminalCloseAction extends StartStoppAction {
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 
+public class TerminalCloseAction implements Runnable {
+
+	@Inject
+	protected WindowBasedTextGUI gui;
+
+	@Inject
+	protected StartStoppClient client;
+
+	
 	@Override
 	public void run() {
 		for( Window window : gui.getWindows()) {

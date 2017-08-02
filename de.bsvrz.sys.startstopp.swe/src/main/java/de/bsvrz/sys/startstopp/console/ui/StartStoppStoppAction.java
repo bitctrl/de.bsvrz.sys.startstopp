@@ -26,10 +26,22 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
+import javax.inject.Inject;
+
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-public class StartStoppStoppAction extends StartStoppAction {
+public class StartStoppStoppAction implements Runnable {
 
+	@Inject
+	protected WindowBasedTextGUI gui;
+
+	@Inject
+	protected StartStoppClient client;
+
+	
 	@Override
 	public void run() {
 		try {

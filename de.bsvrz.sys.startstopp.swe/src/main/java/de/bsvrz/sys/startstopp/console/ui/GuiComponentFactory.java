@@ -26,29 +26,34 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import javax.inject.Inject;
+import com.googlecode.lanterna.gui2.Window;
 
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.console.ui.editor.EditorCloseAction;
+import de.bsvrz.sys.startstopp.console.ui.editor.EditorSaveAction;
+import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+public interface GuiComponentFactory {
 
-public class StartStoppRestartAction implements Runnable {
+	SkriptEditor createSkriptEditor(StartStoppSkript skript);
 
-	@Inject
-	protected WindowBasedTextGUI gui;
+	EditorSaveAction createSaveAction(StartStoppSkript skript);
 
-	@Inject
-	protected StartStoppClient client;
+	EditorCloseAction createEditorCloseAction(Window window);
 
-	
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
+	ApplikationStartAction createApplikationStartAction(String inkarnation);
 
-	}
+	ApplikationRestartAction createApplikationRestartAction(String inkarnation);
 
-	@Override
-	public String toString() {
-		return "System neu starten";
-	}
+	ApplikationStoppAction createApplikationStoppAction(String inkarnation);
+
+	ApplikationDetailAction createApplikationDetailAction(String inkarnation);
+
+	StartStoppStoppAction createStartStoppStoppAction();
+
+	StartStoppRestartAction createStartStoppRestartAction();
+
+	StartStoppExitAction createStartStoppExitAction();
+
+	TerminalCloseAction createTerminalCloseAction();
 }

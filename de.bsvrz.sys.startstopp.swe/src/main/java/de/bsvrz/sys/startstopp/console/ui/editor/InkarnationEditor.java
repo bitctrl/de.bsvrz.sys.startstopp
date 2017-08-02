@@ -27,29 +27,31 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
+import java.util.List;
 
-import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Button.Listener;
+import com.googlecode.lanterna.gui2.CheckBox;
 import com.googlecode.lanterna.gui2.ComboBox;
 import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowListener;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
-import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartArt.Option;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation.InkarnationsTyp;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class InkarnationEditor extends DialogWindow implements WindowListener {
+public class InkarnationEditor extends DialogWindow {
 
 	private MessageDialogButton result;
 	private TextBox nameField;
@@ -59,26 +61,19 @@ public class InkarnationEditor extends DialogWindow implements WindowListener {
 	public InkarnationEditor(Inkarnation inkarnation) {
 		super("StartStopp - Editor: Inkarnation: ");
 
-		this.inkarnation = inkarnation;
-		
+		this.inkarnation = (Inkarnation) Util.cloneObject(inkarnation);
 		setHints(Arrays.asList(Window.Hint.CENTERED));
 		setCloseWindowWithEscape(true);
-		addWindowListener(this);
-		
 		initUI();
 	}
-	
+
 	private void initUI() {
 		Panel buttonPanel = new Panel();
-		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
+		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1).setTopMarginSize(1));
 		Button okButton = new Button("OK", new Runnable() {
-
 
 			@Override
 			public void run() {
-//				rechner.setName(nameField.getText());
-//				rechner.setTcpAdresse(addresseField.getText());
-//				rechner.setPort(portField.getText());
 				result = MessageDialogButton.OK;
 				close();
 			}
@@ -94,31 +89,79 @@ public class InkarnationEditor extends DialogWindow implements WindowListener {
 		buttonPanel.addComponent(cancelButton);
 
 		Panel mainPanel = new Panel();
-		mainPanel.setLayoutManager(new GridLayout(2).setLeftMarginSize(1).setRightMarginSize(1));
+		mainPanel.setLayoutManager(new GridLayout(3).setLeftMarginSize(1).setRightMarginSize(1).setTopMarginSize(1));
 
 		mainPanel.addComponent(new Label("Inkarnationsname:"));
-		nameField = new TextBox();
+		nameField = new TextBox() {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				inkarnation.setInkarnationsName(nameField.getText());
+				super.afterLeaveFocus(direction, nextInFocus);
+			}
+		};
 		nameField.setText(inkarnation.getInkarnationsName());
-		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(1));
-		
+		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(2));
+
 		mainPanel.addComponent(new Label("Applikation:"));
 		applikationField = new TextBox("");
 		applikationField.setText(inkarnation.getApplikation());
-		mainPanel.addComponent(applikationField, GridLayout.createHorizontallyFilledLayoutData(1));
+		mainPanel.addComponent(applikationField, GridLayout.createHorizontallyFilledLayoutData(2));
 
 		mainPanel.addComponent(new Label("Parameter:"));
+		List<String> aufrufParameter = inkarnation.getAufrufParameter();
+		mainPanel.addComponent(new Label(aufrufParameter.isEmpty() ? "" : aufrufParameter.get(0) + ", ..."));
 		Button parameterButton = new Button("Bearbeiten");
+		parameterButton.addListener(new Listener() {
+			@Override
+			public void onTriggered(Button button) {
+				// TODO Auto-generated method stub
+			}
+		});
 		mainPanel.addComponent(parameterButton, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Typ:"));
-		ComboBox<StartArt.Option> startArtOption = new ComboBox<StartArt.Option>(StartArt.Option.values());
+		ComboBox<InkarnationsTyp> typSelektor = new ComboBox<InkarnationsTyp>(InkarnationsTyp.values());
 		// TODO korrekten Offset bestimmen
-		startArtOption.setSelectedIndex(0);
-		mainPanel.addComponent(startArtOption, GridLayout.createHorizontallyFilledLayoutData(1));
+		typSelektor.setSelectedIndex(0);
+		mainPanel.addComponent(typSelektor, GridLayout.createHorizontallyFilledLayoutData(2));
 
-		
+		mainPanel.addComponent(new Label("Startart:"));
+		mainPanel.addComponent(new Label(inkarnation.getStartArt().getOption().toString()));
+		Button startArtButton = new Button("Bearbeiten");
+		mainPanel.addComponent(startArtButton, GridLayout.createHorizontallyFilledLayoutData(1));
+
+		CheckBox initCheckbox = new CheckBox("Initialisieren");
+		initCheckbox.setChecked(inkarnation.getInitialize());
+		mainPanel.addComponent(initCheckbox, GridLayout.createHorizontallyFilledLayoutData(1));
+
+		CheckBox setInkarnationsNameCheckbox = new CheckBox("Setze Inkarnationsname");
+		setInkarnationsNameCheckbox.setChecked(inkarnation.getMitInkarnationsName());
+		mainPanel.addComponent(setInkarnationsNameCheckbox, GridLayout.createHorizontallyFilledLayoutData(2));
+
+		mainPanel.addComponent(new Label("Startbedingung:"));
+		StartBedingung startBedingung = inkarnation.getStartBedingung();
+		mainPanel.addComponent(new Label(startBedingung == null ? "Keine" : startBedingung.getVorgaenger().get(0)));
+		Button startBedingungButton = new Button("Bearbeiten");
+		mainPanel.addComponent(startBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
+
+		mainPanel.addComponent(new Label("Startfehlerverhalten:"));
+		mainPanel.addComponent(new Label(inkarnation.getStartFehlerVerhalten().getOption().toString()));
+		Button startFehlerVerhaltenButton = new Button("Bearbeiten");
+		mainPanel.addComponent(startFehlerVerhaltenButton, GridLayout.createHorizontallyFilledLayoutData(1));
+
+		mainPanel.addComponent(new Label("Stoppbedingung:"));
+		StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
+		mainPanel.addComponent(new Label(stoppBedingung == null ? "Keine" : stoppBedingung.getNachfolger().get(0)));
+		Button stoppBedingungButton = new Button("Bearbeiten");
+		mainPanel.addComponent(stoppBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
+
+		mainPanel.addComponent(new Label("Stoppfehlerverhalten:"));
+		mainPanel.addComponent(new Label(inkarnation.getStoppFehlerVerhalten().getOption().toString()));
+		Button stoppFehlerVerhaltenButton = new Button("Bearbeiten");
+		mainPanel.addComponent(stoppFehlerVerhaltenButton, GridLayout.createHorizontallyFilledLayoutData(1));
+
 		mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-		
+
 		buttonPanel.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false))
 				.addTo(mainPanel);
@@ -127,27 +170,11 @@ public class InkarnationEditor extends DialogWindow implements WindowListener {
 	}
 
 	@Override
-	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-		// TODO Auto-generated method stub
-		
+	public Inkarnation showDialog(WindowBasedTextGUI textGUI) {
+		super.showDialog(textGUI);
+		if (result == MessageDialogButton.OK) {
+			return inkarnation;
+		}
+		return null;
 	}
-
-	@Override
-	public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onMoved(Window window, TerminalPosition oldPosition, TerminalPosition newPosition) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

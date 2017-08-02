@@ -37,6 +37,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.screen.Screen;
@@ -46,7 +47,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.StartStoppUiFactory;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow;
 
 @Singleton
@@ -91,7 +92,8 @@ public class StartStoppConsole {
 			binder.bind(StartStoppConsoleOptions.class).toInstance(options);
 			binder.bind(StartStoppClient.class).toInstance(client);
 			binder.bind(WindowBasedTextGUI.class).toProvider(TextGuiProvider.class);
-			binder.bind(StartStoppUiFactory.class).toInstance(new StartStoppUiFactory());
+			
+			binder.install(new FactoryModuleBuilder().build(GuiComponentFactory.class));
 		}
 	}
 	
@@ -109,5 +111,4 @@ public class StartStoppConsole {
 		Injector injector = Guice.createInjector(new StartStoppModule(args));
 		injector.getInstance(StartStoppConsole.class);
 	}
-
 }

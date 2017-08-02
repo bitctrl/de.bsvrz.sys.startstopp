@@ -34,11 +34,12 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
@@ -54,27 +55,24 @@ import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 public class SkriptEditor extends BasicWindow implements WindowListener {
 	private InkarnationTable inkarnationTable;
 	private StartStoppSkript skript;
 	private MakroTable makroTable;
 	private RechnerTable rechnerTable;
-	private StartStoppClient client;
 
 	@Inject
-	private EditorSaveAction saveAction;
+	GuiComponentFactory factory;
 
-	@Inject
-	private EditorCloseAction closeAction;
-	
-	@Inject
-	public SkriptEditor(StartStoppClient client) throws StartStoppException {
+	@Inject 
+	public SkriptEditor(@Assisted StartStoppSkript skript)  {
 		super("StartStopp - Editor");
-		this.client = client;
+		this.skript = skript;
 	}
 
 	@PostConstruct
@@ -83,9 +81,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
 
 		try {
-			skript = client.getCurrentSkript();
 			showInkarnationTable();
-			saveAction.setSkript(skript);
 		} catch (StartStoppException e) {
 			Debug.getLogger().warning(e.getLocalizedMessage());
 		}
@@ -151,7 +147,6 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		rechnerTable.setVisibleRows(getSize().getRows() - 7);
 	}
 
-
 	@Override
 	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
 		// TODO Auto-generated method stub
@@ -160,7 +155,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 			switch (keyStroke.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addActions(saveAction, closeAction);
+				builder.addActions(factory.createSaveAction(skript), factory.createEditorCloseAction(this));
 				builder.build().showDialog(getTextGUI());
 				break;
 
@@ -214,9 +209,14 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 				break;
 
 			case 'e':
-				InkarnationEditor inkarnationEditor;
-				inkarnationEditor = new InkarnationEditor(inkarnationTable.getSelectedOnlineInkarnation());
-				inkarnationEditor.showDialog(getTextGUI());
+				Inkarnation selectedOnlineInkarnation = inkarnationTable.getSelectedOnlineInkarnation();
+				InkarnationEditor inkarnationEditor = new InkarnationEditor(selectedOnlineInkarnation);
+				Inkarnation changedInkarnation = inkarnationEditor.showDialog(getTextGUI());
+				if (changedInkarnation != null) {
+					int idx = skript.getInkarnationen().indexOf(selectedOnlineInkarnation);
+					skript.getInkarnationen().remove(idx);
+					skript.getInkarnationen().add(idx, changedInkarnation);
+				}
 				break;
 
 			// TODO Inkarnationsdetails anzeigen
