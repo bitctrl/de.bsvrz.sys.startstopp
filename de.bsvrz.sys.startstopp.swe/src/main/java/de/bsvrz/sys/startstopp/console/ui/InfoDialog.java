@@ -28,31 +28,30 @@ package de.bsvrz.sys.startstopp.console.ui;
 
 import javax.inject.Inject;
 
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class StartStoppExitAction implements Runnable {
+public class InfoDialog {
+
+	private MessageDialog dialog;
+	private WindowBasedTextGUI gui;
 
 	@Inject
-	protected WindowBasedTextGUI gui;
+	public InfoDialog(WindowBasedTextGUI gui, @Assisted("title") String title, @Assisted("message") String message) {
 
-	@Inject
-	protected StartStoppClient client;
-	
-	@Override
-	public void run() {
-		try {
-			client.exitStartStopp();
-		} catch (StartStoppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.gui = gui;
+
+		MessageDialogBuilder msgBuilder = new MessageDialogBuilder();
+		msgBuilder.setTitle(title);
+		msgBuilder.setText(Util.wrapText(gui.getScreen().getTerminalSize().getColumns(), message));
+		dialog = msgBuilder.build();
 	}
 
-	@Override
-	public String toString() {
-		return "StartStopp beenden";
+	public void display() {
+		dialog.showDialog(gui);
 	}
 }

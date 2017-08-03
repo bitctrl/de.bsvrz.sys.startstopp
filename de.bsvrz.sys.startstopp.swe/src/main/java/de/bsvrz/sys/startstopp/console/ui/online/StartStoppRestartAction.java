@@ -24,32 +24,31 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.config;
+package de.bsvrz.sys.startstopp.console.ui.online;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.inject.Inject;
 
-public class StartStoppException extends Exception {
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
-	private List<String> messages = new ArrayList<>();
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 
-	public StartStoppException(String string) {
-		super(string);
-	}
+public class StartStoppRestartAction implements Runnable {
 
-	public StartStoppException(Exception e) {
-		super(e);
-	}
+	@Inject
+	protected WindowBasedTextGUI gui;
 
-	public StartStoppException(String string, Exception e) {
-		super(string, e);
-	}
+	@Inject
+	protected StartStoppClient client;
 
-	protected void addMessages(List<String> messages) {
-		this.messages.addAll(messages);
-	}
 	
-	public List<String> getMessages() {
-		return messages;
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String toString() {
+		return "System neu starten";
 	}
 }

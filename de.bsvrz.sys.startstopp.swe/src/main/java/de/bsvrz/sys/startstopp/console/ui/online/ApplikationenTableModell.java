@@ -43,11 +43,16 @@ class ApplikationenTableModell extends TableModel<Object> {
 		super("Inkarnation", "Status", "Startzeit");
 	}
 
+	private final List<Applikation> applikationen = new ArrayList<>();
+
 	public void setApplikationen(List<Applikation> applikationen) {
 
 		while (getRowCount() > 0) {
 			removeRow(0);
 		}
+
+		this.applikationen.clear();
+		this.applikationen.addAll(applikationen);
 
 		for (Applikation applikation : applikationen) {
 			addRow(getValues(applikation));
@@ -81,4 +86,12 @@ class ApplikationenTableModell extends TableModel<Object> {
 		return result;
 	}
 
+	public Applikation getApplikation(int row) {
+
+		if ((row < 0) || (row >= applikationen.size())) {
+			return null;
+		}
+
+		return applikationen.get(row);
+	}
 }

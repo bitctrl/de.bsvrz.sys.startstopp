@@ -26,12 +26,22 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.Window;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorCloseAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorSaveAction;
+import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationTable;
 import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
+import de.bsvrz.sys.startstopp.console.ui.online.ApplikationDetailAction;
+import de.bsvrz.sys.startstopp.console.ui.online.ApplikationRestartAction;
+import de.bsvrz.sys.startstopp.console.ui.online.ApplikationStartAction;
+import de.bsvrz.sys.startstopp.console.ui.online.ApplikationStoppAction;
+import de.bsvrz.sys.startstopp.console.ui.online.StartStoppExitAction;
+import de.bsvrz.sys.startstopp.console.ui.online.StartStoppRestartAction;
+import de.bsvrz.sys.startstopp.console.ui.online.StartStoppStoppAction;
 
 public interface GuiComponentFactory {
 
@@ -41,13 +51,13 @@ public interface GuiComponentFactory {
 
 	EditorCloseAction createEditorCloseAction(Window window);
 
-	ApplikationStartAction createApplikationStartAction(String inkarnation);
+	ApplikationStartAction createApplikationStartAction(Applikation applikation);
 
-	ApplikationRestartAction createApplikationRestartAction(String inkarnation);
+	ApplikationRestartAction createApplikationRestartAction(Applikation applikation);
 
-	ApplikationStoppAction createApplikationStoppAction(String inkarnation);
+	ApplikationStoppAction createApplikationStoppAction(Applikation applikation);
 
-	ApplikationDetailAction createApplikationDetailAction(String inkarnation);
+	ApplikationDetailAction createApplikationDetailAction(Applikation applikation);
 
 	StartStoppStoppAction createStartStoppStoppAction();
 
@@ -56,4 +66,10 @@ public interface GuiComponentFactory {
 	StartStoppExitAction createStartStoppExitAction();
 
 	TerminalCloseAction createTerminalCloseAction();
+	
+	InfoDialog createInfoDialog(@Assisted("title") String title, @Assisted("message") String message);
+
+	JaNeinDialog createJaNeinDialog(@Assisted("title") String title, @Assisted("message") String message);
+
+	InkarnationTable createInkarnationTable(StartStoppSkript skript);
 }

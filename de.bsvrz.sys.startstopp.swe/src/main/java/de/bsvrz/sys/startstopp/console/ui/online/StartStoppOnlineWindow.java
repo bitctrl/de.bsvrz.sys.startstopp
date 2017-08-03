@@ -47,6 +47,7 @@ import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
@@ -95,7 +96,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 			switch (keyStroke.getCharacter()) {
 			case 't':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("Theme")
-						.setDescription("Choose a theme");
+						.setDescription("Theme auswählen");
 				for (String theme : LanternaThemes.getRegisteredThemes()) {
 					builder.addAction(theme, new Runnable() {
 						@Override
@@ -117,14 +118,14 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				builder.build().showDialog(getTextGUI());
 				break;
 			case 'p':
-				String inkarnation = table.getSelectedOnlineInkarnation();
-				if (inkarnation != null) {
+				Applikation applikation = table.getSelectedApplikation();
+				if (applikation != null) {
 					
 					builder = new ActionListDialogBuilder().setTitle("Applikation");
-					builder.addAction(uiFactory.createApplikationStartAction(inkarnation));
-					builder.addAction(uiFactory.createApplikationRestartAction(inkarnation));
-					builder.addAction(uiFactory.createApplikationStoppAction(inkarnation));
-					builder.addAction(uiFactory.createApplikationDetailAction(inkarnation));
+					builder.addAction(uiFactory.createApplikationStartAction(applikation));
+					builder.addAction(uiFactory.createApplikationRestartAction(applikation));
+					builder.addAction(uiFactory.createApplikationStoppAction(applikation));
+					builder.addAction(uiFactory.createApplikationDetailAction(applikation));
 					builder.build().showDialog(getTextGUI());
 				}
 
@@ -133,8 +134,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				try {
 					getTextGUI().addWindow(uiFactory.createSkriptEditor(client.getCurrentSkript()));
 				} catch (StartStoppException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					uiFactory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
 				}
 				break;
 			default:

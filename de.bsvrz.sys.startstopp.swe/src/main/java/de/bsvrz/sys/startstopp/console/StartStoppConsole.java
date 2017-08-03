@@ -27,6 +27,8 @@
 package de.bsvrz.sys.startstopp.console;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 
@@ -38,6 +40,8 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.googlecode.lanterna.bundle.LanternaThemes;
+import com.googlecode.lanterna.graphics.PropertyTheme;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.screen.Screen;
@@ -57,10 +61,10 @@ public class StartStoppConsole {
 	private static class TextGuiProvider implements Provider<WindowBasedTextGUI> {
 
 		WindowBasedTextGUI gui;
-		
+
 		@Override
 		public WindowBasedTextGUI get() {
-			if( gui == null) {
+			if (gui == null) {
 				try {
 					DefaultTerminalFactory factory = new DefaultTerminalFactory();
 					Terminal term = factory.createTerminal();
@@ -86,17 +90,17 @@ public class StartStoppConsole {
 			options = new StartStoppConsoleOptions(args);
 			client = new StartStoppClient(options.getHost(), options.getPort());
 		}
-		
+
 		@Override
 		public void configure(Binder binder) {
 			binder.bind(StartStoppConsoleOptions.class).toInstance(options);
 			binder.bind(StartStoppClient.class).toInstance(client);
 			binder.bind(WindowBasedTextGUI.class).toProvider(TextGuiProvider.class);
-			
+
 			binder.install(new FactoryModuleBuilder().build(GuiComponentFactory.class));
 		}
 	}
-	
+
 	@PostConstruct
 	@Inject
 	void run(WindowBasedTextGUI gui, StartStoppOnlineWindow onlineWindow) throws IOException, StartStoppException {
@@ -106,8 +110,15 @@ public class StartStoppConsole {
 		gui.getScreen().stopScreen();
 		System.exit(0);
 	}
-	
+
 	public static void main(String[] args) throws IOException, InterruptedException, StartStoppException {
+
+		Properties themeProperties = new Properties();
+		try (InputStream stream = StartStoppConsole.class.getResourceAsStream("nerz-mono.properties")) {
+			themeProperties.load(stream);
+			LanternaThemes.registerTheme("NERZ-Mono", new PropertyTheme(themeProperties));
+		}
+
 		Injector injector = Guice.createInjector(new StartStoppModule(args));
 		injector.getInstance(StartStoppConsole.class);
 	}

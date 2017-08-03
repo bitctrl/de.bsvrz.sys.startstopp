@@ -204,10 +204,10 @@ public class StartStoppClient {
 				return response.readEntity(StartStoppSkript.class);
 			}
 		} catch (Exception e) {
-			throw new StartStoppException(e);
+			throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden", e);
 		}
 		if ((response != null) && (response.getStatus() == Response.Status.SERVICE_UNAVAILABLE.getStatusCode())) {
-			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte abgerufen werden",
+			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden",
 					response.readEntity(StatusResponse.class));
 		}
 

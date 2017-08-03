@@ -35,22 +35,23 @@ import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 
-public class ZugangDavEditor extends DialogWindow  {
+public class UsvEditor extends DialogWindow {
 
-	private ZugangDav zugangDav;
+	private Usv usv;
 	private boolean okPressed;
-	
-	public ZugangDavEditor(ZugangDav zugangDav) {
+
+	public UsvEditor(Usv usv) {
 		super("StartStopp - Editor: Inkarnation: ");
 
-		if( zugangDav == null) {
-			this.zugangDav = new ZugangDav();
+		if( usv == null) {
+			this.usv = new Usv("");
 		} else {
-			this.zugangDav = (ZugangDav) Util.cloneObject(zugangDav);
+			this.usv = (Usv) Util.cloneObject(usv);
 		}
+		
 		
 		setHints(Arrays.asList(Window.Hint.CENTERED));
 		setCloseWindowWithEscape(true);
@@ -83,13 +84,13 @@ public class ZugangDavEditor extends DialogWindow  {
 		Panel mainPanel = new Panel();
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
-		// TODO Inhalt für ZugangDav
+		// TODO Inhalt für USV
 
 		mainPanel.addComponent(buttonPanel);
 		setComponent(mainPanel);
 	}
-
 	
+
 	@Override
 	public Boolean showDialog(WindowBasedTextGUI textGUI) {
 		// TODO Auto-generated method stub
@@ -97,7 +98,9 @@ public class ZugangDavEditor extends DialogWindow  {
 		return okPressed;
 	}
 
-	public ZugangDav getZugangDav() {
-		return zugangDav;
+	public Usv getUsv() {
+		// TODO Auto-generated method stub
+		return usv;
 	}
+	
 }

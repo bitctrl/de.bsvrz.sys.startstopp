@@ -48,14 +48,10 @@
 		}
 	},
 	"required": [
-		"startBedingungen",
 		"aufrufParameter",
+        "inkarnationsName",
 		"applikation",
-		"startArt",
-		"stoppBedingungen",
-		"startFehlerVerhalten",
-		"stoppFehlerVerhalten",
-		"inkarnationsName"
+		"startArt"
 	]}
 	
 }

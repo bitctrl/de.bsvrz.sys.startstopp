@@ -26,48 +26,79 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Collection;
+import java.util.List;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.Window; 
-import com.googlecode.lanterna.gui2.WindowListener;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import com.googlecode.lanterna.input.KeyStroke;
 
-public class KernsystemEditor extends DialogWindow implements WindowListener {
+import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-	public KernsystemEditor() {
+public class KernsystemEditor extends DialogWindow {
+
+	private boolean okPressed;
+	private List<KernSystem> kernSysteme = new ArrayList<>();
+	
+	public KernsystemEditor(StartStoppSkript skript) {
 		super("StartStopp - Editor: Inkarnation: ");
 
+		for( KernSystem kernSystem : skript.getGlobal().getKernsysteme()) {
+			kernSysteme.add((KernSystem) Util.cloneObject(kernSystem));
+		}
 		setHints(Arrays.asList(Window.Hint.CENTERED));
-		setCloseWindowWithEscape(true);
-		addWindowListener(this);
+
+		initUI();
+	}
+
+	private void initUI() {
+		Panel buttonPanel = new Panel();
+		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
+		Button okButton = new Button("OK", new Runnable() {
+
+
+			@Override
+			public void run() {
+				okPressed = true;
+				close();
+			}
+		});
+		buttonPanel.addComponent(okButton);
+		Button cancelButton = new Button("Abbrechen", new Runnable() {
+
+			@Override
+			public void run() {
+				close();
+			}
+		});
+		buttonPanel.addComponent(cancelButton);
+
+		Panel mainPanel = new Panel();
+		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
+
+		// TODO Inhalt für Kernsysteme
+
+		mainPanel.addComponent(buttonPanel);
+		setComponent(mainPanel);
+	}
+
+	@Override
+	public Boolean showDialog(WindowBasedTextGUI textGUI) {
+		// TODO Auto-generated method stub
+		super.showDialog(textGUI);
+		return okPressed;
+	}
+
+	public Collection<KernSystem> getKernsysteme() {
+		// TODO Auto-generated method stub
+		return kernSysteme;
 	}
 	
-	@Override
-	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onMoved(Window window, TerminalPosition oldPosition, TerminalPosition newPosition) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

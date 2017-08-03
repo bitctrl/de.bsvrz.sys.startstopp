@@ -24,18 +24,35 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui;
+package de.bsvrz.sys.startstopp.console.ui.online;
 
-public class StartStoppUpdateAction implements Runnable {
+import javax.inject.Inject;
 
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
+
+public class StartStoppExitAction implements Runnable {
+
+	@Inject
+	protected WindowBasedTextGUI gui;
+
+	@Inject
+	protected StartStoppClient client;
+	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-
+		try {
+			client.exitStartStopp();
+		} catch (StartStoppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "Prozesse nachstarten";
+		return "StartStopp beenden";
 	}
 }

@@ -24,28 +24,49 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui;
+package de.bsvrz.sys.startstopp.console.ui.online;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
-class ApplikationRestartAction implements Runnable {
+public class ApplikationStoppAction implements Runnable {
 
 	@Inject
-	ApplikationRestartAction(@Assisted Inkarnation inkarnation) {
-		// TODO Auto-generated constructor stub
+	private GuiComponentFactory factory;
+
+	@Inject
+	private StartStoppClient client;
+
+	private Applikation applikation;
+
+	@Inject
+	public ApplikationStoppAction(@Assisted Applikation applikation) {
+		this.applikation = applikation;
 	}
-	
+
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		try {
+			JaNeinDialog dialog = factory.createJaNeinDialog("Applikation anhalten", "Soll die Applikation \""
+					+ applikation.getInkarnation().getInkarnationsName() + "\" wirklich angehalten werden?");
+			if (dialog.display()) {
+				client.stoppeApplikation(applikation.getInkarnation().getInkarnationsName());
+			}
+		} catch (StartStoppException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	@Override
 	public String toString() {
-		return "Neu starten";
+		return "Anhalten";
 	}
 }

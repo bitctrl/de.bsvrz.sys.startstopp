@@ -48,6 +48,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation.InkarnationsTyp;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
@@ -57,10 +58,12 @@ public class InkarnationEditor extends DialogWindow {
 	private TextBox nameField;
 	private Inkarnation inkarnation;
 	private TextBox applikationField;
+	private StartStoppSkript skript;
 
-	public InkarnationEditor(Inkarnation inkarnation) {
+	public InkarnationEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super("StartStopp - Editor: Inkarnation: ");
 
+		this.skript = skript;
 		this.inkarnation = (Inkarnation) Util.cloneObject(inkarnation);
 		setHints(Arrays.asList(Window.Hint.CENTERED));
 		setCloseWindowWithEscape(true);
@@ -114,50 +117,119 @@ public class InkarnationEditor extends DialogWindow {
 		parameterButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				// TODO Auto-generated method stub
+				AufrufParameterEditor editor = new AufrufParameterEditor(inkarnation);
+				List<String> parameter = editor.showDialog(getTextGUI());
+				if( parameter != null) {
+					inkarnation.getAufrufParameter().clear();
+					inkarnation.getAufrufParameter().addAll(parameter);
+				}
 			}
 		});
 		mainPanel.addComponent(parameterButton, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Typ:"));
 		ComboBox<InkarnationsTyp> typSelektor = new ComboBox<InkarnationsTyp>(InkarnationsTyp.values());
-		// TODO korrekten Offset bestimmen
-		typSelektor.setSelectedIndex(0);
+		for( int idx = 0; idx < typSelektor.getItemCount(); idx++) {
+			if( typSelektor.getItem(idx) == inkarnation.getInkarnationsTyp()) {
+				typSelektor.setSelectedIndex(idx);
+			}
+		}
+		typSelektor.addListener(new ComboBox.Listener() {
+			@Override
+			public void onSelectionChanged(int selectedIndex, int previousSelection) {
+				inkarnation.setInkarnationsTyp(typSelektor.getItem(selectedIndex));
+			}
+		});
 		mainPanel.addComponent(typSelektor, GridLayout.createHorizontallyFilledLayoutData(2));
 
 		mainPanel.addComponent(new Label("Startart:"));
 		mainPanel.addComponent(new Label(inkarnation.getStartArt().getOption().toString()));
 		Button startArtButton = new Button("Bearbeiten");
+		startArtButton.addListener(new Listener() {
+			@Override
+			public void onTriggered(Button button) {
+				StartArtEditor editor = new StartArtEditor(inkarnation.getStartArt());
+				if( editor.showDialog(getTextGUI())) {
+					inkarnation.setStartArt(editor.getStartArt());
+				}
+			}
+		});
 		mainPanel.addComponent(startArtButton, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		CheckBox initCheckbox = new CheckBox("Initialisieren");
 		initCheckbox.setChecked(inkarnation.getInitialize());
+		initCheckbox.addListener(new CheckBox.Listener() {
+			@Override
+			public void onStatusChanged(boolean checked) {
+				inkarnation.setInitialize(checked);
+			}});
 		mainPanel.addComponent(initCheckbox, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		CheckBox setInkarnationsNameCheckbox = new CheckBox("Setze Inkarnationsname");
 		setInkarnationsNameCheckbox.setChecked(inkarnation.getMitInkarnationsName());
+		setInkarnationsNameCheckbox.addListener(new CheckBox.Listener() {
+			@Override
+			public void onStatusChanged(boolean checked) {
+				inkarnation.setMitInkarnationsName(checked);
+			}});
 		mainPanel.addComponent(setInkarnationsNameCheckbox, GridLayout.createHorizontallyFilledLayoutData(2));
 
 		mainPanel.addComponent(new Label("Startbedingung:"));
 		StartBedingung startBedingung = inkarnation.getStartBedingung();
 		mainPanel.addComponent(new Label(startBedingung == null ? "Keine" : startBedingung.getVorgaenger().get(0)));
 		Button startBedingungButton = new Button("Bearbeiten");
+		startBedingungButton.addListener(new Listener() {
+			@Override
+			public void onTriggered(Button button) {
+				StartBedingungEditor editor = new StartBedingungEditor(skript, inkarnation.getStartBedingung());
+				if( editor.showDialog(getTextGUI())) {
+					inkarnation.setStartBedingung(editor.getStartBedingung());
+				}
+			}
+		});
 		mainPanel.addComponent(startBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Startfehlerverhalten:"));
 		mainPanel.addComponent(new Label(inkarnation.getStartFehlerVerhalten().getOption().toString()));
 		Button startFehlerVerhaltenButton = new Button("Bearbeiten");
+		startFehlerVerhaltenButton.addListener(new Listener() {
+			@Override
+			public void onTriggered(Button button) {
+				StartFehlerVerhaltenEditor editor = new StartFehlerVerhaltenEditor(inkarnation.getStartFehlerVerhalten());
+				if( editor.showDialog(getTextGUI())) {
+					inkarnation.setStartFehlerVerhalten(editor.getStartFehlerVerhalten());
+				}
+			}
+		});
 		mainPanel.addComponent(startFehlerVerhaltenButton, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Stoppbedingung:"));
 		StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
 		mainPanel.addComponent(new Label(stoppBedingung == null ? "Keine" : stoppBedingung.getNachfolger().get(0)));
 		Button stoppBedingungButton = new Button("Bearbeiten");
+		stoppBedingungButton.addListener(new Listener() {
+			@Override
+			public void onTriggered(Button button) {
+				StoppBedingungEditor editor = new StoppBedingungEditor(skript, inkarnation.getStoppBedingung());
+				if( editor.showDialog(getTextGUI())) {
+					inkarnation.setStoppBedingung(editor.getStoppBedingung());
+				}
+			}
+		});
 		mainPanel.addComponent(stoppBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Stoppfehlerverhalten:"));
 		mainPanel.addComponent(new Label(inkarnation.getStoppFehlerVerhalten().getOption().toString()));
 		Button stoppFehlerVerhaltenButton = new Button("Bearbeiten");
+		stoppFehlerVerhaltenButton.addListener(new Listener() {
+			@Override
+			public void onTriggered(Button button) {
+				StoppFehlerVerhaltenEditor editor = new StoppFehlerVerhaltenEditor(inkarnation.getStoppFehlerVerhalten());
+				if( editor.showDialog(getTextGUI())) {
+					inkarnation.setStoppFehlerVerhalten(editor.getStoppFehlerVerhalten());
+				}
+			}
+		});
 		mainPanel.addComponent(stoppFehlerVerhaltenButton, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));

@@ -26,38 +26,116 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import com.google.inject.assistedinject.Assisted;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 public class InkarnationTable extends Table<Object> {
 
 	private static final Debug LOGGER = Debug.getLogger();
-	
-	private List<Inkarnation> inkarnations = new ArrayList<>();
 
-	public InkarnationTable(StartStoppSkript skript) throws StartStoppException {
-		super("Name");
+	@Inject
+	GuiComponentFactory factory;
+
+	private WindowBasedTextGUI gui;
+
+	private StartStoppSkript skript;
+
+	@Inject
+	public InkarnationTable(WindowBasedTextGUI gui, @Assisted StartStoppSkript skript) throws StartStoppException {
+		super("Name", "Typ", "Startart");
+
+		this.gui = gui;
+		this.skript = skript;
 
 		for (Inkarnation inkarnation : skript.getInkarnationen()) {
-			getTableModel().addRow(inkarnation.getInkarnationsName());
-			inkarnations.add(inkarnation);
+			getTableModel().addRow(inkarnation.getInkarnationsName(), inkarnation.getInkarnationsTyp(),
+					inkarnation.getStartArt().getOption());
 		}
+
+
 	}
 	
+	@Inject
+	@PostConstruct
+	private void initUI() {
+		setSelectAction(new Runnable() {
+			@Override
+			public void run() {
+				int row = getSelectedRow();
+				Inkarnation inkarnation = skript.getInkarnationen().get(row);
+				InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
+				Inkarnation result = editor.showDialog(gui);
+				if (result != null) {
+					int idx = skript.getInkarnationen().indexOf(inkarnation);
+					skript.getInkarnationen().remove(idx);
+					skript.getInkarnationen().add(idx, result);
+				}
+			}
+		});
+	}
+
 	public Inkarnation getSelectedOnlineInkarnation() {
 		int row = getSelectedRow();
-		if(( row < 0 ) || (row >= inkarnations.size())) {
+		if ((row < 0) || (row >= skript.getInkarnationen().size())) {
 			return null;
 		}
-		
-		return inkarnations.get(row);
+
+		return skript.getInkarnationen().get(row);
+	}
+
+	@Override
+	public Result handleKeyStroke(KeyStroke keyStroke) {
+		// TODO Auto-generated method stub
+		System.err.println("InkarnationTable-Key: " + keyStroke);
+
+		if (keyStroke.getKeyType() == KeyType.Character) {
+			switch (keyStroke.getCharacter()) {
+			case '+':
+				int row = getSelectedRow() + 1;
+				Inkarnation inkarnation = new Inkarnation().withInkarnationsName("NeueInkarnation")
+						.withApplikation("java").withStartArt(new StartArt())
+						.withStartFehlerVerhalten(new StartFehlerVerhalten())
+						.withStoppFehlerVerhalten(new StoppFehlerVerhalten());
+				InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
+				Inkarnation result = editor.showDialog(gui);
+				if (result != null) {
+					skript.getInkarnationen().add(row, result);
+					getTableModel().insertRow(row, Arrays.asList(inkarnation.getInkarnationsName(),
+							inkarnation.getInkarnationsTyp(), inkarnation.getStartArt().getOption()));
+				}
+				break;
+			case '-':
+				JaNeinDialog dialog = factory.createJaNeinDialog("Löschen",
+						"Soll die ausgewählte Inkarnation wirklich gelöscht werden?");
+				if (dialog.display()) {
+					int deleteRow = getSelectedRow();
+					skript.getInkarnationen().remove(deleteRow);
+					getTableModel().removeRow(deleteRow);
+				}
+				break;
+			default:
+			}
+		}
+
+		return super.handleKeyStroke(keyStroke);
 	}
 
 }

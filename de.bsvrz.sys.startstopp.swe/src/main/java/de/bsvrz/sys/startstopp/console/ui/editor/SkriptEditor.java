@@ -55,8 +55,8 @@ import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
@@ -69,10 +69,10 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 	@Inject
 	GuiComponentFactory factory;
 
-	@Inject 
-	public SkriptEditor(@Assisted StartStoppSkript skript)  {
+	@Inject
+	public SkriptEditor(@Assisted StartStoppSkript skript) {
 		super("StartStopp - Editor");
-		this.skript = skript;
+		this.skript = (StartStoppSkript) Util.cloneObject(skript);
 	}
 
 	@PostConstruct
@@ -97,7 +97,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
-		inkarnationTable = new InkarnationTable(skript);
+		inkarnationTable = factory.createInkarnationTable(skript);
 		inkarnationTable.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		inkarnationTable.setPreferredSize(TerminalSize.ONE);
@@ -208,28 +208,35 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 				}
 				break;
 
-			case 'e':
-				Inkarnation selectedOnlineInkarnation = inkarnationTable.getSelectedOnlineInkarnation();
-				InkarnationEditor inkarnationEditor = new InkarnationEditor(selectedOnlineInkarnation);
-				Inkarnation changedInkarnation = inkarnationEditor.showDialog(getTextGUI());
-				if (changedInkarnation != null) {
-					int idx = skript.getInkarnationen().indexOf(selectedOnlineInkarnation);
-					skript.getInkarnationen().remove(idx);
-					skript.getInkarnationen().add(idx, changedInkarnation);
+			case 'k':
+				KernsystemEditor ksEditor = new KernsystemEditor(skript);
+				if (ksEditor.showDialog(getTextGUI())) {
+					skript.getGlobal().getKernsysteme().clear();
+					skript.getGlobal().getKernsysteme().addAll(ksEditor.getKernsysteme());
 				}
 				break;
 
-			// TODO Inkarnationsdetails anzeigen
+			case 'u':
+				UsvEditor usvEditor = new UsvEditor(skript.getGlobal().getUsv());
+				if (usvEditor.showDialog(getTextGUI())) {
+					skript.getGlobal().setUsv(usvEditor.getUsv());
+				}
+				break;
 
+			case 'z':
+				ZugangDavEditor zugangDavEditor = new ZugangDavEditor(skript.getGlobal().getZugangDav());
+				if (zugangDavEditor.showDialog(getTextGUI())) {
+					skript.getGlobal().setZugangDav(zugangDavEditor.getZugangDav());
+				}
+				break;
+
+				
 			default:
 				System.err.println(getClass().getSimpleName() + ": " + keyStroke);
 				break;
 			}
 			break;
 
-		case Escape:
-			close();
-			break;
 		default:
 			break;
 		}

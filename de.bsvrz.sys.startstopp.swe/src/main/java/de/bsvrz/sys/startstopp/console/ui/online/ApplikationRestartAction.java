@@ -24,22 +24,19 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui;
+package de.bsvrz.sys.startstopp.console.ui.online;
 
-import javax.inject.Inject;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
-
-public class StartStoppRestartAction implements Runnable {
-
-	@Inject
-	protected WindowBasedTextGUI gui;
+public class ApplikationRestartAction implements Runnable {
 
 	@Inject
-	protected StartStoppClient client;
-
+	ApplikationRestartAction(@Assisted Applikation applikation) {
+		// TODO Auto-generated constructor stub
+	}
 	
 	@Override
 	public void run() {
@@ -49,6 +46,6 @@ public class StartStoppRestartAction implements Runnable {
 
 	@Override
 	public String toString() {
-		return "System neu starten";
+		return "Neu starten";
 	}
 }

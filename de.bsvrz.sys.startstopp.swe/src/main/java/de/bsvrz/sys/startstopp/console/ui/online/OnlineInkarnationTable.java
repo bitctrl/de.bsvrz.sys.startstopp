@@ -111,17 +111,13 @@ public class OnlineInkarnationTable extends Table<Object> {
 		updater.start();
 	}
 
-	public String getSelectedOnlineInkarnation() {
+	public Applikation getSelectedApplikation() {
 
 		if (getTableModel() != applikationenTableModell) {
 			return null;
 		}
 
-		int row = getSelectedRow();
-		if ((row < 0) || (row >= getTableModel().getRowCount())) {
-			return null;
-		}
-
-		return (String) getTableModel().getCell(0, row);
+		return applikationenTableModell.getApplikation(getSelectedRow());
+		
 	}
 }

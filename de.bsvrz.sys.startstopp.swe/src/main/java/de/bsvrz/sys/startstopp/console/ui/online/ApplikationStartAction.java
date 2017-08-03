@@ -24,28 +24,33 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui;
+package de.bsvrz.sys.startstopp.console.ui.online;
+
 
 import javax.inject.Inject;
 
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.google.inject.assistedinject.Assisted;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-public class StartStoppStoppAction implements Runnable {
+public class ApplikationStartAction implements Runnable {
 
 	@Inject
-	protected WindowBasedTextGUI gui;
+	private StartStoppClient client;
+	
+	private final Applikation applikation;
 
 	@Inject
-	protected StartStoppClient client;
-
+	public ApplikationStartAction(@Assisted Applikation applikation) {
+		this.applikation = applikation;
+	}
 	
 	@Override
 	public void run() {
 		try {
-			client.stoppStartStopp();
+			client.starteApplikation(applikation.getInkarnation().getInkarnationsName());
 		} catch (StartStoppException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,6 +59,6 @@ public class StartStoppStoppAction implements Runnable {
 
 	@Override
 	public String toString() {
-		return "System anhalten";
+		return "Starten";
 	}
 }
