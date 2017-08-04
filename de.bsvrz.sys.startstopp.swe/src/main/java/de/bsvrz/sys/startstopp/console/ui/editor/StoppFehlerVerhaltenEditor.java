@@ -26,30 +26,25 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.Arrays;
+import javax.inject.Inject;
 
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.Button;
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.ComboBox;
-import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class StoppFehlerVerhaltenEditor extends DialogWindow {
+public class StoppFehlerVerhaltenEditor extends StartStoppElementEditor<StoppFehlerVerhalten> {
 
 	private StoppFehlerVerhalten stoppFehlerVerhalten;
-	private boolean okPressed = false;
 
-	public StoppFehlerVerhaltenEditor(StoppFehlerVerhalten stoppFehlerVerhalten) {
+	@Inject
+	public StoppFehlerVerhaltenEditor(@Assisted StoppFehlerVerhalten stoppFehlerVerhalten) {
 		super("StartStopp - Editor: Inkarnation: ");
 
 
@@ -58,35 +53,9 @@ public class StoppFehlerVerhaltenEditor extends DialogWindow {
 		} else {
 			this.stoppFehlerVerhalten = (StoppFehlerVerhalten) Util.cloneObject(stoppFehlerVerhalten);
 		}
-
-		setHints(Arrays.asList(Window.Hint.CENTERED, Window.Hint.FIT_TERMINAL_WINDOW));
-		setCloseWindowWithEscape(true);
-
-		initUI();
 	}
 
-	private void initUI() {
-		Panel buttonPanel = new Panel();
-		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-		Button okButton = new Button("OK", new Runnable() {
-
-			@Override
-			public void run() {
-				okPressed = true;
-				close();
-			}
-		});
-		buttonPanel.addComponent(okButton);
-		Button cancelButton = new Button("Abbrechen", new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
-		buttonPanel.addComponent(cancelButton);
-
-		Panel mainPanel = new Panel();
+	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
 		mainPanel.addComponent(new Label("Option:"));
@@ -115,23 +84,9 @@ public class StoppFehlerVerhaltenEditor extends DialogWindow {
 			}
 		};
 		mainPanel.addComponent(warteZeitField, GridLayout.createHorizontallyFilledLayoutData(1));
-
-		mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-
-		buttonPanel.setLayoutData(
-				GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false))
-				.addTo(mainPanel);
-
-		setComponent(mainPanel);
 	}
 
-	@Override
-	public Boolean showDialog(WindowBasedTextGUI textGUI) {
-		super.showDialog(textGUI);
-		return okPressed;
-	}
-
-	public StoppFehlerVerhalten getStoppFehlerVerhalten() {
+	public StoppFehlerVerhalten getElement() {
 		return stoppFehlerVerhalten;
 	}
 }

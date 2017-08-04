@@ -26,72 +26,49 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.Arrays;
 import java.util.List;
 
-import com.googlecode.lanterna.TerminalSize;
+import javax.inject.Inject;
+
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Button.Listener;
 import com.googlecode.lanterna.gui2.CheckBox;
 import com.googlecode.lanterna.gui2.ComboBox;
-import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation.InkarnationsTyp;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
-public class InkarnationEditor extends DialogWindow {
+public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 
-	private MessageDialogButton result;
-	private TextBox nameField;
 	private Inkarnation inkarnation;
 	private TextBox applikationField;
 	private StartStoppSkript skript;
+	private TextBox nameField;
 
-	public InkarnationEditor(StartStoppSkript skript, Inkarnation inkarnation) {
-		super("StartStopp - Editor: Inkarnation: ");
+	@Inject
+	private GuiComponentFactory factory;
 
+	@Inject
+	public InkarnationEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
+		super("Inkarnation: " + inkarnation.getInkarnationsName());
 		this.skript = skript;
 		this.inkarnation = (Inkarnation) Util.cloneObject(inkarnation);
-		setHints(Arrays.asList(Window.Hint.CENTERED));
-		setCloseWindowWithEscape(true);
-		initUI();
 	}
 
-	private void initUI() {
-		Panel buttonPanel = new Panel();
-		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1).setTopMarginSize(1));
-		Button okButton = new Button("OK", new Runnable() {
-
-			@Override
-			public void run() {
-				result = MessageDialogButton.OK;
-				close();
-			}
-		});
-		buttonPanel.addComponent(okButton);
-		Button cancelButton = new Button("Abbrechen", new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
-		buttonPanel.addComponent(cancelButton);
-
-		Panel mainPanel = new Panel();
+	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(3).setLeftMarginSize(1).setRightMarginSize(1).setTopMarginSize(1));
 
 		mainPanel.addComponent(new Label("Inkarnationsname:"));
@@ -106,7 +83,13 @@ public class InkarnationEditor extends DialogWindow {
 		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(2));
 
 		mainPanel.addComponent(new Label("Applikation:"));
-		applikationField = new TextBox("");
+		applikationField = new TextBox("") {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				inkarnation.setApplikation(applikationField.getText());
+				super.afterLeaveFocus(direction, nextInFocus);
+			}
+		};
 		applikationField.setText(inkarnation.getApplikation());
 		mainPanel.addComponent(applikationField, GridLayout.createHorizontallyFilledLayoutData(2));
 
@@ -117,11 +100,10 @@ public class InkarnationEditor extends DialogWindow {
 		parameterButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				AufrufParameterEditor editor = new AufrufParameterEditor(inkarnation);
-				List<String> parameter = editor.showDialog(getTextGUI());
-				if( parameter != null) {
+				AufrufParameterEditor editor = factory.createAufrufParameterEditor(inkarnation);
+				if (editor.showDialog(getTextGUI())) {
 					inkarnation.getAufrufParameter().clear();
-					inkarnation.getAufrufParameter().addAll(parameter);
+					inkarnation.getAufrufParameter().addAll(editor.getElement());
 				}
 			}
 		});
@@ -129,8 +111,8 @@ public class InkarnationEditor extends DialogWindow {
 
 		mainPanel.addComponent(new Label("Typ:"));
 		ComboBox<InkarnationsTyp> typSelektor = new ComboBox<InkarnationsTyp>(InkarnationsTyp.values());
-		for( int idx = 0; idx < typSelektor.getItemCount(); idx++) {
-			if( typSelektor.getItem(idx) == inkarnation.getInkarnationsTyp()) {
+		for (int idx = 0; idx < typSelektor.getItemCount(); idx++) {
+			if (typSelektor.getItem(idx) == inkarnation.getInkarnationsTyp()) {
 				typSelektor.setSelectedIndex(idx);
 			}
 		}
@@ -148,9 +130,9 @@ public class InkarnationEditor extends DialogWindow {
 		startArtButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				StartArtEditor editor = new StartArtEditor(inkarnation.getStartArt());
-				if( editor.showDialog(getTextGUI())) {
-					inkarnation.setStartArt(editor.getStartArt());
+				StartArtEditor editor = factory.createStartArtEditor(inkarnation.getStartArt());
+				if (editor.showDialog(getTextGUI())) {
+					inkarnation.setStartArt(editor.getElement());
 				}
 			}
 		});
@@ -162,7 +144,8 @@ public class InkarnationEditor extends DialogWindow {
 			@Override
 			public void onStatusChanged(boolean checked) {
 				inkarnation.setInitialize(checked);
-			}});
+			}
+		});
 		mainPanel.addComponent(initCheckbox, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		CheckBox setInkarnationsNameCheckbox = new CheckBox("Setze Inkarnationsname");
@@ -171,7 +154,8 @@ public class InkarnationEditor extends DialogWindow {
 			@Override
 			public void onStatusChanged(boolean checked) {
 				inkarnation.setMitInkarnationsName(checked);
-			}});
+			}
+		});
 		mainPanel.addComponent(setInkarnationsNameCheckbox, GridLayout.createHorizontallyFilledLayoutData(2));
 
 		mainPanel.addComponent(new Label("Startbedingung:"));
@@ -181,9 +165,10 @@ public class InkarnationEditor extends DialogWindow {
 		startBedingungButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				StartBedingungEditor editor = new StartBedingungEditor(skript, inkarnation.getStartBedingung());
-				if( editor.showDialog(getTextGUI())) {
-					inkarnation.setStartBedingung(editor.getStartBedingung());
+				StartBedingungEditor editor = factory.createStartBedingungEditor(skript,
+						Util.getObjectOrDefault(inkarnation.getStartBedingung(), StartBedingung.class));
+				if (editor.showDialog(getTextGUI())) {
+					inkarnation.setStartBedingung(editor.getElement());
 				}
 			}
 		});
@@ -195,9 +180,10 @@ public class InkarnationEditor extends DialogWindow {
 		startFehlerVerhaltenButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				StartFehlerVerhaltenEditor editor = new StartFehlerVerhaltenEditor(inkarnation.getStartFehlerVerhalten());
-				if( editor.showDialog(getTextGUI())) {
-					inkarnation.setStartFehlerVerhalten(editor.getStartFehlerVerhalten());
+				StartFehlerVerhaltenEditor editor = factory.createStartFehlerVerhaltenEditor(
+						Util.getObjectOrDefault(inkarnation.getStartFehlerVerhalten(), StartFehlerVerhalten.class));
+				if (editor.showDialog(getTextGUI())) {
+					inkarnation.setStartFehlerVerhalten(editor.getElement());
 				}
 			}
 		});
@@ -205,14 +191,16 @@ public class InkarnationEditor extends DialogWindow {
 
 		mainPanel.addComponent(new Label("Stoppbedingung:"));
 		StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
-		mainPanel.addComponent(new Label(stoppBedingung == null ? "Keine" : stoppBedingung.getNachfolger().get(0)));
+		mainPanel.addComponent(new Label(stoppBedingung == null || stoppBedingung.getNachfolger().isEmpty() ? "Keine"
+				: stoppBedingung.getNachfolger().get(0)));
 		Button stoppBedingungButton = new Button("Bearbeiten");
 		stoppBedingungButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				StoppBedingungEditor editor = new StoppBedingungEditor(skript, inkarnation.getStoppBedingung());
-				if( editor.showDialog(getTextGUI())) {
-					inkarnation.setStoppBedingung(editor.getStoppBedingung());
+				StoppBedingungEditor editor = factory.createStoppBedingungEditor(skript,
+						Util.getObjectOrDefault(inkarnation.getStoppBedingung(), StoppBedingung.class));
+				if (editor.showDialog(getTextGUI())) {
+					inkarnation.setStoppBedingung(editor.getElement());
 				}
 			}
 		});
@@ -224,29 +212,18 @@ public class InkarnationEditor extends DialogWindow {
 		stoppFehlerVerhaltenButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				StoppFehlerVerhaltenEditor editor = new StoppFehlerVerhaltenEditor(inkarnation.getStoppFehlerVerhalten());
-				if( editor.showDialog(getTextGUI())) {
-					inkarnation.setStoppFehlerVerhalten(editor.getStoppFehlerVerhalten());
+				StoppFehlerVerhaltenEditor editor = factory.createStoppFehlerVerhaltenEditor(
+						Util.getObjectOrDefault(inkarnation.getStoppFehlerVerhalten(), StoppFehlerVerhalten.class));
+				if (editor.showDialog(getTextGUI())) {
+					inkarnation.setStoppFehlerVerhalten(editor.getElement());
 				}
 			}
 		});
 		mainPanel.addComponent(stoppFehlerVerhaltenButton, GridLayout.createHorizontallyFilledLayoutData(1));
-
-		mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-
-		buttonPanel.setLayoutData(
-				GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false))
-				.addTo(mainPanel);
-
-		setComponent(mainPanel);
 	}
 
 	@Override
-	public Inkarnation showDialog(WindowBasedTextGUI textGUI) {
-		super.showDialog(textGUI);
-		if (result == MessageDialogButton.OK) {
-			return inkarnation;
-		}
-		return null;
+	public Inkarnation getElement() {
+		return inkarnation;
 	}
 }

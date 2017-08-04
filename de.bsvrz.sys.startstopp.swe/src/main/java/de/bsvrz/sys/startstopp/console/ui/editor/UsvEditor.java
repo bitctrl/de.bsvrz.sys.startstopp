@@ -26,81 +26,51 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.Arrays;
+import javax.inject.Inject;
 
-import com.googlecode.lanterna.gui2.Button;
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Interactable;
+import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.gui2.TextBox;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class UsvEditor extends DialogWindow {
+public class UsvEditor extends StartStoppElementEditor<Usv> {
 
 	private Usv usv;
-	private boolean okPressed;
 
-	public UsvEditor(Usv usv) {
-		super("StartStopp - Editor: Inkarnation: ");
+	@Inject
+	public UsvEditor(@Assisted Usv usv) {
+		super("USV");
 
-		if( usv == null) {
+		if (usv == null) {
 			this.usv = new Usv("");
 		} else {
 			this.usv = (Usv) Util.cloneObject(usv);
 		}
-		
-		
-		setHints(Arrays.asList(Window.Hint.CENTERED));
-		setCloseWindowWithEscape(true);
-		
-		initUI();
 	}
-	
-	private void initUI() {
-		Panel buttonPanel = new Panel();
-		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-		Button okButton = new Button("OK", new Runnable() {
 
-
-			@Override
-			public void run() {
-				okPressed = true;
-				close();
-			}
-		});
-		buttonPanel.addComponent(okButton);
-		Button cancelButton = new Button("Abbrechen", new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
-		buttonPanel.addComponent(cancelButton);
-
-		Panel mainPanel = new Panel();
+	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
-		// TODO Inhalt für USV
-
-		mainPanel.addComponent(buttonPanel);
-		setComponent(mainPanel);
-	}
-	
-
-	@Override
-	public Boolean showDialog(WindowBasedTextGUI textGUI) {
-		// TODO Auto-generated method stub
-		super.showDialog(textGUI);
-		return okPressed;
+		mainPanel.addComponent(new Label("PID:"));
+		TextBox box = new TextBox(Util.nonEmptyString(usv.getPid())) {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				usv.setPid(getText());
+			}
+		};
+		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
-	public Usv getUsv() {
-		// TODO Auto-generated method stub
+	public Usv getElement() {
+		if (Util.nonEmptyString(usv.getPid().trim()).isEmpty()) {
+			return null;
+		}
 		return usv;
 	}
-	
+
 }

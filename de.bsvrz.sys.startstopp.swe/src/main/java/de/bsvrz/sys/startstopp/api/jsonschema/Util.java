@@ -95,4 +95,32 @@ public class Util {
 	public static boolean isDeleteKey(KeyStroke key) {
 		return key.getKeyType() == KeyType.Delete && key.isAltDown();
 	}
+
+	public static boolean isEintragNachObenKey(KeyStroke key) {
+		return key.getKeyType() == KeyType.ArrowUp && key.isAltDown();
+	}
+
+	public static boolean isEintragNachUntenKey(KeyStroke key) {
+		return key.getKeyType() == KeyType.ArrowDown && key.isAltDown();
+	}
+
+	
+	public static <T> T getObjectOrDefault(T object, Class<T> clazz) {
+		if( object == null) {
+			try {
+				return clazz.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+		return object;
+	}
+
+	public static String nonEmptyString(String string) {
+		if( string == null) {
+			return "";
+		}
+		return string;
+	}
+
 }

@@ -26,78 +26,74 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.Arrays;
+import javax.inject.Inject;
 
-import com.googlecode.lanterna.gui2.Button;
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Interactable;
+import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.gui2.TextBox;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 
-public class ZugangDavEditor extends DialogWindow  {
+public class ZugangDavEditor extends StartStoppElementEditor<ZugangDav> {
 
 	private ZugangDav zugangDav;
-	private boolean okPressed;
-	
-	public ZugangDavEditor(ZugangDav zugangDav) {
-		super("StartStopp - Editor: Inkarnation: ");
 
-		if( zugangDav == null) {
+	@Inject
+	public ZugangDavEditor(@Assisted ZugangDav zugangDav) {
+		super("Zugang Datenverteiler");
+
+		if (zugangDav == null) {
 			this.zugangDav = new ZugangDav();
 		} else {
 			this.zugangDav = (ZugangDav) Util.cloneObject(zugangDav);
 		}
-		
-		setHints(Arrays.asList(Window.Hint.CENTERED));
-		setCloseWindowWithEscape(true);
-		
-		initUI();
 	}
-	
-	private void initUI() {
-		Panel buttonPanel = new Panel();
-		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-		Button okButton = new Button("OK", new Runnable() {
 
-
-			@Override
-			public void run() {
-				okPressed = true;
-				close();
-			}
-		});
-		buttonPanel.addComponent(okButton);
-		Button cancelButton = new Button("Abbrechen", new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
-		buttonPanel.addComponent(cancelButton);
-
-		Panel mainPanel = new Panel();
+	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
-		// TODO Inhalt für ZugangDav
+		mainPanel.addComponent(new Label("Adresse:"));
+		TextBox box = new TextBox(zugangDav.getAdresse()) {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				zugangDav.setAdresse(getText());
+			}
+		};
+		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
 
-		mainPanel.addComponent(buttonPanel);
-		setComponent(mainPanel);
+		mainPanel.addComponent(new Label("Port:"));
+		box = new TextBox(zugangDav.getPort()) {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				zugangDav.setPort(getText());
+			}
+		};
+		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
+
+		mainPanel.addComponent(new Label("Nutzername:"));
+		box = new TextBox(zugangDav.getUserName()) {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				zugangDav.setUserName(getText());
+			}
+		};
+		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
+
+		mainPanel.addComponent(new Label("Passwort:"));
+		box = new TextBox(zugangDav.getPassWord()) {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				zugangDav.setPassWord(getText());
+			}
+		}.setMask('*');
+		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
-	
-	@Override
-	public Boolean showDialog(WindowBasedTextGUI textGUI) {
-		// TODO Auto-generated method stub
-		super.showDialog(textGUI);
-		return okPressed;
-	}
-
-	public ZugangDav getZugangDav() {
+	public ZugangDav getElement() {
 		return zugangDav;
 	}
 }

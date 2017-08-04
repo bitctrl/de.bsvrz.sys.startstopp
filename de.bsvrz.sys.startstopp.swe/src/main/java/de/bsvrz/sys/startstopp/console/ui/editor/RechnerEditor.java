@@ -26,116 +26,75 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.EmptySpace;
+import javax.inject.Inject;
+
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.WindowListener;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class RechnerEditor extends DialogWindow implements WindowListener {
-
-	private Button okButton;
-	private Button cancelButton;
-	private TextBox nameField;
-	private TextBox addresseField;
-	private TextBox portField;
+public class RechnerEditor extends StartStoppElementEditor<Rechner> {
 	
 	private Rechner rechner;
-	private MessageDialogButton result = MessageDialogButton.Cancel;
 	private StartStoppSkript skript;
 
-
-	public RechnerEditor(StartStoppSkript skript, Rechner rechner) {
-		super("StartStopp - Editor: Rechner: " + rechner.getName());
-
+	@Inject
+	public RechnerEditor(@Assisted StartStoppSkript skript, @Assisted Rechner rechner) {
+		super("Rechner: " + rechner.getName());
 		this.skript = skript;
-		this.rechner = rechner;
-		
-		setHints(Arrays.asList(Window.Hint.CENTERED));
-		setCloseWindowWithEscape(true);
-		addWindowListener(this);
-
-		initUI();
+		this.rechner = (Rechner) Util.cloneObject(rechner);
 	}
 	
-	private void initUI() {
-		Panel buttonPanel = new Panel();
-		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-		okButton = new Button("OK", new Runnable() {
-
-			@Override
-			public void run() {
-				rechner.setName(nameField.getText());
-				rechner.setTcpAdresse(addresseField.getText());
-				rechner.setPort(portField.getText());
-				result = MessageDialogButton.OK;
-				close();
-			}
-		});
-		buttonPanel.addComponent(okButton);
-		cancelButton = new Button("Abbrechen", new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
-		buttonPanel.addComponent(cancelButton);
-
-		Panel mainPanel = new Panel();
+	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
 		mainPanel.addComponent(new Label("Name:"));
-		nameField = new TextBox();
+		TextBox nameField = new TextBox() {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				rechner.setName(getText());
+				super.afterLeaveFocus(direction, nextInFocus);
+			}
+		};
 		nameField.setText(rechner.getName());
 		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(1));
 		
 		mainPanel.addComponent(new Label("Adresse:"));
-		addresseField = new TextBox("");
+		TextBox addresseField = new TextBox("") {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				rechner.setTcpAdresse(getText());
+				super.afterLeaveFocus(direction, nextInFocus);
+			}
+		};
 		addresseField.setText(rechner.getTcpAdresse());
 		mainPanel.addComponent(addresseField, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Port:"));
-		portField = new TextBox();
+		TextBox portField = new TextBox() {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				rechner.setPort(getText());
+				super.afterLeaveFocus(direction, nextInFocus);
+			}
+		};
 		portField.setText(rechner.getPort());
 		portField.setValidationPattern(Pattern.compile("\\d*"));
 
 		mainPanel.addComponent(portField, GridLayout.createHorizontallyFilledLayoutData(1));
-
-		mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-		
-		buttonPanel.setLayoutData(
-				GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false))
-				.addTo(mainPanel);
-
-		setComponent(mainPanel);
 	}
 
-	@Override
-	public MessageDialogButton showDialog(WindowBasedTextGUI textGUI) {
-		super.showDialog(textGUI);
-		return result;
-	}
-	
 	@Override
 	public boolean handleInput(KeyStroke key) {
 		
@@ -166,29 +125,9 @@ public class RechnerEditor extends DialogWindow implements WindowListener {
 		// TODO Auto-generated method stub
 		return super.handleInput(key);
 	}
-	
-	@Override
-	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
-	public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-		// TODO Auto-generated method stub
-		
+	public Rechner getElement() {
+		return rechner;
 	}
-
-	@Override
-	public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onMoved(Window window, TerminalPosition oldPosition, TerminalPosition newPosition) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

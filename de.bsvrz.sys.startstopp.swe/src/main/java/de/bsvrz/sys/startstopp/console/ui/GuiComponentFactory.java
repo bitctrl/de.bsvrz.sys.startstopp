@@ -30,11 +30,36 @@ import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.Window;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
+import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
+import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
+import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
+import de.bsvrz.sys.startstopp.console.ui.editor.AufrufParameterEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorCloseAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorSaveAction;
+import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationSelektor;
 import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationTable;
-import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.KernsystemEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.MakroEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.MakroTable;
+import de.bsvrz.sys.startstopp.console.ui.editor.RechnerEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.RechnerTable;
+import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditorWindow;
+import de.bsvrz.sys.startstopp.console.ui.editor.StartArtEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.StartBedingungEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.StartFehlerVerhaltenEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.StoppBedingungEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.StoppFehlerVerhaltenEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.UsvEditor;
+import de.bsvrz.sys.startstopp.console.ui.editor.ZugangDavEditor;
 import de.bsvrz.sys.startstopp.console.ui.online.ApplikationDetailAction;
 import de.bsvrz.sys.startstopp.console.ui.online.ApplikationRestartAction;
 import de.bsvrz.sys.startstopp.console.ui.online.ApplikationStartAction;
@@ -45,7 +70,7 @@ import de.bsvrz.sys.startstopp.console.ui.online.StartStoppStoppAction;
 
 public interface GuiComponentFactory {
 
-	SkriptEditor createSkriptEditor(StartStoppSkript skript);
+	SkriptEditorWindow createSkriptEditor(StartStoppSkript skript);
 
 	EditorSaveAction createSaveAction(StartStoppSkript skript);
 
@@ -72,4 +97,34 @@ public interface GuiComponentFactory {
 	JaNeinDialog createJaNeinDialog(@Assisted("title") String title, @Assisted("message") String message);
 
 	InkarnationTable createInkarnationTable(StartStoppSkript skript);
+
+	InkarnationEditor createInkarnationEditor(StartStoppSkript skript, Inkarnation inkarnation);
+
+	AufrufParameterEditor createAufrufParameterEditor(Inkarnation inkarnation);
+
+	KernsystemEditor createKernsystemEditor(StartStoppSkript skript);
+
+	MakroEditor createMakroEditor(StartStoppSkript skript, MakroDefinition makroDefinition);
+
+	MakroTable createMakroTable(StartStoppSkript skript);
+
+	RechnerEditor createRechnerEditor(StartStoppSkript skript, Rechner rechner);
+
+	RechnerTable createRechnerTable(StartStoppSkript skript);
+
+	StartBedingungEditor createStartBedingungEditor(StartStoppSkript skript, StartBedingung startBedingung);
+
+	StartFehlerVerhaltenEditor createStartFehlerVerhaltenEditor(StartFehlerVerhalten startFehlerVerhalten);
+
+	StoppBedingungEditor createStoppBedingungEditor(StartStoppSkript skript, StoppBedingung stoppBedingung);
+
+	StoppFehlerVerhaltenEditor createStoppFehlerVerhaltenEditor(StoppFehlerVerhalten stoppFehlerVerhalten);
+
+	UsvEditor createUsvEditor(Usv usv);
+
+	ZugangDavEditor createZugangDavEditor(ZugangDav zugangDav);
+
+	StartArtEditor createStartArtEditor(StartArt startArt);
+
+	InkarnationSelektor createInkarnationSelektor(StartStoppSkript skript);
 }

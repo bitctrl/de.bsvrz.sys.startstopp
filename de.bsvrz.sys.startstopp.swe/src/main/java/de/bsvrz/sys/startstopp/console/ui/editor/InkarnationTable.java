@@ -81,12 +81,11 @@ public class InkarnationTable extends Table<Object> {
 			public void run() {
 				int row = getSelectedRow();
 				Inkarnation inkarnation = skript.getInkarnationen().get(row);
-				InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
-				Inkarnation result = editor.showDialog(gui);
-				if (result != null) {
+				InkarnationEditor editor = factory.createInkarnationEditor(skript, inkarnation);
+				if( editor.showDialog(gui)) {
 					int idx = skript.getInkarnationen().indexOf(inkarnation);
 					skript.getInkarnationen().remove(idx);
-					skript.getInkarnationen().add(idx, result);
+					skript.getInkarnationen().add(idx, editor.getElement());
 				}
 			}
 		});
@@ -114,10 +113,9 @@ public class InkarnationTable extends Table<Object> {
 						.withApplikation("java").withStartArt(new StartArt())
 						.withStartFehlerVerhalten(new StartFehlerVerhalten())
 						.withStoppFehlerVerhalten(new StoppFehlerVerhalten());
-				InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
-				Inkarnation result = editor.showDialog(gui);
-				if (result != null) {
-					skript.getInkarnationen().add(row, result);
+				InkarnationEditor editor = factory.createInkarnationEditor(skript, inkarnation);
+				if( editor.showDialog(gui)) {
+					skript.getInkarnationen().add(row, editor.getElement());
 					getTableModel().insertRow(row, Arrays.asList(inkarnation.getInkarnationsName(),
 							inkarnation.getInkarnationsTyp(), inkarnation.getStartArt().getOption()));
 				}

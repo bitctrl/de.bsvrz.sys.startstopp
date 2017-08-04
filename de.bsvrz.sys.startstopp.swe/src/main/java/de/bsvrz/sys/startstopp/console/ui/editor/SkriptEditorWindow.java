@@ -31,16 +31,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
@@ -49,18 +45,20 @@ import com.googlecode.lanterna.gui2.GridLayout.Alignment;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowListener;
+import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
-public class SkriptEditor extends BasicWindow implements WindowListener {
+public class SkriptEditorWindow extends BasicWindow {
 	private InkarnationTable inkarnationTable;
 	private StartStoppSkript skript;
 	private MakroTable makroTable;
@@ -70,7 +68,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 	GuiComponentFactory factory;
 
 	@Inject
-	public SkriptEditor(@Assisted StartStoppSkript skript) {
+	public SkriptEditorWindow(@Assisted StartStoppSkript skript) {
 		super("StartStopp - Editor");
 		this.skript = (StartStoppSkript) Util.cloneObject(skript);
 	}
@@ -85,7 +83,14 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		} catch (StartStoppException e) {
 			Debug.getLogger().warning(e.getLocalizedMessage());
 		}
-		addWindowListener(this);
+		addWindowListener(new WindowListenerAdapter() {
+			@Override
+			public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
+				if (inkarnationTable != null) {
+					inkarnationTable.setVisibleRows(newSize.getRows() - 2);
+				}
+			}
+		});
 	}
 
 	private void showInkarnationTable() throws StartStoppException {
@@ -116,7 +121,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
-		makroTable = new MakroTable(getTextGUI(), skript);
+		makroTable = factory.createMakroTable(skript);
 		makroTable.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		makroTable.setPreferredSize(TerminalSize.ONE);
@@ -136,7 +141,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
-		rechnerTable = new RechnerTable(getTextGUI(), skript);
+		rechnerTable = factory.createRechnerTable(skript);
 		rechnerTable.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		rechnerTable.setPreferredSize(TerminalSize.ONE);
@@ -148,16 +153,16 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 	}
 
 	@Override
-	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-		// TODO Auto-generated method stub
-		switch (keyStroke.getKeyType()) {
+	public boolean handleInput(KeyStroke key) {
+
+		switch (key.getKeyType()) {
 		case Character:
-			switch (keyStroke.getCharacter()) {
+			switch (key.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
 				builder.addActions(factory.createSaveAction(skript), factory.createEditorCloseAction(this));
 				builder.build().showDialog(getTextGUI());
-				break;
+				return true;
 
 			case 'm':
 				try {
@@ -166,7 +171,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				break;
+				return true;
 
 			case 'i':
 				try {
@@ -175,7 +180,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				break;
+				return true;
 
 			case 'r':
 				try {
@@ -184,7 +189,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				break;
+				return true;
 
 			case 'l':
 				FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
@@ -195,44 +200,38 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 					try (InputStream stream = new FileInputStream(selectedFile)) {
 						ObjectMapper mapper = new ObjectMapper();
 						skript = mapper.readValue(stream, StartStoppSkript.class);
-					} catch (JsonParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JsonMappingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
 					}
 				}
-				break;
+				return true;
 
 			case 'k':
-				KernsystemEditor ksEditor = new KernsystemEditor(skript);
+				KernsystemEditor ksEditor = factory.createKernsystemEditor(skript);
 				if (ksEditor.showDialog(getTextGUI())) {
 					skript.getGlobal().getKernsysteme().clear();
-					skript.getGlobal().getKernsysteme().addAll(ksEditor.getKernsysteme());
+					skript.getGlobal().getKernsysteme().addAll(ksEditor.getElement());
 				}
-				break;
+				return true;
 
 			case 'u':
-				UsvEditor usvEditor = new UsvEditor(skript.getGlobal().getUsv());
+				UsvEditor usvEditor = factory
+						.createUsvEditor(Util.getObjectOrDefault(skript.getGlobal().getUsv(), Usv.class));
 				if (usvEditor.showDialog(getTextGUI())) {
-					skript.getGlobal().setUsv(usvEditor.getUsv());
+					skript.getGlobal().setUsv(usvEditor.getElement());
 				}
-				break;
+				return true;
 
 			case 'z':
-				ZugangDavEditor zugangDavEditor = new ZugangDavEditor(skript.getGlobal().getZugangDav());
+				ZugangDavEditor zugangDavEditor = factory.createZugangDavEditor(
+						Util.getObjectOrDefault(skript.getGlobal().getZugangDav(), ZugangDav.class));
 				if (zugangDavEditor.showDialog(getTextGUI())) {
-					skript.getGlobal().setZugangDav(zugangDavEditor.getZugangDav());
+					skript.getGlobal().setZugangDav(zugangDavEditor.getElement());
 				}
-				break;
+				return true;
 
-				
 			default:
-				System.err.println(getClass().getSimpleName() + ": " + keyStroke);
+				System.err.println(getClass().getSimpleName() + ": " + key);
 				break;
 			}
 			break;
@@ -240,25 +239,7 @@ public class SkriptEditor extends BasicWindow implements WindowListener {
 		default:
 			break;
 		}
-	}
 
-	@Override
-	public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
-		if (inkarnationTable != null) {
-			inkarnationTable.setVisibleRows(newSize.getRows() - 2);
-		}
-
-	}
-
-	@Override
-	public void onMoved(Window window, TerminalPosition oldPosition, TerminalPosition newPosition) {
-		// TODO Auto-generated method stub
-
+		return super.handleInput(key);
 	}
 }

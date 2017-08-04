@@ -26,42 +26,48 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
-public class MakroTable extends Table<Object> {
+public class InkarnationSelektor {
+	
+	private Inkarnation selected = null;
+	private ActionListDialogBuilder builder;
 
 	@Inject
-	private GuiComponentFactory factory;
+	private WindowBasedTextGUI gui;
+	
+	private SortedMap<String, Inkarnation> inkarnationen = new TreeMap<>();
 	
 	@Inject
-	public MakroTable(WindowBasedTextGUI gui, @Assisted StartStoppSkript skript) {
-		super("Name", "Wert");
-
-		for (MakroDefinition makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
-			getTableModel().addRow(makroDefinition.getName(), makroDefinition.getWert());
+	public InkarnationSelektor(@Assisted StartStoppSkript skript) {
+		for( Inkarnation inkarnation : skript.getInkarnationen()) {
+			inkarnationen.put(inkarnation.getInkarnationsName(), inkarnation);
 		}
-		
-		setSelectAction(new Runnable() {
-			@Override
-			public void run() {
-				int row = getSelectedRow();
-				MakroDefinition makroDefinition = skript.getGlobal().getMakrodefinitionen().get(row);
-				MakroEditor editor = factory.createMakroEditor(skript, makroDefinition); 
-				if( editor.showDialog(gui)) {
-					makroDefinition.setName(editor.getElement().getName());
-					getTableModel().setCell(0, row, makroDefinition.getName());
-					makroDefinition.setWert(editor.getElement().getWert());
-					getTableModel().setCell(1, row, makroDefinition.getWert());
-				}
-			}
-		});
+	}
+
+	public void removeInkarnation( String name) {
+		inkarnationen.remove(name);
+	}
+	
+	public Inkarnation getInkarnation() {
+
+		builder = new ActionListDialogBuilder();
+		builder.setTitle("Inkarnation");
+		for( Inkarnation inkarnation : inkarnationen.values()) {
+			builder.addAction(inkarnation.getInkarnationsName(), () -> { selected = inkarnation;});
+		}
+
+		builder.build().showDialog(gui);
+		return selected;
 	}
 }

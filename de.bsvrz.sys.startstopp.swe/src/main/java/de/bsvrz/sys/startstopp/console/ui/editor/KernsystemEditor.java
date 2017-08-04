@@ -27,78 +27,114 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-import com.googlecode.lanterna.gui2.Button;
+import javax.inject.Inject;
+
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
+import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.input.KeyStroke;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
-public class KernsystemEditor extends DialogWindow {
+public class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> {
 
-	private boolean okPressed;
 	private List<KernSystem> kernSysteme = new ArrayList<>();
-	
-	public KernsystemEditor(StartStoppSkript skript) {
-		super("StartStopp - Editor: Inkarnation: ");
+	private Table<String> ksTable;
+	private StartStoppSkript skript;
 
-		for( KernSystem kernSystem : skript.getGlobal().getKernsysteme()) {
+	@Inject
+	private GuiComponentFactory factory;
+
+	@Inject
+	public KernsystemEditor(@Assisted StartStoppSkript skript) {
+		super("Kernsystem");
+		this.skript = skript;
+		for (KernSystem kernSystem : skript.getGlobal().getKernsysteme()) {
 			kernSysteme.add((KernSystem) Util.cloneObject(kernSystem));
 		}
-		setHints(Arrays.asList(Window.Hint.CENTERED));
-
-		initUI();
 	}
 
-	private void initUI() {
-		Panel buttonPanel = new Panel();
-		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-		Button okButton = new Button("OK", new Runnable() {
-
-
-			@Override
-			public void run() {
-				okPressed = true;
-				close();
-			}
-		});
-		buttonPanel.addComponent(okButton);
-		Button cancelButton = new Button("Abbrechen", new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
-		buttonPanel.addComponent(cancelButton);
-
-		Panel mainPanel = new Panel();
+	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
-		// TODO Inhalt für Kernsysteme
+		ksTable = new Table<>("Kernsystem");
+		for (KernSystem ks : kernSysteme) {
+			ksTable.getTableModel().addRow(ks.getInkarnationsName());
+		}
+		mainPanel.addComponent(ksTable, GridLayout.createHorizontallyFilledLayoutData(1));
+	}
 
-		mainPanel.addComponent(buttonPanel);
-		setComponent(mainPanel);
+	public List<KernSystem> getElement() {
+		return kernSysteme;
 	}
 
 	@Override
-	public Boolean showDialog(WindowBasedTextGUI textGUI) {
-		// TODO Auto-generated method stub
-		super.showDialog(textGUI);
-		return okPressed;
-	}
+	public boolean handleInput(KeyStroke key) {
+		if (ksTable.isFocused()) {
+			if (Util.isDeleteKey(key)) {
+				int row = ksTable.getSelectedRow();
+				if ((row >= 0) && (row < kernSysteme.size())) {
+					kernSysteme.remove(row);
+					ksTable.getTableModel().removeRow(row);
+					ksTable.setSelectedRow(Math.max(0, row - 1));
+				}
+				return true;
+			} else if (Util.isInsertAfterKey(key)) {
+				InkarnationSelektor inkarnationSelektor = factory.createInkarnationSelektor(skript);
+				for (KernSystem ks : kernSysteme) {
+					inkarnationSelektor.removeInkarnation(ks.getInkarnationsName());
+				}
+				Inkarnation inkarnation = inkarnationSelektor.getInkarnation();
+				if (inkarnation != null) {
+					int row = ksTable.getSelectedRow();
+					kernSysteme.add(row, new KernSystem(inkarnation.getInkarnationsName()));
+					ksTable.getTableModel().insertRow(row + 1, Collections.singleton(inkarnation.getInkarnationsName()));
+					ksTable.setSelectedRow(row + 1);
+				}
+				return true;
+			} else if (Util.isInsertBeforeKey(key)) {
+				InkarnationSelektor inkarnationSelektor = factory.createInkarnationSelektor(skript);
+				for (KernSystem ks : kernSysteme) {
+					inkarnationSelektor.removeInkarnation(ks.getInkarnationsName());
+				}
+				Inkarnation inkarnation = inkarnationSelektor.getInkarnation();
+				if (inkarnation != null) {
+					int row = ksTable.getSelectedRow();
+					kernSysteme.add(row, new KernSystem(inkarnation.getInkarnationsName()));
+					ksTable.getTableModel().insertRow(row, Collections.singleton(inkarnation.getInkarnationsName()));
+				}
+				return true;
+			} else if (Util.isEintragNachObenKey(key)) {
+				int row = ksTable.getSelectedRow();
+				if (row > 0) {
+					KernSystem kernSystem = kernSysteme.remove(row);
+					kernSysteme.add(row - 1, kernSystem);
+					ksTable.getTableModel().setCell(0, row - 1, kernSysteme.get(row - 1).getInkarnationsName());
+					ksTable.getTableModel().setCell(0, row, kernSysteme.get(row).getInkarnationsName());
+					ksTable.setSelectedRow(row - 1);
+				}
+				return true;
+			} else if (Util.isEintragNachUntenKey(key)) {
+				int row = ksTable.getSelectedRow();
+				if (row < kernSysteme.size() - 1) {
+					KernSystem kernSystem = kernSysteme.remove(row);
+					kernSysteme.add(row + 1, kernSystem);
+					ksTable.getTableModel().setCell(0, row + 1, kernSysteme.get(row + 1).getInkarnationsName());
+					ksTable.getTableModel().setCell(0, row, kernSysteme.get(row).getInkarnationsName());
+					ksTable.setSelectedRow(row + 1);
+				}
+				return true;
+			}
+		}
 
-	public Collection<KernSystem> getKernsysteme() {
-		// TODO Auto-generated method stub
-		return kernSysteme;
+		return super.handleInput(key);
 	}
-	
 }

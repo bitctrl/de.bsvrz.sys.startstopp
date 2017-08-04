@@ -28,6 +28,9 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
@@ -37,13 +40,18 @@ import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 public class RechnerTable extends Table<String> {
 
+	@Inject
+	private GuiComponentFactory factory;
+	
 	private StartStoppSkript skript;
 	private WindowBasedTextGUI gui;
 
-	public RechnerTable(WindowBasedTextGUI gui, StartStoppSkript skript) {
+	@Inject
+	public RechnerTable(WindowBasedTextGUI gui, @Assisted StartStoppSkript skript) {
 		super("Name", "Host", "Port");
 		this.skript = skript;
 		this.gui = gui;
@@ -53,12 +61,11 @@ public class RechnerTable extends Table<String> {
 			public void run() {
 				int row = getSelectedRow();
 				Rechner rechner = skript.getGlobal().getRechner().get(row);
-				RechnerEditor editor = new RechnerEditor(skript, rechner);
-				MessageDialogButton result = editor.showDialog(gui);
-				if (result == MessageDialogButton.OK) {
-					getTableModel().setCell(0, row, rechner.getName());
-					getTableModel().setCell(1, row, rechner.getTcpAdresse());
-					getTableModel().setCell(2, row, rechner.getPort());
+				RechnerEditor editor = factory.createRechnerEditor(skript, rechner);
+				if (editor.showDialog(gui)) {
+					getTableModel().setCell(0, row, editor.getElement().getName());
+					getTableModel().setCell(1, row, editor.getElement().getTcpAdresse());
+					getTableModel().setCell(2, row, editor.getElement().getPort());
 				}
 			}
 		});
@@ -82,12 +89,11 @@ public class RechnerTable extends Table<String> {
 				rechner.setName("Neuer Rechner");
 				rechner.setTcpAdresse("");
 				rechner.setPort("");
-				RechnerEditor editor = new RechnerEditor(skript, rechner);
-				MessageDialogButton result = editor.showDialog(gui);
-				if (result == MessageDialogButton.OK) {
-					skript.getGlobal().getRechner().add(row, rechner);
-					getTableModel().insertRow(row,
-							Arrays.asList(rechner.getName(), rechner.getTcpAdresse(), rechner.getPort()));
+				RechnerEditor editor = factory.createRechnerEditor(skript, rechner);
+				if (editor.showDialog(gui)) {
+					skript.getGlobal().getRechner().add(row, editor.getElement());
+					getTableModel().insertRow(row, Arrays.asList(editor.getElement().getName(),
+							editor.getElement().getTcpAdresse(), editor.getElement().getPort()));
 				}
 				break;
 			case '-':
@@ -96,7 +102,7 @@ public class RechnerTable extends Table<String> {
 				builder.addButton(MessageDialogButton.No);
 				builder.setTitle("Rechner löschen");
 				builder.setText("Soll der ausgewählte Rechner wirklich gelöscht werden?");
-				result = builder.build().showDialog(gui);
+				MessageDialogButton result = builder.build().showDialog(gui);
 				if (result.equals(MessageDialogButton.Yes)) {
 					int deleteRow = getSelectedRow();
 					skript.getGlobal().getRechner().remove(deleteRow);

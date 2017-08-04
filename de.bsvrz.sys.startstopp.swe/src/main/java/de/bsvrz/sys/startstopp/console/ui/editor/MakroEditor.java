@@ -26,91 +26,60 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.Arrays;
+import javax.inject.Inject;
 
+import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.Button;
-import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class MakroEditor extends DialogWindow {
+public class MakroEditor extends StartStoppElementEditor<MakroDefinition> {
 
-	private MakroDefinition result;
-	private Button okButton;
 	private MakroDefinition makroDefinition;
-	private Button cancelButton;
-	private TextBox nameField;
-	private TextBox wertField;
 
-	public MakroEditor(StartStoppSkript skript, MakroDefinition makroDefinition) {
-		super("StartStopp - Editor: Inkarnation: ");
+	@Inject
+	public MakroEditor(@Assisted StartStoppSkript skript, @Assisted MakroDefinition makroDefinition) {
+		super("Makrodefinition");
+		this.makroDefinition = (MakroDefinition) Util.cloneObject(makroDefinition);
+	}	
 
-		this.makroDefinition = makroDefinition;
-		setHints(Arrays.asList(Window.Hint.CENTERED, Window.Hint.FIT_TERMINAL_WINDOW));
-		setCloseWindowWithEscape(true);
-		
-		initUI();
-	}
-	
-	private void initUI() {
-		Panel buttonPanel = new Panel();
-		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-		okButton = new Button("OK", new Runnable() {
-
-			@Override
-			public void run() {
-				makroDefinition.setName(nameField.getText());
-				makroDefinition.setWert(wertField.getText());
-				result = makroDefinition;
-				close();
-			}
-		});
-		buttonPanel.addComponent(okButton);
-		cancelButton = new Button("Abbrechen", new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
-		buttonPanel.addComponent(cancelButton);
-
-		Panel mainPanel = new Panel();
+	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
 		mainPanel.addComponent(new Label("Name:"));
-		nameField = new TextBox();
+		TextBox nameField = new TextBox() {
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				makroDefinition.setName(getText());
+				super.afterLeaveFocus(direction, nextInFocus);
+			}
+		};
 		nameField.setText(makroDefinition.getName());
 		nameField.setPreferredSize(new TerminalSize(nameField.getText().length(), 1));
 		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(1));
-		
+
 		mainPanel.addComponent(new Label("Adresse:"));
-		wertField = new TextBox("");
+		TextBox wertField = new TextBox(""){
+			@Override
+			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
+				makroDefinition.setWert(getText());
+				super.afterLeaveFocus(direction, nextInFocus);
+			}
+		};
 		wertField.setText(makroDefinition.getWert());
 		wertField.setPreferredSize(new TerminalSize(wertField.getText().length(), 1));
 		mainPanel.addComponent(wertField, GridLayout.createHorizontallyFilledLayoutData(1));
-
-		mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-		
-		buttonPanel.setLayoutData(
-				GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false))
-				.addTo(mainPanel);
-
-		setComponent(mainPanel);
 	}
-	
+
 	@Override
-	public MakroDefinition showDialog(WindowBasedTextGUI textGUI) {
-		super.showDialog(textGUI);
-		return result;
+	public MakroDefinition getElement() {
+		return makroDefinition;
 	}
 }
