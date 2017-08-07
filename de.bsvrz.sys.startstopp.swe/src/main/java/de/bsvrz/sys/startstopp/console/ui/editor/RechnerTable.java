@@ -32,21 +32,19 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 public class RechnerTable extends Table<String> {
 
 	@Inject
 	private GuiComponentFactory factory;
-	
+
 	private StartStoppSkript skript;
 	private WindowBasedTextGUI gui;
 
@@ -78,36 +76,24 @@ public class RechnerTable extends Table<String> {
 
 	@Override
 	public Result handleKeyStroke(KeyStroke keyStroke) {
-
-		if (keyStroke.getKeyType() == KeyType.Character) {
-			switch (keyStroke.getCharacter()) {
-			case '+':
-				int row = getSelectedRow() + 1;
-				Rechner rechner = new Rechner();
-				rechner.setName("Neuer Rechner");
-				rechner.setTcpAdresse("");
-				rechner.setPort("");
-				RechnerEditor editor = factory.createRechnerEditor(skript, rechner);
-				if (editor.showDialog(gui)) {
-					skript.getGlobal().getRechner().add(row, editor.getElement());
-					getTableModel().insertRow(row, Arrays.asList(editor.getElement().getName(),
-							editor.getElement().getTcpAdresse(), editor.getElement().getPort()));
-				}
-				break;
-			case '-':
-				MessageDialogBuilder builder = new MessageDialogBuilder();
-				builder.addButton(MessageDialogButton.Yes);
-				builder.addButton(MessageDialogButton.No);
-				builder.setTitle("Rechner löschen");
-				builder.setText("Soll der ausgewählte Rechner wirklich gelöscht werden?");
-				MessageDialogButton result = builder.build().showDialog(gui);
-				if (result.equals(MessageDialogButton.Yes)) {
-					int deleteRow = getSelectedRow();
-					skript.getGlobal().getRechner().remove(deleteRow);
-					getTableModel().removeRow(deleteRow);
-				}
-				break;
-			default:
+		if (SkriptEditor.isInsertAfterKey(keyStroke)) {
+			int row = getSelectedRow() + 1;
+			Rechner rechner = new Rechner();
+			rechner.setName("Neuer Rechner");
+			rechner.setTcpAdresse("");
+			rechner.setPort("");
+			RechnerEditor editor = factory.createRechnerEditor(skript, rechner);
+			if (editor.showDialog(gui)) {
+				skript.getGlobal().getRechner().add(row, editor.getElement());
+				getTableModel().insertRow(row, Arrays.asList(editor.getElement().getName(),
+						editor.getElement().getTcpAdresse(), editor.getElement().getPort()));
+			}
+		} else if (SkriptEditor.isDeleteKey(keyStroke)) {
+			JaNeinDialog dialog = factory.createJaNeinDialog("Rechner löschen", "Soll der ausgewählte Rechner wirklich gelöscht werden?");
+			if (dialog.display()) {
+				int deleteRow = getSelectedRow();
+				skript.getGlobal().getRechner().remove(deleteRow);
+				getTableModel().removeRow(deleteRow);
 			}
 		}
 

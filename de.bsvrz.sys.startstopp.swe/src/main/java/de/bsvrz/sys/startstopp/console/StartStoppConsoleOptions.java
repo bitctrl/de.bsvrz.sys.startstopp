@@ -26,13 +26,17 @@
 
 package de.bsvrz.sys.startstopp.console;
 
+import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
+
 public class StartStoppConsoleOptions {
 
 	private String host = "localhost";
 	private int port = 3000;
 
 	public StartStoppConsoleOptions(String[] args) {
-		// TODO Kommandozeilenparameter einlesen
+		ArgumentList argList = new ArgumentList(args);
+		host = argList.fetchArgument("-host=localhost").asNonEmptyString();
+		port = argList.fetchArgument("-port=3000").intValue();
 	}
 
 	public String getHost() {

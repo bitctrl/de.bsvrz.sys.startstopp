@@ -477,4 +477,9 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	public void stopperFinished() {
 		// TODO Auto-generated method stub
 	}
+
+	public void starteSkript() {
+		// TODO Auto-generated method stub
+		
+	}
 }

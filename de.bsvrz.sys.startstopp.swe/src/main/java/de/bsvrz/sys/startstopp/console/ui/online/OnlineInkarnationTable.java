@@ -33,6 +33,7 @@ import javax.inject.Inject;
 
 import com.googlecode.lanterna.gui2.table.Table;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
@@ -40,6 +41,8 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 
 public class OnlineInkarnationTable extends Table<Object> {
 
+	private static final Debug LOGGER = Debug.getLogger();
+	
 	private final class Updater extends Thread {
 
 		private Updater() {
@@ -53,8 +56,7 @@ public class OnlineInkarnationTable extends Table<Object> {
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.warning(e.getLocalizedMessage());
 				}
 
 				try {

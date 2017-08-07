@@ -169,8 +169,7 @@ public class SkriptEditor extends BasicWindow {
 				try {
 					showMakroTable();
 				} catch (StartStoppException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
 				}
 				return true;
 
@@ -178,8 +177,7 @@ public class SkriptEditor extends BasicWindow {
 				try {
 					showInkarnationTable();
 				} catch (StartStoppException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
 				}
 				return true;
 
@@ -187,8 +185,7 @@ public class SkriptEditor extends BasicWindow {
 				try {
 					showRechnerTable();
 				} catch (StartStoppException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
 				}
 				return true;
 

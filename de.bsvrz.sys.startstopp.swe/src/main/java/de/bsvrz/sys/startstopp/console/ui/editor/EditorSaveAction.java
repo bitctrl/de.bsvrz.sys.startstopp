@@ -30,17 +30,20 @@ import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.UrlasserDialog;
 
 public class EditorSaveAction implements Runnable {
 
 	private final StartStoppSkript skript;
+
+	@Inject
+	private GuiComponentFactory factory;
 
 	@Inject
 	private WindowBasedTextGUI textGui;
@@ -68,10 +71,7 @@ public class EditorSaveAction implements Runnable {
 					text.append(msg);
 				}
 				
-				MessageDialogBuilder builder = new MessageDialogBuilder();
-				builder.setTitle("Fehler");
-				builder.setText(text.toString());
-				builder.build().showDialog(textGui);
+				factory.createInfoDialog("Fehler", text.toString()).display();
 			}
 		}
 	}

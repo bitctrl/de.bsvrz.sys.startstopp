@@ -29,19 +29,33 @@ package de.bsvrz.sys.startstopp.console.ui.online;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 public class ApplikationRestartAction implements Runnable {
 
 	@Inject
+	private GuiComponentFactory factory;
+
+	@Inject
+	private StartStoppClient client;
+	
+	private Applikation applikation;
+	
+	@Inject
 	ApplikationRestartAction(@Assisted Applikation applikation) {
-		// TODO Auto-generated constructor stub
+		this.applikation = applikation;
 	}
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-
+		try {
+			client.restarteApplikation(applikation.getInkarnation().getInkarnationsName());
+		} catch (StartStoppException e) {
+			factory.createInfoDialog("FEHLER", e.getLocalizedMessage());
+		}
 	}
 
 	@Override

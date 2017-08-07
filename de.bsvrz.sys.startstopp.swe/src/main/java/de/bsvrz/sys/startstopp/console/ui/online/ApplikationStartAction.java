@@ -34,8 +34,12 @@ import com.google.inject.assistedinject.Assisted;
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 public class ApplikationStartAction implements Runnable {
+
+	@Inject
+	private GuiComponentFactory factory;
 
 	@Inject
 	private StartStoppClient client;
@@ -52,8 +56,7 @@ public class ApplikationStartAction implements Runnable {
 		try {
 			client.starteApplikation(applikation.getInkarnation().getInkarnationsName());
 		} catch (StartStoppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			factory.createInfoDialog("FEHLER", e.getLocalizedMessage());
 		}
 	}
 

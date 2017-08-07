@@ -78,6 +78,15 @@ public class SystemService {
 	public Response responseStartStoppRestart() {
 		Response response = Response.accepted().build();
 		startStopp.getProcessManager().stoppeSkript(true);
+		startStopp.getProcessManager().starteSkript();
+		return response;
+	}
+
+	@POST
+	@Path("start")
+	public Response responseStartStoppStart() {
+		Response response = Response.accepted().build();
+		startStopp.getProcessManager().starteSkript();
 		return response;
 	}
 

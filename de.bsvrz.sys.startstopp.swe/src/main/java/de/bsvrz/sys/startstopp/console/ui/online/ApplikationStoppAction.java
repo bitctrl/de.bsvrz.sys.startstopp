@@ -59,8 +59,7 @@ public class ApplikationStoppAction implements Runnable {
 				client.stoppeApplikation(applikation.getInkarnation().getInkarnationsName());
 			}
 		} catch (StartStoppException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
 		}
 
 	}

@@ -179,6 +179,21 @@ public class StartStoppClient {
 						+ response.getStatus() + ")");
 	}
 
+	public void startStartStopp() throws StartStoppException {
+		Response response = null;
+		try {
+			response = createPostResponse("/system/start");
+			if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+				return;
+			}
+		} catch (Exception e) {
+			throw new StartStoppException(e);
+		}
+		throw new StartStoppException(
+				"Anforderung zum Starten der StartStopp-Konfiguration wurde nicht entgegengenommen (Response: "
+						+ response.getStatus() + ")");
+	}
+
 	public void restartStartStopp() throws StartStoppException {
 		Response response = null;
 		try {
