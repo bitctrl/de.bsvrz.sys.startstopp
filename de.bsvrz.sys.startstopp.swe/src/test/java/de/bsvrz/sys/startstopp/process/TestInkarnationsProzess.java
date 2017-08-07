@@ -104,7 +104,7 @@ public class TestInkarnationsProzess {
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
 		String ausgabe = inkarnationsProzess.getProzessAusgabe().toLowerCase();
-		Assert.assertTrue("Fehlermeldung", ausgabe.contains("hauptklasse") || ausgabe.contains("mainclass"));
+		Assert.assertTrue("Fehlermeldung: " + ausgabe, ausgabe.contains("hauptklasse") || ausgabe.contains("mainclass"));
 		Assert.assertEquals("Exitcode", 1, inkarnationsProzess.getLastExitCode());
 	}
 
