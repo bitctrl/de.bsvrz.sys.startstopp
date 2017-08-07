@@ -60,7 +60,7 @@ public class StartBedingungEditor extends StartStoppElementEditor<StartBedingung
 			bedingungUsed = false;
 			this.startBedingung = new StartBedingung();
 		} else {
-			bedingungUsed = false;
+			bedingungUsed = true;
 			this.startBedingung = (StartBedingung) Util.cloneObject(startBedingung);
 		}
 
@@ -127,13 +127,16 @@ public class StartBedingungEditor extends StartStoppElementEditor<StartBedingung
 				}
 			}
 		});
+		mainPanel.addComponent(rechnerSelektor, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Wartezeit:"));
 		TextBox warteZeitField = new TextBox(
 				startBedingung.getWartezeit() == null ? "" : startBedingung.getWartezeit()) {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
-				startBedingung.setWartezeit(getText());
+				String neueWarteZeit = getText();
+				System.err.println("Neue Wartezeit: " + neueWarteZeit);
+				startBedingung.setWartezeit(neueWarteZeit);
 				super.afterLeaveFocus(direction, nextInFocus);
 			}
 		};

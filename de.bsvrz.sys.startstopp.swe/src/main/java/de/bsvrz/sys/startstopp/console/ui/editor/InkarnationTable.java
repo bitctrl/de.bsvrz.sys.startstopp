@@ -49,8 +49,6 @@ import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 public class InkarnationTable extends Table<Object> {
 
-	private static final Debug LOGGER = Debug.getLogger();
-
 	@Inject
 	GuiComponentFactory factory;
 
@@ -102,8 +100,6 @@ public class InkarnationTable extends Table<Object> {
 
 	@Override
 	public Result handleKeyStroke(KeyStroke keyStroke) {
-		// TODO Auto-generated method stub
-		System.err.println("InkarnationTable-Key: " + keyStroke);
 
 		if (keyStroke.getKeyType() == KeyType.Character) {
 			switch (keyStroke.getCharacter()) {

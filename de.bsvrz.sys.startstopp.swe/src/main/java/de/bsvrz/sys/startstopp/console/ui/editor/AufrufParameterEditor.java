@@ -27,16 +27,16 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
-import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.TextBox;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
+import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
@@ -44,146 +44,104 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
 public class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 
-	private List<String> parameter = new ArrayList<>();
-	private Panel parameterPanel;
+	private List<String> parameterListe = new ArrayList<>();
+	private Table<String> parameterTable;
 
 	@Inject
 	public AufrufParameterEditor(@Assisted Inkarnation inkarnation) {
 		super("Aufrufparameter");
-		this.parameter.addAll(inkarnation.getAufrufParameter());
+		this.parameterListe.addAll(inkarnation.getAufrufParameter());
 	}
 
 	protected void initComponents(Panel mainPanel) {
 
-		parameterPanel = new Panel();
-		parameterPanel.setLayoutManager(new GridLayout(1));
+		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
-		for (String param : parameter) {
-			TextBox box = new TextBox(param) {
-				@Override
-				protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
-					int row = getBoxLine(this);
-					if (row >= 0) {
-						parameter.remove(row);
-						parameter.add(row, getText());
-					}
-					super.afterLeaveFocus(direction, nextInFocus);
-				}
-			};
-			parameterPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
+		parameterTable = new Table<>("Aufrufparameter");
+		for (String parameter : parameterListe) {
+			parameterTable.getTableModel().addRow(parameter);
 		}
-
-		mainPanel.addComponent(parameterPanel);
-	}
-
-	private int getBoxLine(TextBox textBox) {
-		int row = 0;
-		for (Component child : parameterPanel.getChildren()) {
-			if (child == textBox) {
-				return row;// TODO Auto-generated method stub
-			}
-			row++;
-		}
-		return -1;
-	}
-
-	private int getSelectedLine() {
-		int line = 0;
-		for (Component child : parameterPanel.getChildren()) {
-			if (child instanceof TextBox) {
-				if (((TextBox) child).isFocused()) {
-					return line;
+		
+		parameterTable.setSelectAction(new Runnable() {
+			
+			@Override
+			public void run() {
+				TextInputDialogBuilder builder = new TextInputDialogBuilder();
+				builder.setTitle("Parameter").setDescription("Parameter bearbeiten:").setInitialContent(parameterListe.get(parameterTable.getSelectedRow()));
+				String newParameter = builder.build().showDialog(getTextGUI());
+				if (newParameter != null) {
+					int row = parameterTable.getSelectedRow();
+					parameterListe.remove(row);
+					parameterListe.add(row, newParameter);
+					parameterTable.getTableModel().setCell(0, row, newParameter);
 				}
 			}
-			line++;
-		}
-		return -1;
+		});
+		
+		mainPanel.addComponent(parameterTable, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
+
 
 	@Override
 	public boolean handleInput(KeyStroke key) {
-		if (Util.isInsertAfterKey(key)) {
-
-			int row = getSelectedLine();
-			if (row >= 0) {
-				parameter.add(row + 1, "Neuer Parameter");
-			} else {
-				parameter.add("Neuer Parameter");
-			}
-
-			TextBox box = new TextBox("Neuer Parameter") {
-				@Override
-				protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
-					int row = getBoxLine(this);
-					if (row >= 0) {
-						parameter.remove(row);
-						parameter.add(row, getText());
-					}
-					super.afterLeaveFocus(direction, nextInFocus);
+		if (parameterTable.isFocused()) {
+			if (Util.isDeleteKey(key)) {
+				int row = parameterTable.getSelectedRow();
+				if ((row >= 0) && (row < parameterListe.size())) {
+					parameterListe.remove(row);
+					parameterTable.getTableModel().removeRow(row);
+					parameterTable.setSelectedRow(Math.max(0, row - 1));
 				}
-			};
-			parameterPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
-
-			int count = 0;
-			for (Component component : parameterPanel.getChildren()) {
-				if (component instanceof TextBox) {
-					((TextBox) component).setText(parameter.get(count++));
+				return true;
+			} else if (Util.isInsertAfterKey(key)) {
+				TextInputDialogBuilder builder = new TextInputDialogBuilder();
+				builder.setTitle("Parameter").setDescription("Neuen Parameter angeben:");
+				String newParameter = builder.build().showDialog(getTextGUI());
+				if (newParameter != null) {
+					int row = parameterTable.getSelectedRow();
+					parameterListe.add(row, newParameter);
+					parameterTable.getTableModel().insertRow(row + 1, Collections.singleton(newParameter));
+					parameterTable.setSelectedRow(row + 1);
 				}
-			}
-
-			return true;
-		} else if (Util.isInsertBeforeKey(key)) {
-			int row = getSelectedLine();
-			if (row >= 0) {
-				parameter.add(row, "Neuer Parameter");
-			} else {
-				parameter.add("Neuer Parameter");
-			}
-
-			TextBox box = new TextBox("Neuer Parameter") {
-				@Override
-				protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
-					int row = getBoxLine(this);
-					if (row >= 0) {
-						parameter.remove(row);
-						parameter.add(row, getText());
-					}
-					super.afterLeaveFocus(direction, nextInFocus);
+				return true;
+			} else if (Util.isInsertBeforeKey(key)) {
+				TextInputDialogBuilder builder = new TextInputDialogBuilder();
+				builder.setTitle("Parameter").setDescription("Neuen Parameter angeben:");
+				String newParameter = builder.build().showDialog(getTextGUI());
+				if (newParameter != null) {
+					int row = parameterTable.getSelectedRow();
+					parameterListe.add(row, newParameter);
+					parameterTable.getTableModel().insertRow(row, Collections.singleton(newParameter));
 				}
-			};
-			parameterPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
-
-			int count = 0;
-			for (Component component : parameterPanel.getChildren()) {
-				if (component instanceof TextBox) {
-					((TextBox) component).setText(parameter.get(count++));
+				return true;
+			} else if (Util.isEintragNachObenKey(key)) {
+				int row = parameterTable.getSelectedRow();
+				if (row > 0) {
+					String parameter = parameterListe.remove(row);
+					parameterListe.add(row - 1, parameter);
+					parameterTable.getTableModel().setCell(0, row - 1, parameterListe.get(row - 1));
+					parameterTable.getTableModel().setCell(0, row, parameterListe.get(row));
+					parameterTable.setSelectedRow(row - 1);
 				}
-			}
-
-			return true;
-		} else if (Util.isDeleteKey(key)) {
-			int row = getSelectedLine();
-			if (row >= 0) {
-				Interactable toDelete = (Interactable) parameterPanel.getChildren().iterator().next();
-				parameterPanel.removeComponent(toDelete);
-				parameter.remove(row);
-				int count = 0;
-				for (Component component : parameterPanel.getChildren()) {
-					if (component instanceof TextBox) {
-						((TextBox) component).setText(parameter.get(count++));
-					}
+				return true;
+			} else if (Util.isEintragNachUntenKey(key)) {
+				int row = parameterTable.getSelectedRow();
+				if (row < parameterListe.size() - 1) {
+					String parameter = parameterListe.remove(row);
+					parameterListe.add(row + 1, parameter);
+					parameterTable.getTableModel().setCell(0, row + 1, parameterListe.get(row + 1));
+					parameterTable.getTableModel().setCell(0, row, parameterListe.get(row));
+					parameterTable.setSelectedRow(row + 1);
 				}
+				return true;
 			}
-
-			return true;
 		}
-		System.err.println("AufrufParameterEditor: " + key);
-		// TODO Auto-generated method stub
-		return super.handleInput(key);
+
+ 		return super.handleInput(key);
 	}
 
 	@Override
 	public List<String> getElement() {
-		return parameter;
+		return parameterListe;
 	}
 }
