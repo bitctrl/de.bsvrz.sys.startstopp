@@ -26,9 +26,12 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
+import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.CheckBox;
 import com.googlecode.lanterna.gui2.ComboBox;
 import com.googlecode.lanterna.gui2.GridLayout;
@@ -37,13 +40,45 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung> {
 
+	public class NachfolgerTable extends EditableTable<String> {
+
+		public NachfolgerTable(List<String> dataList, String ... columnName) {
+			super(dataList, columnName);
+		}
+
+		@Override
+		protected String requestNewElement() {
+			InkarnationSelektor selektor = factory.createInkarnationSelektor(skript);
+			Inkarnation inkarnation = selektor.getInkarnation();
+			if( inkarnation == null) {
+				return null;
+			}
+			return inkarnation.getInkarnationsName();
+		}
+
+		@Override
+		protected String editElement(String oldElement) {
+			return null;
+		}
+
+		@Override
+		protected String renderElement(String element) {
+			return element;
+		}
+	}
+	
+	@Inject
+	GuiComponentFactory factory;
+	
 	private static final String KEIN_RECHNER = "<kein Rechner>";
 	private StoppBedingung stoppBedingung;
 	private StartStoppSkript skript;
@@ -51,7 +86,7 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 
 	@Inject
 	public StoppBedingungEditor(@Assisted StartStoppSkript skript, @Assisted StoppBedingung stoppBedingung) {
-		super("StartStopp - Editor: Inkarnation: ");
+		super(skript, "StartStopp - Editor: Inkarnation: ");
 
 		this.skript = skript;
 		bedingungUsed = stoppBedingung.getNachfolger().isEmpty();
@@ -71,10 +106,8 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 		});
 		mainPanel.addComponent(bedingungsCheck);
 
-		mainPanel.addComponent(new Label("Nachfolger:"));
-		Panel nachfolgerPanel = new Panel(new GridLayout(1));
-		// TODO Vorgänger eintragen
-		mainPanel.addComponent(nachfolgerPanel);
+		NachfolgerTable table = new NachfolgerTable(stoppBedingung.getNachfolger(), "Nachfolger");
+		mainPanel.addComponent(table.withBorder(Borders.singleLine("Nachfolger")), GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Rechner:"));
 		ComboBox<String> rechnerSelektor = new ComboBox<>(KEIN_RECHNER);

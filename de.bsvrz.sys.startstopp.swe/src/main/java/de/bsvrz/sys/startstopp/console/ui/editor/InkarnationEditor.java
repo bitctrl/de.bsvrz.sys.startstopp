@@ -63,7 +63,7 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 
 	@Inject
 	public InkarnationEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
-		super("Inkarnation: " + inkarnation.getInkarnationsName());
+		super(skript, "Inkarnation: " + inkarnation.getInkarnationsName());
 		this.skript = skript;
 		this.inkarnation = (Inkarnation) Util.cloneObject(inkarnation);
 	}
@@ -100,7 +100,7 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		parameterButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				AufrufParameterEditor editor = factory.createAufrufParameterEditor(inkarnation);
+				AufrufParameterEditor editor = factory.createAufrufParameterEditor(getSkript(), inkarnation);
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.getAufrufParameter().clear();
 					inkarnation.getAufrufParameter().addAll(editor.getElement());
@@ -130,7 +130,7 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		startArtButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				StartArtEditor editor = factory.createStartArtEditor(inkarnation.getStartArt());
+				StartArtEditor editor = factory.createStartArtEditor(getSkript(), inkarnation.getStartArt());
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.setStartArt(editor.getElement());
 				}
@@ -180,7 +180,7 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		startFehlerVerhaltenButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				StartFehlerVerhaltenEditor editor = factory.createStartFehlerVerhaltenEditor(
+				StartFehlerVerhaltenEditor editor = factory.createStartFehlerVerhaltenEditor(getSkript(),
 						Util.getObjectOrDefault(inkarnation.getStartFehlerVerhalten(), StartFehlerVerhalten.class));
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.setStartFehlerVerhalten(editor.getElement());
@@ -212,7 +212,7 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		stoppFehlerVerhaltenButton.addListener(new Listener() {
 			@Override
 			public void onTriggered(Button button) {
-				StoppFehlerVerhaltenEditor editor = factory.createStoppFehlerVerhaltenEditor(
+				StoppFehlerVerhaltenEditor editor = factory.createStoppFehlerVerhaltenEditor(getSkript(),
 						Util.getObjectOrDefault(inkarnation.getStoppFehlerVerhalten(), StoppFehlerVerhalten.class));
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.setStoppFehlerVerhalten(editor.getElement());

@@ -37,7 +37,6 @@ import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
-import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;

@@ -26,8 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.regex.Pattern;
-
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
@@ -36,10 +34,7 @@ import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
@@ -47,12 +42,10 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 public class RechnerEditor extends StartStoppElementEditor<Rechner> {
 	
 	private Rechner rechner;
-	private StartStoppSkript skript;
 
 	@Inject
 	public RechnerEditor(@Assisted StartStoppSkript skript, @Assisted Rechner rechner) {
-		super("Rechner: " + rechner.getName());
-		this.skript = skript;
+		super(skript, "Rechner: " + rechner.getName());
 		this.rechner = (Rechner) Util.cloneObject(rechner);
 	}
 	
@@ -90,40 +83,7 @@ public class RechnerEditor extends StartStoppElementEditor<Rechner> {
 			}
 		};
 		portField.setText(rechner.getPort());
-		portField.setValidationPattern(Pattern.compile("\\d*"));
-
 		mainPanel.addComponent(portField, GridLayout.createHorizontallyFilledLayoutData(1));
-	}
-
-	@Override
-	public boolean handleInput(KeyStroke key) {
-		
-		System.err.println("RechnerEditor: " + key);
-		if(key.isAltDown()) {
-			if( key.getKeyType() == KeyType.Character) {
-				switch(key.getCharacter()) {
-				case 'm':
-				case 'M':
-					MakroSelektor selektor = new MakroSelektor(getTextGUI(), skript);
-					MakroDefinition selectedMakroDefinition = selektor.getSelectedMakroDefinition();
-					if( selectedMakroDefinition != null) {
-						Interactable interactable = getFocusedInteractable();
-						if( interactable instanceof TextBox) {
-							TextBox textBox = (TextBox) interactable;
-							int position = textBox.getCursorLocation().getColumn();
-							StringBuilder oldText = new StringBuilder(textBox.getText());
-							oldText.insert(position, "%" + selectedMakroDefinition.getName() + "%");
-							textBox.setText(oldText.toString());
-						}
-					}
-					break;
-				}
-			}
-			return true;
-		}
-		
-		// TODO Auto-generated method stub
-		return super.handleInput(key);
 	}
 
 	@Override

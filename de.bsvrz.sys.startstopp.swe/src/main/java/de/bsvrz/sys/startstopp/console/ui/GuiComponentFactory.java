@@ -52,7 +52,7 @@ import de.bsvrz.sys.startstopp.console.ui.editor.MakroEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.MakroTable;
 import de.bsvrz.sys.startstopp.console.ui.editor.RechnerEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.RechnerTable;
-import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditorWindow;
+import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.StartArtEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.StartBedingungEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.StartFehlerVerhaltenEditor;
@@ -70,7 +70,7 @@ import de.bsvrz.sys.startstopp.console.ui.online.StartStoppStoppAction;
 
 public interface GuiComponentFactory {
 
-	SkriptEditorWindow createSkriptEditor(StartStoppSkript skript);
+	SkriptEditor createSkriptEditor(StartStoppSkript skript);
 
 	EditorSaveAction createSaveAction(StartStoppSkript skript);
 
@@ -91,7 +91,7 @@ public interface GuiComponentFactory {
 	StartStoppExitAction createStartStoppExitAction();
 
 	TerminalCloseAction createTerminalCloseAction();
-	
+
 	InfoDialog createInfoDialog(@Assisted("title") String title, @Assisted("message") String message);
 
 	JaNeinDialog createJaNeinDialog(@Assisted("title") String title, @Assisted("message") String message);
@@ -100,7 +100,7 @@ public interface GuiComponentFactory {
 
 	InkarnationEditor createInkarnationEditor(StartStoppSkript skript, Inkarnation inkarnation);
 
-	AufrufParameterEditor createAufrufParameterEditor(Inkarnation inkarnation);
+	AufrufParameterEditor createAufrufParameterEditor(StartStoppSkript skript, Inkarnation inkarnation);
 
 	KernsystemEditor createKernsystemEditor(StartStoppSkript skript);
 
@@ -114,17 +114,22 @@ public interface GuiComponentFactory {
 
 	StartBedingungEditor createStartBedingungEditor(StartStoppSkript skript, StartBedingung startBedingung);
 
-	StartFehlerVerhaltenEditor createStartFehlerVerhaltenEditor(StartFehlerVerhalten startFehlerVerhalten);
+	StartFehlerVerhaltenEditor createStartFehlerVerhaltenEditor(StartStoppSkript skript,
+			StartFehlerVerhalten startFehlerVerhalten);
 
 	StoppBedingungEditor createStoppBedingungEditor(StartStoppSkript skript, StoppBedingung stoppBedingung);
 
-	StoppFehlerVerhaltenEditor createStoppFehlerVerhaltenEditor(StoppFehlerVerhalten stoppFehlerVerhalten);
+	StoppFehlerVerhaltenEditor createStoppFehlerVerhaltenEditor(StartStoppSkript skript,
+			StoppFehlerVerhalten stoppFehlerVerhalten);
 
-	UsvEditor createUsvEditor(Usv usv);
+	UsvEditor createUsvEditor(StartStoppSkript skript);
 
-	ZugangDavEditor createZugangDavEditor(ZugangDav zugangDav);
+	ZugangDavEditor createZugangDavEditor(StartStoppSkript skript);
 
-	StartArtEditor createStartArtEditor(StartArt startArt);
+	StartArtEditor createStartArtEditor(StartStoppSkript skript, StartArt startArt);
 
 	InkarnationSelektor createInkarnationSelektor(StartStoppSkript skript);
+
+	MakroTextInputDialog createMakroTextInputDialog(StartStoppSkript skript, @Assisted("title") String title,
+			@Assisted("description") String description, @Assisted("content") String content);
 }

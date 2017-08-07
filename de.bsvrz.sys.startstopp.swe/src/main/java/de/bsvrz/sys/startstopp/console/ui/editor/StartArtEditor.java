@@ -38,6 +38,7 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
 public class StartArtEditor extends StartStoppElementEditor<StartArt> {
@@ -45,8 +46,8 @@ public class StartArtEditor extends StartStoppElementEditor<StartArt> {
 	private StartArt startArt;
 	
 	@Inject
-	public StartArtEditor(@Assisted StartArt startArt) {
-		super("Startart-Editor");
+	public StartArtEditor(@Assisted StartStoppSkript skript, @Assisted StartArt startArt) {
+		super(skript, "Startart-Editor");
 		this.startArt = (StartArt) Util.cloneObject(startArt);
 	}
 

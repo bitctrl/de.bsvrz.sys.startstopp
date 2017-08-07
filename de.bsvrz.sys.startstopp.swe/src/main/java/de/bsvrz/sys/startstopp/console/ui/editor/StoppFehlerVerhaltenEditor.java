@@ -36,6 +36,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
@@ -44,8 +45,8 @@ public class StoppFehlerVerhaltenEditor extends StartStoppElementEditor<StoppFeh
 	private StoppFehlerVerhalten stoppFehlerVerhalten;
 
 	@Inject
-	public StoppFehlerVerhaltenEditor(@Assisted StoppFehlerVerhalten stoppFehlerVerhalten) {
-		super("StartStopp - Editor: Inkarnation: ");
+	public StoppFehlerVerhaltenEditor(@Assisted StartStoppSkript skript, @Assisted StoppFehlerVerhalten stoppFehlerVerhalten) {
+		super(skript, "StartStopp - Editor: Inkarnation: ");
 
 
 		if (stoppFehlerVerhalten == null) {

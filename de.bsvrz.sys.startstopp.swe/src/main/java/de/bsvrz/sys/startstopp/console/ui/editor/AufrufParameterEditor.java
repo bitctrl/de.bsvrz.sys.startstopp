@@ -27,7 +27,6 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -35,109 +34,65 @@ import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
-import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.ui.MakroTextInputDialog;
 
 public class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 
+	public class AufrufParameterTable extends EditableTable<String> {
+
+		public AufrufParameterTable(List<String> parameterListe, String string) {
+			super(parameterListe, string);
+		}
+
+		@Override
+		protected String requestNewElement() {
+			MakroTextInputDialog dialog = factory.createMakroTextInputDialog(getSkript(), "Parameter", "Neuen Parameter angeben:", "");
+			if( dialog.showDialog((WindowBasedTextGUI) getTextGUI())) {
+				return dialog.getElement();
+			}
+			return null;
+		}
+
+		@Override
+		protected String editElement(String oldElement) {
+			MakroTextInputDialog dialog = factory.createMakroTextInputDialog(getSkript(), "Parameter", "Parameter bearbeiten:", oldElement);
+			if( dialog.showDialog((WindowBasedTextGUI) getTextGUI())) {
+				return dialog.getElement();
+			}
+			return null;
+		}
+
+		@Override
+		protected String renderElement(String element) {
+			return element;
+		}
+
+	}
+
+
 	private List<String> parameterListe = new ArrayList<>();
-	private Table<String> parameterTable;
+	private EditableTable<String> parameterTable;
 
 	@Inject
-	public AufrufParameterEditor(@Assisted Inkarnation inkarnation) {
-		super("Aufrufparameter");
+	GuiComponentFactory factory;
+	
+	@Inject
+	public AufrufParameterEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
+		super(skript, "Aufrufparameter");
 		this.parameterListe.addAll(inkarnation.getAufrufParameter());
 	}
 
 	protected void initComponents(Panel mainPanel) {
 
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
-
-		parameterTable = new Table<>("Aufrufparameter");
-		for (String parameter : parameterListe) {
-			parameterTable.getTableModel().addRow(parameter);
-		}
-		
-		parameterTable.setSelectAction(new Runnable() {
-			
-			@Override
-			public void run() {
-				TextInputDialogBuilder builder = new TextInputDialogBuilder();
-				builder.setTitle("Parameter").setDescription("Parameter bearbeiten:").setInitialContent(parameterListe.get(parameterTable.getSelectedRow()));
-				String newParameter = builder.build().showDialog(getTextGUI());
-				if (newParameter != null) {
-					int row = parameterTable.getSelectedRow();
-					parameterListe.remove(row);
-					parameterListe.add(row, newParameter);
-					parameterTable.getTableModel().setCell(0, row, newParameter);
-				}
-			}
-		});
-		
+		parameterTable = new AufrufParameterTable(parameterListe, "Aufrufparameter");
 		mainPanel.addComponent(parameterTable, GridLayout.createHorizontallyFilledLayoutData(1));
-	}
-
-
-	@Override
-	public boolean handleInput(KeyStroke key) {
-		if (parameterTable.isFocused()) {
-			if (Util.isDeleteKey(key)) {
-				int row = parameterTable.getSelectedRow();
-				if ((row >= 0) && (row < parameterListe.size())) {
-					parameterListe.remove(row);
-					parameterTable.getTableModel().removeRow(row);
-					parameterTable.setSelectedRow(Math.max(0, row - 1));
-				}
-				return true;
-			} else if (Util.isInsertAfterKey(key)) {
-				TextInputDialogBuilder builder = new TextInputDialogBuilder();
-				builder.setTitle("Parameter").setDescription("Neuen Parameter angeben:");
-				String newParameter = builder.build().showDialog(getTextGUI());
-				if (newParameter != null) {
-					int row = parameterTable.getSelectedRow();
-					parameterListe.add(row, newParameter);
-					parameterTable.getTableModel().insertRow(row + 1, Collections.singleton(newParameter));
-					parameterTable.setSelectedRow(row + 1);
-				}
-				return true;
-			} else if (Util.isInsertBeforeKey(key)) {
-				TextInputDialogBuilder builder = new TextInputDialogBuilder();
-				builder.setTitle("Parameter").setDescription("Neuen Parameter angeben:");
-				String newParameter = builder.build().showDialog(getTextGUI());
-				if (newParameter != null) {
-					int row = parameterTable.getSelectedRow();
-					parameterListe.add(row, newParameter);
-					parameterTable.getTableModel().insertRow(row, Collections.singleton(newParameter));
-				}
-				return true;
-			} else if (Util.isEintragNachObenKey(key)) {
-				int row = parameterTable.getSelectedRow();
-				if (row > 0) {
-					String parameter = parameterListe.remove(row);
-					parameterListe.add(row - 1, parameter);
-					parameterTable.getTableModel().setCell(0, row - 1, parameterListe.get(row - 1));
-					parameterTable.getTableModel().setCell(0, row, parameterListe.get(row));
-					parameterTable.setSelectedRow(row - 1);
-				}
-				return true;
-			} else if (Util.isEintragNachUntenKey(key)) {
-				int row = parameterTable.getSelectedRow();
-				if (row < parameterListe.size() - 1) {
-					String parameter = parameterListe.remove(row);
-					parameterListe.add(row + 1, parameter);
-					parameterTable.getTableModel().setCell(0, row + 1, parameterListe.get(row + 1));
-					parameterTable.getTableModel().setCell(0, row, parameterListe.get(row));
-					parameterTable.setSelectedRow(row + 1);
-				}
-				return true;
-			}
-		}
-
- 		return super.handleInput(key);
 	}
 
 	@Override

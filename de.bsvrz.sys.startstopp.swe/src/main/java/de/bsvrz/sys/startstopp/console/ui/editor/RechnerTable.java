@@ -78,8 +78,6 @@ public class RechnerTable extends Table<String> {
 
 	@Override
 	public Result handleKeyStroke(KeyStroke keyStroke) {
-		// TODO Auto-generated method stub
-		System.err.println("RechnerTable-Key: " + keyStroke);
 
 		if (keyStroke.getKeyType() == KeyType.Character) {
 			switch (keyStroke.getCharacter()) {

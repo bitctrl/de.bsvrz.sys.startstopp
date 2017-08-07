@@ -49,6 +49,7 @@ import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
@@ -58,7 +59,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
-public class SkriptEditorWindow extends BasicWindow {
+public class SkriptEditor extends BasicWindow {
 	private InkarnationTable inkarnationTable;
 	private StartStoppSkript skript;
 	private MakroTable makroTable;
@@ -68,7 +69,7 @@ public class SkriptEditorWindow extends BasicWindow {
 	GuiComponentFactory factory;
 
 	@Inject
-	public SkriptEditorWindow(@Assisted StartStoppSkript skript) {
+	public SkriptEditor(@Assisted StartStoppSkript skript) {
 		super("StartStopp - Editor");
 		this.skript = (StartStoppSkript) Util.cloneObject(skript);
 	}
@@ -215,16 +216,14 @@ public class SkriptEditorWindow extends BasicWindow {
 				return true;
 
 			case 'u':
-				UsvEditor usvEditor = factory
-						.createUsvEditor(Util.getObjectOrDefault(skript.getGlobal().getUsv(), Usv.class));
+				UsvEditor usvEditor = factory.createUsvEditor(skript);
 				if (usvEditor.showDialog(getTextGUI())) {
 					skript.getGlobal().setUsv(usvEditor.getElement());
 				}
 				return true;
 
 			case 'z':
-				ZugangDavEditor zugangDavEditor = factory.createZugangDavEditor(
-						Util.getObjectOrDefault(skript.getGlobal().getZugangDav(), ZugangDav.class));
+				ZugangDavEditor zugangDavEditor = factory.createZugangDavEditor(skript);
 				if (zugangDavEditor.showDialog(getTextGUI())) {
 					skript.getGlobal().setZugangDav(zugangDavEditor.getElement());
 				}
@@ -241,5 +240,29 @@ public class SkriptEditorWindow extends BasicWindow {
 		}
 
 		return super.handleInput(key);
+	}
+	
+	public static boolean isDeleteKey(KeyStroke key) {
+		return key.getKeyType() == KeyType.Delete && key.isAltDown();
+	}
+
+	public static boolean isInsertAfterKey(KeyStroke key) {
+		return key.getKeyType() == KeyType.Insert && key.isAltDown() && !key.isShiftDown();
+	}
+
+	public static boolean isInsertBeforeKey(KeyStroke key) {
+		return key.getKeyType() == KeyType.Insert && key.isAltDown() && key.isShiftDown();
+	}
+
+	public static boolean isEintragNachObenKey(KeyStroke key) {
+		return key.getKeyType() == KeyType.ArrowUp && key.isAltDown();
+	}
+
+	public static boolean isEintragNachUntenKey(KeyStroke key) {
+		return key.getKeyType() == KeyType.ArrowDown && key.isAltDown();
+	}
+
+	public static boolean isSelectMakroKey(KeyStroke key) {
+		return key.getKeyType() == KeyType.Character && key.isAltDown() && key.getCharacter() == 'm';
 	}
 }

@@ -24,62 +24,48 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui.editor;
+package de.bsvrz.sys.startstopp.console.ui;
 
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.console.ui.editor.StartStoppElementEditor;
 
-public class MakroEditor extends StartStoppElementEditor<MakroDefinition> {
+public class MakroTextInputDialog extends StartStoppElementEditor<String> {
 
-	private MakroDefinition makroDefinition;
+	private String content;
+	private String description;
 
 	@Inject
-	public MakroEditor(@Assisted StartStoppSkript skript, @Assisted MakroDefinition makroDefinition) {
-		super(skript, "Makrodefinition");
-		this.makroDefinition = (MakroDefinition) Util.cloneObject(makroDefinition);
-	}	
+	public MakroTextInputDialog(@Assisted StartStoppSkript skript, @Assisted("title") String title,
+			@Assisted("description") String description, @Assisted("content") String content) {
+		super(skript, title);
+		this.content = content;
+		this.description = description;
+	}
 
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
-		mainPanel.addComponent(new Label("Name:"));
-		TextBox nameField = new TextBox() {
+		mainPanel.addComponent(new Label(description));
+		TextBox box = new TextBox(content) {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
-				makroDefinition.setName(getText());
-				super.afterLeaveFocus(direction, nextInFocus);
+				content = getText();
 			}
 		};
-		nameField.setText(makroDefinition.getName());
-		nameField.setPreferredSize(new TerminalSize(nameField.getText().length(), 1));
-		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(1));
-
-		mainPanel.addComponent(new Label("Adresse:"));
-		TextBox wertField = new TextBox(""){
-			@Override
-			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
-				makroDefinition.setWert(getText());
-				super.afterLeaveFocus(direction, nextInFocus);
-			}
-		};
-		wertField.setText(makroDefinition.getWert());
-		wertField.setPreferredSize(new TerminalSize(wertField.getText().length(), 1));
-		mainPanel.addComponent(wertField, GridLayout.createHorizontallyFilledLayoutData(1));
+		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
-	@Override
-	public MakroDefinition getElement() {
-		return makroDefinition;
+	public String getElement() {
+		return content;
 	}
+
 }

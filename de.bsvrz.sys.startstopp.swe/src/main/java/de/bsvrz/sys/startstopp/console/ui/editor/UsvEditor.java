@@ -35,6 +35,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
@@ -43,13 +44,13 @@ public class UsvEditor extends StartStoppElementEditor<Usv> {
 	private Usv usv;
 
 	@Inject
-	public UsvEditor(@Assisted Usv usv) {
-		super("USV");
+	public UsvEditor(@Assisted StartStoppSkript skript) {
+		super(skript, "USV");
 
-		if (usv == null) {
+		if (skript.getGlobal().getUsv() == null) {
 			this.usv = new Usv("");
 		} else {
-			this.usv = (Usv) Util.cloneObject(usv);
+			this.usv = (Usv) Util.cloneObject(skript.getGlobal().getUsv());
 		}
 	}
 

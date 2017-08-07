@@ -33,9 +33,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
-
 public class Util {
 
 	public static Object cloneObject(Serializable src) {
@@ -83,27 +80,6 @@ public class Util {
 
 		return textBuffer.toString();
 	}
-
-	public static boolean isInsertAfterKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.Insert && key.isAltDown() && !key.isShiftDown();
-	}
-
-	public static boolean isInsertBeforeKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.Insert && key.isAltDown() && key.isShiftDown();
-	}
-
-	public static boolean isDeleteKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.Delete && key.isAltDown();
-	}
-
-	public static boolean isEintragNachObenKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.ArrowUp && key.isAltDown();
-	}
-
-	public static boolean isEintragNachUntenKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.ArrowDown && key.isAltDown();
-	}
-
 	
 	public static <T> T getObjectOrDefault(T object, Class<T> clazz) {
 		if( object == null) {

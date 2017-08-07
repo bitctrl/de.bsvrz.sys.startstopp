@@ -35,6 +35,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 
@@ -43,13 +44,13 @@ public class ZugangDavEditor extends StartStoppElementEditor<ZugangDav> {
 	private ZugangDav zugangDav;
 
 	@Inject
-	public ZugangDavEditor(@Assisted ZugangDav zugangDav) {
-		super("Zugang Datenverteiler");
+	public ZugangDavEditor(@Assisted StartStoppSkript skript) {
+		super(skript, "Zugang Datenverteiler");
 
-		if (zugangDav == null) {
+		if (skript.getGlobal().getZugangDav() == null) {
 			this.zugangDav = new ZugangDav();
 		} else {
-			this.zugangDav = (ZugangDav) Util.cloneObject(zugangDav);
+			this.zugangDav = (ZugangDav) Util.cloneObject(skript.getGlobal().getZugangDav());
 		}
 	}
 
