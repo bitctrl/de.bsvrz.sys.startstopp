@@ -126,7 +126,8 @@ public class TestInkarnationsProzess {
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
-		Assert.assertTrue("Fehlermeldung", inkarnationsProzess.getProzessAusgabe().contains("fatal exception"));
+		String ausgabe = inkarnationsProzess.getProzessAusgabe().toLowerCase();
+		Assert.assertTrue("Fehlermeldung: " + ausgabe, ausgabe.contains("fatal exception"));
 		Assert.assertEquals("Exitcode", 1, inkarnationsProzess.getLastExitCode());
 	}
 
