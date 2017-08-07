@@ -116,7 +116,7 @@ public class StartStoppConsole {
 		Properties themeProperties = new Properties();
 		try (InputStream stream = StartStoppConsole.class.getResourceAsStream("nerz-mono.properties")) {
 			themeProperties.load(stream);
-			LanternaThemes.registerTheme("NERZ-Mono", new PropertyTheme(themeProperties));
+			LanternaThemes.registerTheme("NERZ-Mono", new StartStoppTheme(themeProperties));
 		}
 
 		Injector injector = Guice.createInjector(new StartStoppModule(args));

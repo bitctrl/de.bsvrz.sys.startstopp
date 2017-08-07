@@ -38,7 +38,7 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.UrlasserDialog;
 
-public class EditorSaveAction implements Runnable {
+public class EditorVersionierenAction implements Runnable {
 
 	private final StartStoppSkript skript;
 
@@ -52,7 +52,7 @@ public class EditorSaveAction implements Runnable {
 	private StartStoppClient client;
 
 	@Inject
-	public EditorSaveAction(@Assisted StartStoppSkript skript) {
+	public EditorVersionierenAction(@Assisted StartStoppSkript skript) {
 		this.skript = skript;
 	}
 	
@@ -78,6 +78,6 @@ public class EditorSaveAction implements Runnable {
 
 	@Override
 	public String toString() {
-		return "Sichern";
+		return "Versionieren";
 	}
 }

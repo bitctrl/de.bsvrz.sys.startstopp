@@ -39,11 +39,10 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
-import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
-import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.console.ui.editor.AufrufParameterEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorCloseAction;
-import de.bsvrz.sys.startstopp.console.ui.editor.EditorSaveAction;
+import de.bsvrz.sys.startstopp.console.ui.editor.EditorSichernAction;
+import de.bsvrz.sys.startstopp.console.ui.editor.EditorVersionierenAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationSelektor;
 import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationTable;
@@ -72,7 +71,7 @@ public interface GuiComponentFactory {
 
 	SkriptEditor createSkriptEditor(StartStoppSkript skript);
 
-	EditorSaveAction createSaveAction(StartStoppSkript skript);
+	EditorVersionierenAction createVersionierenAction(StartStoppSkript skript);
 
 	EditorCloseAction createEditorCloseAction(Window window);
 
@@ -132,4 +131,6 @@ public interface GuiComponentFactory {
 
 	MakroTextInputDialog createMakroTextInputDialog(StartStoppSkript skript, @Assisted("title") String title,
 			@Assisted("description") String description, @Assisted("content") String content);
+
+	EditorSichernAction createSichernAction(StartStoppSkript skript);
 }

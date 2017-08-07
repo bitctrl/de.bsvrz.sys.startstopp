@@ -28,8 +28,6 @@ package de.bsvrz.sys.startstopp.console.ui.online;
 
 import javax.inject.Inject;
 
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;

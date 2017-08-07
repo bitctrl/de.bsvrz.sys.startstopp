@@ -31,7 +31,6 @@ import java.util.List;
 
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
 public abstract class EditableTable<T> extends Table<String> {
 

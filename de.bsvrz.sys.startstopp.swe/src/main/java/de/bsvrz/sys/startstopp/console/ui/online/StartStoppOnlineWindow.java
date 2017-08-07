@@ -27,13 +27,11 @@
 package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
 import com.google.inject.Singleton;
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
@@ -42,7 +40,6 @@ import com.googlecode.lanterna.gui2.GridLayout.Alignment;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowListener;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -50,6 +47,8 @@ import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
+import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
 
 @Singleton
 public class StartStoppOnlineWindow extends BasicWindow {
@@ -69,20 +68,24 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		this.table = table;
 		this.table.setSelectAction(()->handleApplikation());
 
-		setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+		setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.NO_DECORATIONS));
 
 		Panel panel = new Panel();
 		panel.setLayoutManager(new GridLayout(1));
 		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
 
-		Label infoLabel = new Label("s-System   p-Prozess   t - Theme   e - Editieren   i - Info");
+		Label infoLabel = new Label("Startstopp - Online");
 		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
 		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
-		table.setLayoutData(
-				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
-		panel.addComponent(table.withBorder(Borders.singleLine()));
+		panel.addComponent(table.withBorder(Borders.singleLine()), GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 
+		MenuPanel menuPanel = new MenuPanel();
+		panel.setLayoutManager(new GridLayout(1));
+		Label statusLabel = new MenuLabel("s-System   p-Prozess   t-Theme   e-Editieren   i-Info");
+		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
+		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
+		
 		setComponent(panel);
 	}
 

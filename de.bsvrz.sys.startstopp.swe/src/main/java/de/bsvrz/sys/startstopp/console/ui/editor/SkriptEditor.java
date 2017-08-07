@@ -53,9 +53,7 @@ import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
@@ -161,7 +159,7 @@ public class SkriptEditor extends BasicWindow {
 			switch (key.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addActions(factory.createSaveAction(skript), factory.createEditorCloseAction(this));
+				builder.addActions(factory.createVersionierenAction(skript), factory.createSichernAction(skript), factory.createEditorCloseAction(this));
 				builder.build().showDialog(getTextGUI());
 				return true;
 

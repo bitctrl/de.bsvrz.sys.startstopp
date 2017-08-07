@@ -71,6 +71,20 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(3).setLeftMarginSize(1).setRightMarginSize(1).setTopMarginSize(1));
 
+		initInkarnationsName(mainPanel);
+		initApplikation(mainPanel);
+		initAufrufParameter(mainPanel);
+		initInkarnationsTyp(mainPanel);
+		initStartArt(mainPanel);
+		initInitialisieren(mainPanel);
+		initUseInkarnationsName(mainPanel);
+		initStartBedingung(mainPanel);
+		initStartFehlerverhalten(mainPanel);
+		initStoppBedingung(mainPanel);
+		initStoppFehlerverhalten(mainPanel);
+	}
+
+	private void initInkarnationsName(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Inkarnationsname:"));
 		nameField = new TextBox() {
 			@Override
@@ -81,7 +95,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		};
 		nameField.setText(inkarnation.getInkarnationsName());
 		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(2));
+	}
 
+	private void initApplikation(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Applikation:"));
 		applikationField = new TextBox("") {
 			@Override
@@ -92,7 +108,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		};
 		applikationField.setText(inkarnation.getApplikation());
 		mainPanel.addComponent(applikationField, GridLayout.createHorizontallyFilledLayoutData(2));
+	}
 
+	private void initAufrufParameter(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Parameter:"));
 		List<String> aufrufParameter = inkarnation.getAufrufParameter();
 		mainPanel.addComponent(new Label(aufrufParameter.isEmpty() ? "" : aufrufParameter.get(0) + ", ..."));
@@ -108,7 +126,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 			}
 		});
 		mainPanel.addComponent(parameterButton, GridLayout.createHorizontallyFilledLayoutData(1));
+	}
 
+	private void initInkarnationsTyp(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Typ:"));
 		ComboBox<InkarnationsTyp> typSelektor = new ComboBox<InkarnationsTyp>(InkarnationsTyp.values());
 		for (int idx = 0; idx < typSelektor.getItemCount(); idx++) {
@@ -123,7 +143,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 			}
 		});
 		mainPanel.addComponent(typSelektor, GridLayout.createHorizontallyFilledLayoutData(2));
+	}
 
+	private void initStartArt(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Startart:"));
 		mainPanel.addComponent(new Label(inkarnation.getStartArt().getOption().toString()));
 		Button startArtButton = new Button("Bearbeiten");
@@ -137,7 +159,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 			}
 		});
 		mainPanel.addComponent(startArtButton, GridLayout.createHorizontallyFilledLayoutData(1));
+	}
 
+	private void initInitialisieren(Panel mainPanel) {
 		CheckBox initCheckbox = new CheckBox("Initialisieren");
 		initCheckbox.setChecked(inkarnation.getInitialize());
 		initCheckbox.addListener(new CheckBox.Listener() {
@@ -147,7 +171,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 			}
 		});
 		mainPanel.addComponent(initCheckbox, GridLayout.createHorizontallyFilledLayoutData(1));
+	}
 
+	private void initUseInkarnationsName(Panel mainPanel) {
 		CheckBox setInkarnationsNameCheckbox = new CheckBox("Setze Inkarnationsname");
 		setInkarnationsNameCheckbox.setChecked(inkarnation.getMitInkarnationsName());
 		setInkarnationsNameCheckbox.addListener(new CheckBox.Listener() {
@@ -157,7 +183,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 			}
 		});
 		mainPanel.addComponent(setInkarnationsNameCheckbox, GridLayout.createHorizontallyFilledLayoutData(2));
+	}
 
+	private void initStartBedingung(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Startbedingung:"));
 		StartBedingung startBedingung = inkarnation.getStartBedingung();
 		mainPanel.addComponent(new Label(startBedingung == null ? "Keine" : startBedingung.getVorgaenger().get(0)));
@@ -173,7 +201,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 			}
 		});
 		mainPanel.addComponent(startBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
+	}
 
+	private void initStartFehlerverhalten(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Startfehlerverhalten:"));
 		mainPanel.addComponent(new Label(inkarnation.getStartFehlerVerhalten().getOption().toString()));
 		Button startFehlerVerhaltenButton = new Button("Bearbeiten");
@@ -188,7 +218,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 			}
 		});
 		mainPanel.addComponent(startFehlerVerhaltenButton, GridLayout.createHorizontallyFilledLayoutData(1));
+	}
 
+	private void initStoppBedingung(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Stoppbedingung:"));
 		StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
 		mainPanel.addComponent(new Label(stoppBedingung == null || stoppBedingung.getNachfolger().isEmpty() ? "Keine"
@@ -205,7 +237,9 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 			}
 		});
 		mainPanel.addComponent(stoppBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
+	}
 
+	private void initStoppFehlerverhalten(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Stoppfehlerverhalten:"));
 		mainPanel.addComponent(new Label(inkarnation.getStoppFehlerVerhalten().getOption().toString()));
 		Button stoppFehlerVerhaltenButton = new Button("Bearbeiten");
