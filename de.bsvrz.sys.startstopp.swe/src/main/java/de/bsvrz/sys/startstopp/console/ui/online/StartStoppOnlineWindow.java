@@ -52,14 +52,14 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 @Singleton
-public class StartStoppOnlineWindow extends BasicWindow implements WindowListener {
+public class StartStoppOnlineWindow extends BasicWindow {
 
-	@Inject 
+	@Inject
 	private GuiComponentFactory uiFactory;
-	
+
 	@Inject
 	private StartStoppClient client;
-	
+
 	private OnlineInkarnationTable table;
 
 	@Inject
@@ -67,6 +67,7 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 		super("StartStopp - Online");
 
 		this.table = table;
+		this.table.setSelectAction(()->handleApplikation());
 
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
 
@@ -82,14 +83,11 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		panel.addComponent(table.withBorder(Borders.singleLine()));
 
-		addWindowListener(this);
-
 		setComponent(panel);
 	}
 
 	@Override
-	public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-		// TODO Auto-generated method stub
+	public boolean handleInput(KeyStroke keyStroke) {
 
 		switch (keyStroke.getKeyType()) {
 		case Character:
@@ -108,7 +106,8 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				}
 				;
 				builder.build().showDialog(getTextGUI());
-				break;
+				return true;
+
 			case 's':
 				builder = new ActionListDialogBuilder().setTitle("System");
 				builder.addAction(uiFactory.createStartStoppStoppAction());
@@ -116,27 +115,21 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 				builder.addAction(uiFactory.createStartStoppExitAction());
 				builder.addAction(uiFactory.createTerminalCloseAction());
 				builder.build().showDialog(getTextGUI());
-				break;
-			case 'p':
-				Applikation applikation = table.getSelectedApplikation();
-				if (applikation != null) {
-					
-					builder = new ActionListDialogBuilder().setTitle("Applikation");
-					builder.addAction(uiFactory.createApplikationStartAction(applikation));
-					builder.addAction(uiFactory.createApplikationRestartAction(applikation));
-					builder.addAction(uiFactory.createApplikationStoppAction(applikation));
-					builder.addAction(uiFactory.createApplikationDetailAction(applikation));
-					builder.build().showDialog(getTextGUI());
-				}
+				return true;
 
-				break;
+			case 'p':
+				handleApplikation();
+				return true;
+
 			case 'e':
 				try {
 					getTextGUI().addWindow(uiFactory.createSkriptEditor(client.getCurrentSkript()));
 				} catch (StartStoppException e) {
 					uiFactory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
 				}
-				break;
+
+				return true;
+
 			default:
 				System.err.println(getClass().getSimpleName() + ": " + keyStroke);
 				break;
@@ -150,23 +143,20 @@ public class StartStoppOnlineWindow extends BasicWindow implements WindowListene
 		default:
 			break;
 		}
+
+		return super.handleInput(keyStroke);
 	}
 
-	@Override
-	public void onUnhandledInput(Window basePane, KeyStroke keyStroke, AtomicBoolean hasBeenHandled) {
-		// TODO Auto-generated method stub
-		// System.err.println("Unhandled: " + keyStroke);
-	}
-
-	@Override
-	public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
-		table.setVisibleRows(newSize.getRows() - 2);
-
-	}
-
-	@Override
-	public void onMoved(Window window, TerminalPosition oldPosition, TerminalPosition newPosition) {
-		// TODO Auto-generated method stub
-
+	private void handleApplikation() {
+		ActionListDialogBuilder builder;
+		Applikation applikation = table.getSelectedApplikation();
+		if (applikation != null) {
+			builder = new ActionListDialogBuilder().setTitle("Applikation");
+			builder.addAction(uiFactory.createApplikationStartAction(applikation));
+			builder.addAction(uiFactory.createApplikationRestartAction(applikation));
+			builder.addAction(uiFactory.createApplikationStoppAction(applikation));
+			builder.addAction(uiFactory.createApplikationDetailAction(applikation));
+			builder.build().showDialog(getTextGUI());
+		}
 	}
 }

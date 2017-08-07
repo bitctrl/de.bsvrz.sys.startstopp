@@ -415,7 +415,7 @@ public class StartStoppApplikation extends Applikation {
 		case INSTALLIERT:
 		case GESTOPPT:
 		case STOPPENWARTEN:
-			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestartet werden");
+			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestoppt werden");
 
 		case GESTARTET:
 		case INITIALISIERT:

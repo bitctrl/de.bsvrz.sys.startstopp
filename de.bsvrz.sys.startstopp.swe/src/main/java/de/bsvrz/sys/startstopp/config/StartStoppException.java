@@ -52,4 +52,13 @@ public class StartStoppException extends Exception {
 	public List<String> getMessages() {
 		return messages;
 	}
+	
+	public String getFullString() {
+		StringBuilder builder = new StringBuilder(getLocalizedMessage());
+		for( String message : messages) {
+			builder.append('\n');
+			builder.append(message);
+		}
+		return builder.toString();
+	}
 }
