@@ -49,6 +49,7 @@ import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
+import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
@@ -61,14 +62,12 @@ import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
 
 public class SkriptEditor extends BasicWindow {
-	private InkarnationTable inkarnationTable;
+
 	private StartStoppSkript skript;
-	private MakroTable makroTable;
-	private RechnerTable rechnerTable;
 
 	@Inject
 	GuiComponentFactory factory;
-	private Border currentTable;
+	private Border currentTableBorder;
 	private Panel panel;
 	private MenuPanel menuPanel;
 
@@ -104,8 +103,9 @@ public class SkriptEditor extends BasicWindow {
 		addWindowListener(new WindowListenerAdapter() {
 			@Override
 			public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
-				if (inkarnationTable != null) {
-					inkarnationTable.setVisibleRows(newSize.getRows() - 2);
+				if (currentTableBorder != null) {
+					Table<?> table = (Table<?>) currentTableBorder.getChildren().iterator().next();
+					table.setVisibleRows(newSize.getRows() - 7);
 				}
 			}
 		});
@@ -115,52 +115,52 @@ public class SkriptEditor extends BasicWindow {
 
 	private void showInkarnationTable() throws StartStoppException {
 
-		inkarnationTable = factory.createInkarnationTable(skript);
-		inkarnationTable.setLayoutData(
+		InkarnationTable table = factory.createInkarnationTable(skript);
+		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
-		inkarnationTable.setPreferredSize(TerminalSize.ONE);
-		if( currentTable != null) {
-			panel.removeComponent(currentTable);
+		table.setPreferredSize(TerminalSize.ONE);
+		if( currentTableBorder != null) {
+			panel.removeComponent(currentTableBorder);
 			panel.removeComponent(menuPanel);
 		}
-		currentTable = inkarnationTable.withBorder(Borders.singleLine());
-		panel.addComponent(currentTable);
-		panel.addComponent(menuPanel);
+		currentTableBorder = table.withBorder(Borders.singleLine());
+		panel.addComponent(currentTableBorder);
+		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
 
-		setFocusedInteractable(inkarnationTable);
+		setFocusedInteractable(table);
 	}
 
 	private void showMakroTable() throws StartStoppException {
-		makroTable = factory.createMakroTable(skript);
-		makroTable.setLayoutData(
+		MakroTable table = factory.createMakroTable(skript);
+		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
-		makroTable.setPreferredSize(TerminalSize.ONE);
-		if( currentTable != null) {
-			panel.removeComponent(currentTable);
+		table.setPreferredSize(TerminalSize.ONE);
+		if( currentTableBorder != null) {
+			panel.removeComponent(currentTableBorder);
 			panel.removeComponent(menuPanel);
 		}
-		currentTable = makroTable.withBorder(Borders.singleLine());
-		panel.addComponent(currentTable);
-		panel.addComponent(menuPanel);
+		currentTableBorder = table.withBorder(Borders.singleLine());
+		panel.addComponent(currentTableBorder);
+		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
 
-		setFocusedInteractable(makroTable);
+		setFocusedInteractable(table);
 	}
 
 	private void showRechnerTable() throws StartStoppException {
-		rechnerTable = factory.createRechnerTable(skript);
-		rechnerTable.setLayoutData(
+		RechnerTable table = factory.createRechnerTable(skript);
+		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
-		rechnerTable.setPreferredSize(TerminalSize.ONE);
+		table.setPreferredSize(TerminalSize.ONE);
 
-		if( currentTable != null) {
-			panel.removeComponent(currentTable);
+		if( currentTableBorder != null) {
+			panel.removeComponent(currentTableBorder);
 			panel.removeComponent(menuPanel);
 		}
-		currentTable = rechnerTable.withBorder(Borders.singleLine());
-		panel.addComponent(currentTable);
-		panel.addComponent(menuPanel);
+		currentTableBorder = table.withBorder(Borders.singleLine());
+		panel.addComponent(currentTableBorder);
+		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
 
-		setFocusedInteractable(rechnerTable);
+		setFocusedInteractable(table);
 	}
 
 	@Override
