@@ -139,8 +139,6 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.setInkarnationsName("Test");
 		Object sync = new Object();
 		status = null;
-		inkarnationsProzess.start();
-
 		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
 
 			@Override
@@ -152,10 +150,11 @@ public class TestInkarnationsProzess {
 				}
 			}
 		});
+		inkarnationsProzess.start();
 
 		synchronized (sync) {
 			try {
-				sync.wait(2000);
+				sync.wait(5000);
 			} catch (InterruptedException e) {
 				Assert.fail();
 			}
