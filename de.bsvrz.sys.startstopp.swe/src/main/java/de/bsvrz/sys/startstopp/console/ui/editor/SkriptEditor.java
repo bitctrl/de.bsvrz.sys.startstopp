@@ -124,14 +124,10 @@ public class SkriptEditor extends BasicWindow {
 			panel.removeComponent(menuPanel);
 		}
 		currentTable = inkarnationTable.withBorder(Borders.singleLine());
-		inkarnationTable.takeFocus();
-		if( inkarnationTable.getTableModel().getRowCount() > 0) {
-			inkarnationTable.setSelectedRow(0);
-		}
 		panel.addComponent(currentTable);
 		panel.addComponent(menuPanel);
-		invalidate();
-		
+
+		setFocusedInteractable(inkarnationTable);
 	}
 
 	private void showMakroTable() throws StartStoppException {
@@ -144,13 +140,10 @@ public class SkriptEditor extends BasicWindow {
 			panel.removeComponent(menuPanel);
 		}
 		currentTable = makroTable.withBorder(Borders.singleLine());
-		makroTable.takeFocus();
-		if( makroTable.getTableModel().getRowCount() > 0) {
-			makroTable.setSelectedRow(0);
-		}
 		panel.addComponent(currentTable);
 		panel.addComponent(menuPanel);
-		invalidate();
+
+		setFocusedInteractable(makroTable);
 	}
 
 	private void showRechnerTable() throws StartStoppException {
@@ -164,13 +157,10 @@ public class SkriptEditor extends BasicWindow {
 			panel.removeComponent(menuPanel);
 		}
 		currentTable = rechnerTable.withBorder(Borders.singleLine());
-		rechnerTable.takeFocus();
-		if( rechnerTable.getTableModel().getRowCount() > 0) {
-			rechnerTable.setSelectedRow(0);
-		}
 		panel.addComponent(currentTable);
 		panel.addComponent(menuPanel);
-		invalidate();
+
+		setFocusedInteractable(rechnerTable);
 	}
 
 	@Override
