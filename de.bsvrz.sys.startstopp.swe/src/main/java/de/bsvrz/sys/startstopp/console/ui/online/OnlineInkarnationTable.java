@@ -31,9 +31,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import com.googlecode.lanterna.gui2.table.DefaultTableRenderer;
 import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.gui2.table.TableCellBorderStyle;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;

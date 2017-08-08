@@ -26,8 +26,6 @@
 
 package de.bsvrz.sys.startstopp.process;
 
-import java.util.Optional;
-
 import de.bsvrz.dav.daf.main.ApplicationCloseActionHandler;
 import de.bsvrz.dav.daf.main.ClientDavConnection;
 import de.bsvrz.dav.daf.main.ClientDavInterface;
@@ -51,7 +49,7 @@ public class DavConnector extends Thread {
 
 		private DavConnector connector;
 
-		public ConnectionListener(DavConnector connector) {
+		ConnectionListener(DavConnector connector) {
 			this.connector = connector;
 		}
 
@@ -59,8 +57,8 @@ public class DavConnector extends Thread {
 		public void connectionClosed(ClientDavInterface connection) {
 			// TODO Auto-generated method stub
 			System.err.println("ConnectionClosed");
-			if( connection.equals(connector.connection)) {
-				connector.connection =  null;
+			if (connection.equals(connector.connection)) {
+				connector.connection = null;
 			}
 		}
 	}
@@ -69,8 +67,7 @@ public class DavConnector extends Thread {
 
 		private DavConnector connector;
 
-		
-		public ConnectionCloseHandler(DavConnector connector) {
+		ConnectionCloseHandler(DavConnector connector) {
 			this.connector = connector;
 		}
 
@@ -102,7 +99,7 @@ public class DavConnector extends Thread {
 			if (connection == null) {
 				connect();
 			}
-			
+
 			if (connection != null) {
 				try {
 					if (!connection.isConnected()) {
@@ -189,11 +186,11 @@ public class DavConnector extends Thread {
 	}
 
 	private void connect() {
-		
-		if( zugangDav == null) {
+
+		if (zugangDav == null) {
 			return;
 		}
-		
+
 		try {
 			ClientDavParameters parameters = new ClientDavParameters();
 			// TODO Inkarnationsname korrekt bilden

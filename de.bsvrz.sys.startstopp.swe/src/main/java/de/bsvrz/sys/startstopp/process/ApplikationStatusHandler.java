@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import de.bsvrz.dav.daf.main.ClientDavConnection;
 import de.bsvrz.dav.daf.main.ClientReceiverInterface;
@@ -46,9 +45,9 @@ import de.bsvrz.dav.daf.main.config.DataModel;
 import de.bsvrz.dav.daf.main.config.DynamicObject;
 import de.bsvrz.dav.daf.main.config.DynamicObjectType;
 import de.bsvrz.dav.daf.main.config.DynamicObjectType.DynamicObjectCreatedListener;
-import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.dav.daf.main.config.InvalidationListener;
 import de.bsvrz.dav.daf.main.config.SystemObject;
+import de.bsvrz.sys.funclib.debug.Debug;
 
 public class ApplikationStatusHandler
 		implements DynamicObjectCreatedListener, InvalidationListener, ClientReceiverInterface {

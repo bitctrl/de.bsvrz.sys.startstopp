@@ -27,6 +27,7 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -63,8 +64,8 @@ public class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> 
 		}
 
 		@Override
-		protected String renderElement(KernSystem element) {
-			return element.getInkarnationsName();
+		protected List<String> getStringsFor(KernSystem element) {
+			return Collections.singletonList(element.getInkarnationsName());
 		}
 	}
 

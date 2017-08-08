@@ -27,6 +27,7 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -68,10 +69,9 @@ public class AufrufParameterEditor extends StartStoppElementEditor<List<String>>
 		}
 
 		@Override
-		protected String renderElement(String element) {
-			return element;
+		protected List<String> getStringsFor(String element) {
+			return Collections.singletonList(element);
 		}
-
 	}
 
 

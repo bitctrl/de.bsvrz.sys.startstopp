@@ -26,6 +26,7 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -71,8 +72,8 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 		}
 
 		@Override
-		protected String renderElement(String element) {
-			return element;
+		protected List<String> getStringsFor(String element) {
+			return Collections.singletonList(element);
 		}
 	}
 

@@ -26,7 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.googlecode.lanterna.gui2.table.Table;
@@ -40,11 +39,25 @@ public abstract class EditableTable<T> extends Table<String> {
 		super(columnName);
 		this.dataList = dataList;
 		for( T element : dataList) {
-			getTableModel().addRow(renderElement(element));
+			getTableModel().addRow(getStringsFor(element));
 		}
 		setSelectAction(() -> editSelectedElement());
 	}
 
+	protected void addElement(int row, T element) {
+		dataList.add(row, element);
+		getTableModel().insertRow(row, getStringsFor(element));
+	}
+	
+	protected void removeCurrentElement() {
+		removeElementAt(getSelectedRow());
+	}
+	
+	protected void removeElementAt(int row) {
+		dataList.remove(row);
+		getTableModel().removeRow(row);
+	}
+	
 	@Override
 	public Result handleKeyStroke(KeyStroke key) {
 
@@ -82,7 +95,7 @@ public abstract class EditableTable<T> extends Table<String> {
 		T newParameter = requestNewElement();
 		if (newParameter != null) {
 			dataList.add(selectedRow, newParameter);
-			getTableModel().insertRow(Math.min(selectedRow + 1, getTableModel().getRowCount()), Collections.singleton(renderElement(newParameter)));
+			getTableModel().insertRow(Math.min(selectedRow + 1, getTableModel().getRowCount()), getStringsFor(newParameter));
 			setSelectedRow(selectedRow + 1);
 		}
 	}
@@ -92,7 +105,7 @@ public abstract class EditableTable<T> extends Table<String> {
 		T newParameter = requestNewElement();
 		if (newParameter != null) {
 			dataList.add(selectedRow, newParameter);
-			getTableModel().insertRow(selectedRow, Collections.singleton(renderElement(newParameter)));
+			getTableModel().insertRow(selectedRow, getStringsFor(newParameter));
 		}
 	}
 
@@ -100,9 +113,16 @@ public abstract class EditableTable<T> extends Table<String> {
 		if (selectedRow > 0) {
 			T parameter = dataList.remove(selectedRow);
 			dataList.add(selectedRow - 1, parameter);
-			getTableModel().setCell(0, selectedRow - 1, renderElement(dataList.get(selectedRow - 1)));
-			getTableModel().setCell(0, selectedRow, renderElement(dataList.get(selectedRow)));
+			updateRowDisplay(selectedRow - 1);
+			updateRowDisplay(selectedRow);
 			setSelectedRow(selectedRow - 1);
+		}
+	}
+
+	private void updateRowDisplay(int row) {
+		List<String> strings = getStringsFor(dataList.get(row));
+		for( int col = 0; col < getTableModel().getColumnCount(); col++) {
+			getTableModel().setCell(col, row, strings.get(col));
 		}
 	}
 
@@ -110,12 +130,22 @@ public abstract class EditableTable<T> extends Table<String> {
 		if (selectedRow < dataList.size() - 1) {
 			T parameter = dataList.remove(selectedRow);
 			dataList.add(selectedRow + 1, parameter);
-			getTableModel().setCell(0, selectedRow + 1, renderElement(dataList.get(selectedRow + 1)));
-			getTableModel().setCell(0, selectedRow, renderElement(dataList.get(selectedRow)));
+			updateRowDisplay(selectedRow + 1);
+			updateRowDisplay(selectedRow);
 			setSelectedRow(selectedRow + 1);
 		}
 	}
 
+	protected void replaceCurrentElementWith(T element) {
+		int selectedRow = getSelectedRow();
+		dataList.remove(selectedRow);
+		dataList.add(selectedRow, element);
+		List<String> values = getStringsFor(element);
+		for (int idx = 0; idx < getTableModel().getColumnCount(); idx++) {
+			getTableModel().setCell(idx, selectedRow, values.get(idx));
+		}
+	}
+	
 	private void editSelectedElement() {
 		T oldElement = dataList.get(getSelectedRow());
 		T newParameter = editElement(oldElement);
@@ -123,14 +153,15 @@ public abstract class EditableTable<T> extends Table<String> {
 			int row = getSelectedRow();
 			dataList.remove(row);
 			dataList.add(row, newParameter);
-			getTableModel().setCell(0, row, renderElement(newParameter));
+			updateRowDisplay(row);
 		}
 	}
-
-	protected abstract T requestNewElement();
-
-	protected abstract T editElement(T oldElement);
-
-	protected  abstract String renderElement(T element);
 	
+	protected T getSelectedElement() {
+		return dataList.get(getSelectedRow());
+	}
+	
+	protected abstract T requestNewElement();
+	protected abstract T editElement(T oldElement);
+	protected abstract List<String> getStringsFor(T element);
 }

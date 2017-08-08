@@ -1,3 +1,29 @@
+/*
+ * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Copyright (C) 2007-2017 BitCtrl Systems GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * Contact Information:<br>
+ * BitCtrl Systems GmbH<br>
+ * Weißenfelser Straße 67<br>
+ * 04229 Leipzig<br>
+ * Phone: +49 341-490670<br>
+ * mailto: info@bitctrl.de
+ */
+
 package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.ArrayList;
@@ -22,28 +48,28 @@ public class ApplikationDetailWindow extends BasicWindow {
 	}
 
 	private void initUI() {
-		
+
 		List<Component> components = new ArrayList<>();
-		for(int i = 0; i < 30; i++) {
+		for (int i = 0; i < 30; i++) {
 			Label label = new Label("Zeile mit\nZeilennummer: " + i);
 			components.add(label);
 		}
-		
+
 		panel = Panels.vertical(components.toArray(new Component[components.size()]));
 		setComponent(panel);
 	}
-	
+
 	@Override
 	public boolean handleInput(KeyStroke key) {
-		System.err.println("Size: " +  getSize() + " Panelsize: " + panel.getSize());
+		System.err.println("Size: " + getSize() + " Panelsize: " + panel.getSize());
 		TerminalPosition altePosition = panel.getPosition();
 		TerminalPosition neuePosition = new TerminalPosition(0, altePosition.getRow() - 1);
 		panel.setPosition(neuePosition);
-		
+
 		System.err.println("Alt: " + altePosition + " Neu: " + neuePosition);
 		panel.invalidate();
 		System.err.println("Preferred: " + panel.calculatePreferredSize());
-		
+
 		return super.handleInput(key);
 	}
 }

@@ -27,7 +27,6 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -36,7 +35,6 @@ import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
@@ -46,9 +44,8 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
-import de.bsvrz.sys.startstopp.console.ui.StartStoppTable;
 
-public class InkarnationTable extends StartStoppTable<Inkarnation> {
+public class InkarnationTable extends EditableTable<Inkarnation> {
 
 	@Inject
 	GuiComponentFactory factory;
@@ -115,5 +112,17 @@ public class InkarnationTable extends StartStoppTable<Inkarnation> {
 		result.add(inkarnation.getInkarnationsTyp().toString());
 		result.add(inkarnation.getStartArt().getOption().toString());
 		return result;
+	}
+
+	@Override
+	protected Inkarnation requestNewElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Inkarnation editElement(Inkarnation oldElement) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
