@@ -96,7 +96,7 @@ public class OnlineInkarnationTable extends Table<Object> {
 		this.applikationenTableModell = applikationenModell;
 		this.emtpyTableModell = messagesModell;
 		setTableModel(emtpyTableModell);
-		setTableCellRenderer(new OnlineTableRenderer());
+		setTableCellRenderer(new OnlineTableCellRenderer());
 		emtpyTableModell.addMessage("Unbekannter Status");
 	}
 

@@ -86,17 +86,17 @@ public class StartBedingungEditor extends StartStoppElementEditor<StartBedingung
 	private boolean bedingungUsed = false;
 
 	@Inject
-	public StartBedingungEditor(@Assisted StartStoppSkript skript, @Assisted StartBedingung startBedingung) {
+	public StartBedingungEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
 		super(skript, "Startbedingung");
 
 		this.skript = skript;
 
-		if (startBedingung == null) {
+		if (inkarnation.getStartBedingung() == null) {
 			bedingungUsed = false;
 			this.startBedingung = new StartBedingung();
 		} else {
 			bedingungUsed = true;
-			this.startBedingung = (StartBedingung) Util.cloneObject(startBedingung);
+			this.startBedingung = (StartBedingung) Util.cloneObject(inkarnation.getStartBedingung());
 		}
 
 	}

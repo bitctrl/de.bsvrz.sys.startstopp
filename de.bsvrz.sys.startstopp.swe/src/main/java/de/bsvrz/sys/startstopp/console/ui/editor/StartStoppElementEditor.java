@@ -27,6 +27,8 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -34,6 +36,8 @@ import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Component;
+import com.googlecode.lanterna.gui2.Container;
 import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
@@ -42,14 +46,18 @@ import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.DialogWindow;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.console.ui.HasHotkey;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppButton;
 
 public abstract class StartStoppElementEditor<T> extends DialogWindow {
 
 	private boolean okPressed;
 	private StartStoppSkript skript;
+	private Map<Character, HasHotkey> hotkeys = new LinkedHashMap<>();
 
 	@Inject
 	public StartStoppElementEditor(@Assisted StartStoppSkript skript, @Assisted String title) {
@@ -63,21 +71,12 @@ public abstract class StartStoppElementEditor<T> extends DialogWindow {
 	private void initUI() {
 		Panel buttonPanel = new Panel();
 		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
-		Button okButton = new Button("OK", new Runnable() {
-			@Override
-			public void run() {
-				okPressed = true;
-				close();
-			}
+		Button okButton = new StartStoppButton("OK", () -> {
+			okPressed = true;
+			close();
 		});
 		buttonPanel.addComponent(okButton);
-		Button cancelButton = new Button("Abbrechen", new Runnable() {
-
-			@Override
-			public void run() {
-				close();
-			}
-		});
+		Button cancelButton = new StartStoppButton("Abbrechen", () -> close());
 		buttonPanel.addComponent(cancelButton);
 
 		Panel mainPanel = new Panel();
@@ -91,7 +90,21 @@ public abstract class StartStoppElementEditor<T> extends DialogWindow {
 				GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false))
 				.addTo(mainPanel);
 
+		collectHotkeys(mainPanel);
+
 		setComponent(mainPanel);
+	}
+
+	private void collectHotkeys(Container mainPanel) {
+		for (Component component : mainPanel.getChildren()) {
+			if (component instanceof HasHotkey) {
+				Character hotkey = ((HasHotkey) component).getHotkey();
+				hotkeys.put(Character.toLowerCase(hotkey), (HasHotkey) component);
+			}
+			if (component instanceof Container) {
+				collectHotkeys((Container) component);
+			}
+		}
 	}
 
 	@Override
@@ -121,6 +134,14 @@ public abstract class StartStoppElementEditor<T> extends DialogWindow {
 				}
 			}
 			return true;
+		}
+
+		if (key.getKeyType() == KeyType.Character && key.isAltDown()) {
+			HasHotkey component = hotkeys.get(Character.toLowerCase(key.getCharacter()));
+			if (component != null) {
+				component.takeFocus();
+				return true;
+			}
 		}
 
 		return super.handleInput(key);

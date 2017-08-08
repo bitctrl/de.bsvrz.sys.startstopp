@@ -51,7 +51,7 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 
 	public class NachfolgerTable extends EditableTable<String> {
 
-		public NachfolgerTable(List<String> dataList, String ... columnName) {
+		public NachfolgerTable(List<String> dataList, String... columnName) {
 			super(dataList, columnName);
 		}
 
@@ -59,7 +59,7 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 		protected String requestNewElement() {
 			InkarnationSelektor selektor = factory.createInkarnationSelektor(skript);
 			Inkarnation inkarnation = selektor.getInkarnation();
-			if( inkarnation == null) {
+			if (inkarnation == null) {
 				return null;
 			}
 			return inkarnation.getInkarnationsName();
@@ -75,25 +75,30 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 			return element;
 		}
 	}
-	
+
 	@Inject
 	GuiComponentFactory factory;
-	
+
 	private static final String KEIN_RECHNER = "<kein Rechner>";
 	private StoppBedingung stoppBedingung;
 	private StartStoppSkript skript;
 	private boolean bedingungUsed = false;
 
 	@Inject
-	public StoppBedingungEditor(@Assisted StartStoppSkript skript, @Assisted StoppBedingung stoppBedingung) {
+	public StoppBedingungEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
 		super(skript, "StartStopp - Editor: Inkarnation: ");
 
 		this.skript = skript;
-		bedingungUsed = stoppBedingung.getNachfolger().isEmpty();
-		this.stoppBedingung = (StoppBedingung) Util.cloneObject(stoppBedingung);
+		if (inkarnation.getStoppBedingung() == null) {
+			bedingungUsed = false;
+			stoppBedingung = new StoppBedingung();
+		} else {
+			bedingungUsed = true;
+			this.stoppBedingung = (StoppBedingung) Util.cloneObject(inkarnation.getStoppBedingung());
+		}
 	}
 
-	protected void initComponents (Panel mainPanel) {
+	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
 		CheckBox bedingungsCheck = new CheckBox("Stoppbedingung prüfen");
@@ -107,7 +112,8 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 		mainPanel.addComponent(bedingungsCheck);
 
 		NachfolgerTable table = new NachfolgerTable(stoppBedingung.getNachfolger(), "Nachfolger");
-		mainPanel.addComponent(table.withBorder(Borders.singleLine("Nachfolger")), GridLayout.createHorizontallyFilledLayoutData(1));
+		mainPanel.addComponent(table.withBorder(Borders.singleLine("Nachfolger")),
+				GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Rechner:"));
 		ComboBox<String> rechnerSelektor = new ComboBox<>(KEIN_RECHNER);

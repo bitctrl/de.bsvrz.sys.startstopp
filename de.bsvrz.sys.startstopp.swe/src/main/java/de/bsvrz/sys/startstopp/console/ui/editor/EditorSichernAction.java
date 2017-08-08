@@ -41,7 +41,6 @@ import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
@@ -55,9 +54,6 @@ public class EditorSichernAction implements Runnable {
 
 	@Inject
 	private WindowBasedTextGUI textGui;
-
-	@Inject
-	private StartStoppClient client;
 
 	@Inject
 	public EditorSichernAction(@Assisted StartStoppSkript skript) {

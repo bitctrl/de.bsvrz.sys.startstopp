@@ -27,17 +27,13 @@
 package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.BasicWindow;
-import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.WindowListenerAdapter;
-import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 
@@ -55,14 +51,8 @@ public class ApplikationDetailAction implements Runnable {
 	
 	@Override
 	public void run() {
-		BasicWindow window = new BasicWindow("Details: " + applikation.getInkarnation().getInkarnationsName());
+		BasicWindow window = new ApplikationDetailWindow("Details: " + applikation.getInkarnation().getInkarnationsName());
 		window.setHints(Collections.singleton(Hint.EXPANDED));
-		window.addWindowListener(new WindowListenerAdapter() {
-			@Override
-			public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-				window.close();
-			}
-		});
 		gui.addWindow(window);
 	}
 

@@ -30,13 +30,15 @@ import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
 
 public class StartStoppConsoleOptions {
 
-	private String host = "localhost";
-	private int port = 3000;
+	private final String host;
+	private final int port;
+	private final boolean monochrome;
 
 	public StartStoppConsoleOptions(String[] args) {
 		ArgumentList argList = new ArgumentList(args);
 		host = argList.fetchArgument("-host=localhost").asNonEmptyString();
 		port = argList.fetchArgument("-port=3000").intValue();
+		monochrome = argList.fetchArgument("-monochrome=true").booleanValue();
 	}
 
 	public String getHost() {
@@ -45,6 +47,10 @@ public class StartStoppConsoleOptions {
 
 	public int getPort() {
 		return port ;
+	}
+
+	public boolean isMonochrome() {
+		return monochrome;
 	}
 
 }

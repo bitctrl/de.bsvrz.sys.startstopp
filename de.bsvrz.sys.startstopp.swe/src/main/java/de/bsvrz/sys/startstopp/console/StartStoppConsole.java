@@ -61,6 +61,9 @@ public class StartStoppConsole {
 	private static class TextGuiProvider implements Provider<WindowBasedTextGUI> {
 
 		WindowBasedTextGUI gui;
+		
+		@Inject
+		StartStoppConsoleOptions options;
 
 		@Override
 		public WindowBasedTextGUI get() {
@@ -70,6 +73,11 @@ public class StartStoppConsole {
 					Terminal term = factory.createTerminal();
 					Screen screen = new TerminalScreen(term);
 					gui = new MultiWindowTextGUI(screen);
+					if(options.isMonochrome()) {
+						gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Mono"));
+					} else {
+						gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Color"));
+					}
 					screen.startScreen();
 				} catch (IOException e) {
 					throw new IllegalStateException("Die UI kann nicht initialisiert werden!", e);
@@ -116,7 +124,14 @@ public class StartStoppConsole {
 		Properties themeProperties = new Properties();
 		try (InputStream stream = StartStoppConsole.class.getResourceAsStream("nerz-mono.properties")) {
 			themeProperties.load(stream);
-			LanternaThemes.registerTheme("NERZ-Mono", new StartStoppTheme(themeProperties));
+			LanternaThemes.registerTheme("NERZ-Mono", new PropertyTheme(themeProperties));
+		}
+		try (InputStream stream = StartStoppConsole.class.getResourceAsStream("nerz-color.properties")) {
+			themeProperties.load(stream);
+			LanternaThemes.registerTheme("NERZ-Color", new PropertyTheme(themeProperties));
+		} catch (Exception e) {
+			// TODO
+			e.printStackTrace();
 		}
 
 		Injector injector = Guice.createInjector(new StartStoppModule(args));

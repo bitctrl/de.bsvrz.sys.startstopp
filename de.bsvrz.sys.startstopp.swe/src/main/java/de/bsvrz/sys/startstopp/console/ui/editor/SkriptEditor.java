@@ -39,6 +39,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
+import com.googlecode.lanterna.gui2.Border;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.GridLayout.Alignment;
@@ -56,6 +57,8 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
+import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
 
 public class SkriptEditor extends BasicWindow {
 	private InkarnationTable inkarnationTable;
@@ -65,6 +68,9 @@ public class SkriptEditor extends BasicWindow {
 
 	@Inject
 	GuiComponentFactory factory;
+	private Border currentTable;
+	private Panel panel;
+	private MenuPanel menuPanel;
 
 	@Inject
 	public SkriptEditor(@Assisted StartStoppSkript skript) {
@@ -75,8 +81,21 @@ public class SkriptEditor extends BasicWindow {
 	@PostConstruct
 	@Inject
 	void init() {
-		setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+		setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.NO_DECORATIONS));
 
+		panel = new Panel();
+		panel.setLayoutManager(new GridLayout(1));
+		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
+
+		Label infoLabel = new Label("Startstopp - Editor");
+		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
+		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
+
+		menuPanel = new MenuPanel();
+		menuPanel.setLayoutManager(new GridLayout(1));
+		Label statusLabel = new MenuLabel("s-System");
+		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
+		
 		try {
 			showInkarnationTable();
 		} catch (StartStoppException e) {
@@ -90,65 +109,68 @@ public class SkriptEditor extends BasicWindow {
 				}
 			}
 		});
+		
+		setComponent(panel);
 	}
 
 	private void showInkarnationTable() throws StartStoppException {
-		Panel panel = new Panel();
-		panel.setLayoutManager(new GridLayout(1));
-		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
-
-		Label infoLabel = new Label("s-System   i-Inkarnation e-Bearbeiten");
-		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
-		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
 		inkarnationTable = factory.createInkarnationTable(skript);
 		inkarnationTable.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		inkarnationTable.setPreferredSize(TerminalSize.ONE);
-		panel.addComponent(inkarnationTable.withBorder(Borders.singleLine()));
-
-		setComponent(panel);
-
+		if( currentTable != null) {
+			panel.removeComponent(currentTable);
+			panel.removeComponent(menuPanel);
+		}
+		currentTable = inkarnationTable.withBorder(Borders.singleLine());
+		inkarnationTable.takeFocus();
+		if( inkarnationTable.getTableModel().getRowCount() > 0) {
+			inkarnationTable.setSelectedRow(0);
+		}
+		panel.addComponent(currentTable);
+		panel.addComponent(menuPanel);
+		invalidate();
+		
 	}
 
 	private void showMakroTable() throws StartStoppException {
-		Panel panel = new Panel();
-		panel.setLayoutManager(new GridLayout(1));
-		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
-
-		Label infoLabel = new Label("s-System   i-Inkarnation e-Bearbeiten");
-		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
-		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
-
 		makroTable = factory.createMakroTable(skript);
 		makroTable.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		makroTable.setPreferredSize(TerminalSize.ONE);
-
-		panel.addComponent(makroTable.withBorder(Borders.singleLine()));
-		setComponent(panel);
-
-		makroTable.setVisibleRows(getSize().getRows() - 7);
+		if( currentTable != null) {
+			panel.removeComponent(currentTable);
+			panel.removeComponent(menuPanel);
+		}
+		currentTable = makroTable.withBorder(Borders.singleLine());
+		makroTable.takeFocus();
+		if( makroTable.getTableModel().getRowCount() > 0) {
+			makroTable.setSelectedRow(0);
+		}
+		panel.addComponent(currentTable);
+		panel.addComponent(menuPanel);
+		invalidate();
 	}
 
 	private void showRechnerTable() throws StartStoppException {
-		Panel panel = new Panel();
-		panel.setLayoutManager(new GridLayout(1));
-		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
-
-		Label infoLabel = new Label("s-System   i-Inkarnation e-Bearbeiten");
-		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
-		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
-
 		rechnerTable = factory.createRechnerTable(skript);
 		rechnerTable.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		rechnerTable.setPreferredSize(TerminalSize.ONE);
 
-		panel.addComponent(rechnerTable.withBorder(Borders.singleLine()));
-		setComponent(panel);
-
-		rechnerTable.setVisibleRows(getSize().getRows() - 7);
+		if( currentTable != null) {
+			panel.removeComponent(currentTable);
+			panel.removeComponent(menuPanel);
+		}
+		currentTable = rechnerTable.withBorder(Borders.singleLine());
+		rechnerTable.takeFocus();
+		if( rechnerTable.getTableModel().getRowCount() > 0) {
+			rechnerTable.setSelectedRow(0);
+		}
+		panel.addComponent(currentTable);
+		panel.addComponent(menuPanel);
+		invalidate();
 	}
 
 	@Override

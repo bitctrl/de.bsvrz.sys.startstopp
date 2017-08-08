@@ -81,17 +81,6 @@ public class Util {
 		return textBuffer.toString();
 	}
 	
-	public static <T> T getObjectOrDefault(T object, Class<T> clazz) {
-		if( object == null) {
-			try {
-				return clazz.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new IllegalArgumentException(e);
-			}
-		}
-		return object;
-	}
-
 	public static String nonEmptyString(String string) {
 		if( string == null) {
 			return "";

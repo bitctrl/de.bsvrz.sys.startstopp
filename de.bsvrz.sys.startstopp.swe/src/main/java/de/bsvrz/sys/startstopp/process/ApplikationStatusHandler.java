@@ -81,7 +81,7 @@ public class ApplikationStatusHandler
 		this.processManager = processManager;
 	}
 
-	public void reconnect(Optional<ClientDavConnection> connection) {
+	public void reconnect(ClientDavConnection connection) {
 
 		Collection<ApplikationStatus> statusValues = new ArrayList<>(applikationStatus.values());
 		applikationStatus.clear();
@@ -89,8 +89,8 @@ public class ApplikationStatusHandler
 			disconnectApplikation(status.appObj);
 		}
 
-		if (connection.isPresent()) {
-			dav = connection.get();
+		if (connection != null) {
+			dav = connection;
 			DataModel dataModel = dav.getDataModel();
 			applikationTyp = (DynamicObjectType) dataModel.getType("typ.applikation");
 			AttributeGroup atg = dataModel.getAttributeGroup("atg.applikationsFertigmeldung");

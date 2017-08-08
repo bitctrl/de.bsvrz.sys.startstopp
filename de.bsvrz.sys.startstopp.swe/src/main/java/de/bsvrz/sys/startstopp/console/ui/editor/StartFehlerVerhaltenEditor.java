@@ -36,6 +36,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
@@ -45,14 +46,14 @@ public class StartFehlerVerhaltenEditor extends StartStoppElementEditor<StartFeh
 	private StartFehlerVerhalten startFehlerVerhalten;
 
 	@Inject
-	public StartFehlerVerhaltenEditor(@Assisted StartStoppSkript skript, @Assisted StartFehlerVerhalten startFehlerVerhalten) {
+	public StartFehlerVerhaltenEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
 		super(skript, "Startfehlerverhalten");
 
 
-		if (startFehlerVerhalten == null) {
+		if (inkarnation.getStartFehlerVerhalten() == null) {
 			this.startFehlerVerhalten = new StartFehlerVerhalten();
 		} else {
-			this.startFehlerVerhalten = (StartFehlerVerhalten) Util.cloneObject(startFehlerVerhalten);
+			this.startFehlerVerhalten = (StartFehlerVerhalten) Util.cloneObject(inkarnation.getStartFehlerVerhalten());
 		}
 	}
 

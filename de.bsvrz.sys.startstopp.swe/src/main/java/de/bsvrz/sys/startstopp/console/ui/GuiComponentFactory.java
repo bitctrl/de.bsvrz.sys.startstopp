@@ -34,11 +34,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
-import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.console.ui.editor.AufrufParameterEditor;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorCloseAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorSichernAction;
@@ -111,15 +107,13 @@ public interface GuiComponentFactory {
 
 	RechnerTable createRechnerTable(StartStoppSkript skript);
 
-	StartBedingungEditor createStartBedingungEditor(StartStoppSkript skript, StartBedingung startBedingung);
+	StartBedingungEditor createStartBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation);
 
-	StartFehlerVerhaltenEditor createStartFehlerVerhaltenEditor(StartStoppSkript skript,
-			StartFehlerVerhalten startFehlerVerhalten);
+	StartFehlerVerhaltenEditor createStartFehlerVerhaltenEditor(StartStoppSkript skript, Inkarnation inkarnation);
 
-	StoppBedingungEditor createStoppBedingungEditor(StartStoppSkript skript, StoppBedingung stoppBedingung);
+	StoppBedingungEditor createStoppBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation);
 
-	StoppFehlerVerhaltenEditor createStoppFehlerVerhaltenEditor(StartStoppSkript skript,
-			StoppFehlerVerhalten stoppFehlerVerhalten);
+	StoppFehlerVerhaltenEditor createStoppFehlerVerhaltenEditor(StartStoppSkript skript, Inkarnation inkarnation);
 
 	UsvEditor createUsvEditor(StartStoppSkript skript);
 

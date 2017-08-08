@@ -47,27 +47,43 @@ import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
 
 public class DavConnector extends Thread {
 
-	public class ConnectionListener implements DavConnectionListener {
+	private static class ConnectionListener implements DavConnectionListener {
+
+		private DavConnector connector;
+
+		public ConnectionListener(DavConnector connector) {
+			this.connector = connector;
+		}
 
 		@Override
 		public void connectionClosed(ClientDavInterface connection) {
 			// TODO Auto-generated method stub
-			// System.err.println("ConnectionClosed");
+			System.err.println("ConnectionClosed");
+			if( connection.equals(connector.connection)) {
+				connector.connection =  null;
+			}
 		}
 	}
 
-	public class ConnectionCloseHandler implements ApplicationCloseActionHandler {
+	private static class ConnectionCloseHandler implements ApplicationCloseActionHandler {
+
+		private DavConnector connector;
+
+		
+		public ConnectionCloseHandler(DavConnector connector) {
+			this.connector = connector;
+		}
 
 		@Override
 		public void close(String error) {
-			connection = Optional.empty();
+			connector.connection = null;
 		}
 	}
 
 	private ZugangDav zugangDav;
 	private Object lock = new Object();
 	private boolean running = true;
-	private Optional<ClientDavConnection> connection = Optional.empty();
+	private ClientDavConnection connection = null;
 	private ProcessManager processManager;
 	private ApplikationStatusHandler appStatusHandler;
 
@@ -83,16 +99,20 @@ public class DavConnector extends Thread {
 
 		while (running) {
 
-			if (connection.isPresent()) {
+			if (connection == null) {
+				connect();
+			}
+			
+			if (connection != null) {
 				try {
-					if (!connection.get().isConnected()) {
-						connection.get().connect();
+					if (!connection.isConnected()) {
+						connection.connect();
 					}
 
-					if (!connection.get().isLoggedIn()) {
+					if (!connection.isLoggedIn()) {
 						Debug.getLogger().info("Anmelden als \"" + zugangDav.getUserName() + "\" Passwort: \""
 								+ zugangDav.getPassWord() + "\"");
-						connection.get().login(zugangDav.getUserName(), zugangDav.getPassWord());
+						connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
 						appStatusHandler.reconnect(connection);
 					}
 
@@ -117,8 +137,8 @@ public class DavConnector extends Thread {
 	}
 
 	public String getConnectionMsg() {
-		if (connection.isPresent()) {
-			if (connection.get().isConnected() && connection.get().isLoggedIn()) {
+		if (connection != null) {
+			if (connection.isConnected() && connection.isLoggedIn()) {
 				return null;
 			}
 			return "Verbindung zum Datenverteiler konnte noch nicht hergestellt werden!";
@@ -127,8 +147,8 @@ public class DavConnector extends Thread {
 	}
 
 	private boolean isOnline() {
-		if (connection.isPresent()) {
-			if (connection.get().isConnected() && connection.get().isLoggedIn()) {
+		if (connection != null) {
+			if (connection.isConnected() && connection.isLoggedIn()) {
 				return true;
 			}
 		}
@@ -142,7 +162,7 @@ public class DavConnector extends Thread {
 			throw new StartStoppDavException();
 		}
 
-		DataModel dataModel = connection.get().getDataModel();
+		DataModel dataModel = connection.getDataModel();
 		UserAdministration userAdministration = dataModel.getUserAdministration();
 		try {
 			Debug.getLogger().warning("Prüfe Passwort: " + veranlasser + ": " + passwort);
@@ -157,27 +177,36 @@ public class DavConnector extends Thread {
 	public void reconnect(ZugangDav newZugangDav) {
 		if (!newZugangDav.equals(zugangDav)) {
 			this.zugangDav = newZugangDav;
-			if (connection.isPresent() && connection.get().isConnected()) {
-				connection.get().disconnect(false, "");
+			if (connection != null && connection.isConnected()) {
+				connection.disconnect(false, "");
 			}
 
-			try {
-				ClientDavParameters parameters = new ClientDavParameters();
-				// TODO Inkarnationsname korrekt bilden
-				parameters.setApplicationName("StartStopp");
-				parameters.setDavCommunicationAddress(zugangDav.getAdresse());
-				parameters.setDavCommunicationSubAddress(Integer.parseInt(zugangDav.getPort()));
-				connection = Optional.of(new ClientDavConnection(parameters));
-				connection.get().addConnectionListener(new ConnectionListener());
-				connection.get().setCloseHandler(new ConnectionCloseHandler());
-			} catch (MissingParameterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			connect();
 		} else {
 			Debug.getLogger().info("Kein Reconnect erforderlich, Zugangsdaten wurden nicht verändert!");
 		}
 		trigger();
+	}
+
+	private void connect() {
+		
+		if( zugangDav == null) {
+			return;
+		}
+		
+		try {
+			ClientDavParameters parameters = new ClientDavParameters();
+			// TODO Inkarnationsname korrekt bilden
+			parameters.setApplicationName("StartStopp");
+			parameters.setDavCommunicationAddress(zugangDav.getAdresse());
+			parameters.setDavCommunicationSubAddress(Integer.parseInt(zugangDav.getPort()));
+			connection = new ClientDavConnection(parameters);
+			connection.addConnectionListener(new ConnectionListener(this));
+			connection.setCloseHandler(new ConnectionCloseHandler(this));
+		} catch (MissingParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	void trigger() {

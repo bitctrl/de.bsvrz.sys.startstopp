@@ -67,7 +67,7 @@ class ApplikationenTableModell extends TableModel<Object> {
 						applikation.getLetzteStartzeit());
 			} else if (getCell(0, idx).equals(applikation.getInkarnation().getInkarnationsName())) {
 				setCell(1, idx, applikation.getStatus());
-				setCell(2, idx, applikation.getLetzteStartzeit());
+				setCell(2, idx, applikation.getStartMeldung());
 			} else {
 				insertRow(idx, getValues(applikation));
 			}
@@ -82,7 +82,7 @@ class ApplikationenTableModell extends TableModel<Object> {
 		Collection<Object> result = new ArrayList<>();
 		result.add(applikation.getInkarnation().getInkarnationsName());
 		result.add(applikation.getStatus());
-		result.add(applikation.getLetzteStartzeit());
+		result.add(applikation.getStartMeldung());
 		return result;
 	}
 
