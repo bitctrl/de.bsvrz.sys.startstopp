@@ -26,14 +26,15 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
@@ -45,8 +46,9 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppTable;
 
-public class InkarnationTable extends Table<Object> {
+public class InkarnationTable extends StartStoppTable<Inkarnation> {
 
 	@Inject
 	GuiComponentFactory factory;
@@ -57,78 +59,61 @@ public class InkarnationTable extends Table<Object> {
 
 	@Inject
 	public InkarnationTable(WindowBasedTextGUI gui, @Assisted StartStoppSkript skript) throws StartStoppException {
-		super("Name", "Typ", "Startart");
-
+		super(skript.getInkarnationen(), "Name", "Typ", "Startart");
 		this.gui = gui;
 		this.skript = skript;
-
-		for (Inkarnation inkarnation : skript.getInkarnationen()) {
-			getTableModel().addRow(inkarnation.getInkarnationsName(), inkarnation.getInkarnationsTyp(),
-					inkarnation.getStartArt().getOption());
-		}
-
-
 	}
 	
 	@Inject
 	@PostConstruct
 	private void initUI() {
+		
 		setSelectAction(new Runnable() {
 			@Override
 			public void run() {
-				int row = getSelectedRow();
-				Inkarnation inkarnation = skript.getInkarnationen().get(row);
+				Inkarnation inkarnation = getSelectedElement();
 				InkarnationEditor editor = factory.createInkarnationEditor(skript, inkarnation);
 				if( editor.showDialog(gui)) {
-					int idx = skript.getInkarnationen().indexOf(inkarnation);
-					skript.getInkarnationen().remove(idx);
-					skript.getInkarnationen().add(idx, editor.getElement());
+					replaceCurrentElementWith(editor.getElement());
 				}
 			}
 		});
 	}
 
-	public Inkarnation getSelectedOnlineInkarnation() {
-		int row = getSelectedRow();
-		if ((row < 0) || (row >= skript.getInkarnationen().size())) {
-			return null;
-		}
-
-		return skript.getInkarnationen().get(row);
-	}
-
 	@Override
 	public Result handleKeyStroke(KeyStroke keyStroke) {
 
-		if (keyStroke.getKeyType() == KeyType.Character) {
-			switch (keyStroke.getCharacter()) {
-			case '+':
-				int row = getSelectedRow() + 1;
-				Inkarnation inkarnation = new Inkarnation().withInkarnationsName("NeueInkarnation")
+		if (SkriptEditor.isInsertAfterKey(keyStroke)) {
+			int row = getSelectedRow() + 1;
+			Inkarnation inkarnation = new Inkarnation().withInkarnationsName("NeueInkarnation")
 						.withApplikation("java").withStartArt(new StartArt())
 						.withStartFehlerVerhalten(new StartFehlerVerhalten())
 						.withStoppFehlerVerhalten(new StoppFehlerVerhalten());
-				InkarnationEditor editor = factory.createInkarnationEditor(skript, inkarnation);
-				if( editor.showDialog(gui)) {
-					skript.getInkarnationen().add(row, editor.getElement());
-					getTableModel().insertRow(row, Arrays.asList(inkarnation.getInkarnationsName(),
-							inkarnation.getInkarnationsTyp(), inkarnation.getStartArt().getOption()));
-				}
-				break;
-			case '-':
-				JaNeinDialog dialog = factory.createJaNeinDialog("Löschen",
-						"Soll die ausgewählte Inkarnation wirklich gelöscht werden?");
-				if (dialog.display()) {
-					int deleteRow = getSelectedRow();
-					skript.getInkarnationen().remove(deleteRow);
-					getTableModel().removeRow(deleteRow);
-				}
-				break;
-			default:
+			InkarnationEditor editor = factory.createInkarnationEditor(skript, inkarnation);
+			if( editor.showDialog(gui)) {
+				addElement(row, editor.getElement());
 			}
+			return Result.HANDLED;
+		}
+		
+		if( SkriptEditor.isDeleteKey(keyStroke)) {
+			JaNeinDialog dialog = factory.createJaNeinDialog("Löschen",
+						"Soll die ausgewählte Inkarnation wirklich gelöscht werden?");
+			if (dialog.display()) {
+				removeCurrentElement();
+			}
+			return Result.HANDLED;
 		}
 
 		return super.handleKeyStroke(keyStroke);
 	}
 
+	@Override
+	protected List<String> getStringsFor(Inkarnation inkarnation) {
+		List<String> result = new ArrayList<>();
+		result.add(inkarnation.getInkarnationsName());
+		result.add(inkarnation.getInkarnationsTyp().toString());
+		result.add(inkarnation.getStartArt().getOption().toString());
+		return result;
+	}
 }

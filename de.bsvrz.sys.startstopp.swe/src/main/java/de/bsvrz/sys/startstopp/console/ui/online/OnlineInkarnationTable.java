@@ -44,7 +44,7 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 public class OnlineInkarnationTable extends Table<Object> {
 
 	private static final Debug LOGGER = Debug.getLogger();
-	
+
 	private final class Updater extends Thread {
 
 		private Updater() {
@@ -65,18 +65,18 @@ public class OnlineInkarnationTable extends Table<Object> {
 					List<Applikation> applikationen = client.getApplikationen();
 
 					boolean showApplikationen = true;
-					if( applikationen.isEmpty()) {
+					if (applikationen.isEmpty()) {
 						StartStoppSkriptStatus skriptStatus = client.getCurrentSkriptStatus();
-						if( skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
+						if (skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
 							emtpyTableModell.setMessage(skriptStatus.getMessages().get(0));
 							setTableModel(emtpyTableModell);
 							showApplikationen = false;
 						}
-					} 
-					
-					if( showApplikationen) {
-					applikationenTableModell.updateApplikationen(applikationen);
-					setTableModel(applikationenTableModell);
+					}
+
+					if (showApplikationen) {
+						applikationenTableModell.updateApplikationen(applikationen);
+						setTableModel(applikationenTableModell);
 					}
 				} catch (StartStoppException e) {
 					emtpyTableModell.setMessage(e.getLocalizedMessage());
@@ -92,7 +92,8 @@ public class OnlineInkarnationTable extends Table<Object> {
 	private StartStoppClient client;
 
 	@Inject
-	public OnlineInkarnationTable(StartStoppClient client, MessagesTableModell messagesModell, ApplikationenTableModell applikationenModell) {
+	public OnlineInkarnationTable(StartStoppClient client, MessagesTableModell messagesModell,
+			ApplikationenTableModell applikationenModell) {
 		super("");
 		this.client = client;
 		this.applikationenTableModell = applikationenModell;
@@ -123,6 +124,6 @@ public class OnlineInkarnationTable extends Table<Object> {
 		}
 
 		return applikationenTableModell.getApplikation(getSelectedRow());
-		
+
 	}
 }
