@@ -39,20 +39,20 @@ import javax.ws.rs.core.Response;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.process.ProcessManager;
+import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.process.StartStoppApplikation;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/applikationen")
 public class ApplikationenService {
 
-	private ProcessManager processManager;
+	private ProzessManager processManager;
 
 	public ApplikationenService() {
 		this(StartStopp.getInstance().getProcessManager());
 	}
 
-	public ApplikationenService(ProcessManager processManager) {
+	public ApplikationenService(ProzessManager processManager) {
 		this.processManager = processManager;
 	}
 

@@ -100,10 +100,10 @@ public class StartStoppApplikation extends Applikation {
 	private Timer timer;
 	private WarteTask warteTask;
 	private TimerTask intervallTask;
-	private ProcessManager processManager;
+	private ProzessManager processManager;
 	private SystemProzessListener systemProzessListener = new SystemProzessListener();
 
-	public StartStoppApplikation(ProcessManager processmanager, StartStoppInkarnation inkarnation) {
+	public StartStoppApplikation(ProzessManager processmanager, StartStoppInkarnation inkarnation) {
 
 		this.processManager = processmanager;
 		this.inkarnation = inkarnation;
@@ -174,7 +174,7 @@ public class StartStoppApplikation extends Applikation {
 		return inkarnation.getStoppBedingung();
 	}
 
-	private void handleInstalliertState(ProcessManager processManager) {
+	private void handleInstalliertState(ProzessManager processManager) {
 		switch (inkarnation.getStartArt().getOption()) {
 		case AUTOMATISCH:
 		case INTERVALLABSOLUT:
@@ -221,7 +221,7 @@ public class StartStoppApplikation extends Applikation {
 		starteApplikation();
 	}
 
-	private void handleStartenWartenState(ProcessManager processManager, TimerType timerType) {
+	private void handleStartenWartenState(ProzessManager processManager, TimerType timerType) {
 
 		Set<Applikation> applikationen = processManager.waitForKernsystemStart(this);
 		if (!applikationen.isEmpty()) {
@@ -279,7 +279,7 @@ public class StartStoppApplikation extends Applikation {
 		return (warteTask != null) && warteTask.isActive();
 	}
 
-	private void handleStoppenWartenState(ProcessManager processManager, TimerType timerType) {
+	private void handleStoppenWartenState(ProzessManager processManager, TimerType timerType) {
 
 		Set<Applikation> applikationen = processManager.waitForKernsystemStopp(this);
 		if (!applikationen.isEmpty()) {

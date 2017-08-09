@@ -70,13 +70,13 @@ public class ApplikationStatusHandler
 		}
 	}
 
-	private ProcessManager processManager;
+	private ProzessManager processManager;
 	private DynamicObjectType applikationTyp = null;
 	private DataDescription applikationsFertigMeldungDesc;
 	private ClientDavConnection dav;
 	private Map<String, ApplikationStatus> applikationStatus = new LinkedHashMap<>();
 
-	public ApplikationStatusHandler(ProcessManager processManager) {
+	public ApplikationStatusHandler(ProzessManager processManager) {
 		this.processManager = processManager;
 	}
 

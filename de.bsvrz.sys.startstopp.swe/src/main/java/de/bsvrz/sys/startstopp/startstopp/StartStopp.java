@@ -34,7 +34,7 @@ import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.process.ProcessManager;
+import de.bsvrz.sys.startstopp.process.ProzessManager;
 
 public class StartStopp {
 
@@ -57,7 +57,7 @@ public class StartStopp {
 
 	private SkriptManager skriptManager;
 
-	private ProcessManager processManager;
+	private ProzessManager processManager;
 
 	private ApiServer apiServer;
 
@@ -74,7 +74,7 @@ public class StartStopp {
 		return options;
 	}
 
-	public ProcessManager getProcessManager() {
+	public ProzessManager getProcessManager() {
 		return processManager;
 	}
 
@@ -112,7 +112,7 @@ public class StartStopp {
 
 		options = new StartStoppOptions(args);
 		skriptManager = new SkriptManager();
-		processManager = new ProcessManager();
+		processManager = new ProzessManager();
 		apiServer = new ApiServer();
 	}
 

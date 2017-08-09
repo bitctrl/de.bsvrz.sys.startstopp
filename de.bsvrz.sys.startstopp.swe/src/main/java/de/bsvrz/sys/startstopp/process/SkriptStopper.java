@@ -38,9 +38,9 @@ public class SkriptStopper extends Thread {
 	private static final Debug LOGGER = Debug.getLogger();
 	private final Map<String, StartStoppApplikation> applikationen = new LinkedHashMap<>();
 	private final Map<String, StartStoppApplikation> kernsystem = new LinkedHashMap<>();
-	private ProcessManager processManager;
+	private ProzessManager processManager;
 
-	public SkriptStopper(ProcessManager processManager) {
+	public SkriptStopper(ProzessManager processManager) {
 
 		this.processManager = processManager;
 

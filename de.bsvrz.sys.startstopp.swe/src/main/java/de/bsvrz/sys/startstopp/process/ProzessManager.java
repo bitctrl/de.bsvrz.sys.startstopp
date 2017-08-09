@@ -52,12 +52,16 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
-public class ProcessManager extends Thread implements SkriptManagerListener, ManagedApplikationListener {
+public class ProzessManager extends Thread implements SkriptManagerListener, ManagedApplikationListener {
+
+	public enum Status {
+		INITIALIZED, STARTING, RUNNING, STOPPING, STOPPED;
+	};
 
 	private static final Debug LOGGER = Debug.getLogger();
 	private boolean stopped;
 	private Object lock = new Object();
-	private ManagerStatus managerStatus = new ManagerStatus();
+	private Status managerStatus = Status.INITIALIZED;
 
 	private Map<String, StartStoppApplikation> applikationen = new LinkedHashMap<>();
 	private final StartStopp startStopp;
@@ -65,12 +69,13 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	private StartStoppKonfiguration aktuelleKonfiguration;
 	private DavConnector davConnector = new DavConnector(this);
 	private String inkarnationsPrefix;
+	private Map<String, RechnerManager> rechner = new LinkedHashMap<>();
 
-	public ProcessManager() {
+	public ProzessManager() {
 		this(StartStopp.getInstance());
 	}
 
-	public ProcessManager(StartStopp startStopp) {
+	public ProzessManager(StartStopp startStopp) {
 		super("ProcessManager");
 		this.startStopp = startStopp;
 		davConnector.start();
@@ -89,6 +94,14 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 					if (skript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
 						aktuelleKonfiguration = skript;
 						davConnector.reconnect(aktuelleKonfiguration.getResolvedZugangDav());
+
+						Collection<Rechner> rechnerListe = aktuelleKonfiguration.getResolvedRechner();
+						for (Rechner rechner : rechnerListe) {
+							RechnerManager rechnerManager = new RechnerManager(rechner);
+							this.rechner.put(rechner.getName(), rechnerManager);
+							rechnerManager.start();
+						}
+
 						for (StartStoppInkarnation inkarnation : aktuelleKonfiguration.getInkarnationen()) {
 							StartStoppApplikation applikation = new StartStoppApplikation(this, inkarnation);
 							applikationen.put(applikation.getInkarnation().getInkarnationsName(), applikation);
@@ -100,7 +113,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 				}
 			}
 			for (StartStoppApplikation applikation : applikationen.values()) {
-				LOGGER.info("Prüfe " + applikation.getInkarnation().getInkarnationsName());
+				LOGGER.fine("Prüfe " + applikation.getInkarnation().getInkarnationsName());
 				applikation.updateStatus();
 			}
 
@@ -194,19 +207,19 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	}
 
 	public boolean isSkriptRunning() {
-		return managerStatus.getState() == ManagerStatus.State.RUNNING;
+		return managerStatus == Status.RUNNING;
 	}
 
 	public boolean isSkriptStopped() {
-		return managerStatus.getState() == ManagerStatus.State.STOPPED;
+		return managerStatus == Status.STOPPED;
 	}
 
 	public Thread stoppeSkript(boolean restart) {
 
-		if (managerStatus.getState() == ManagerStatus.State.STOPPING) {
+		if (managerStatus == Status.STOPPING) {
 			return null;
 		}
-		managerStatus.setState(ManagerStatus.State.STOPPING);
+		managerStatus = Status.STOPPING;
 
 		stopper = new SkriptStopper(this);
 		stopper.start();
@@ -256,8 +269,8 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 
 			if (!canBeStartet(applikation, bedingung)) {
 				result.add(applikation);
-				LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf " + applikation.getInkarnation().getInkarnationsName()
-						+ " warten!");
+				LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf "
+						+ applikation.getInkarnation().getInkarnationsName() + " warten!");
 			}
 		}
 		return result;
@@ -266,12 +279,13 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	private boolean canBeStartet(Applikation applikation, StartBedingung bedingung) {
 		switch (bedingung.getWarteart()) {
 		case BEGINN:
-			if ((applikation.getStatus() != Status.GESTARTET) && (applikation.getStatus() != Status.INITIALISIERT)) {
+			if ((applikation.getStatus() != Applikation.Status.GESTARTET)
+					&& (applikation.getStatus() != Applikation.Status.INITIALISIERT)) {
 				return false;
 			}
 			break;
 		case ENDE:
-			if (applikation.getStatus() != Status.INITIALISIERT) {
+			if (applikation.getStatus() != Applikation.Status.INITIALISIERT) {
 				return false;
 			}
 			break;
@@ -330,21 +344,23 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	private Set<Applikation> waitForRemoteStoppBedingung(StartStoppApplikation managedApplikation, String rechnerName,
 			StoppBedingung bedingung) {
 		Set<Applikation> result = new LinkedHashSet<>();
-		try {
-			Rechner rechner = aktuelleKonfiguration.getResolvedRechner(rechnerName);
-			StartStoppClient client = new StartStoppClient(rechner.getTcpAdresse(),
-					Integer.parseInt(rechner.getPort()));
-			for (String nachfolger : bedingung.getNachfolger()) {
-				Applikation applikation = client.getApplikation(nachfolger);
-				if (!canBeStopped(applikation)) {
-					result.add(applikation);
-					LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf "
-							+ applikation.getInkarnation().getInkarnationsName() + " auf Rechner \"" + rechnerName + "\" warten!");
-				}
-			}
+		RechnerManager rechnerManager = rechner.get(rechnerName);
+		if (rechnerManager == null) {
+			throw new IllegalStateException(
+					"Rechner " + rechnerName + " ist in der aktuellen Konfiguration nicht definiert!");
+		}
 
-		} catch (NumberFormatException | StartStoppException e) {
-			LOGGER.warning(e.getLocalizedMessage());
+		for (String nachfolger : bedingung.getNachfolger()) {
+			Applikation applikation = rechnerManager.getApplikation(nachfolger);
+			if (applikation == null) {
+				LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " kann den Status von "
+						+ nachfolger + " auf Rechner \"" + rechnerName + "\" nicht ermittlen!");
+			} else if (!canBeStopped(applikation)) {
+				result.add(applikation);
+				LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf "
+						+ applikation.getInkarnation().getInkarnationsName() + " auf Rechner \"" + rechnerName
+						+ "\" warten!");
+			}
 		}
 
 		return result;
@@ -354,37 +370,31 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 			StartBedingung bedingung) {
 
 		Set<Applikation> result = new LinkedHashSet<>();
-		try {
-			Rechner rechner = aktuelleKonfiguration.getResolvedRechner(rechnerName);
-			StartStoppClient client = new StartStoppClient(rechner.getTcpAdresse(),
-					Integer.parseInt(rechner.getPort()));
-
-			for (String vorgaenger : bedingung.getVorgaenger()) {
-
-				Applikation applikation = client.getApplikation(vorgaenger);
-
-				if (!canBeStartet(applikation, bedingung)) {
-					result.add(applikation);
-					LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf "
-							+ applikation.getInkarnation().getInkarnationsName() + " auf Rechner \"" + rechnerName + "\" warten!");
-				}
+		RechnerManager rechnerManager = rechner.get(rechnerName);
+		if (rechnerManager == null) {
+			throw new IllegalStateException("Rechner " + rechnerName + " ist in der Konfiguration nicht definiert!");
+		}
+		for (String vorgaenger : bedingung.getVorgaenger()) {
+			Applikation applikation = rechnerManager.getApplikation(vorgaenger);
+			if (applikation == null) {
+				result.add(new Applikation().withInkarnation(new Inkarnation().withInkarnationsName(vorgaenger)));
+				LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf " + vorgaenger
+						+ " auf Rechner \"" + rechnerName + "\" warten!");
+			} else if (!canBeStartet(applikation, bedingung)) {
+				result.add(applikation);
+				LOGGER.info(managedApplikation.getInkarnation().getInkarnationsName() + " muss auf "
+						+ applikation.getInkarnation().getInkarnationsName() + " auf Rechner \"" + rechnerName
+						+ "\" warten!");
 			}
-		} catch (NumberFormatException | StartStoppException e) {
-			LOGGER.warning(e.getLocalizedMessage());
-			Applikation dummyApplikation = new Applikation();
-			Inkarnation inkarnation = new Inkarnation();
-			inkarnation.setInkarnationsName(rechnerName);
-			dummyApplikation.setInkarnation(inkarnation);
-			result.add(dummyApplikation);
 		}
 
 		return result;
 	}
 
 	public Set<Applikation> waitForKernsystemStart(StartStoppApplikation managedApplikation) {
-		
+
 		Set<Applikation> result = new LinkedHashSet<>();
-		
+
 		for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
 			if (ks.getInkarnationsName().equals(managedApplikation.getInkarnation().getInkarnationsName())) {
 				return result;
@@ -403,7 +413,7 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	}
 
 	public Set<Applikation> waitForKernsystemStopp(StartStoppApplikation startStoppApplikation) {
-		
+
 		Set<Applikation> result = new LinkedHashSet<>();
 		boolean foundKernsoftwareApplikation = false;
 
@@ -433,7 +443,8 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 	}
 
 	@Override
-	public void applicationStatusChanged(StartStoppApplikation managedApplikation, Status oldValue, Status newValue) {
+	public void applicationStatusChanged(StartStoppApplikation managedApplikation, Applikation.Status oldValue,
+			Applikation.Status newValue) {
 		synchronized (lock) {
 			lock.notify();
 		}
@@ -469,7 +480,8 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 			if (applikation.getStatus() == Applikation.Status.GESTARTET) {
 				applikation.updateStatus(Applikation.Status.INITIALISIERT);
 			} else {
-				LOGGER.warning(applikation.getInkarnation().getInkarnationsName() + " ist im Status " + applikation.getStatus());
+				LOGGER.warning(applikation.getInkarnation().getInkarnationsName() + " ist im Status "
+						+ applikation.getStatus());
 			}
 		}
 	}
@@ -480,6 +492,6 @@ public class ProcessManager extends Thread implements SkriptManagerListener, Man
 
 	public void starteSkript() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

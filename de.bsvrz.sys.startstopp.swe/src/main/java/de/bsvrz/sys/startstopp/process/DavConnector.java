@@ -81,10 +81,10 @@ public class DavConnector extends Thread {
 	private Object lock = new Object();
 	private boolean running = true;
 	private ClientDavConnection connection = null;
-	private ProcessManager processManager;
+	private ProzessManager processManager;
 	private ApplikationStatusHandler appStatusHandler;
 
-	public DavConnector(ProcessManager processManager) {
+	public DavConnector(ProzessManager processManager) {
 		super("DavConnector");
 		setDaemon(true);
 		this.processManager = processManager;
