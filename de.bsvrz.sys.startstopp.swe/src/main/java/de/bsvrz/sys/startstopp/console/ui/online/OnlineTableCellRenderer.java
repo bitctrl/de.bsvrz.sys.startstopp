@@ -49,31 +49,22 @@ public class OnlineTableCellRenderer extends DefaultTableCellRenderer<Object> {
 		String statusName = ((Status) status).name();
 
 		ThemeDefinition themeDefinition = table.getThemeDefinition();
+		ThemeStyle style = themeDefinition.getNormal();
 		if ((table.getSelectedColumn() == columnIndex && table.getSelectedRow() == rowIndex)
 				|| (table.getSelectedRow() == rowIndex && !table.isCellSelection())) {
 			statusName = statusName + "_SELECTED";
 			if (table.isFocused()) {
-				ThemeStyle style = themeDefinition.getActive();
-				if (themeDefinition.getBooleanProperty("COLOR_STATUS", false)) {
-					style = themeDefinition.getCustom(statusName);
-				}
-				textGUIGraphics.applyThemeStyle(style);
+				style = themeDefinition.getActive();
 			} else {
-				ThemeStyle style = themeDefinition.getSelected();
-				if (themeDefinition.getBooleanProperty("COLOR_STATUS", false)) {
-					style = themeDefinition.getCustom(statusName);
-				}
-				textGUIGraphics.applyThemeStyle(style);
+				style = themeDefinition.getSelected();
 			}
-			textGUIGraphics.fill(' '); // Make sure to fill the whole cell first
-		} else {
-			ThemeStyle style = themeDefinition.getNormal();
-			if (themeDefinition.getBooleanProperty("COLOR_STATUS", false)) {
-				style = themeDefinition.getCustom(statusName);
-			}
-			textGUIGraphics.applyThemeStyle(style);
-			textGUIGraphics.fill(' '); // Make sure to fill the whole cell first
 		}
+		if (themeDefinition.getBooleanProperty("COLOR_STATUS", false)) {
+			style = themeDefinition.getCustom(statusName);
+		}
+
+		textGUIGraphics.applyThemeStyle(style);
+		textGUIGraphics.fill(' '); 
 
 		String[] lines = getContent(cell);
 		int rowCount = 0;

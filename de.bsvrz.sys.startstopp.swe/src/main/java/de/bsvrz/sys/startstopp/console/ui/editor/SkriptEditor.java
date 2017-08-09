@@ -53,10 +53,8 @@ import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
-import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
@@ -94,12 +92,9 @@ public class SkriptEditor extends BasicWindow {
 		menuPanel.setLayoutManager(new GridLayout(1));
 		Label statusLabel = new MenuLabel("s-System");
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
-		
-		try {
-			showInkarnationTable();
-		} catch (StartStoppException e) {
-			Debug.getLogger().warning(e.getLocalizedMessage());
-		}
+
+		showInkarnationTable();
+
 		addWindowListener(new WindowListenerAdapter() {
 			@Override
 			public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
@@ -109,17 +104,17 @@ public class SkriptEditor extends BasicWindow {
 				}
 			}
 		});
-		
+
 		setComponent(panel);
 	}
 
-	private void showInkarnationTable() throws StartStoppException {
+	private void showInkarnationTable() {
 
 		InkarnationTable table = factory.createInkarnationTable(skript);
 		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		table.setPreferredSize(TerminalSize.ONE);
-		if( currentTableBorder != null) {
+		if (currentTableBorder != null) {
 			panel.removeComponent(currentTableBorder);
 			panel.removeComponent(menuPanel);
 		}
@@ -130,12 +125,12 @@ public class SkriptEditor extends BasicWindow {
 		setFocusedInteractable(table);
 	}
 
-	private void showMakroTable() throws StartStoppException {
+	private void showMakroTable() {
 		MakroTable table = factory.createMakroTable(skript);
 		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		table.setPreferredSize(TerminalSize.ONE);
-		if( currentTableBorder != null) {
+		if (currentTableBorder != null) {
 			panel.removeComponent(currentTableBorder);
 			panel.removeComponent(menuPanel);
 		}
@@ -146,13 +141,13 @@ public class SkriptEditor extends BasicWindow {
 		setFocusedInteractable(table);
 	}
 
-	private void showRechnerTable() throws StartStoppException {
+	private void showRechnerTable() {
 		RechnerTable table = factory.createRechnerTable(skript);
 		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		table.setPreferredSize(TerminalSize.ONE);
 
-		if( currentTableBorder != null) {
+		if (currentTableBorder != null) {
 			panel.removeComponent(currentTableBorder);
 			panel.removeComponent(menuPanel);
 		}
@@ -171,32 +166,21 @@ public class SkriptEditor extends BasicWindow {
 			switch (key.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addActions(factory.createVersionierenAction(skript), factory.createSichernAction(skript), factory.createEditorCloseAction(this));
+				builder.addActions(factory.createVersionierenAction(skript), factory.createSichernAction(skript),
+						factory.createEditorCloseAction(this));
 				builder.build().showDialog(getTextGUI());
 				return true;
 
 			case 'm':
-				try {
-					showMakroTable();
-				} catch (StartStoppException e) {
-					factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
-				}
+				showMakroTable();
 				return true;
 
 			case 'i':
-				try {
-					showInkarnationTable();
-				} catch (StartStoppException e) {
-					factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
-				}
+				showInkarnationTable();
 				return true;
 
 			case 'r':
-				try {
-					showRechnerTable();
-				} catch (StartStoppException e) {
-					factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
-				}
+				showRechnerTable();
 				return true;
 
 			case 'l':
@@ -237,7 +221,6 @@ public class SkriptEditor extends BasicWindow {
 				return true;
 
 			default:
-				System.err.println(getClass().getSimpleName() + ": " + key);
 				break;
 			}
 			break;
@@ -248,7 +231,7 @@ public class SkriptEditor extends BasicWindow {
 
 		return super.handleInput(key);
 	}
-	
+
 	public static boolean isDeleteKey(KeyStroke key) {
 		return key.getKeyType() == KeyType.Delete && key.isAltDown();
 	}

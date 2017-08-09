@@ -53,9 +53,7 @@ import de.bsvrz.sys.startstopp.console.ui.StartStoppButton;
 public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 
 	private Inkarnation inkarnation;
-	private TextBox applikationField;
 	private StartStoppSkript skript;
-	private TextBox nameField;
 
 	@Inject
 	private GuiComponentFactory factory;
@@ -85,10 +83,10 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 
 	private void initInkarnationsName(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Inkarnationsname:"));
-		nameField = new TextBox() {
+		TextBox nameField = new TextBox() {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
-				inkarnation.setInkarnationsName(nameField.getText());
+				inkarnation.setInkarnationsName(getText());
 				super.afterLeaveFocus(direction, nextInFocus);
 			}
 		};
@@ -98,10 +96,10 @@ public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 
 	private void initApplikation(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Applikation:"));
-		applikationField = new TextBox("") {
+		TextBox applikationField = new TextBox("") {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
-				inkarnation.setApplikation(applikationField.getText());
+				inkarnation.setApplikation(getText());
 				super.afterLeaveFocus(direction, nextInFocus);
 			}
 		};
