@@ -29,11 +29,6 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
@@ -41,36 +36,27 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 public class InkarnationTable extends EditableTable<Inkarnation> {
 
-	@Inject
-	GuiComponentFactory factory;
-
-	private WindowBasedTextGUI gui;
-
 	private StartStoppSkript skript;
 
-	@Inject
-	public InkarnationTable(WindowBasedTextGUI gui, @Assisted StartStoppSkript skript) throws StartStoppException {
+	public InkarnationTable(StartStoppSkript skript) {
 		super(skript.getInkarnationen(), "Name", "Typ", "Startart");
-		this.gui = gui;
 		this.skript = skript;
+
+		initUI();
 	}
-	
-	@Inject
-	@PostConstruct
+
 	private void initUI() {
-		
+
 		setSelectAction(new Runnable() {
 			@Override
 			public void run() {
 				Inkarnation inkarnation = getSelectedElement();
-				InkarnationEditor editor = factory.createInkarnationEditor(skript, inkarnation);
-				if( editor.showDialog(gui)) {
+				InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
+				if (editor.showDialog(getTextGUI())) {
 					replaceCurrentElementWith(editor.getElement());
 				}
 			}
@@ -82,20 +68,19 @@ public class InkarnationTable extends EditableTable<Inkarnation> {
 
 		if (SkriptEditor.isInsertAfterKey(keyStroke)) {
 			int row = getSelectedRow() + 1;
-			Inkarnation inkarnation = new Inkarnation().withInkarnationsName("NeueInkarnation")
-						.withApplikation("java").withStartArt(new StartArt())
-						.withStartFehlerVerhalten(new StartFehlerVerhalten())
-						.withStoppFehlerVerhalten(new StoppFehlerVerhalten());
-			InkarnationEditor editor = factory.createInkarnationEditor(skript, inkarnation);
-			if( editor.showDialog(gui)) {
+			Inkarnation inkarnation = new Inkarnation().withInkarnationsName("NeueInkarnation").withApplikation("java")
+					.withStartArt(new StartArt()).withStartFehlerVerhalten(new StartFehlerVerhalten())
+					.withStoppFehlerVerhalten(new StoppFehlerVerhalten());
+			InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
+			if (editor.showDialog(getTextGUI())) {
 				addElement(row, editor.getElement());
 			}
 			return Result.HANDLED;
 		}
-		
-		if( SkriptEditor.isDeleteKey(keyStroke)) {
-			JaNeinDialog dialog = factory.createJaNeinDialog("Löschen",
-						"Soll die ausgewählte Inkarnation wirklich gelöscht werden?");
+
+		if (SkriptEditor.isDeleteKey(keyStroke)) {
+			JaNeinDialog dialog = new JaNeinDialog("Löschen",
+					"Soll die ausgewählte Inkarnation wirklich gelöscht werden?");
 			if (dialog.display()) {
 				removeCurrentElement();
 			}

@@ -28,24 +28,18 @@ package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.Collections;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window.Hint;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class ApplikationDetailAction implements Runnable {
 
-	@Inject
-	private WindowBasedTextGUI gui;
-	
+
 	private Applikation applikation;
 
-	@Inject
-	public ApplikationDetailAction(@Assisted Applikation applikation) {
+	public ApplikationDetailAction(Applikation applikation) {
 		this.applikation = applikation;
 	}
 	
@@ -53,7 +47,7 @@ public class ApplikationDetailAction implements Runnable {
 	public void run() {
 		BasicWindow window = new ApplikationDetailWindow("Details: " + applikation.getInkarnation().getInkarnationsName());
 		window.setHints(Collections.singleton(Hint.EXPANDED));
-		gui.addWindow(window);
+		StartStoppConsole.getGui().addWindow(window);
 	}
 
 	@Override

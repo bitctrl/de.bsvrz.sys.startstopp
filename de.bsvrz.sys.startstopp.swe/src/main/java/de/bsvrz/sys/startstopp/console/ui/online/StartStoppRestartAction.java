@@ -26,27 +26,18 @@
 
 package de.bsvrz.sys.startstopp.console.ui.online;
 
-import javax.inject.Inject;
-
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 
 public class StartStoppRestartAction implements Runnable {
 
-	@Inject
-	private GuiComponentFactory factory;
-
-	@Inject
-	private StartStoppClient client;
-
-	
 	@Override
 	public void run() {
 		try {
-			client.restartStartStopp();
+			StartStoppConsole.getClient().restartStartStopp();
 		} catch (StartStoppException e) {
-			factory.createInfoDialog("FEHLER", e.getLocalizedMessage());
+			new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
 		}
 	}
 

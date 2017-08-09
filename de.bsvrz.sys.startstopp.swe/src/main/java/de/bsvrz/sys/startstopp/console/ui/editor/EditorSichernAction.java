@@ -33,30 +33,20 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import javax.inject.Inject;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.inject.assistedinject.Assisted;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 public class EditorSichernAction implements Runnable {
 
 	private final StartStoppSkript skript;
 
-	@Inject
-	private GuiComponentFactory factory;
-
-	@Inject
-	private WindowBasedTextGUI textGui;
-
-	@Inject
-	public EditorSichernAction(@Assisted StartStoppSkript skript) {
+	public EditorSichernAction(StartStoppSkript skript) {
 		this.skript = skript;
 	}
 
@@ -66,11 +56,11 @@ public class EditorSichernAction implements Runnable {
 		FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
 		fileDialogBuilder.setTitle("Zieldatei auswählen");
 		fileDialogBuilder.setActionLabel("Sichern");
-		File selectedFile = fileDialogBuilder.build().showDialog(textGui);
+		File selectedFile = fileDialogBuilder.build().showDialog(StartStoppConsole.getGui());
 		if (selectedFile != null) {
 
 			if (selectedFile.exists()) {
-				JaNeinDialog dialog = factory.createJaNeinDialog("Sichern",
+				JaNeinDialog dialog = new JaNeinDialog("Sichern",
 						"Soll die bestehende Datei überschrieben werden?");
 				if (!dialog.display()) {
 					return;
@@ -83,7 +73,7 @@ public class EditorSichernAction implements Runnable {
 				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 				mapper.writeValue(writer, skript);
 			} catch (IOException e) {
-				factory.createInfoDialog("FEHLER", e.getLocalizedMessage());
+				new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
 			}
 		}
 	}

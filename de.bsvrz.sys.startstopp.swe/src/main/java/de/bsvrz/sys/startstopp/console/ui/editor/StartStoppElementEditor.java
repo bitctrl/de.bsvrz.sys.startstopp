@@ -30,10 +30,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Component;
@@ -59,15 +55,12 @@ public abstract class StartStoppElementEditor<T> extends DialogWindow {
 	private StartStoppSkript skript;
 	private Map<Character, HasHotkey> hotkeys = new LinkedHashMap<>();
 
-	@Inject
-	public StartStoppElementEditor(@Assisted StartStoppSkript skript, @Assisted String title) {
+	public StartStoppElementEditor(StartStoppSkript skript, String title) {
 		super(title);
 		this.skript = skript;
 		setHints(Arrays.asList(new Hint[] { Hint.CENTERED, Hint.FIT_TERMINAL_WINDOW }));
 	}
 
-	@Inject
-	@PostConstruct
 	private void initUI() {
 		Panel buttonPanel = new Panel();
 		buttonPanel.setLayoutManager(new GridLayout(2).setHorizontalSpacing(1));
@@ -81,17 +74,15 @@ public abstract class StartStoppElementEditor<T> extends DialogWindow {
 
 		Panel mainPanel = new Panel();
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
-
 		initComponents(mainPanel);
 
 		mainPanel.addComponent(new EmptySpace(TerminalSize.ONE));
-
+		
 		buttonPanel.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER, false, false))
 				.addTo(mainPanel);
 
 		collectHotkeys(mainPanel);
-
 		setComponent(mainPanel);
 	}
 
@@ -109,6 +100,7 @@ public abstract class StartStoppElementEditor<T> extends DialogWindow {
 
 	@Override
 	public Boolean showDialog(WindowBasedTextGUI textGUI) {
+		initUI();
 		super.showDialog(textGUI);
 		return okPressed;
 	}
@@ -149,6 +141,11 @@ public abstract class StartStoppElementEditor<T> extends DialogWindow {
 
 	public StartStoppSkript getSkript() {
 		return skript;
+	}
+	
+	@Override
+	public WindowBasedTextGUI getTextGUI() {
+		return super.getTextGUI();
 	}
 
 }

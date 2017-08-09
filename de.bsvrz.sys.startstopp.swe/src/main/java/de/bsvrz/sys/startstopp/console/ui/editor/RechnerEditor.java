@@ -26,9 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
@@ -43,8 +40,7 @@ public class RechnerEditor extends StartStoppElementEditor<Rechner> {
 	
 	private Rechner rechner;
 
-	@Inject
-	public RechnerEditor(@Assisted StartStoppSkript skript, @Assisted Rechner rechner) {
+	public RechnerEditor(StartStoppSkript skript, Rechner rechner) {
 		super(skript, "Rechner: " + rechner.getName());
 		this.rechner = (Rechner) Util.cloneObject(rechner);
 	}

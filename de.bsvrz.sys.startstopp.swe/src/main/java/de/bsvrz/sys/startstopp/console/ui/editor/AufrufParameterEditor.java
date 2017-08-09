@@ -30,16 +30,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.MakroTextInputDialog;
 
 public class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
@@ -52,7 +48,7 @@ public class AufrufParameterEditor extends StartStoppElementEditor<List<String>>
 
 		@Override
 		protected String requestNewElement() {
-			MakroTextInputDialog dialog = factory.createMakroTextInputDialog(getSkript(), "Parameter", "Neuen Parameter angeben:", "");
+			MakroTextInputDialog dialog = new MakroTextInputDialog(getSkript(), "Parameter", "Neuen Parameter angeben:", "");
 			if( dialog.showDialog((WindowBasedTextGUI) getTextGUI())) {
 				return dialog.getElement();
 			}
@@ -61,7 +57,7 @@ public class AufrufParameterEditor extends StartStoppElementEditor<List<String>>
 
 		@Override
 		protected String editElement(String oldElement) {
-			MakroTextInputDialog dialog = factory.createMakroTextInputDialog(getSkript(), "Parameter", "Parameter bearbeiten:", oldElement);
+			MakroTextInputDialog dialog = new MakroTextInputDialog(getSkript(), "Parameter", "Parameter bearbeiten:", oldElement);
 			if( dialog.showDialog((WindowBasedTextGUI) getTextGUI())) {
 				return dialog.getElement();
 			}
@@ -78,17 +74,12 @@ public class AufrufParameterEditor extends StartStoppElementEditor<List<String>>
 	private List<String> parameterListe = new ArrayList<>();
 	private EditableTable<String> parameterTable;
 
-	@Inject
-	GuiComponentFactory factory;
-	
-	@Inject
-	public AufrufParameterEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
+	public AufrufParameterEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "Aufrufparameter");
 		this.parameterListe.addAll(inkarnation.getAufrufParameter());
 	}
 
 	protected void initComponents(Panel mainPanel) {
-
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 		parameterTable = new AufrufParameterTable(parameterListe, "Aufrufparameter");
 		mainPanel.addComponent(parameterTable, GridLayout.createHorizontallyFilledLayoutData(1));

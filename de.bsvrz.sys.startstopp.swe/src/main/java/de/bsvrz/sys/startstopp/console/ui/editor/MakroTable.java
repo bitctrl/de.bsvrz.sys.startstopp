@@ -26,23 +26,15 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.table.Table;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 public class MakroTable extends Table<Object> {
 
-	@Inject
-	private GuiComponentFactory factory;
-	
-	@Inject
-	public MakroTable(WindowBasedTextGUI gui, @Assisted StartStoppSkript skript) {
+	public MakroTable(WindowBasedTextGUI gui, StartStoppSkript skript) {
 		super("Name", "Wert");
 
 		for (MakroDefinition makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
@@ -54,7 +46,7 @@ public class MakroTable extends Table<Object> {
 			public void run() {
 				int row = getSelectedRow();
 				MakroDefinition makroDefinition = skript.getGlobal().getMakrodefinitionen().get(row);
-				MakroEditor editor = factory.createMakroEditor(skript, makroDefinition); 
+				MakroEditor editor = new MakroEditor(skript, makroDefinition); 
 				if( editor.showDialog(gui)) {
 					makroDefinition.setName(editor.getElement().getName());
 					getTableModel().setCell(0, row, makroDefinition.getName());

@@ -32,11 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import javax.annotation.PostConstruct;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Border;
@@ -55,7 +51,7 @@ import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
 
@@ -63,20 +59,16 @@ public class SkriptEditor extends BasicWindow {
 
 	private StartStoppSkript skript;
 
-	@Inject
-	GuiComponentFactory factory;
 	private Border currentTableBorder;
 	private Panel panel;
 	private MenuPanel menuPanel;
 
-	@Inject
-	public SkriptEditor(@Assisted StartStoppSkript skript) {
+	public SkriptEditor(StartStoppSkript skript) {
 		super("StartStopp - Editor");
 		this.skript = (StartStoppSkript) Util.cloneObject(skript);
+		init();
 	}
 
-	@PostConstruct
-	@Inject
 	void init() {
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.NO_DECORATIONS));
 
@@ -93,8 +85,6 @@ public class SkriptEditor extends BasicWindow {
 		Label statusLabel = new MenuLabel("s-System");
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
 
-		showInkarnationTable();
-
 		addWindowListener(new WindowListenerAdapter() {
 			@Override
 			public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
@@ -106,11 +96,12 @@ public class SkriptEditor extends BasicWindow {
 		});
 
 		setComponent(panel);
+		showInkarnationTable();
 	}
 
 	private void showInkarnationTable() {
 
-		InkarnationTable table = factory.createInkarnationTable(skript);
+		InkarnationTable table = new InkarnationTable(skript);
 		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		table.setPreferredSize(TerminalSize.ONE);
@@ -126,7 +117,7 @@ public class SkriptEditor extends BasicWindow {
 	}
 
 	private void showMakroTable() {
-		MakroTable table = factory.createMakroTable(skript);
+		MakroTable table = new MakroTable(getTextGUI(), skript);
 		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		table.setPreferredSize(TerminalSize.ONE);
@@ -142,7 +133,7 @@ public class SkriptEditor extends BasicWindow {
 	}
 
 	private void showRechnerTable() {
-		RechnerTable table = factory.createRechnerTable(skript);
+		RechnerTable table = new RechnerTable(skript);
 		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		table.setPreferredSize(TerminalSize.ONE);
@@ -166,8 +157,8 @@ public class SkriptEditor extends BasicWindow {
 			switch (key.getCharacter()) {
 			case 's':
 				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addActions(factory.createVersionierenAction(skript), factory.createSichernAction(skript),
-						factory.createEditorCloseAction(this));
+				builder.addActions(new EditorVersionierenAction(skript), new EditorSichernAction(skript),
+						new EditorCloseAction(this));
 				builder.build().showDialog(getTextGUI());
 				return true;
 
@@ -193,13 +184,13 @@ public class SkriptEditor extends BasicWindow {
 						ObjectMapper mapper = new ObjectMapper();
 						skript = mapper.readValue(stream, StartStoppSkript.class);
 					} catch (IOException e) {
-						factory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
+						new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
 					}
 				}
 				return true;
 
 			case 'k':
-				KernsystemEditor ksEditor = factory.createKernsystemEditor(skript);
+				KernsystemEditor ksEditor = new KernsystemEditor(skript);
 				if (ksEditor.showDialog(getTextGUI())) {
 					skript.getGlobal().getKernsysteme().clear();
 					skript.getGlobal().getKernsysteme().addAll(ksEditor.getElement());
@@ -207,14 +198,14 @@ public class SkriptEditor extends BasicWindow {
 				return true;
 
 			case 'u':
-				UsvEditor usvEditor = factory.createUsvEditor(skript);
+				UsvEditor usvEditor = new UsvEditor(skript);
 				if (usvEditor.showDialog(getTextGUI())) {
 					skript.getGlobal().setUsv(usvEditor.getElement());
 				}
 				return true;
 
 			case 'z':
-				ZugangDavEditor zugangDavEditor = factory.createZugangDavEditor(skript);
+				ZugangDavEditor zugangDavEditor = new ZugangDavEditor(skript);
 				if (zugangDavEditor.showDialog(getTextGUI())) {
 					skript.getGlobal().setZugangDav(zugangDavEditor.getElement());
 				}

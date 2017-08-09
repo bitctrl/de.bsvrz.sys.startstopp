@@ -30,16 +30,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 public class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> {
 
@@ -51,11 +47,11 @@ public class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> 
 
 		@Override
 		protected KernSystem requestNewElement() {
-			InkarnationSelektor inkarnationSelektor = factory.createInkarnationSelektor(skript);
+			InkarnationSelektor inkarnationSelektor = new InkarnationSelektor(skript);
 			for (KernSystem ks : kernSysteme) {
 				inkarnationSelektor.removeInkarnation(ks.getInkarnationsName());
 			}
-			return new KernSystem(inkarnationSelektor.getInkarnation().getInkarnationsName());
+			return new KernSystem(inkarnationSelektor.getInkarnation(getTextGUI()).getInkarnationsName());
 		}
 
 		@Override
@@ -73,11 +69,7 @@ public class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> 
 	private KernSystemTable ksTable;
 	private StartStoppSkript skript;
 
-	@Inject
-	private GuiComponentFactory factory;
-
-	@Inject
-	public KernsystemEditor(@Assisted StartStoppSkript skript) {
+	public KernsystemEditor(StartStoppSkript skript) {
 		super(skript, "Kernsystem");
 		this.skript = skript;
 		for (KernSystem kernSystem : skript.getGlobal().getKernsysteme()) {

@@ -29,9 +29,6 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.CheckBox;
 import com.googlecode.lanterna.gui2.ComboBox;
@@ -46,7 +43,6 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 
 public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung> {
 
@@ -58,8 +54,8 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 
 		@Override
 		protected String requestNewElement() {
-			InkarnationSelektor selektor = factory.createInkarnationSelektor(skript);
-			Inkarnation inkarnation = selektor.getInkarnation();
+			InkarnationSelektor selektor = new InkarnationSelektor(skript);
+			Inkarnation inkarnation = selektor.getInkarnation(getTextGUI());
 			if (inkarnation == null) {
 				return null;
 			}
@@ -77,16 +73,12 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 		}
 	}
 
-	@Inject
-	GuiComponentFactory factory;
-
 	private static final String KEIN_RECHNER = "<kein Rechner>";
 	private StoppBedingung stoppBedingung;
 	private StartStoppSkript skript;
 	private boolean bedingungUsed = false;
 
-	@Inject
-	public StoppBedingungEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
+	public StoppBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "StartStopp - Editor: Inkarnation: ");
 
 		this.skript = skript;

@@ -26,40 +26,30 @@
 
 package de.bsvrz.sys.startstopp.console.ui.online;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 public class ApplikationStoppAction implements Runnable {
 
-	@Inject
-	private GuiComponentFactory factory;
-
-	@Inject
-	private StartStoppClient client;
-
 	private Applikation applikation;
 
-	@Inject
-	public ApplikationStoppAction(@Assisted Applikation applikation) {
+	public ApplikationStoppAction(Applikation applikation) {
 		this.applikation = applikation;
 	}
 
 	@Override
 	public void run() {
 		try {
-			JaNeinDialog dialog = factory.createJaNeinDialog("Applikation anhalten", "Soll die Applikation \""
+			JaNeinDialog dialog = new JaNeinDialog("Applikation anhalten", "Soll die Applikation \""
 					+ applikation.getInkarnation().getInkarnationsName() + "\" wirklich angehalten werden?");
 			if (dialog.display()) {
-				client.stoppeApplikation(applikation.getInkarnation().getInkarnationsName());
+				StartStoppConsole.getClient().stoppeApplikation(applikation.getInkarnation().getInkarnationsName());
 			}
 		} catch (StartStoppException e) {
-			factory.createInfoDialog("FEHLER", e.getFullString()).display();
+			new InfoDialog("FEHLER", e.getFullString()).display();
 		}
 
 	}

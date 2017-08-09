@@ -26,32 +26,28 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class InfoDialog {
 
 	private MessageDialog dialog;
-	private WindowBasedTextGUI gui;
+	private WindowBasedTextGUI gui = StartStoppConsole.getGui();
 
-	@Inject
-	public InfoDialog(WindowBasedTextGUI gui, @Assisted("title") String title, @Assisted("message") String message) {
-
-		this.gui = gui;
-
+	public InfoDialog(String title, String message) {
 		MessageDialogBuilder msgBuilder = new MessageDialogBuilder();
 		msgBuilder.setTitle(title);
 		msgBuilder.setText(Util.wrapText(gui.getScreen().getTerminalSize().getColumns(), message));
 		dialog = msgBuilder.build();
 	}
-
+	
 	public void display() {
 		dialog.showDialog(gui);
 	}
+	
+	
 }

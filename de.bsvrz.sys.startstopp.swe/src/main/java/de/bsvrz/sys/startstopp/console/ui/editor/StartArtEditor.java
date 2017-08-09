@@ -26,9 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.CheckBox;
 import com.googlecode.lanterna.gui2.ComboBox;
 import com.googlecode.lanterna.gui2.GridLayout;
@@ -45,8 +42,7 @@ public class StartArtEditor extends StartStoppElementEditor<StartArt> {
 
 	private StartArt startArt;
 	
-	@Inject
-	public StartArtEditor(@Assisted StartStoppSkript skript, @Assisted StartArt startArt) {
+	public StartArtEditor(StartStoppSkript skript, StartArt startArt) {
 		super(skript, "Startart-Editor");
 		this.startArt = (StartArt) Util.cloneObject(startArt);
 	}

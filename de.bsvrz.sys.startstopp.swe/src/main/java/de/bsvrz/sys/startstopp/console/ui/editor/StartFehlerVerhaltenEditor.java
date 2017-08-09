@@ -26,9 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.ComboBox;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
@@ -45,8 +42,7 @@ public class StartFehlerVerhaltenEditor extends StartStoppElementEditor<StartFeh
 
 	private StartFehlerVerhalten startFehlerVerhalten;
 
-	@Inject
-	public StartFehlerVerhaltenEditor(@Assisted StartStoppSkript skript, @Assisted Inkarnation inkarnation) {
+	public StartFehlerVerhaltenEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "Startfehlerverhalten");
 
 

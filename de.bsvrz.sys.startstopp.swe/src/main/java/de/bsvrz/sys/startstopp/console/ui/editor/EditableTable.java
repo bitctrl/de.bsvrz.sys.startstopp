@@ -28,6 +28,7 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.List;
 
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -159,6 +160,11 @@ public abstract class EditableTable<T> extends Table<String> {
 	
 	protected T getSelectedElement() {
 		return dataList.get(getSelectedRow());
+	}
+	
+	@Override
+	public WindowBasedTextGUI getTextGUI() {
+		return (WindowBasedTextGUI) super.getTextGUI();
 	}
 	
 	protected abstract T requestNewElement();

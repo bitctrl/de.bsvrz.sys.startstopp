@@ -31,7 +31,6 @@ import java.util.TreeMap;
 
 import javax.inject.Inject;
 
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
@@ -43,13 +42,10 @@ public class InkarnationSelektor {
 	private Inkarnation selected = null;
 	private ActionListDialogBuilder builder;
 
-	@Inject
-	private WindowBasedTextGUI gui;
-	
 	private SortedMap<String, Inkarnation> inkarnationen = new TreeMap<>();
 	
 	@Inject
-	public InkarnationSelektor(@Assisted StartStoppSkript skript) {
+	public InkarnationSelektor(StartStoppSkript skript) {
 		for( Inkarnation inkarnation : skript.getInkarnationen()) {
 			inkarnationen.put(inkarnation.getInkarnationsName(), inkarnation);
 		}
@@ -59,7 +55,7 @@ public class InkarnationSelektor {
 		inkarnationen.remove(name);
 	}
 	
-	public Inkarnation getInkarnation() {
+	public Inkarnation getInkarnation(WindowBasedTextGUI gui) {
 
 		builder = new ActionListDialogBuilder();
 		builder.setTitle("Inkarnation");

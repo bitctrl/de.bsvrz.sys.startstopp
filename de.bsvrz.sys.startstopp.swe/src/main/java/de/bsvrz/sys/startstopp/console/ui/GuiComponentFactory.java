@@ -26,35 +26,11 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import com.google.inject.assistedinject.Assisted;
-import com.googlecode.lanterna.gui2.Window;
-
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
-import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
-import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.console.ui.editor.AufrufParameterEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.EditorCloseAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorSichernAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.EditorVersionierenAction;
-import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationSelektor;
-import de.bsvrz.sys.startstopp.console.ui.editor.InkarnationTable;
-import de.bsvrz.sys.startstopp.console.ui.editor.KernsystemEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.MakroEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.MakroTable;
-import de.bsvrz.sys.startstopp.console.ui.editor.RechnerEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.RechnerTable;
 import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.StartArtEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.StartBedingungEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.StartFehlerVerhaltenEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.StoppBedingungEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.StoppFehlerVerhaltenEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.UsvEditor;
-import de.bsvrz.sys.startstopp.console.ui.editor.ZugangDavEditor;
 import de.bsvrz.sys.startstopp.console.ui.online.ApplikationDetailAction;
 import de.bsvrz.sys.startstopp.console.ui.online.ApplikationRestartAction;
 import de.bsvrz.sys.startstopp.console.ui.online.ApplikationStartAction;
@@ -69,7 +45,6 @@ public interface GuiComponentFactory {
 
 	EditorVersionierenAction createVersionierenAction(StartStoppSkript skript);
 
-	EditorCloseAction createEditorCloseAction(Window window);
 
 	ApplikationStartAction createApplikationStartAction(Applikation applikation);
 
@@ -86,45 +61,6 @@ public interface GuiComponentFactory {
 	StartStoppExitAction createStartStoppExitAction();
 
 	TerminalCloseAction createTerminalCloseAction();
-
-	InfoDialog createInfoDialog(@Assisted("title") String title, @Assisted("message") String message);
-
-	JaNeinDialog createJaNeinDialog(@Assisted("title") String title, @Assisted("message") String message);
-
-	InkarnationTable createInkarnationTable(StartStoppSkript skript);
-
-	InkarnationEditor createInkarnationEditor(StartStoppSkript skript, Inkarnation inkarnation);
-
-	AufrufParameterEditor createAufrufParameterEditor(StartStoppSkript skript, Inkarnation inkarnation);
-
-	KernsystemEditor createKernsystemEditor(StartStoppSkript skript);
-
-	MakroEditor createMakroEditor(StartStoppSkript skript, MakroDefinition makroDefinition);
-
-	MakroTable createMakroTable(StartStoppSkript skript);
-
-	RechnerEditor createRechnerEditor(StartStoppSkript skript, Rechner rechner);
-
-	RechnerTable createRechnerTable(StartStoppSkript skript);
-
-	StartBedingungEditor createStartBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation);
-
-	StartFehlerVerhaltenEditor createStartFehlerVerhaltenEditor(StartStoppSkript skript, Inkarnation inkarnation);
-
-	StoppBedingungEditor createStoppBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation);
-
-	StoppFehlerVerhaltenEditor createStoppFehlerVerhaltenEditor(StartStoppSkript skript, Inkarnation inkarnation);
-
-	UsvEditor createUsvEditor(StartStoppSkript skript);
-
-	ZugangDavEditor createZugangDavEditor(StartStoppSkript skript);
-
-	StartArtEditor createStartArtEditor(StartStoppSkript skript, StartArt startArt);
-
-	InkarnationSelektor createInkarnationSelektor(StartStoppSkript skript);
-
-	MakroTextInputDialog createMakroTextInputDialog(StartStoppSkript skript, @Assisted("title") String title,
-			@Assisted("description") String description, @Assisted("content") String content);
 
 	EditorSichernAction createSichernAction(StartStoppSkript skript);
 }

@@ -30,16 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
-
-import com.google.inject.Binder;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.graphics.PropertyTheme;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
@@ -51,73 +41,14 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
 import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow;
 
-@Singleton
 public class StartStoppConsole {
 
-	@Singleton
-	private static class TextGuiProvider implements Provider<WindowBasedTextGUI> {
-
-		WindowBasedTextGUI gui;
-
-		@Inject
-		StartStoppConsoleOptions options;
-
-		@Override
-		public WindowBasedTextGUI get() {
-			if (gui == null) {
-				try {
-					DefaultTerminalFactory factory = new DefaultTerminalFactory();
-					Terminal term = factory.createTerminal();
-					Screen screen = new TerminalScreen(term);
-					gui = new MultiWindowTextGUI(screen);
-					if (options.isMonochrome()) {
-						gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Mono"));
-					} else {
-						gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Color"));
-					}
-					screen.startScreen();
-				} catch (IOException e) {
-					throw new IllegalStateException("Die UI kann nicht initialisiert werden!", e);
-
-				}
-			}
-			return gui;
-		}
-
-	}
-
-	private static class StartStoppModule implements Module {
-
-		private StartStoppConsoleOptions options;
-		private StartStoppClient client;
-
-		StartStoppModule(String[] args) {
-			options = new StartStoppConsoleOptions(args);
-			client = new StartStoppClient(options.getHost(), options.getPort());
-		}
-
-		@Override
-		public void configure(Binder binder) {
-			binder.bind(StartStoppConsoleOptions.class).toInstance(options);
-			binder.bind(StartStoppClient.class).toInstance(client);
-			binder.bind(WindowBasedTextGUI.class).toProvider(TextGuiProvider.class);
-
-			binder.install(new FactoryModuleBuilder().build(GuiComponentFactory.class));
-		}
-	}
-
-	@PostConstruct
-	@Inject
-	void run(WindowBasedTextGUI gui, StartStoppOnlineWindow onlineWindow) throws IOException, StartStoppException {
-		gui.getScreen().startScreen();
-		gui.addWindow(onlineWindow);
-		onlineWindow.waitUntilClosed();
-		gui.getScreen().stopScreen();
-		System.exit(0);
-	}
+	private static final StartStoppConsole INSTANZ = new StartStoppConsole();
+	private StartStoppConsoleOptions options;
+	private StartStoppClient client;
+	private MultiWindowTextGUI gui;
 
 	public static void main(String[] args) throws IOException, InterruptedException, StartStoppException {
 
@@ -133,7 +64,33 @@ public class StartStoppConsole {
 			LanternaThemes.registerTheme("NERZ-Color", new PropertyTheme(themeProperties));
 		}
 
-		Injector injector = Guice.createInjector(new StartStoppModule(args));
-		injector.getInstance(StartStoppConsole.class);
+		INSTANZ.options = new StartStoppConsoleOptions(args);
+		INSTANZ.client = new StartStoppClient(INSTANZ.options.getHost(), INSTANZ.options.getPort());
+		
+		DefaultTerminalFactory factory = new DefaultTerminalFactory();
+		Terminal term = factory.createTerminal();
+		Screen screen = new TerminalScreen(term);
+		INSTANZ.gui = new MultiWindowTextGUI(screen);
+		if (INSTANZ.options.isMonochrome()) {
+			INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Mono"));
+		} else {
+			INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Color"));
+		}
+		screen.startScreen();
+
+		INSTANZ.gui.getScreen().startScreen();
+		StartStoppOnlineWindow onlineWindow = new StartStoppOnlineWindow();
+		INSTANZ.gui.addWindow(onlineWindow);
+		onlineWindow.waitUntilClosed();
+		INSTANZ.gui.getScreen().stopScreen();
+		System.exit(0);
+	}
+
+	public static WindowBasedTextGUI getGui() {
+		return INSTANZ.gui;
+	}
+
+	public static StartStoppClient getClient() {
+		return INSTANZ.client;
 	}
 }

@@ -28,7 +28,6 @@ package de.bsvrz.sys.startstopp.api.client;
 
 import java.util.List;
 
-import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -53,7 +52,6 @@ import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 
-@Singleton
 public class StartStoppClient {
 
 	private static final Debug LOGGER = Debug.getLogger();

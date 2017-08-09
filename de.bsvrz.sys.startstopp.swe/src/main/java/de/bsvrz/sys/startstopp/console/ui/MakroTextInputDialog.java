@@ -26,9 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
@@ -43,9 +40,7 @@ public class MakroTextInputDialog extends StartStoppElementEditor<String> {
 	private String content;
 	private String description;
 
-	@Inject
-	public MakroTextInputDialog(@Assisted StartStoppSkript skript, @Assisted("title") String title,
-			@Assisted("description") String description, @Assisted("content") String content) {
+	public MakroTextInputDialog(StartStoppSkript skript, String title, String description, String content) {
 		super(skript, title);
 		this.content = content;
 		this.description = description;

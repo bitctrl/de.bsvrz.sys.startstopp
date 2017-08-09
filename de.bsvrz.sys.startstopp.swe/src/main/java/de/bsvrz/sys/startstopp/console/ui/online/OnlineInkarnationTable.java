@@ -28,9 +28,6 @@ package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import com.googlecode.lanterna.gui2.table.Table;
 
 import de.bsvrz.sys.funclib.debug.Debug;
@@ -38,6 +35,7 @@ import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
 public class OnlineInkarnationTable extends Table<Object> {
 
@@ -84,25 +82,20 @@ public class OnlineInkarnationTable extends Table<Object> {
 		}
 	}
 
-	private final MessagesTableModell emtpyTableModell;
-	private final ApplikationenTableModell applikationenTableModell;
+	private final MessagesTableModell emtpyTableModell = new MessagesTableModell();
+	private final ApplikationenTableModell applikationenTableModell = new ApplikationenTableModell();
 
 	private StartStoppClient client;
 
-	@Inject
-	public OnlineInkarnationTable(StartStoppClient client, MessagesTableModell messagesModell,
-			ApplikationenTableModell applikationenModell) {
+	public OnlineInkarnationTable() {
 		super("");
-		this.client = client;
-		this.applikationenTableModell = applikationenModell;
-		this.emtpyTableModell = messagesModell;
+		this.client = StartStoppConsole.getClient();
 		setTableModel(emtpyTableModell);
 		setTableCellRenderer(new OnlineTableCellRenderer());
 		emtpyTableModell.addMessage("Unbekannter Status");
+		init();
 	}
 
-	@PostConstruct
-	@Inject
 	void init() {
 		try {
 			applikationenTableModell.setApplikationen(client.getApplikationen());

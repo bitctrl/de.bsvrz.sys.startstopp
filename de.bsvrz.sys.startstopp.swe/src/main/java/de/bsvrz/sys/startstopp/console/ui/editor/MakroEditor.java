@@ -26,9 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
@@ -44,8 +41,7 @@ public class MakroEditor extends StartStoppElementEditor<MakroDefinition> {
 
 	private MakroDefinition makroDefinition;
 
-	@Inject
-	public MakroEditor(@Assisted StartStoppSkript skript, @Assisted MakroDefinition makroDefinition) {
+	public MakroEditor(StartStoppSkript skript, MakroDefinition makroDefinition) {
 		super(skript, "Makrodefinition");
 		this.makroDefinition = (MakroDefinition) Util.cloneObject(makroDefinition);
 	}	

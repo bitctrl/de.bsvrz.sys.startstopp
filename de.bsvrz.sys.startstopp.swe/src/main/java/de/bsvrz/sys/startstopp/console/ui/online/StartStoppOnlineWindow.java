@@ -30,7 +30,6 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 
-import com.google.inject.Singleton;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
@@ -42,29 +41,25 @@ import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
+import de.bsvrz.sys.startstopp.console.ui.TerminalCloseAction;
+import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
-@Singleton
 public class StartStoppOnlineWindow extends BasicWindow {
 
-	@Inject
-	private GuiComponentFactory uiFactory;
-
-	@Inject
-	private StartStoppClient client;
 
 	private OnlineInkarnationTable table;
 
 	@Inject
-	public StartStoppOnlineWindow(OnlineInkarnationTable table) throws StartStoppException {
+	public StartStoppOnlineWindow() throws StartStoppException {
 		super("StartStopp - Online");
 
-		this.table = table;
+		this.table = new OnlineInkarnationTable();
 		this.table.setSelectAction(()->handleApplikation());
 
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.NO_DECORATIONS));
@@ -111,10 +106,10 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 			case 's':
 				builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addAction(uiFactory.createStartStoppStoppAction());
-				builder.addAction(uiFactory.createStartStoppRestartAction());
-				builder.addAction(uiFactory.createStartStoppExitAction());
-				builder.addAction(uiFactory.createTerminalCloseAction());
+				builder.addAction(new StartStoppStoppAction());
+				builder.addAction(new StartStoppRestartAction());
+				builder.addAction(new StartStoppExitAction());
+				builder.addAction(new TerminalCloseAction());
 				builder.build().showDialog(getTextGUI());
 				return true;
 
@@ -124,9 +119,9 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 			case 'e':
 				try {
-					getTextGUI().addWindow(uiFactory.createSkriptEditor(client.getCurrentSkript()));
+					getTextGUI().addWindow(new SkriptEditor(StartStoppConsole.getClient().getCurrentSkript()));
 				} catch (StartStoppException e) {
-					uiFactory.createInfoDialog("FEHLER", e.getLocalizedMessage()).display();
+					new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
 				}
 
 				return true;
@@ -153,10 +148,10 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		Applikation applikation = table.getSelectedApplikation();
 		if (applikation != null) {
 			builder = new ActionListDialogBuilder().setTitle("Applikation");
-			builder.addAction(uiFactory.createApplikationStartAction(applikation));
-			builder.addAction(uiFactory.createApplikationRestartAction(applikation));
-			builder.addAction(uiFactory.createApplikationStoppAction(applikation));
-			builder.addAction(uiFactory.createApplikationDetailAction(applikation));
+			builder.addAction(new ApplikationStartAction(applikation));
+			builder.addAction(new ApplikationRestartAction(applikation));
+			builder.addAction(new ApplikationStoppAction(applikation));
+			builder.addAction(new ApplikationDetailAction(applikation));
 			builder.build().showDialog(getTextGUI());
 		}
 	}

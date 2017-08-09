@@ -26,9 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
@@ -43,8 +40,7 @@ public class ZugangDavEditor extends StartStoppElementEditor<ZugangDav> {
 
 	private ZugangDav zugangDav;
 
-	@Inject
-	public ZugangDavEditor(@Assisted StartStoppSkript skript) {
+	public ZugangDavEditor(StartStoppSkript skript) {
 		super(skript, "Zugang Datenverteiler");
 
 		if (skript.getGlobal().getZugangDav() == null) {

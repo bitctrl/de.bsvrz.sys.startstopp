@@ -26,40 +26,31 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.ui.GuiComponentFactory;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.UrlasserDialog;
 
 public class EditorVersionierenAction implements Runnable {
 
 	private final StartStoppSkript skript;
 
-	@Inject
-	private GuiComponentFactory factory;
+	private WindowBasedTextGUI gui = StartStoppConsole.getGui();
+	private StartStoppClient client = StartStoppConsole.getClient();
 
-	@Inject
-	private WindowBasedTextGUI textGui;
-
-	@Inject
-	private StartStoppClient client;
-
-	@Inject
-	public EditorVersionierenAction(@Assisted StartStoppSkript skript) {
+	public EditorVersionierenAction(StartStoppSkript skript) {
 		this.skript = skript;
 	}
 	
 	@Override
 	public void run() {
 		UrlasserDialog dialog = new UrlasserDialog("Versionieren");
-		Object showDialog = dialog.showDialog(textGui);
+		Object showDialog = dialog.showDialog(gui);
 		if (showDialog.equals(MessageDialogButton.OK)) {
 			try {
 				client.setCurrentSkript(dialog.getVeranlasser(), dialog.getPasswort(), null, dialog.getGrund(), skript);
@@ -71,7 +62,7 @@ public class EditorVersionierenAction implements Runnable {
 					text.append(msg);
 				}
 				
-				factory.createInfoDialog("Fehler", text.toString()).display();
+				new InfoDialog("Fehler", text.toString()).display();
 			}
 		}
 	}

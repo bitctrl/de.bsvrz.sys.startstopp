@@ -26,9 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Interactable;
 import com.googlecode.lanterna.gui2.Label;
@@ -43,8 +40,7 @@ public class UsvEditor extends StartStoppElementEditor<Usv> {
 
 	private Usv usv;
 
-	@Inject
-	public UsvEditor(@Assisted StartStoppSkript skript) {
+	public UsvEditor(StartStoppSkript skript) {
 		super(skript, "USV");
 
 		if (skript.getGlobal().getUsv() == null) {

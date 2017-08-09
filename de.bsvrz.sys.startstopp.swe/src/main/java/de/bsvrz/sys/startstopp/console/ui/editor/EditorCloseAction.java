@@ -26,17 +26,13 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import javax.inject.Inject;
-
-import com.google.inject.assistedinject.Assisted;
 import com.googlecode.lanterna.gui2.Window;
 
 public class EditorCloseAction implements Runnable {
 
 	private Window window;
 
-	@Inject
-	public EditorCloseAction(@Assisted Window window) {
+	public EditorCloseAction(Window window) {
 		this.window = window;
 	}
 
