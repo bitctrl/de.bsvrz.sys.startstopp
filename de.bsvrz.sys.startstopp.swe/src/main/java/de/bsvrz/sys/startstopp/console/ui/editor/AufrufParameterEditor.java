@@ -36,6 +36,7 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 import de.bsvrz.sys.startstopp.console.ui.MakroTextInputDialog;
 
 class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {

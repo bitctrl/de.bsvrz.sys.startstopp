@@ -24,37 +24,50 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui.editor;
+package de.bsvrz.sys.startstopp.console.ui;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 
-public abstract class EditableTable<T> extends Table<String> {
+import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
+
+public abstract class EditableTable<T> extends Table<T> {
 
 	private List<T> dataList;
 	private boolean editierbar = true;
 
 	public EditableTable(List<T> dataList, String... columnName) {
 		super(columnName);
+		setTableCellRenderer(new EditableTableCellRenderer<T>(this));
 		this.dataList = dataList;
 		for (T element : dataList) {
-			getTableModel().addRow(getStringsFor(element));
+			getTableModel().addRow(getElementArray(element));
 		}
 		setSelectAction(() -> editSelectedElement());
+	}
+
+	private Collection<T> getElementArray(T element) {
+		List<T> list = new ArrayList<>();
+		for( int idx = 0; idx < getTableModel().getColumnCount(); idx++) {
+			list.add(element);
+		}
+		return list;
 	}
 
 	protected void addElement(T element) {
 		int row = dataList.size();
 		dataList.add(row, element);
-		getTableModel().insertRow(row, getStringsFor(element));
+		getTableModel().insertRow(row, getElementArray(element));
 	}
 	
 	protected void addElement(int row, T element) {
 		dataList.add(row, element);
-		getTableModel().insertRow(row, getStringsFor(element));
+		getTableModel().insertRow(row, getElementArray(element));
 	}
 
 	protected void removeCurrentElement() {
@@ -113,7 +126,7 @@ public abstract class EditableTable<T> extends Table<String> {
 		if (newParameter != null) {
 			dataList.add(selectedRow, newParameter);
 			getTableModel().insertRow(Math.min(selectedRow + 1, getTableModel().getRowCount()),
-					getStringsFor(newParameter));
+					getElementArray(newParameter));
 			setSelectedRow(selectedRow + 1);
 		}
 	}
@@ -122,7 +135,7 @@ public abstract class EditableTable<T> extends Table<String> {
 		T newParameter = requestNewElement();
 		if (newParameter != null) {
 			dataList.add(selectedRow, newParameter);
-			getTableModel().insertRow(selectedRow, getStringsFor(newParameter));
+			getTableModel().insertRow(selectedRow, getElementArray(newParameter));
 		}
 	}
 
@@ -130,25 +143,25 @@ public abstract class EditableTable<T> extends Table<String> {
 		if (selectedRow > 0) {
 			T parameter = dataList.remove(selectedRow);
 			dataList.add(selectedRow - 1, parameter);
-			updateRowDisplay(selectedRow - 1);
-			updateRowDisplay(selectedRow);
+//			updateRowDisplay(selectedRow - 1);
+//			updateRowDisplay(selectedRow);
 			setSelectedRow(selectedRow - 1);
 		}
 	}
 
-	private void updateRowDisplay(int row) {
-		List<String> strings = getStringsFor(dataList.get(row));
-		for (int col = 0; col < getTableModel().getColumnCount(); col++) {
-			getTableModel().setCell(col, row, strings.get(col));
-		}
-	}
+//	private void updateRowDisplay(int row) {
+//		List<String> strings = getStringsFor(dataList.get(row));
+//		for (int col = 0; col < getTableModel().getColumnCount(); col++) {
+//			getTableModel().setCell(col, row, strings.get(col));
+//		}
+//	}
 
 	private void moveElementDown(int selectedRow) {
 		if (selectedRow < dataList.size() - 1) {
 			T parameter = dataList.remove(selectedRow);
 			dataList.add(selectedRow + 1, parameter);
-			updateRowDisplay(selectedRow + 1);
-			updateRowDisplay(selectedRow);
+//			updateRowDisplay(selectedRow + 1);
+//			updateRowDisplay(selectedRow);
 			setSelectedRow(selectedRow + 1);
 		}
 	}
@@ -157,10 +170,10 @@ public abstract class EditableTable<T> extends Table<String> {
 		int selectedRow = getSelectedRow();
 		dataList.remove(selectedRow);
 		dataList.add(selectedRow, element);
-		List<String> values = getStringsFor(element);
-		for (int idx = 0; idx < getTableModel().getColumnCount(); idx++) {
-			getTableModel().setCell(idx, selectedRow, values.get(idx));
-		}
+//		List<String> values = getStringsFor(element);
+//		for (int idx = 0; idx < getTableModel().getColumnCount(); idx++) {
+//			getTableModel().setCell(idx, selectedRow, values.get(idx));
+//		}
 	}
 
 	private void editSelectedElement() {
@@ -170,7 +183,7 @@ public abstract class EditableTable<T> extends Table<String> {
 			int row = getSelectedRow();
 			dataList.remove(row);
 			dataList.add(row, newParameter);
-			updateRowDisplay(row);
+//			updateRowDisplay(row);
 		}
 	}
 
@@ -189,7 +202,16 @@ public abstract class EditableTable<T> extends Table<String> {
 
 	protected abstract List<String> getStringsFor(T element);
 
+	public final String getStringForColumn(int columnIndex, T element) {
+		List<String> strings = getStringsFor(element);
+		if( columnIndex < 0 || columnIndex >= strings.size()) {
+			return "?";
+		}
+		return strings.get(columnIndex);
+	}
+	
 	public void setEditierbar(boolean editierbar) {
 		this.editierbar = editierbar;
 	}
+
 }

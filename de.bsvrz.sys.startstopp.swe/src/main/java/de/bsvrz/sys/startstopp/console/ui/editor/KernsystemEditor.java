@@ -36,6 +36,7 @@ import com.googlecode.lanterna.gui2.Panel;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 
 class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> {
 

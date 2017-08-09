@@ -34,7 +34,7 @@ import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.console.ui.editor.EditableTable;
+import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 
 class OnlineInkarnationTable extends EditableTable<Applikation> {
 
@@ -44,7 +44,7 @@ class OnlineInkarnationTable extends EditableTable<Applikation> {
 
 	OnlineInkarnationTable(List<Applikation> applikationen) {
 		super(applikationen, "Inkarnation", "Status", "Startzeit");
-//		setTableCellRenderer(new OnlineTableCellRenderer());
+		setTableCellRenderer(new OnlineTableCellRenderer(this));
 	}
 
 	public void updateApplikationen(List<Applikation> applikationen) {

@@ -36,6 +36,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
+import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 class InkarnationTable extends EditableTable<Inkarnation> {

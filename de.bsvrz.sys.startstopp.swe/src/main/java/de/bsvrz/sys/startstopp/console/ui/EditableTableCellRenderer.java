@@ -24,73 +24,75 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui.online;
+package de.bsvrz.sys.startstopp.console.ui;
 
-import java.util.EnumSet;
-
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeStyle;
-import com.googlecode.lanterna.gui2.Component;
-import com.googlecode.lanterna.gui2.ComponentRenderer;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
+import com.googlecode.lanterna.gui2.table.DefaultTableCellRenderer;
 import com.googlecode.lanterna.gui2.table.Table;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
-import de.bsvrz.sys.startstopp.console.ui.EditableTable;
-import de.bsvrz.sys.startstopp.console.ui.EditableTableCellRenderer;
 
-class OnlineTableCellRenderer extends EditableTableCellRenderer<Applikation> {
+public class EditableTableCellRenderer<T> extends DefaultTableCellRenderer<T> {
 
-	public OnlineTableCellRenderer(EditableTable<Applikation> table) {
-		super(table);
+	private EditableTable<T> table;
+
+	public EditableTableCellRenderer(EditableTable<T> table) {
+		this.table = table;
 	}
 	
 	@Override
-	protected ThemeStyle getCellStyle(Table<Applikation> table, Applikation cell, int columnIndex, int rowIndex) {
+	public void drawCell(Table<T> table, T cell, int columnIndex, int rowIndex,
+			TextGUIGraphics textGUIGraphics) {
 
-		Status status = cell.getStatus();
-		String statusName = status.name();
+		ThemeStyle style = getCellStyle(table, cell, columnIndex, rowIndex);
 
+		textGUIGraphics.applyThemeStyle(style);
+		textGUIGraphics.fill(' '); 
+
+		String[] lines = getContent(columnIndex, cell);
+		int rowCount = 0;
+		for (String line : lines) {
+			textGUIGraphics.putString(0, rowCount++, line);
+		}
+	}
+
+	protected ThemeStyle getCellStyle(Table<T> table, T cell, int columnIndex, int rowIndex) {
 		ThemeDefinition themeDefinition = table.getThemeDefinition();
 		ThemeStyle style = themeDefinition.getNormal();
 		if ((table.getSelectedColumn() == columnIndex && table.getSelectedRow() == rowIndex)
 				|| (table.getSelectedRow() == rowIndex && !table.isCellSelection())) {
-			statusName = statusName + "_SELECTED";
 			if (table.isFocused()) {
 				style = themeDefinition.getActive();
 			} else {
 				style = themeDefinition.getSelected();
 			}
 		}
-		if (themeDefinition.getBooleanProperty("COLOR_STATUS", false)) {
-			style = themeDefinition.getCustom(statusName);
+		return style;
+	}
+
+	@Override
+	public TerminalSize getPreferredSize(Table<T> table, T cell, int columnIndex, int rowIndex) {
+		String[] lines = getContent(columnIndex, cell);
+		int breite = 0;
+		for( String line : lines) {
+			breite = Math.max(breite, line.length());
 		}
 		
-
-		new ThemeStyle() {
-			
-			@Override
-			public EnumSet<SGR> getSGRs() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public TextColor getForeground() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public TextColor getBackground() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
-		
-		return style;
+		return new TerminalSize(breite, lines.length);
+	}
+	
+	private String[] getContent(int columnIndex, T cell) {
+		String[] lines;
+		String text = table.getStringForColumn(columnIndex, cell);
+		if (cell == null) {
+			lines = new String[] { "" };
+		} else {
+			lines = text.split("\r?\n");
+		}
+		return lines;
 	}
 }

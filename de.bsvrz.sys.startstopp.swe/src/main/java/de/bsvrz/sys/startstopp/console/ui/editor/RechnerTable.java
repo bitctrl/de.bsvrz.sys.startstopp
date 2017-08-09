@@ -31,6 +31,7 @@ import java.util.List;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 
 class RechnerTable extends EditableTable<Rechner> {
 
@@ -42,7 +43,7 @@ class RechnerTable extends EditableTable<Rechner> {
 
 		this.skript = skript;
 		for (Rechner rechner : skript.getGlobal().getRechner()) {
-			getTableModel().addRow(rechner.getName(), rechner.getTcpAdresse(), rechner.getPort());
+			addElement(rechner);
 		}
 	}
 
