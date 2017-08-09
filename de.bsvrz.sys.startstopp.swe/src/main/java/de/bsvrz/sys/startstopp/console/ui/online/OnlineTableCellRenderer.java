@@ -32,21 +32,17 @@ import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.gui2.table.DefaultTableCellRenderer;
 import com.googlecode.lanterna.gui2.table.Table;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
 
-class OnlineTableCellRenderer extends DefaultTableCellRenderer<Object> {
+class OnlineTableCellRenderer extends DefaultTableCellRenderer<Applikation> {
 
 	@Override
-	public void drawCell(Table<Object> table, Object cell, int columnIndex, int rowIndex,
+	public void drawCell(Table<Applikation> table, Applikation cell, int columnIndex, int rowIndex,
 			TextGUIGraphics textGUIGraphics) {
 
-		if (table.getTableModel().getColumnCount() < 3) {
-			super.drawCell(table, cell, columnIndex, rowIndex, textGUIGraphics);
-			return;
-		}
-
-		Object status = table.getTableModel().getCell(1, rowIndex);
-		String statusName = ((Status) status).name();
+		Status status = cell.getStatus();
+		String statusName = status.name();
 
 		ThemeDefinition themeDefinition = table.getThemeDefinition();
 		ThemeStyle style = themeDefinition.getNormal();

@@ -42,15 +42,15 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/skripte")
-class SkripteService {
+public class SkripteService {
 
 	private SkriptManager skriptManager;
 
-	SkripteService() {
+	public SkripteService() {
 		this(StartStopp.getInstance().getSkriptManager());
 	}
 
-	SkripteService(SkriptManager skriptManager) {
+	public SkripteService(SkriptManager skriptManager) {
 		this.skriptManager = skriptManager;
 	}
 

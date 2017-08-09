@@ -26,95 +26,59 @@
 
 package de.bsvrz.sys.startstopp.console.ui.online;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.lanterna.gui2.table.Table;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+import de.bsvrz.sys.startstopp.console.ui.editor.EditableTable;
 
-class OnlineInkarnationTable extends Table<Object> {
+class OnlineInkarnationTable extends EditableTable<Applikation> {
 
 	private static final Debug LOGGER = Debug.getLogger();
 
-	private final class Updater extends Thread {
-
-		private Updater() {
-			super("StatusUpdater");
-			setDaemon(true);
-		}
-
-		public void run() {
-
-			while (true) {
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					LOGGER.warning(e.getLocalizedMessage());
-				}
-
-				try {
-					List<Applikation> applikationen = client.getApplikationen();
-
-					boolean showApplikationen = true;
-					if (applikationen.isEmpty()) {
-						StartStoppSkriptStatus skriptStatus = client.getCurrentSkriptStatus();
-						if (skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
-							emtpyTableModell.setMessage(skriptStatus.getMessages().get(0));
-							setTableModel(emtpyTableModell);
-							showApplikationen = false;
-						}
-					}
-
-					if (showApplikationen) {
-						applikationenTableModell.updateApplikationen(applikationen);
-						setTableModel(applikationenTableModell);
-					}
-				} catch (StartStoppException e) {
-					emtpyTableModell.setMessage(e.getLocalizedMessage());
-					setTableModel(emtpyTableModell);
-				}
-			}
-		}
-	}
-
-	private final MessagesTableModell emtpyTableModell = new MessagesTableModell();
-	private final ApplikationenTableModell applikationenTableModell = new ApplikationenTableModell();
-
 	private StartStoppClient client;
 
-	OnlineInkarnationTable() {
-		super("");
-		this.client = StartStoppConsole.getClient();
-		setTableModel(emtpyTableModell);
-		setTableCellRenderer(new OnlineTableCellRenderer());
-		emtpyTableModell.addMessage("Unbekannter Status");
-		init();
+	OnlineInkarnationTable(List<Applikation> applikationen) {
+		super(applikationen, "Inkarnation", "Status", "Startzeit");
+//		setTableCellRenderer(new OnlineTableCellRenderer());
 	}
 
-	void init() {
-		try {
-			applikationenTableModell.setApplikationen(client.getApplikationen());
-			setTableModel(applikationenTableModell);
-		} catch (StartStoppException e) {
-			System.err.println(e.getLocalizedMessage());
+	public void updateApplikationen(List<Applikation> applikationen) {
+		clearTable();
+		for(Applikation applikation : applikationen) {
+			addElement(applikation);
 		}
-
-		Thread updater = new Updater();
-		updater.start();
 	}
 
-	public Applikation getSelectedApplikation() {
+	@Override
+	protected Applikation requestNewElement() {
+		return null;
+	}
 
-		if (getTableModel() != applikationenTableModell) {
-			return null;
+	@Override
+	protected Applikation editElement(Applikation applikation) {
+		ActionListDialogBuilder builder;
+		if (applikation != null) {
+			builder = new ActionListDialogBuilder().setTitle("Applikation");
+			builder.addAction(new ApplikationStartAction(applikation));
+			builder.addAction(new ApplikationRestartAction(applikation));
+			builder.addAction(new ApplikationStoppAction(applikation));
+			builder.addAction(new ApplikationDetailAction(applikation));
+			builder.build().showDialog(getTextGUI());
 		}
+		return null;
+	}
 
-		return applikationenTableModell.getApplikation(getSelectedRow());
-
+	@Override
+	protected List<String> getStringsFor(Applikation applikation) {
+		List<String> result = new ArrayList<>();
+		result.add(applikation.getInkarnation().getInkarnationsName());
+		result.add(applikation.getStatus().toString());
+		result.add(applikation.getStartMeldung());
+		return result;
 	}
 }

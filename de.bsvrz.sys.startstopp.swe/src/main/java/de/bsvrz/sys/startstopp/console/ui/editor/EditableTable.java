@@ -35,50 +35,66 @@ import com.googlecode.lanterna.input.KeyStroke;
 public abstract class EditableTable<T> extends Table<String> {
 
 	private List<T> dataList;
+	private boolean editierbar = true;
 
 	public EditableTable(List<T> dataList, String... columnName) {
 		super(columnName);
 		this.dataList = dataList;
-		for( T element : dataList) {
+		for (T element : dataList) {
 			getTableModel().addRow(getStringsFor(element));
 		}
 		setSelectAction(() -> editSelectedElement());
 	}
 
-	protected void addElement(int row, T element) {
+	protected void addElement(T element) {
+		int row = dataList.size();
 		dataList.add(row, element);
 		getTableModel().insertRow(row, getStringsFor(element));
 	}
 	
+	protected void addElement(int row, T element) {
+		dataList.add(row, element);
+		getTableModel().insertRow(row, getStringsFor(element));
+	}
+
 	protected void removeCurrentElement() {
 		removeElementAt(getSelectedRow());
 	}
-	
+
 	protected void removeElementAt(int row) {
 		dataList.remove(row);
 		getTableModel().removeRow(row);
+	}
+
+	protected void clearTable() {
+		dataList.clear();
+		while( getTableModel().getRowCount() > 0) {
+			getTableModel().removeRow(0);
+		}
 	}
 	
 	@Override
 	public Result handleKeyStroke(KeyStroke key) {
 
-		int selectedRow = getSelectedRow();
+		if (editierbar ) {
+			int selectedRow = getSelectedRow();
 
-		if (SkriptEditor.isDeleteKey(key)) {
-			deleteElementAt(selectedRow);
-			return Result.HANDLED;
-		} else if (SkriptEditor.isInsertAfterKey(key)) {
-			insertElementAfter(selectedRow);
-			return Result.HANDLED;
-		} else if (SkriptEditor.isInsertBeforeKey(key)) {
-			insertElementBefore(selectedRow);
-			return Result.HANDLED;
-		} else if (SkriptEditor.isEintragNachObenKey(key)) {
-			moveElementUp(selectedRow);
-			return Result.HANDLED;
-		} else if (SkriptEditor.isEintragNachUntenKey(key)) {
-			moveElementDown(selectedRow);
-			return Result.HANDLED;
+			if (SkriptEditor.isDeleteKey(key)) {
+				deleteElementAt(selectedRow);
+				return Result.HANDLED;
+			} else if (SkriptEditor.isInsertAfterKey(key)) {
+				insertElementAfter(selectedRow);
+				return Result.HANDLED;
+			} else if (SkriptEditor.isInsertBeforeKey(key)) {
+				insertElementBefore(selectedRow);
+				return Result.HANDLED;
+			} else if (SkriptEditor.isEintragNachObenKey(key)) {
+				moveElementUp(selectedRow);
+				return Result.HANDLED;
+			} else if (SkriptEditor.isEintragNachUntenKey(key)) {
+				moveElementDown(selectedRow);
+				return Result.HANDLED;
+			}
 		}
 
 		return super.handleKeyStroke(key);
@@ -96,11 +112,11 @@ public abstract class EditableTable<T> extends Table<String> {
 		T newParameter = requestNewElement();
 		if (newParameter != null) {
 			dataList.add(selectedRow, newParameter);
-			getTableModel().insertRow(Math.min(selectedRow + 1, getTableModel().getRowCount()), getStringsFor(newParameter));
+			getTableModel().insertRow(Math.min(selectedRow + 1, getTableModel().getRowCount()),
+					getStringsFor(newParameter));
 			setSelectedRow(selectedRow + 1);
 		}
 	}
-
 
 	void insertElementBefore(int selectedRow) {
 		T newParameter = requestNewElement();
@@ -122,7 +138,7 @@ public abstract class EditableTable<T> extends Table<String> {
 
 	private void updateRowDisplay(int row) {
 		List<String> strings = getStringsFor(dataList.get(row));
-		for( int col = 0; col < getTableModel().getColumnCount(); col++) {
+		for (int col = 0; col < getTableModel().getColumnCount(); col++) {
 			getTableModel().setCell(col, row, strings.get(col));
 		}
 	}
@@ -146,7 +162,7 @@ public abstract class EditableTable<T> extends Table<String> {
 			getTableModel().setCell(idx, selectedRow, values.get(idx));
 		}
 	}
-	
+
 	private void editSelectedElement() {
 		T oldElement = dataList.get(getSelectedRow());
 		T newParameter = editElement(oldElement);
@@ -157,17 +173,23 @@ public abstract class EditableTable<T> extends Table<String> {
 			updateRowDisplay(row);
 		}
 	}
-	
+
 	protected T getSelectedElement() {
 		return dataList.get(getSelectedRow());
 	}
-	
+
 	@Override
 	public WindowBasedTextGUI getTextGUI() {
 		return (WindowBasedTextGUI) super.getTextGUI();
 	}
-	
+
 	protected abstract T requestNewElement();
+
 	protected abstract T editElement(T oldElement);
+
 	protected abstract List<String> getStringsFor(T element);
+
+	public void setEditierbar(boolean editierbar) {
+		this.editierbar = editierbar;
+	}
 }

@@ -26,9 +26,16 @@
 
 package de.bsvrz.sys.startstopp.console.ui.online;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
+import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
@@ -39,7 +46,9 @@ import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
@@ -50,14 +59,93 @@ import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
 public class StartStoppOnlineWindow extends BasicWindow {
 
+	private final class Updater extends Thread {
 
+		private Updater() {
+			super("OnlineWindowUpdater");
+			setDaemon(true);
+		}
+
+		public void run() {
+
+			while (true) {
+				try {
+					List<Applikation> applikationen = StartStoppConsole.getClient().getApplikationen();
+
+					if (applikationen.isEmpty()) {
+						StartStoppSkriptStatus skriptStatus = StartStoppConsole.getClient().getCurrentSkriptStatus();
+						if (skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
+							onlineDisplay.setStatus(OnlineDisplay.Status.SKRIPT_FEHLER);
+						}
+					}
+
+					table.updateApplikationen(applikationen);
+					onlineDisplay.setStatus(OnlineDisplay.Status.ONLINE);
+				} catch (StartStoppException e) {
+					table.updateApplikationen(Collections.emptyList());
+					onlineDisplay.setStatus(OnlineDisplay.Status.VERBINDUNG_FEHLER);
+				}
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					LOGGER.warning(e.getLocalizedMessage());
+				}
+			}
+		}
+	}
+
+	public static class OnlineDisplay extends Panel {
+
+		private Label verbindungsStatus;
+		private Label letzteAbfrage;
+
+		enum Status {
+			UNKNOWN("-", TextColor.ANSI.WHITE),
+			SKRIPT_FEHLER("S", TextColor.ANSI.BLUE),
+			VERBINDUNG_FEHLER("X", TextColor.ANSI.RED),
+			ONLINE(" ", TextColor.ANSI.GREEN);
+
+			private String text;
+			private TextColor color;
+
+			private Status(String text, TextColor color) {
+				this.text = text;
+				this.color = color;
+			}
+		};
+
+		public OnlineDisplay() {
+			setLayoutManager(new GridLayout(3));
+			addComponent(new Label("Startstopp - Online"), GridLayout.createHorizontallyFilledLayoutData(1));
+			letzteAbfrage = new Label("00.00.0000 00:00:00");
+			addComponent(letzteAbfrage);
+			verbindungsStatus = new Label(" ");
+			addComponent(verbindungsStatus);
+		}
+
+		public void setStatus(Status status) {
+			ThemeDefinition themeDefinition = verbindungsStatus.getThemeDefinition();
+			if (themeDefinition.getBooleanProperty("COLOR_STATUS", false)) {
+				verbindungsStatus.setText(" ");
+				verbindungsStatus.setBackgroundColor(status.color);
+				letzteAbfrage.setText(DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis())));
+			} else {
+				verbindungsStatus.setText(status.text);
+				letzteAbfrage.setText(DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis())));
+			}
+		}
+	}
+
+	private static final Debug LOGGER = Debug.getLogger();
 	private OnlineInkarnationTable table;
+	private List<Applikation> applikationen = new ArrayList<>();
+	private OnlineDisplay onlineDisplay;
 
 	public StartStoppOnlineWindow() throws StartStoppException {
 		super("StartStopp - Online");
 
-		this.table = new OnlineInkarnationTable();
-		this.table.setSelectAction(()->handleApplikation());
+		this.table = new OnlineInkarnationTable(applikationen);
+		table.setEditierbar(false);
 
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.NO_DECORATIONS));
 
@@ -65,18 +153,20 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		panel.setLayoutManager(new GridLayout(1));
 		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
 
-		Label infoLabel = new Label("Startstopp - Online");
-		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
-		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
-
-		panel.addComponent(table.withBorder(Borders.singleLine()), GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
+		onlineDisplay = new OnlineDisplay();
+		panel.addComponent(onlineDisplay.withBorder(Borders.singleLine()),
+				GridLayout.createHorizontallyFilledLayoutData(1));
+		panel.addComponent(table.withBorder(Borders.singleLine()),
+				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 
 		MenuPanel menuPanel = new MenuPanel();
 		panel.setLayoutManager(new GridLayout(1));
-		Label statusLabel = new MenuLabel("s-System   p-Prozess   t-Theme   e-Editieren   i-Info");
+		Label statusLabel = new MenuLabel("s-System  p-ENTER t-Theme   e-Editieren   i-Info");
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
 		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
-		
+
+		new Updater().start();
+
 		setComponent(panel);
 	}
 
@@ -110,10 +200,6 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				builder.build().showDialog(getTextGUI());
 				return true;
 
-			case 'p':
-				handleApplikation();
-				return true;
-
 			case 'e':
 				try {
 					getTextGUI().addWindow(new SkriptEditor(StartStoppConsole.getClient().getCurrentSkript()));
@@ -138,18 +224,5 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		}
 
 		return super.handleInput(keyStroke);
-	}
-
-	private void handleApplikation() {
-		ActionListDialogBuilder builder;
-		Applikation applikation = table.getSelectedApplikation();
-		if (applikation != null) {
-			builder = new ActionListDialogBuilder().setTitle("Applikation");
-			builder.addAction(new ApplikationStartAction(applikation));
-			builder.addAction(new ApplikationRestartAction(applikation));
-			builder.addAction(new ApplikationStoppAction(applikation));
-			builder.addAction(new ApplikationDetailAction(applikation));
-			builder.build().showDialog(getTextGUI());
-		}
 	}
 }
