@@ -84,7 +84,7 @@ public class DavConnector extends Thread {
 	private ProzessManager processManager;
 	private ApplikationStatusHandler appStatusHandler;
 
-	public DavConnector(ProzessManager processManager) {
+	DavConnector(ProzessManager processManager) {
 		super("DavConnector");
 		setDaemon(true);
 		this.processManager = processManager;

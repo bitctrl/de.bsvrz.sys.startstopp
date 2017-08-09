@@ -28,8 +28,6 @@ package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.Arrays;
 
-import javax.inject.Inject;
-
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
@@ -55,7 +53,6 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 	private OnlineInkarnationTable table;
 
-	@Inject
 	public StartStoppOnlineWindow() throws StartStoppException {
 		super("StartStopp - Online");
 

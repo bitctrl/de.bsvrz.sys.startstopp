@@ -36,11 +36,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 
-public class ZugangDavEditor extends StartStoppElementEditor<ZugangDav> {
+class ZugangDavEditor extends StartStoppElementEditor<ZugangDav> {
 
 	private ZugangDav zugangDav;
 
-	public ZugangDavEditor(StartStoppSkript skript) {
+	ZugangDavEditor(StartStoppSkript skript) {
 		super(skript, "Zugang Datenverteiler");
 
 		if (skript.getGlobal().getZugangDav() == null) {

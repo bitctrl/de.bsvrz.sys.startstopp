@@ -38,11 +38,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.console.ui.MakroTextInputDialog;
 
-public class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
+class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 
-	public class AufrufParameterTable extends EditableTable<String> {
+	private class AufrufParameterTable extends EditableTable<String> {
 
-		public AufrufParameterTable(List<String> parameterListe, String string) {
+		AufrufParameterTable(List<String> parameterListe, String string) {
 			super(parameterListe, string);
 		}
 
@@ -74,7 +74,7 @@ public class AufrufParameterEditor extends StartStoppElementEditor<List<String>>
 	private List<String> parameterListe = new ArrayList<>();
 	private EditableTable<String> parameterTable;
 
-	public AufrufParameterEditor(StartStoppSkript skript, Inkarnation inkarnation) {
+	AufrufParameterEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "Aufrufparameter");
 		this.parameterListe.addAll(inkarnation.getAufrufParameter());
 	}

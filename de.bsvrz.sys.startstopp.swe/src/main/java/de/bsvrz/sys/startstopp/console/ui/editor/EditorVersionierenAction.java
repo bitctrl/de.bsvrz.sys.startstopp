@@ -36,14 +36,14 @@ import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.UrlasserDialog;
 
-public class EditorVersionierenAction implements Runnable {
+class EditorVersionierenAction implements Runnable {
 
 	private final StartStoppSkript skript;
 
 	private WindowBasedTextGUI gui = StartStoppConsole.getGui();
 	private StartStoppClient client = StartStoppConsole.getClient();
 
-	public EditorVersionierenAction(StartStoppSkript skript) {
+	EditorVersionierenAction(StartStoppSkript skript) {
 		this.skript = skript;
 	}
 	

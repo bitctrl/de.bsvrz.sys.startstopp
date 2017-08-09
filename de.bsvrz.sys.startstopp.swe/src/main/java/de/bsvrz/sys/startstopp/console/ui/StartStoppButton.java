@@ -123,7 +123,7 @@ public class StartStoppButton extends Button implements HasHotkey {
 		return result.replace("&", "");
 	}
 
-	int getHotkeyOffset() {
+	private int getHotkeyOffset() {
 		int result = super.getLabel().indexOf('&');
 		return Math.max(result, 0);
 	}

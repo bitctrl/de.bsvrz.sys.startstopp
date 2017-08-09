@@ -36,11 +36,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class RechnerEditor extends StartStoppElementEditor<Rechner> {
+class RechnerEditor extends StartStoppElementEditor<Rechner> {
 	
 	private Rechner rechner;
 
-	public RechnerEditor(StartStoppSkript skript, Rechner rechner) {
+	RechnerEditor(StartStoppSkript skript, Rechner rechner) {
 		super(skript, "Rechner: " + rechner.getName());
 		this.rechner = (Rechner) Util.cloneObject(rechner);
 	}

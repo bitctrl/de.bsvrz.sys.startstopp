@@ -38,11 +38,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class StartArtEditor extends StartStoppElementEditor<StartArt> {
+class StartArtEditor extends StartStoppElementEditor<StartArt> {
 
 	private StartArt startArt;
 	
-	public StartArtEditor(StartStoppSkript skript, StartArt startArt) {
+	StartArtEditor(StartStoppSkript skript, StartArt startArt) {
 		super(skript, "Startart-Editor");
 		this.startArt = (StartArt) Util.cloneObject(startArt);
 	}

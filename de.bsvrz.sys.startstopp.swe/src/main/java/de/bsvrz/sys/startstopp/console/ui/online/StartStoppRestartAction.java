@@ -30,7 +30,7 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 
-public class StartStoppRestartAction implements Runnable {
+class StartStoppRestartAction implements Runnable {
 
 	@Override
 	public void run() {

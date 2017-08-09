@@ -37,11 +37,11 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Panels;
 import com.googlecode.lanterna.input.KeyStroke;
 
-public class ApplikationDetailWindow extends BasicWindow {
+class ApplikationDetailWindow extends BasicWindow {
 
 	private Panel panel;
 
-	public ApplikationDetailWindow(String string) {
+	ApplikationDetailWindow(String string) {
 		super(string);
 		setCloseWindowWithEscape(true);
 		initUI();

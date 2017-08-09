@@ -26,26 +26,16 @@
 
 package de.bsvrz.sys.startstopp.console.ui.online;
 
-import javax.inject.Inject;
-
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 
 public class StartStoppUpdateAction implements Runnable {
 
-	@Inject
-	WindowBasedTextGUI gui;
-
-	@Inject
-	StartStoppClient client;
-	
 	@Override
 	public void run() {
 		try {
-			client.startStartStopp();
+			StartStoppConsole.getClient().startStartStopp();
 		} catch (StartStoppException e) {
 			new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
 		}

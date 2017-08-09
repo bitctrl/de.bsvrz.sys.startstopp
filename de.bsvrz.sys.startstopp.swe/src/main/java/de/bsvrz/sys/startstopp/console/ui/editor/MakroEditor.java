@@ -37,11 +37,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class MakroEditor extends StartStoppElementEditor<MakroDefinition> {
+class MakroEditor extends StartStoppElementEditor<MakroDefinition> {
 
 	private MakroDefinition makroDefinition;
 
-	public MakroEditor(StartStoppSkript skript, MakroDefinition makroDefinition) {
+	MakroEditor(StartStoppSkript skript, MakroDefinition makroDefinition) {
 		super(skript, "Makrodefinition");
 		this.makroDefinition = (MakroDefinition) Util.cloneObject(makroDefinition);
 	}	

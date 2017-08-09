@@ -36,7 +36,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-public class RechnerManager extends Thread {
+class RechnerManager extends Thread {
 
 	private static final Debug LOGGER = Debug.getLogger();
 	private StartStoppClient client;
@@ -46,7 +46,7 @@ public class RechnerManager extends Thread {
 	private boolean listeErmittelt = false;
 	private Object lock = new Object();
 
-	public RechnerManager(Rechner rechner) {
+	RechnerManager(Rechner rechner) {
 		super("Rechner-" + rechner.getName());
 		setDaemon(true);
 		client = new StartStoppClient(rechner.getTcpAdresse(), Integer.parseInt(rechner.getPort()));

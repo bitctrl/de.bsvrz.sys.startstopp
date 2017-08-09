@@ -36,11 +36,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class UsvEditor extends StartStoppElementEditor<Usv> {
+class UsvEditor extends StartStoppElementEditor<Usv> {
 
 	private Usv usv;
 
-	public UsvEditor(StartStoppSkript skript) {
+	UsvEditor(StartStoppSkript skript) {
 		super(skript, "USV");
 
 		if (skript.getGlobal().getUsv() == null) {

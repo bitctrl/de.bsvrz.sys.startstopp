@@ -46,13 +46,13 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.console.ui.StartStoppButton;
 
-public class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
+class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 
 	private Inkarnation inkarnation;
 	private StartStoppSkript skript;
 
 
-	public InkarnationEditor(StartStoppSkript skript, Inkarnation inkarnation) {
+	InkarnationEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "Inkarnation: " + inkarnation.getInkarnationsName());
 		this.skript = skript;
 		this.inkarnation = (Inkarnation) Util.cloneObject(inkarnation);

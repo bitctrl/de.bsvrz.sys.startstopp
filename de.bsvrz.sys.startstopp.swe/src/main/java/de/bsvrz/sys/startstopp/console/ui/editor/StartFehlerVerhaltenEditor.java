@@ -38,11 +38,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class StartFehlerVerhaltenEditor extends StartStoppElementEditor<StartFehlerVerhalten> {
+class StartFehlerVerhaltenEditor extends StartStoppElementEditor<StartFehlerVerhalten> {
 
 	private StartFehlerVerhalten startFehlerVerhalten;
 
-	public StartFehlerVerhaltenEditor(StartStoppSkript skript, Inkarnation inkarnation) {
+	StartFehlerVerhaltenEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "Startfehlerverhalten");
 
 

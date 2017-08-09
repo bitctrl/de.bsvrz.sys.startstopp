@@ -38,11 +38,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
-public class InkarnationTable extends EditableTable<Inkarnation> {
+class InkarnationTable extends EditableTable<Inkarnation> {
 
 	private StartStoppSkript skript;
 
-	public InkarnationTable(StartStoppSkript skript) {
+	InkarnationTable(StartStoppSkript skript) {
 		super(skript.getInkarnationen(), "Name", "Typ", "Startart");
 		this.skript = skript;
 

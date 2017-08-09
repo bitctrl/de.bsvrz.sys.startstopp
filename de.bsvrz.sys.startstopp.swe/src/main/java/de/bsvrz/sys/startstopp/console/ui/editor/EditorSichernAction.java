@@ -42,11 +42,11 @@ import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
-public class EditorSichernAction implements Runnable {
+class EditorSichernAction implements Runnable {
 
 	private final StartStoppSkript skript;
 
-	public EditorSichernAction(StartStoppSkript skript) {
+	EditorSichernAction(StartStoppSkript skript) {
 		this.skript = skript;
 	}
 

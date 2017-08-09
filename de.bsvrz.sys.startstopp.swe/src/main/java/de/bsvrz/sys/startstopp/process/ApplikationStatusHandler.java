@@ -49,7 +49,7 @@ import de.bsvrz.dav.daf.main.config.InvalidationListener;
 import de.bsvrz.dav.daf.main.config.SystemObject;
 import de.bsvrz.sys.funclib.debug.Debug;
 
-public class ApplikationStatusHandler
+class ApplikationStatusHandler
 		implements DynamicObjectCreatedListener, InvalidationListener, ClientReceiverInterface {
 
 	private static class ApplikationStatus {
@@ -76,7 +76,7 @@ public class ApplikationStatusHandler
 	private ClientDavConnection dav;
 	private Map<String, ApplikationStatus> applikationStatus = new LinkedHashMap<>();
 
-	public ApplikationStatusHandler(ProzessManager processManager) {
+	ApplikationStatusHandler(ProzessManager processManager) {
 		this.processManager = processManager;
 	}
 

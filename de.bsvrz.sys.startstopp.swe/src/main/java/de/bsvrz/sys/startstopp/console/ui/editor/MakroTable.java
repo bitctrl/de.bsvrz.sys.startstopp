@@ -32,9 +32,9 @@ import com.googlecode.lanterna.gui2.table.Table;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 
-public class MakroTable extends Table<Object> {
+class MakroTable extends Table<Object> {
 
-	public MakroTable(WindowBasedTextGUI gui, StartStoppSkript skript) {
+	MakroTable(WindowBasedTextGUI gui, StartStoppSkript skript) {
 		super("Name", "Wert");
 
 		for (MakroDefinition makroDefinition : skript.getGlobal().getMakrodefinitionen()) {

@@ -33,14 +33,14 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-public class SkriptStopper extends Thread {
+class SkriptStopper extends Thread {
 
 	private static final Debug LOGGER = Debug.getLogger();
 	private final Map<String, StartStoppApplikation> applikationen = new LinkedHashMap<>();
 	private final Map<String, StartStoppApplikation> kernsystem = new LinkedHashMap<>();
 	private ProzessManager processManager;
 
-	public SkriptStopper(ProzessManager processManager) {
+	SkriptStopper(ProzessManager processManager) {
 
 		this.processManager = processManager;
 

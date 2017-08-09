@@ -32,11 +32,11 @@ import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
-public class ApplikationStoppAction implements Runnable {
+class ApplikationStoppAction implements Runnable {
 
 	private Applikation applikation;
 
-	public ApplikationStoppAction(Applikation applikation) {
+	ApplikationStoppAction(Applikation applikation) {
 		this.applikation = applikation;
 	}
 

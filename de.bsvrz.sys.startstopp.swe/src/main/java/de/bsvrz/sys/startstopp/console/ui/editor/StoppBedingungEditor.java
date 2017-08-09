@@ -44,11 +44,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung> {
+class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung> {
 
-	public class NachfolgerTable extends EditableTable<String> {
+	private class NachfolgerTable extends EditableTable<String> {
 
-		public NachfolgerTable(List<String> dataList, String... columnName) {
+		NachfolgerTable(List<String> dataList, String... columnName) {
 			super(dataList, columnName);
 		}
 
@@ -78,7 +78,7 @@ public class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung
 	private StartStoppSkript skript;
 	private boolean bedingungUsed = false;
 
-	public StoppBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation) {
+	StoppBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "StartStopp - Editor: Inkarnation: ");
 
 		this.skript = skript;

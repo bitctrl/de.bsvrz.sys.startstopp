@@ -32,27 +32,13 @@ import java.util.List;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 
-public class RechnerTable extends EditableTable<Rechner> {
+class RechnerTable extends EditableTable<Rechner> {
 
 	private StartStoppSkript skript;
 
-	public RechnerTable(StartStoppSkript skript) {
+	RechnerTable(StartStoppSkript skript) {
 		super(skript.getGlobal().getRechner(), "Name", "Host", "Port");
 		this.skript = skript;
-
-//		setSelectAction(new Runnable() {
-//			@Override
-//			public void run() {
-//				int row = getSelectedRow();
-//				Rechner rechner = skript.getGlobal().getRechner().get(row);
-//				RechnerEditor editor = new RechnerEditor(skript, rechner);
-//				if (editor.showDialog(gui)) {
-//					getTableModel().setCell(0, row, editor.getElement().getName());
-//					getTableModel().setCell(1, row, editor.getElement().getTcpAdresse());
-//					getTableModel().setCell(2, row, editor.getElement().getPort());
-//				}
-//			}
-//		});
 
 		this.skript = skript;
 		for (Rechner rechner : skript.getGlobal().getRechner()) {
@@ -60,31 +46,6 @@ public class RechnerTable extends EditableTable<Rechner> {
 		}
 	}
 
-//	@Override
-//	public Result handleKeyStroke(KeyStroke keyStroke) {
-//		if (SkriptEditor.isInsertAfterKey(keyStroke)) {
-//			int row = getSelectedRow() + 1;
-//			Rechner rechner = new Rechner();
-//			rechner.setName("Neuer Rechner");
-//			rechner.setTcpAdresse("");
-//			rechner.setPort("");
-//			RechnerEditor editor = new RechnerEditor(skript, rechner);
-//			if (editor.showDialog(gui)) {
-//				skript.getGlobal().getRechner().add(row, editor.getElement());
-//				getTableModel().insertRow(row, Arrays.asList(editor.getElement().getName(),
-//						editor.getElement().getTcpAdresse(), editor.getElement().getPort()));
-//			}
-//		} else if (SkriptEditor.isDeleteKey(keyStroke)) {
-//			JaNeinDialog dialog = new JaNeinDialog(getTextGUI(), "Rechner löschen", "Soll der ausgewählte Rechner wirklich gelöscht werden?");
-//			if (dialog.display()) {
-//				int deleteRow = getSelectedRow();
-//				skript.getGlobal().getRechner().remove(deleteRow);
-//				getTableModel().removeRow(deleteRow);
-//			}
-//		}
-//
-//		return super.handleKeyStroke(keyStroke);
-//	}
 
 	@Override
 	protected Rechner requestNewElement() {

@@ -26,7 +26,6 @@
 
 package de.bsvrz.sys.startstopp.api.server;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -43,22 +42,21 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/skripte")
-public class SkripteService {
+class SkripteService {
 
 	private SkriptManager skriptManager;
 
-	public SkripteService() {
+	SkripteService() {
 		this(StartStopp.getInstance().getSkriptManager());
 	}
 
-	public SkripteService(SkriptManager skriptManager) {
+	SkripteService(SkriptManager skriptManager) {
 		this.skriptManager = skriptManager;
 	}
 
 	@GET
 	@Path("current")
 	@Produces("application/json")
-	@Inject
 	public Response responseSkripteCurrent() throws NoContentException {
 
 		Response response;

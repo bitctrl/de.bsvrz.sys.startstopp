@@ -28,11 +28,11 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import com.googlecode.lanterna.gui2.Window;
 
-public class EditorCloseAction implements Runnable {
+class EditorCloseAction implements Runnable {
 
 	private Window window;
 
-	public EditorCloseAction(Window window) {
+	EditorCloseAction(Window window) {
 		this.window = window;
 	}
 

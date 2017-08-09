@@ -26,19 +26,16 @@
 
 package de.bsvrz.sys.startstopp.console.ui.online;
 
-import javax.inject.Inject;
-
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 
-public class ApplikationStartAction implements Runnable {
+class ApplikationStartAction implements Runnable {
 
 	private final Applikation applikation;
 
-	@Inject
-	public ApplikationStartAction(Applikation applikation) {
+	ApplikationStartAction(Applikation applikation) {
 		this.applikation = applikation;
 	}
 

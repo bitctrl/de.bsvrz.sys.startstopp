@@ -29,8 +29,6 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.inject.Inject;
-
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
@@ -44,7 +42,6 @@ public class InkarnationSelektor {
 
 	private SortedMap<String, Inkarnation> inkarnationen = new TreeMap<>();
 	
-	@Inject
 	public InkarnationSelektor(StartStoppSkript skript) {
 		for( Inkarnation inkarnation : skript.getInkarnationen()) {
 			inkarnationen.put(inkarnation.getInkarnationsName(), inkarnation);

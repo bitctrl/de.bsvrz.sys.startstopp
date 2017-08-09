@@ -44,15 +44,15 @@ import de.bsvrz.sys.startstopp.process.StartStoppApplikation;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/applikationen")
-public class ApplikationenService {
+class ApplikationenService {
 
 	private ProzessManager processManager;
 
-	public ApplikationenService() {
+	ApplikationenService() {
 		this(StartStopp.getInstance().getProcessManager());
 	}
 
-	public ApplikationenService(ProzessManager processManager) {
+	ApplikationenService(ProzessManager processManager) {
 		this.processManager = processManager;
 	}
 

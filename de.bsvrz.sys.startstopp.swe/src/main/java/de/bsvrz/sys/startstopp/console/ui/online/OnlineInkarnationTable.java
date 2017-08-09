@@ -37,7 +37,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
-public class OnlineInkarnationTable extends Table<Object> {
+class OnlineInkarnationTable extends Table<Object> {
 
 	private static final Debug LOGGER = Debug.getLogger();
 
@@ -87,7 +87,7 @@ public class OnlineInkarnationTable extends Table<Object> {
 
 	private StartStoppClient client;
 
-	public OnlineInkarnationTable() {
+	OnlineInkarnationTable() {
 		super("");
 		this.client = StartStoppConsole.getClient();
 		setTableModel(emtpyTableModell);

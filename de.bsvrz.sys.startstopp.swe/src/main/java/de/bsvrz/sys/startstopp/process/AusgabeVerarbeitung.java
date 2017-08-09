@@ -42,7 +42,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
  * Standardfehlerausgabe einer Inkarnation. Der Thread wird automatisch durch
  * den Konstruktor der Klasse gestartet.
  */
-public class AusgabeVerarbeitung extends Thread {
+class AusgabeVerarbeitung extends Thread {
 
 	private static final Debug LOGGER = Debug.getLogger();
 
@@ -86,7 +86,7 @@ public class AusgabeVerarbeitung extends Thread {
 	 * @param prozess
 	 *            Systemprozess der Inkarnation
 	 */
-	public AusgabeVerarbeitung(final String inkarnation, final Process prozess) {
+	AusgabeVerarbeitung(final String inkarnation, final Process prozess) {
 		this.inkarnation = inkarnation;
 		this.process = prozess;
 		processStdError = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.defaultCharset()));

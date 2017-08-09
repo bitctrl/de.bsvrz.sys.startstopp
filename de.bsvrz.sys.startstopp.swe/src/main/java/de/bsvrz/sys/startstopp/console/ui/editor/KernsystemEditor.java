@@ -37,11 +37,11 @@ import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
-public class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> {
+class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> {
 
-	public class KernSystemTable extends EditableTable<KernSystem> {
+	private class KernSystemTable extends EditableTable<KernSystem> {
 
-		public KernSystemTable(List<KernSystem> dataList, String ... columnName) {
+		KernSystemTable(List<KernSystem> dataList, String ... columnName) {
 			super(dataList, columnName);
 		}
 
@@ -69,7 +69,7 @@ public class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> 
 	private KernSystemTable ksTable;
 	private StartStoppSkript skript;
 
-	public KernsystemEditor(StartStoppSkript skript) {
+	KernsystemEditor(StartStoppSkript skript) {
 		super(skript, "Kernsystem");
 		this.skript = skript;
 		for (KernSystem kernSystem : skript.getGlobal().getKernsysteme()) {

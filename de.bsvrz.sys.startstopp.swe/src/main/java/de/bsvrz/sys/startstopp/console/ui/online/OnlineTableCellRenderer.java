@@ -34,7 +34,7 @@ import com.googlecode.lanterna.gui2.table.Table;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
 
-public class OnlineTableCellRenderer extends DefaultTableCellRenderer<Object> {
+class OnlineTableCellRenderer extends DefaultTableCellRenderer<Object> {
 
 	@Override
 	public void drawCell(Table<Object> table, Object cell, int columnIndex, int rowIndex,

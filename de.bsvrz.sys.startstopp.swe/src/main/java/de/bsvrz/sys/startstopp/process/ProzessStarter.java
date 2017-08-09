@@ -28,7 +28,7 @@ package de.bsvrz.sys.startstopp.process;
 
 import java.io.IOException;
 
-public class ProzessStarter {
+class ProzessStarter {
 
 	public static synchronized Process start(String cmdarray) throws IOException {
 		Process proc = null;

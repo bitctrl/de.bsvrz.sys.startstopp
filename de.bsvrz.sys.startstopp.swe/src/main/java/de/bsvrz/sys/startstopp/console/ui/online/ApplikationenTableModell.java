@@ -30,15 +30,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import com.googlecode.lanterna.gui2.table.TableModel;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 
 class ApplikationenTableModell extends TableModel<Object> {
 
-	@Inject
 	ApplikationenTableModell() {
 		super("Inkarnation", "Status", "Startzeit");
 	}

@@ -34,12 +34,12 @@ import com.googlecode.lanterna.gui2.Window.Hint;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 
-public class ApplikationDetailAction implements Runnable {
+class ApplikationDetailAction implements Runnable {
 
 
 	private Applikation applikation;
 
-	public ApplikationDetailAction(Applikation applikation) {
+	ApplikationDetailAction(Applikation applikation) {
 		this.applikation = applikation;
 	}
 	

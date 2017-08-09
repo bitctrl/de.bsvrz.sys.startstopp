@@ -46,15 +46,15 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/rechner")
-public class RechnerService {
+class RechnerService {
 
 	private StartStopp startStopp;
 
-	public RechnerService() {
+	RechnerService() {
 		this(StartStopp.getInstance());
 	}
 
-	public RechnerService(StartStopp startStopp) {
+	RechnerService(StartStopp startStopp) {
 		this.startStopp = startStopp;
 	}
 
