@@ -69,28 +69,6 @@ class OnlineTableCellRenderer extends EditableTableCellRenderer<Applikation> {
 			style = themeDefinition.getCustom(statusName);
 		}
 		
-
-		new ThemeStyle() {
-			
-			@Override
-			public EnumSet<SGR> getSGRs() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public TextColor getForeground() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public TextColor getBackground() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
-		
 		return style;
 	}
 }
