@@ -117,7 +117,6 @@ public class StartStopp {
 	}
 
 	private void start() throws Exception {
-		processManager.start();
 		apiServer.start();
 	}
 

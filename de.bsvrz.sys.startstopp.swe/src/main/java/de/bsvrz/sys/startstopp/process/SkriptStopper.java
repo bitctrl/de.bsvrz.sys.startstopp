@@ -44,7 +44,7 @@ class SkriptStopper extends Thread {
 
 		this.processManager = processManager;
 
-		for (StartStoppApplikation applikation : processManager.getManagedApplikationen()) {
+		for (StartStoppApplikation applikation : processManager.getApplikationen()) {
 			if (applikation.isKernsystem()) {
 				kernsystem.put(applikation.getInkarnation().getInkarnationsName(), applikation);
 			} else {
