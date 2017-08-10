@@ -96,14 +96,14 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 	public static class OnlineDisplay extends Panel {
 
-		private Label verbindungsStatus;
+		private OnlineStatusLabel verbindungsStatus;
 		private Label letzteAbfrage;
 
 		enum Status {
 			UNKNOWN("-", TextColor.ANSI.WHITE),
 			SKRIPT_FEHLER("S", TextColor.ANSI.BLUE),
 			VERBINDUNG_FEHLER("X", TextColor.ANSI.RED),
-			ONLINE(" ", TextColor.ANSI.GREEN);
+			ONLINE("O", TextColor.ANSI.GREEN);
 
 			private String text;
 			private TextColor color;
@@ -119,20 +119,15 @@ public class StartStoppOnlineWindow extends BasicWindow {
 			addComponent(new Label("Startstopp - Online"), GridLayout.createHorizontallyFilledLayoutData(1));
 			letzteAbfrage = new Label("00.00.0000 00:00:00");
 			addComponent(letzteAbfrage);
-			verbindungsStatus = new Label(" ");
+			verbindungsStatus = new OnlineStatusLabel();
 			addComponent(verbindungsStatus);
 		}
 
 		public void setStatus(Status status) {
-			ThemeDefinition themeDefinition = verbindungsStatus.getThemeDefinition();
-			if (themeDefinition.getBooleanProperty("COLOR_STATUS", false)) {
-				verbindungsStatus.setText(" ");
-				verbindungsStatus.setBackgroundColor(status.color);
-				letzteAbfrage.setText(DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis())));
-			} else {
-				verbindungsStatus.setText(status.text);
-				letzteAbfrage.setText(DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis())));
-			}
+			verbindungsStatus.setStatus(status);
+			letzteAbfrage.setText(DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis())));
+			verbindungsStatus.setBackgroundColor(status.color);
+			verbindungsStatus.setText(status.text);
 		}
 	}
 
@@ -194,6 +189,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 			case 's':
 				builder = new ActionListDialogBuilder().setTitle("System");
 				builder.addAction(new StartStoppStoppAction());
+				builder.addAction(new StartStoppStartAction());
 				builder.addAction(new StartStoppRestartAction());
 				builder.addAction(new StartStoppExitAction());
 				builder.addAction(new TerminalCloseAction());

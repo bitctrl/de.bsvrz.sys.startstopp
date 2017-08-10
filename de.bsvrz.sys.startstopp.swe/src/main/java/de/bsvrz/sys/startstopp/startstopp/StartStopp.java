@@ -31,9 +31,9 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
-import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
 
 public class StartStopp {
@@ -63,12 +63,8 @@ public class StartStopp {
 
 	private void cancel(Exception e) {
 		System.err.println(e.getLocalizedMessage());
-		if( processManager != null) {
-			processManager.stopp();
-		}
 		System.exit(-1);
 	}
-
 	
 	public StartStoppOptions getOptions() {
 		return options;
@@ -120,21 +116,7 @@ public class StartStopp {
 		apiServer.start();
 	}
 
-	public void stoppApplikation() {
-		
-		new Thread() {
-			@Override
-			public void run() {
-				Thread stopper = processManager.stoppeSkript(false);
-				if( stopper != null) {
-					try {
-						stopper.join();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				System.exit(0);
-			}
-		}.start();
+	public void stoppStartStoppApplikation() {
+		processManager.stoppeSkript().thenRun(()->System.exit(0));
 	}
 }

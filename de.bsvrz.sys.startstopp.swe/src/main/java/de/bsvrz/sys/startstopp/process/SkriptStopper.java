@@ -33,7 +33,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-class SkriptStopper extends Thread {
+class SkriptStopper implements Runnable {
 
 	private static final Debug LOGGER = Debug.getLogger();
 	private final Map<String, StartStoppApplikation> applikationen = new LinkedHashMap<>();
@@ -60,6 +60,14 @@ class SkriptStopper extends Thread {
 			applikation.updateStatus(Applikation.Status.STOPPENWARTEN);
 		}
 
+		try {
+			Thread.sleep(15000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		boolean stopped = false;
 		if (Tools.isWindows()) {
 			for (StartStoppApplikation applikation : kernsystem.values()) {
@@ -81,7 +89,5 @@ class SkriptStopper extends Thread {
 				applikation.updateStatus(Applikation.Status.STOPPENWARTEN);
 			}
 		}
-
-		processManager.stopperFinished();
 	}
 }

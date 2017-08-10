@@ -61,7 +61,7 @@ public class SystemService {
 	@Path("exit")
 	public Response responseStartStoppExit() {
 		Response response = Response.accepted().build();
-		startStopp.stoppApplikation();
+		startStopp.stoppStartStoppApplikation();
 		return response;
 	}
 
@@ -69,7 +69,7 @@ public class SystemService {
 	@Path("stopp")
 	public Response responseStartStoppStopp() {
 		Response response = Response.accepted().build();
-		startStopp.getProcessManager().stoppeSkript(false);
+		startStopp.getProcessManager().stoppeSkript();
 		return response;
 	}
 
@@ -77,8 +77,7 @@ public class SystemService {
 	@Path("restart")
 	public Response responseStartStoppRestart() {
 		Response response = Response.accepted().build();
-		startStopp.getProcessManager().stoppeSkript(true);
-		startStopp.getProcessManager().starteSkript();
+		startStopp.getProcessManager().stoppeSkript().thenRun(() -> startStopp.getProcessManager().starteSkript());
 		return response;
 	}
 

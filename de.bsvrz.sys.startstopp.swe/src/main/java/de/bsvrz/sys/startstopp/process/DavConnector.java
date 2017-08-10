@@ -111,6 +111,7 @@ public class DavConnector extends Thread {
 								+ zugangDav.getPassWord() + "\"");
 						connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
 						appStatusHandler.reconnect(connection);
+						processManager.davConnected();
 					}
 
 				} catch (CommunicationError | ConnectionException | RuntimeException e) {
