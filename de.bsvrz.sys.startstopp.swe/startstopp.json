@@ -79,10 +79,10 @@
   },
   "inkarnationen" : [ {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx4G", "-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter", "%dav1.einstellungen%", "%debug.default%", "-benutzer=TestDatenverteilerBenutzer", "-konfigurationsBenutzer=configuration", "-parametrierungsBenutzer=parameter", "-authentifizierung=%authentifizierung.passwortdatei%", "-datenverteilerId=10000", "-rechtePruefung=neu", "-verzögerungFürAndereDatenverteiler=600s" ],
+    "aufrufParameter" : [ "-Xmx4G", "-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter", "%dav1.einstellungen%", "%debug.default%", "-benutzer=TestDatenverteilerBenutzer", "-konfigurationsBenutzer=configuration", "-parametrierungsBenutzer=parameter", "-authentifizierung=%authentifizierung.passwortdatei%", "-datenverteilerId=10000", "-rechtePruefung=nein", "-verzögerungFürAndereDatenverteiler=600s" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Datenverteiler",
-    "initialize" : false,
+    "initialize" : true,
     "mitInkarnationsName" : false,
     "startArt" : {
       "option" : "automatisch",
@@ -102,7 +102,7 @@
     "aufrufParameter" : [ "-Xmx4g", "-cp %dist%/de.bsvrz.puk.config/de.bsvrz.puk.config-runtime.jar de.bsvrz.puk.config.main.ConfigurationApp", "%dav1.ohneAuthentifizierung%", "%debug.default%", "-benutzer=configuration", "-authentifizierung=%authentifizierung.passwortdatei%", "-verwaltung=%root%/konfiguration/verwaltungsdaten.xml", "-benutzerverwaltung=%root%/konfiguration/benutzerverwaltung.xml" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Konfiguration",
-    "initialize" : false,
+    "initialize" : true,
     "mitInkarnationsName" : false,
     "startArt" : {
       "option" : "automatisch",
@@ -210,7 +210,7 @@
     }
   }, {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application06", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation06",
     "initialize" : false,
@@ -230,9 +230,9 @@
     }
   } ],
   "metaDaten" : {
-    "aenderungsGrund" : "Alles neu",
-    "erstelltAm" : "2017-08-08T13:04:32.560",
+    "aenderungsGrund" : "Transmitter und Konfiguration intiailisieren",
+    "erstelltAm" : "2017-08-11T16:06:52.559",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1502190272560"
+    "versionsNummer" : "1502460412559"
   }
 }

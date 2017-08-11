@@ -26,15 +26,8 @@
 
 package de.bsvrz.sys.startstopp.console.ui.online;
 
-import java.util.EnumSet;
-
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.graphics.ThemeStyle;
-import com.googlecode.lanterna.gui2.Component;
-import com.googlecode.lanterna.gui2.ComponentRenderer;
-import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.gui2.table.Table;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;

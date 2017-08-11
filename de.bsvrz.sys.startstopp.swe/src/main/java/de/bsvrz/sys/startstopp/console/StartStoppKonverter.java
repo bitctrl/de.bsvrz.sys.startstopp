@@ -58,10 +58,10 @@ public class StartStoppKonverter {
 
 		StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(skript);
 		if (konfiguration.getSkriptStatus().getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
-			System.err.println("Konfigurationsfehler");
-			System.err.println("====================\n");
+			System.out.println("Konfigurationsfehler");
+			System.out.println("====================\n");
 			for (String line : konfiguration.getSkriptStatus().getMessages()) {
-				System.err.println(line);
+				System.out.println(line);
 			}
 		}
 
@@ -84,24 +84,24 @@ public class StartStoppKonverter {
 		String output = argumentList.fetchArgument("-output=").asNonEmptyString();
 
 		if (input.trim().isEmpty()) {
-			System.err.println("Es wurde keine XML-Quelle angegeben (Argument: -input=<file>)!");
+			System.out.println("Es wurde keine XML-Quelle angegeben (Argument: -input=<file>)!");
 			System.exit(-1);
 		}
 
 		if (output.trim().isEmpty()) {
-			System.err.println("Es wurde keine Zieldatei angegeben (Argument: -output=<file>)!");
+			System.out.println("Es wurde keine Zieldatei angegeben (Argument: -output=<file>)!");
 			System.exit(-1);
 		}
 
 		File inputFile = new File(input);
 		if (inputFile.isDirectory() || !inputFile.exists() || !inputFile.canRead()) {
-			System.err.println("Die Quelldatei existiert nicht oder ist nicht lesbar!");
+			System.out.println("Die Quelldatei existiert nicht oder ist nicht lesbar!");
 			System.exit(-1);
 		}
 
 		File outputFile = new File(output);
 		if (outputFile.exists() && !argumentList.hasArgument("-force")) {
-			System.err.println("Die Zieldatei existiert bereits, zum Überschreiben muss \"-force\" übergeben werden!");
+			System.out.println("Die Zieldatei existiert bereits, zum Überschreiben muss \"-force\" übergeben werden!");
 			System.exit(-1);
 		}
 

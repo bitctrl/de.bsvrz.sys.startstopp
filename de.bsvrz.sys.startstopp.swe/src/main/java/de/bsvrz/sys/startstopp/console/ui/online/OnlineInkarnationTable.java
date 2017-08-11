@@ -31,16 +31,10 @@ import java.util.List;
 
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
-import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 
 class OnlineInkarnationTable extends EditableTable<Applikation> {
-
-	private static final Debug LOGGER = Debug.getLogger();
-
-	private StartStoppClient client;
 
 	OnlineInkarnationTable(List<Applikation> applikationen) {
 		super(applikationen, "Inkarnation", "Status", "Startzeit");

@@ -162,7 +162,6 @@ class StartBedingungEditor extends StartStoppElementEditor<StartBedingung> {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
 				String neueWarteZeit = getText();
-				System.err.println("Neue Wartezeit: " + neueWarteZeit);
 				startBedingung.setWartezeit(neueWarteZeit);
 				super.afterLeaveFocus(direction, nextInFocus);
 			}

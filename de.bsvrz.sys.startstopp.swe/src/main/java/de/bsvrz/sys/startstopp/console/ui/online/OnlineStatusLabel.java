@@ -7,11 +7,7 @@ import com.googlecode.lanterna.gui2.ComponentRenderer;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.TextGUIGraphics;
 
-import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow.OnlineDisplay.Status;
-
 public class OnlineStatusLabel extends Label {
-
-	private Status status = Status.UNKNOWN;
 
 	public OnlineStatusLabel() {
 		super(" ");
@@ -41,10 +37,5 @@ public class OnlineStatusLabel extends Label {
                 }
 			}
 		};
-	}
-
-	public void setStatus(Status status) {
-		this.status  = status;
-		invalidate();
 	}
 }

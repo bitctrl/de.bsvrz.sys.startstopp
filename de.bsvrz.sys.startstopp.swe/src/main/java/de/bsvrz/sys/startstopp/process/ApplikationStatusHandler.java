@@ -30,15 +30,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import de.bsvrz.dav.daf.main.ClientDavConnection;
 import de.bsvrz.dav.daf.main.ClientReceiverInterface;
+import de.bsvrz.dav.daf.main.ClientSenderInterface;
 import de.bsvrz.dav.daf.main.Data;
+import de.bsvrz.dav.daf.main.Data.Array;
 import de.bsvrz.dav.daf.main.DataDescription;
+import de.bsvrz.dav.daf.main.DataNotSubscribedException;
+import de.bsvrz.dav.daf.main.OneSubscriptionPerSendData;
 import de.bsvrz.dav.daf.main.ReceiveOptions;
 import de.bsvrz.dav.daf.main.ReceiverRole;
 import de.bsvrz.dav.daf.main.ResultData;
+import de.bsvrz.dav.daf.main.SendSubscriptionNotConfirmed;
+import de.bsvrz.dav.daf.main.SenderRole;
 import de.bsvrz.dav.daf.main.config.Aspect;
 import de.bsvrz.dav.daf.main.config.AttributeGroup;
 import de.bsvrz.dav.daf.main.config.DataModel;
@@ -47,10 +55,93 @@ import de.bsvrz.dav.daf.main.config.DynamicObjectType;
 import de.bsvrz.dav.daf.main.config.DynamicObjectType.DynamicObjectCreatedListener;
 import de.bsvrz.dav.daf.main.config.InvalidationListener;
 import de.bsvrz.dav.daf.main.config.SystemObject;
+import de.bsvrz.dav.daf.main.config.SystemObjectType;
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-class ApplikationStatusHandler
-		implements DynamicObjectCreatedListener, InvalidationListener, ClientReceiverInterface {
+class ApplikationStatusHandler implements DynamicObjectCreatedListener, InvalidationListener, ClientReceiverInterface {
+
+	private static class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
+
+		private static final Debug LOGGER = Debug.getLogger();
+		private DataDescription dataDescription;
+		private SystemObject datenVerteilerObj;
+		private ClientDavConnection dav;
+		private Set<SystemObject> applikationen = new LinkedHashSet<>();
+		private DataDescription terminierungsDesc;
+		private boolean subscription;
+
+		public DatenVerteiler(ClientDavConnection dav, SystemObject dvObj) {
+
+			this.dav = dav;
+			this.datenVerteilerObj = dvObj;
+
+			DataModel dataModel = dav.getDataModel();
+			AttributeGroup atg = dataModel.getAttributeGroup("atg.angemeldeteApplikationen");
+			Aspect asp = dataModel.getAspect("asp.standard");
+			dataDescription = new DataDescription(atg, asp);
+			dav.subscribeReceiver(this, datenVerteilerObj, dataDescription, ReceiveOptions.normal(),
+					ReceiverRole.receiver());
+
+			atg = dataModel.getAttributeGroup("atg.terminierung");
+			asp = dataModel.getAspect("asp.anfrage");
+			terminierungsDesc = new DataDescription(atg, asp);
+			try {
+				dav.subscribeSender(this, datenVerteilerObj, terminierungsDesc, SenderRole.sender());
+				subscription = true;
+			} catch (OneSubscriptionPerSendData e) {
+				LOGGER.warning(e.getLocalizedMessage());
+			}
+		}
+
+		public void disconnect() {
+			if( subscription) {
+				dav.unsubscribeSender(this, datenVerteilerObj, terminierungsDesc);
+			}
+			dav.unsubscribeReceiver(this, datenVerteilerObj, dataDescription);
+		}
+
+		@Override
+		public void update(ResultData[] results) {
+			for (ResultData result : results) {
+				if (result.hasData()) {
+					Array appArray = result.getData().getArray("angemeldeteApplikation");
+					for (int idx = 0; idx < appArray.getLength(); idx++) {
+						applikationen.add(appArray.getItem(idx).getReferenceValue("applikation").getSystemObject());
+					}
+				} else {
+					applikationen.clear();
+				}
+			}
+		}
+
+		public boolean sendeTerminierung(SystemObject appObj) throws StartStoppException {
+			for( SystemObject applikation : applikationen) {
+				if( applikation.equals(appObj)) {
+					Data data = dav.createData(terminierungsDesc.getAttributeGroup());
+					data.getReferenceArray("Applikationen").setLength(1);
+					data.getReferenceArray("Applikationen").getReferenceValue(0).setSystemObject(appObj);
+					try {
+						dav.sendData(new ResultData(datenVerteilerObj, terminierungsDesc, dav.getTime(), data));
+						return true;
+					} catch (DataNotSubscribedException | SendSubscriptionNotConfirmed e) {
+						throw new StartStoppException(e.getLocalizedMessage());
+					}
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public void dataRequest(SystemObject object, DataDescription dataDescription, byte state) {
+			// TODO Status auswerten
+		}
+
+		@Override
+		public boolean isRequestSupported(SystemObject object, DataDescription dataDescription) {
+			return true;
+		}
+	}
 
 	private static class ApplikationStatus {
 
@@ -75,22 +166,45 @@ class ApplikationStatusHandler
 	private DataDescription applikationsFertigMeldungDesc;
 	private ClientDavConnection dav;
 	private Map<String, ApplikationStatus> applikationStatus = new LinkedHashMap<>();
+	private Set<DatenVerteiler> datenVerteiler = new LinkedHashSet<>();
 
 	ApplikationStatusHandler(ProzessManager processManager) {
 		this.processManager = processManager;
+	}
+
+	public void terminiereAppPerDav(String name) throws StartStoppException {
+		ApplikationStatus status = applikationStatus.get(name);
+		if (status == null) {
+			throw new StartStoppException("Die Applikation \"" + name + "\" ist nicht bekannt!");
+		}
+
+		for (DatenVerteiler dv : datenVerteiler) {
+			if (dv.sendeTerminierung(status.appObj)) {
+				return;
+			}
+		}
+
+		throw new StartStoppException(
+				"Es konnte kein Datenverteiler zum Versenden der Terminierungsnachricht an die Applikation \"" + name
+						+ "\" ermittelt werden!");
 	}
 
 	public void reconnect(ClientDavConnection connection) {
 
 		Collection<ApplikationStatus> statusValues = new ArrayList<>(applikationStatus.values());
 		applikationStatus.clear();
-		for (ApplikationStatus status : statusValues) {
-			disconnectApplikation(status.appObj);
-		}
+		statusValues.forEach(app -> disconnectApplikation(app.appObj));
+
+		datenVerteiler.forEach(datenverteiler -> datenverteiler.disconnect());
+		datenVerteiler.clear();
 
 		if (connection != null) {
 			dav = connection;
 			DataModel dataModel = dav.getDataModel();
+
+			SystemObjectType datenVerteilerTyp = dataModel.getType("typ.datenverteiler");
+			datenVerteilerTyp.getElements().forEach(dvObj -> datenVerteiler.add(new DatenVerteiler(dav, dvObj)));
+
 			applikationTyp = (DynamicObjectType) dataModel.getType("typ.applikation");
 			AttributeGroup atg = dataModel.getAttributeGroup("atg.applikationsFertigmeldung");
 			Aspect asp = dataModel.getAspect("asp.standard");
@@ -108,10 +222,6 @@ class ApplikationStatusHandler
 	private void connectApplikation(SystemObject appObj) {
 		dav.subscribeReceiver(this, appObj, applikationsFertigMeldungDesc, ReceiveOptions.normal(),
 				ReceiverRole.receiver());
-		ResultData resultData = dav.getData(appObj, applikationsFertigMeldungDesc, 0);
-		if (resultData.hasData()) {
-			updateApplikationStatus(appObj, resultData.getData());
-		}
 	}
 
 	@Override

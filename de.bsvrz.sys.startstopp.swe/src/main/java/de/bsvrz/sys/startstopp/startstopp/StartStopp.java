@@ -49,7 +49,8 @@ public class StartStopp {
 			instance.init(args);
 			instance.start();
 		} catch (Exception e) {
-			instance.cancel(e);
+			System.err.println(e.getLocalizedMessage());
+			System.exit(-1);
 		}
 	}
 
@@ -61,11 +62,6 @@ public class StartStopp {
 
 	private ApiServer apiServer;
 
-	private void cancel(Exception e) {
-		System.err.println(e.getLocalizedMessage());
-		System.exit(-1);
-	}
-	
 	public StartStoppOptions getOptions() {
 		return options;
 	}

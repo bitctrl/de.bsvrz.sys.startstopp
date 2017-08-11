@@ -57,7 +57,7 @@ class SkriptStopper implements Runnable {
 	public void run() {
 		// TODO Herunterfahren implementieren
 		for (StartStoppApplikation applikation : applikationen.values()) {
-			applikation.updateStatus(Applikation.Status.STOPPENWARTEN);
+			applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Skript wird angehalten");
 		}
 
 		try {
@@ -86,7 +86,7 @@ class SkriptStopper implements Runnable {
 
 		if (!stopped) {
 			for (StartStoppApplikation applikation : kernsystem.values()) {
-				applikation.updateStatus(Applikation.Status.STOPPENWARTEN);
+				applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Kernsystem beenden");
 			}
 		}
 	}

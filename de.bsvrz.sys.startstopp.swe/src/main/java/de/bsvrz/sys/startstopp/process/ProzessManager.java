@@ -57,6 +57,10 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 		INITIALIZED, RUNNING, STOPPING, STOPPED;
 	};
 
+	public enum StartStoppMode {
+		SKRIPT, OS, EXTERNAL; 
+	}
+	
 	private static final Debug LOGGER = Debug.getLogger();
 	private Object lock = new Object();
 	private Status managerStatus = Status.INITIALIZED;
@@ -166,7 +170,16 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 	public StartStoppApplikation stoppeApplikationOhnePruefung(String inkarnationsName) throws StartStoppException {
 		StartStoppApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation != null) {
-			applikation.stoppSystemProcess();
+			try {
+				davConnector.stoppApplikation(getInkarnationsPrefix() + inkarnationsName);
+			} catch (StartStoppException e) {
+				Debug.getLogger()
+						.warning("Die Applikation \"" + inkarnationsName
+								+ "\" konnte nicht über die Dav-Terminierungsschnittstelle beendet werden: "
+								+ e.getLocalizedMessage());
+				applikation.stoppSystemProcess();
+			}
+
 			return applikation;
 		}
 
@@ -443,7 +456,7 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 		if (fertig) {
 			StartStoppApplikation applikation = applikationen.get(inkarnationsName);
 			if (applikation.getStatus() == Applikation.Status.GESTARTET) {
-				applikation.updateStatus(Applikation.Status.INITIALISIERT);
+				applikation.updateStatus(Applikation.Status.INITIALISIERT, "");
 			} else {
 				LOGGER.warning(applikation.getInkarnation().getInkarnationsName() + " ist im Status "
 						+ applikation.getStatus());
@@ -461,7 +474,7 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 		for (StartStoppApplikation applikation : applikationen.values()) {
 			if (applikation.getInkarnation().getStartArt().getOption() != StartArt.Option.MANUELL) {
 				if (applikation.getStatus() == Applikation.Status.GESTOPPT) {
-					applikation.updateStatus(Applikation.Status.INSTALLIERT);
+					applikation.updateStatus(Applikation.Status.INSTALLIERT, "");
 				}
 			}
 		}

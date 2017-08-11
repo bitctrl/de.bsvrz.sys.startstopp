@@ -35,7 +35,6 @@ import java.util.List;
 
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
-import com.googlecode.lanterna.graphics.ThemeDefinition;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
@@ -124,7 +123,6 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		}
 
 		public void setStatus(Status status) {
-			verbindungsStatus.setStatus(status);
 			letzteAbfrage.setText(DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis())));
 			verbindungsStatus.setBackgroundColor(status.color);
 			verbindungsStatus.setText(status.text);
@@ -206,7 +204,6 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				return true;
 
 			default:
-				System.err.println(getClass().getSimpleName() + ": " + keyStroke);
 				break;
 			}
 			break;

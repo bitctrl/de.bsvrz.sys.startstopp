@@ -33,9 +33,6 @@ import com.googlecode.lanterna.gui2.TextGUIGraphics;
 import com.googlecode.lanterna.gui2.table.DefaultTableCellRenderer;
 import com.googlecode.lanterna.gui2.table.Table;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
-
 public class EditableTableCellRenderer<T> extends DefaultTableCellRenderer<T> {
 
 	private EditableTable<T> table;

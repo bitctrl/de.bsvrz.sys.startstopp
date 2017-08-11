@@ -120,7 +120,6 @@ public class UrlasserDialog extends DialogWindow {
 	
 	@Override
 	public boolean handleInput(KeyStroke key) {
-		System.err.println("Urlasserdialog: " + key);
 		if( key.isAltDown()) {
 			switch(key.getCharacter()) {
 			case 'a':
