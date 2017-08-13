@@ -45,6 +45,7 @@ class RechnerEditor extends StartStoppElementEditor<Rechner> {
 		this.rechner = (Rechner) Util.cloneObject(rechner);
 	}
 	
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 

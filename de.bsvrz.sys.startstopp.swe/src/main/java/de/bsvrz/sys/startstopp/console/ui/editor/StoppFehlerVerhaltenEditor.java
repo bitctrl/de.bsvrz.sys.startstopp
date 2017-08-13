@@ -52,6 +52,7 @@ class StoppFehlerVerhaltenEditor extends StartStoppElementEditor<StoppFehlerVerh
 		}
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
@@ -83,6 +84,7 @@ class StoppFehlerVerhaltenEditor extends StartStoppElementEditor<StoppFehlerVerh
 		mainPanel.addComponent(warteZeitField, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
+	@Override
 	public StoppFehlerVerhalten getElement() {
 		return stoppFehlerVerhalten;
 	}

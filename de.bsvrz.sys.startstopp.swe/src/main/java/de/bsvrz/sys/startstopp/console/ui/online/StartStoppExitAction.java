@@ -37,9 +37,7 @@ class StartStoppExitAction implements Runnable {
 		try {
 			StartStoppConsole.getClient().exitStartStopp();
 		} catch (StartStoppException e) {
-			new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
-			;
-		}
+			new InfoDialog("FEHLER", e.getLocalizedMessage()).display();		}
 	}
 
 	@Override

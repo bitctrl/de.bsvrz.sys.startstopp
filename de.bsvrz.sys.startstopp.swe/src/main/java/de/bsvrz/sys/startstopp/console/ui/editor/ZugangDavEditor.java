@@ -50,6 +50,7 @@ class ZugangDavEditor extends StartStoppElementEditor<ZugangDav> {
 		}
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
@@ -90,6 +91,7 @@ class ZugangDavEditor extends StartStoppElementEditor<ZugangDav> {
 		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
+	@Override
 	public ZugangDav getElement() {
 		return zugangDav;
 	}

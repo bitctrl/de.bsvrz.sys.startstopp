@@ -274,6 +274,8 @@ public class StartStoppXMLParser {
 				break;
 			case tagIsUndefined:
 				throw new IllegalArgumentException("Tag not supported: " + qName);
+			default:
+				break;
 
 			}
 		}
@@ -326,6 +328,8 @@ public class StartStoppXMLParser {
 			case startbedingung:
 				break;
 			case stoppbedingung:
+				break;
+			default:
 				break;
 			}
 		}

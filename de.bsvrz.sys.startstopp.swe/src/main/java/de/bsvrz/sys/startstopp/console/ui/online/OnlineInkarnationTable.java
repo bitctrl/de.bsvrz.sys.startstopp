@@ -38,7 +38,7 @@ class OnlineInkarnationTable extends EditableTable<Applikation> {
 
 	OnlineInkarnationTable(List<Applikation> applikationen) {
 		super(applikationen, "Inkarnation", "Status", "Startzeit");
-		setTableCellRenderer(new OnlineTableCellRenderer(this));
+		setTableCellRenderer(new OnlineTableCellRenderer());
 	}
 
 	public void updateApplikationen(List<Applikation> applikationen) {

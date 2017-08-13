@@ -50,6 +50,7 @@ class UsvEditor extends StartStoppElementEditor<Usv> {
 		}
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
@@ -63,6 +64,7 @@ class UsvEditor extends StartStoppElementEditor<Usv> {
 		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
+	@Override
 	public Usv getElement() {
 		if (Util.nonEmptyString(usv.getPid().trim()).isEmpty()) {
 			return null;

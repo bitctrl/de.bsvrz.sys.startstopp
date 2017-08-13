@@ -36,6 +36,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
@@ -46,6 +47,7 @@ import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 @Path("/ststapi/v1/applikationen")
 public class ApplikationenService {
 
+	private static final Debug LOGGER = Debug.getLogger();
 	private ProzessManager processManager;
 
 	public ApplikationenService() {
@@ -84,6 +86,7 @@ public class ApplikationenService {
 			responseBuilder.entity(applikation);
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
+			LOGGER.fine(e.getLocalizedMessage());
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 	}

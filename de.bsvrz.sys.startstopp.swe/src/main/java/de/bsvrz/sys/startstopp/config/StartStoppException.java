@@ -45,8 +45,8 @@ public class StartStoppException extends Exception {
 		super(string, e);
 	}
 
-	protected void addMessages(List<String> messages) {
-		this.messages.addAll(messages);
+	protected void addMessages(List<String> newMessages) {
+		this.messages.addAll(newMessages);
 	}
 	
 	public List<String> getMessages() {

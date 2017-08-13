@@ -95,6 +95,7 @@ class StartBedingungEditor extends StartStoppElementEditor<StartBedingung> {
 
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 

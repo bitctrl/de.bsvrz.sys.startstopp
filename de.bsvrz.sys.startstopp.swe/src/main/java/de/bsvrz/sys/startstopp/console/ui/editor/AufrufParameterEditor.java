@@ -32,7 +32,6 @@ import java.util.List;
 
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
@@ -50,7 +49,7 @@ class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 		@Override
 		protected String requestNewElement() {
 			MakroTextInputDialog dialog = new MakroTextInputDialog(getSkript(), "Parameter", "Neuen Parameter angeben:", "");
-			if( dialog.showDialog((WindowBasedTextGUI) getTextGUI())) {
+			if( dialog.showDialog(getTextGUI())) {
 				return dialog.getElement();
 			}
 			return null;
@@ -59,7 +58,7 @@ class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 		@Override
 		protected String editElement(String oldElement) {
 			MakroTextInputDialog dialog = new MakroTextInputDialog(getSkript(), "Parameter", "Parameter bearbeiten:", oldElement);
-			if( dialog.showDialog((WindowBasedTextGUI) getTextGUI())) {
+			if( dialog.showDialog(getTextGUI())) {
 				return dialog.getElement();
 			}
 			return null;
@@ -80,6 +79,7 @@ class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 		this.parameterListe.addAll(inkarnation.getAufrufParameter());
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 		parameterTable = new AufrufParameterTable(parameterListe, "Aufrufparameter");

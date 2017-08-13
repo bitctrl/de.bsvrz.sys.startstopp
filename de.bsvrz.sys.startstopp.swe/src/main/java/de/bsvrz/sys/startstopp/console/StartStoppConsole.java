@@ -40,7 +40,6 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow;
 
 public class StartStoppConsole {
@@ -50,7 +49,7 @@ public class StartStoppConsole {
 	private StartStoppClient client;
 	private MultiWindowTextGUI gui;
 
-	public static void main(String[] args) throws IOException, InterruptedException, StartStoppException {
+	public static void main(String[] args) throws IOException {
 
 		Properties themeProperties = new Properties();
 		try (InputStream stream = StartStoppConsole.class.getResourceAsStream("nerz-mono.properties")) {
@@ -66,23 +65,26 @@ public class StartStoppConsole {
 
 		INSTANZ.options = new StartStoppConsoleOptions(args);
 		INSTANZ.client = new StartStoppClient(INSTANZ.options.getHost(), INSTANZ.options.getPort());
-		
-		DefaultTerminalFactory factory = new DefaultTerminalFactory();
-		Terminal term = factory.createTerminal();
-		Screen screen = new TerminalScreen(term);
-		INSTANZ.gui = new MultiWindowTextGUI(screen);
-		if (INSTANZ.options.isMonochrome()) {
-			INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Mono"));
-		} else {
-			INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Color"));
-		}
-		screen.startScreen();
 
-		INSTANZ.gui.getScreen().startScreen();
-		StartStoppOnlineWindow onlineWindow = new StartStoppOnlineWindow();
-		INSTANZ.gui.addWindow(onlineWindow);
-		onlineWindow.waitUntilClosed();
-		INSTANZ.gui.getScreen().stopScreen();
+		DefaultTerminalFactory factory = new DefaultTerminalFactory();
+		try (Terminal term = factory.createTerminal()) {
+			try (Screen screen = new TerminalScreen(term)) {
+				INSTANZ.gui = new MultiWindowTextGUI(screen);
+				if (INSTANZ.options.isMonochrome()) {
+					INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Mono"));
+				} else {
+					INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Color"));
+				}
+				screen.startScreen();
+
+				INSTANZ.gui.getScreen().startScreen();
+				StartStoppOnlineWindow onlineWindow = new StartStoppOnlineWindow();
+				INSTANZ.gui.addWindow(onlineWindow);
+				onlineWindow.waitUntilClosed();
+				INSTANZ.gui.getScreen().stopScreen();
+			}
+			term.clearScreen();
+		}
 		System.exit(0);
 	}
 

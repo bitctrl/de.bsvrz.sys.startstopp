@@ -96,8 +96,7 @@ public class SkriptManager {
 
 		this.startStopp = startStopp;
 
-		String skriptDir = startStopp.getOptions().getSkriptDir();
-		initSkriptHistory(skriptDir);
+		initSkriptHistory();
 
 		try {
 
@@ -165,13 +164,14 @@ public class SkriptManager {
 		return new File(versionDir, "startstopp_history.json");
 	}
 
-	private void initSkriptHistory(String skriptDir) {
+	private void initSkriptHistory() {
 
 		File historyFile = getStartStoppHistoryFile();
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			List<StartStoppVersion> versionsListe = mapper.readValue(historyFile,
 					new TypeReference<List<StartStoppVersion>>() {
+						// Kein weiterer Code erforderlich
 					});
 			for (StartStoppVersion version : versionsListe) {
 				versions.put(Long.parseLong(version.getVersion()), version);

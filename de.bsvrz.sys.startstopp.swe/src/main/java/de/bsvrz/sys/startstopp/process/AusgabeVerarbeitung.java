@@ -97,6 +97,7 @@ class AusgabeVerarbeitung extends Thread {
 		this.setName("Ausgabeverarbeitung Inkarnation '" + inkarnation + "'");
 	}
 
+	@Override
 	public void run() {
 		running = true;
 
@@ -134,7 +135,7 @@ class AusgabeVerarbeitung extends Thread {
 				try {
 					sleep(1000);
 				} catch (InterruptedException e) {
-					LOGGER.fine("Lesen der Ausgabeströme der Inkarnation '" + inkarnation + "' unterbrochen");
+					LOGGER.fine("Lesen der Ausgabeströme der Inkarnation '" + inkarnation + "' unterbrochen:" + e.getLocalizedMessage() );
 				}
 			}
 

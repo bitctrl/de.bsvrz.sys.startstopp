@@ -130,6 +130,8 @@ public class UrlasserDialog extends DialogWindow {
 			case 'O':
 				setFocusedInteractable(okButton, FocusChangeDirection.NEXT);
 				break;
+			default:
+				break;
 			}
 			return true;
 		}

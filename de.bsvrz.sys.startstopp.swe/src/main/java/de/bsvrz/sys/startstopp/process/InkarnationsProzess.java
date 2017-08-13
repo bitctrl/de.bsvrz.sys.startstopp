@@ -228,7 +228,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 							+ processInfo.getPid() + ")");
 				}
 
-				prozessGestartet(process, processInfo);
+				prozessGestartet();
 
 				ueberwacheProzess(startTime);
 			}
@@ -273,7 +273,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		}
 	}
 
-	private void prozessGestartet(Process process, ProcessInfo processInfo) {
+	private void prozessGestartet() {
 		setStatus(InkarnationsProzessStatus.GESTARTET);
 	}
 

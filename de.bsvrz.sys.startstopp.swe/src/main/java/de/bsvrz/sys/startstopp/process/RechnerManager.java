@@ -44,7 +44,6 @@ class RechnerManager extends Thread {
 
 	private boolean running = true;
 	private boolean listeErmittelt = false;
-	private Object lock = new Object();
 
 	RechnerManager(Rechner rechner) {
 		super("Rechner-" + rechner.getName());
@@ -73,20 +72,18 @@ class RechnerManager extends Thread {
 				}
 			}
 
-			synchronized (lock) {
-				try {
-					Thread.sleep(30000);
-				} catch (InterruptedException e) {
-					LOGGER.warning(e.getLocalizedMessage());
-				}
+			try {
+				Thread.sleep(30000);
+			} catch (InterruptedException e) {
+				LOGGER.warning(e.getLocalizedMessage());
 			}
 		}
 	}
-	
+
 	boolean checkApplikationsStatus(String inkarnationsName, Applikation.Status status) {
-		if( listeErmittelt) {
+		if (listeErmittelt) {
 			Applikation applikation = applikationen.get(inkarnationsName);
-			if( applikation != null) {
+			if (applikation != null) {
 				return applikation.getStatus() == status;
 			}
 		}
@@ -94,7 +91,7 @@ class RechnerManager extends Thread {
 	}
 
 	public Applikation getApplikation(String name) {
-		if( listeErmittelt) {
+		if (listeErmittelt) {
 			return applikationen.get(name);
 		}
 		return null;

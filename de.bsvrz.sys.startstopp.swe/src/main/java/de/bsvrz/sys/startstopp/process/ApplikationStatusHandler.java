@@ -64,7 +64,7 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 	private static class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 
 		private static final Debug LOGGER = Debug.getLogger();
-		private DataDescription dataDescription;
+		private DataDescription applikationenDesc;
 		private SystemObject datenVerteilerObj;
 		private ClientDavConnection dav;
 		private Set<SystemObject> applikationen = new LinkedHashSet<>();
@@ -79,8 +79,8 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 			DataModel dataModel = dav.getDataModel();
 			AttributeGroup atg = dataModel.getAttributeGroup("atg.angemeldeteApplikationen");
 			Aspect asp = dataModel.getAspect("asp.standard");
-			dataDescription = new DataDescription(atg, asp);
-			dav.subscribeReceiver(this, datenVerteilerObj, dataDescription, ReceiveOptions.normal(),
+			applikationenDesc = new DataDescription(atg, asp);
+			dav.subscribeReceiver(this, datenVerteilerObj, applikationenDesc, ReceiveOptions.normal(),
 					ReceiverRole.receiver());
 
 			atg = dataModel.getAttributeGroup("atg.terminierung");
@@ -95,10 +95,10 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 		}
 
 		public void disconnect() {
-			if( subscription) {
+			if (subscription) {
 				dav.unsubscribeSender(this, datenVerteilerObj, terminierungsDesc);
 			}
-			dav.unsubscribeReceiver(this, datenVerteilerObj, dataDescription);
+			dav.unsubscribeReceiver(this, datenVerteilerObj, applikationenDesc);
 		}
 
 		@Override
@@ -116,8 +116,8 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 		}
 
 		public boolean sendeTerminierung(SystemObject appObj) throws StartStoppException {
-			for( SystemObject applikation : applikationen) {
-				if( applikation.equals(appObj)) {
+			for (SystemObject applikation : applikationen) {
+				if (applikation.equals(appObj)) {
 					Data data = dav.createData(terminierungsDesc.getAttributeGroup());
 					data.getReferenceArray("Applikationen").setLength(1);
 					data.getReferenceArray("Applikationen").getReferenceValue(0).setSystemObject(appObj);
@@ -220,6 +220,17 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 	}
 
 	private void connectApplikation(SystemObject appObj) {
+		if (dav == null) {
+			Debug.getLogger().warning("Es besteht keine Datenverteilerverbindung! Applikation " + appObj
+					+ " kann nicht registriert werden!");
+			return;
+		}
+		if (applikationsFertigMeldungDesc == null) {
+			Debug.getLogger().warning(
+					"Die Datenbeschreibung für Applikationsfertigmeldungen wurde nicht initialisiert! Applikation "
+							+ appObj + " kann nicht registriert werden!");
+			return;
+		}
 		dav.subscribeReceiver(this, appObj, applikationsFertigMeldungDesc, ReceiveOptions.normal(),
 				ReceiverRole.receiver());
 	}
@@ -230,6 +241,17 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 	}
 
 	private void disconnectApplikation(SystemObject appObj) {
+		if (dav == null) {
+			Debug.getLogger().warning("Es besteht keine Datenverteilerverbindung! Applikation " + appObj
+					+ " kann nicht abgemeldet werden!");
+			return;
+		}
+		if (applikationsFertigMeldungDesc == null) {
+			Debug.getLogger().warning(
+					"Die Datenbeschreibung für Applikationsfertigmeldungen wurde nicht initialisiert! Applikation "
+							+ appObj + " kann nicht abgemeldet werden!");
+			return;
+		}
 		dav.unsubscribeReceiver(this, appObj, applikationsFertigMeldungDesc);
 		Iterator<ApplikationStatus> iterator = applikationStatus.values().iterator();
 		while (iterator.hasNext()) {
@@ -247,6 +269,13 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 
 	@Override
 	public void update(ResultData[] results) {
+
+		if (applikationsFertigMeldungDesc == null) {
+			Debug.getLogger()
+					.warning("Die Datenbeschreibung für Applikationsfertigmeldungen wurde nicht initialisiert!");
+			return;
+		}
+
 		for (ResultData resultData : results) {
 			Data data = resultData.getData();
 			if (data == null) {

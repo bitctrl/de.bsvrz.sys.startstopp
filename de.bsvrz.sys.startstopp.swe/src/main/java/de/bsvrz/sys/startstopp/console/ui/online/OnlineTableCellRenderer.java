@@ -32,15 +32,10 @@ import com.googlecode.lanterna.gui2.table.Table;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
-import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 import de.bsvrz.sys.startstopp.console.ui.EditableTableCellRenderer;
 
 class OnlineTableCellRenderer extends EditableTableCellRenderer<Applikation> {
 
-	public OnlineTableCellRenderer(EditableTable<Applikation> table) {
-		super(table);
-	}
-	
 	@Override
 	protected ThemeStyle getCellStyle(Table<Applikation> table, Applikation cell, int columnIndex, int rowIndex) {
 

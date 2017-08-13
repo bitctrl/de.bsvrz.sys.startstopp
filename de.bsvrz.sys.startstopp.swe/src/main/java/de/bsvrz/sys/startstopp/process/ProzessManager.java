@@ -51,16 +51,16 @@ import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.process.StartStoppApplikation.TaskType;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
-public class ProzessManager implements SkriptManagerListener, ManagedApplikationListener {
+public final class ProzessManager implements SkriptManagerListener, ManagedApplikationListener {
 
 	public enum Status {
 		INITIALIZED, RUNNING, STOPPING, STOPPED;
-	};
+	}
 
 	public enum StartStoppMode {
-		SKRIPT, OS, EXTERNAL; 
+		SKRIPT, OS, EXTERNAL;
 	}
-	
+
 	private static final Debug LOGGER = Debug.getLogger();
 	private Object lock = new Object();
 	private Status managerStatus = Status.INITIALIZED;
@@ -88,9 +88,9 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 				davConnector.reconnect(aktuelleKonfiguration.getResolvedZugangDav());
 
 				Collection<Rechner> rechnerListe = aktuelleKonfiguration.getResolvedRechner();
-				for (Rechner rechner : rechnerListe) {
-					RechnerManager rechnerManager = new RechnerManager(rechner);
-					this.rechner.put(rechner.getName(), rechnerManager);
+				for (Rechner rechnerEintrag : rechnerListe) {
+					RechnerManager rechnerManager = new RechnerManager(rechnerEintrag);
+					this.rechner.put(rechnerEintrag.getName(), rechnerManager);
 					rechnerManager.start();
 				}
 
@@ -107,6 +107,7 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 				}
 			}
 		} catch (StartStoppException e) {
+			LOGGER.fine(e.getLocalizedMessage());
 			aktuelleKonfiguration = null;
 		}
 
@@ -267,6 +268,8 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 				return false;
 			}
 			break;
+		default:
+			break;
 		}
 
 		return true;
@@ -407,6 +410,7 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 				case INITIALISIERT:
 				case STOPPENWARTEN:
 					result.add(app.getInkarnation().getInkarnationsName());
+					break;
 				case GESTOPPT:
 				case INSTALLIERT:
 				case STARTENWARTEN:
@@ -443,6 +447,7 @@ public class ProzessManager implements SkriptManagerListener, ManagedApplikation
 				hostName = InetAddress.getLocalHost().getHostName();
 				builder.append(hostName);
 			} catch (UnknownHostException e) {
+				LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
 				builder.append("unknown_host");
 			}
 			builder.append('_');

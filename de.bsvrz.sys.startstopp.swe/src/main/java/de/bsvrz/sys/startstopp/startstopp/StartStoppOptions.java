@@ -88,7 +88,7 @@ public class StartStoppOptions {
 				try {
 					masterPort = Integer.parseInt(parts[1]);
 				} catch (NumberFormatException e) {
-					LOGGER.warning("Port konnte nicht interpretiert werden: \"" + parts[1] + "\"!");
+					LOGGER.warning("Port konnte nicht interpretiert werden: \"" + parts[1] + "\"!: " + e.getLocalizedMessage());
 				}
 			}
 		}

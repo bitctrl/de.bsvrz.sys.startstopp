@@ -46,6 +46,7 @@ public class MakroTextInputDialog extends StartStoppElementEditor<String> {
 		this.description = description;
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
@@ -59,6 +60,7 @@ public class MakroTextInputDialog extends StartStoppElementEditor<String> {
 		mainPanel.addComponent(box, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
+	@Override
 	public String getElement() {
 		return content;
 	}

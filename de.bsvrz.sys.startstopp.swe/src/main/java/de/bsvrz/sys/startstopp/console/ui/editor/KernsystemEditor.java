@@ -78,12 +78,14 @@ class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> {
 		}
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 		ksTable = new KernSystemTable(kernSysteme, "Kernsystem");
 		mainPanel.addComponent(ksTable, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
+	@Override
 	public List<KernSystem> getElement() {
 		return kernSysteme;
 	}

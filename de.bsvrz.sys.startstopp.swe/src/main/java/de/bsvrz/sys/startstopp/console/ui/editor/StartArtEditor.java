@@ -47,6 +47,7 @@ class StartArtEditor extends StartStoppElementEditor<StartArt> {
 		this.startArt = (StartArt) Util.cloneObject(startArt);
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 
 		mainPanel.addComponent(new Label("Option:"));
@@ -85,6 +86,7 @@ class StartArtEditor extends StartStoppElementEditor<StartArt> {
 		mainPanel.addComponent(intervallField, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 	
+	@Override
 	public StartArt getElement() {
 		return startArt;
 	}

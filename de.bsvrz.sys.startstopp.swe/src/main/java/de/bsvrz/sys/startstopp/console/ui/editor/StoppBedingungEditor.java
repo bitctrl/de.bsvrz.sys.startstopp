@@ -92,6 +92,7 @@ class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung> {
 		}
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 
@@ -149,6 +150,7 @@ class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung> {
 		mainPanel.addComponent(warteZeitField, GridLayout.createHorizontallyFilledLayoutData(1));
 	}
 
+	@Override
 	public StoppBedingung getElement() {
 		if (bedingungUsed) {
 			return stoppBedingung;

@@ -29,10 +29,7 @@ package de.bsvrz.sys.startstopp.process;
 import java.io.File;
 import java.util.logging.Level;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -45,24 +42,11 @@ public class TestInkarnationsProzess {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		// Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		String startPath = new File(System.getProperty("user.dir")).toURI().getPath();
 		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 		classPath = classPath.replace(startPath, "");
 		Debug.getLogger().info("Set classpath to: " + classPath);
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
 	}
 
 	@Test
@@ -104,7 +88,8 @@ public class TestInkarnationsProzess {
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
 		String ausgabe = inkarnationsProzess.getProzessAusgabe().toLowerCase();
-		Assert.assertTrue("Fehlermeldung: " + ausgabe, ausgabe.contains("hauptklasse") || ausgabe.contains("mainclass"));
+		Assert.assertTrue("Fehlermeldung: " + ausgabe,
+				ausgabe.contains("hauptklasse") || ausgabe.contains("mainclass"));
 		Assert.assertEquals("Exitcode", 1, inkarnationsProzess.getLastExitCode());
 	}
 
@@ -132,7 +117,7 @@ public class TestInkarnationsProzess {
 	}
 
 	@Test
-	public final void testStartFehlerListener() {
+	public final void testStartFehlerListener() throws InterruptedException {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
 		inkarnationsProzess.setProgramm("java");
 		inkarnationsProzess.setProgrammArgumente("-invalidOption=");
@@ -153,28 +138,20 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.start();
 
 		synchronized (sync) {
-			try {
-				sync.wait(5000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(5000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
 
 		synchronized (sync) {
-			try {
-				sync.wait(2000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(2000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, status);
 	}
 
 	@Test
-	public final void testStart() {
+	public final void testStart() throws InterruptedException {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
 		inkarnationsProzess.setProgramm("java");
 		inkarnationsProzess
@@ -197,38 +174,29 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.start();
 
 		synchronized (sync) {
-			try {
-				sync.wait(6000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(6000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
 
 		synchronized (sync) {
-			try {
-				sync.wait(15000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(15000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
 	}
 
 	@Test
-	public final void testTerminiere() {
+	public final void testTerminiere() throws InterruptedException {
 
 		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 
-		
-		if( Tools.isWindows()) {
+		if (Tools.isWindows()) {
 			logger.warning("TODO: Test not supported for Windows-Environment");
 			return;
 		}
-		
+
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
 		inkarnationsProzess.setProgramm("java");
 		inkarnationsProzess
@@ -251,11 +219,7 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.start();
 
 		synchronized (sync) {
-			try {
-				sync.wait(6000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(6000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
@@ -270,18 +234,14 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.terminate();
 
 		synchronized (sync) {
-			try {
-				sync.wait(2000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(2000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
 	}
 
 	@Test
-	public final void testKill() {
+	public final void testKill() throws InterruptedException {
 		Debug logger = Debug.getLogger();
 		Debug.setHandlerLevel("StdErr", Level.FINE);
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
@@ -306,37 +266,24 @@ public class TestInkarnationsProzess {
 		inkarnationsProzess.start();
 
 		synchronized (sync) {
-			try {
-				sync.wait(6000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(6000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
 
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		Thread.sleep(5000);
 
 		inkarnationsProzess.kill();
 
 		synchronized (sync) {
-			try {
-				sync.wait(2000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(2000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
 	}
 
 	@Test
-	public final void testStartMitUmlaut() {
+	public final void testStartMitUmlaut() throws InterruptedException {
 		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
 		inkarnationsProzess.setProgramm("java");
 		inkarnationsProzess
@@ -359,11 +306,7 @@ public class TestInkarnationsProzess {
 		});
 
 		synchronized (sync) {
-			try {
-				sync.wait(200000);
-			} catch (InterruptedException e) {
-				Assert.fail();
-			}
+			sync.wait(200000);
 		}
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);

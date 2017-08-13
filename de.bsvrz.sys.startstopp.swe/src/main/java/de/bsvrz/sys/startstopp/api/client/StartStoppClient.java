@@ -219,7 +219,7 @@ public class StartStoppClient {
 		} catch (Exception e) {
 			throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden", e);
 		}
-		if ((response != null) && (response.getStatus() == Response.Status.SERVICE_UNAVAILABLE.getStatusCode())) {
+		if (response.getStatus() == Response.Status.SERVICE_UNAVAILABLE.getStatusCode()) {
 			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden",
 					response.readEntity(StatusResponse.class));
 		}
@@ -247,7 +247,7 @@ public class StartStoppClient {
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		if ((response != null) && (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode())) {
+		if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
 			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden",
 					response.readEntity(StatusResponse.class));
 		}
@@ -279,6 +279,7 @@ public class StartStoppClient {
 			response = createGetResponse("/applikationen");
 			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(new GenericType<List<Applikation>>() {
+					// keine zusätzlicher Code erforderlich
 				});
 			}
 		} catch (Exception e) {
@@ -318,7 +319,7 @@ public class StartStoppClient {
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		if ((response != null) && (response.getStatus() == Response.Status.CONFLICT.getStatusCode())) {
+		if (response.getStatus() == Response.Status.CONFLICT.getStatusCode()) {
 			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
 					+ "\"konnte nicht gestartet werden (Response: " + response.getStatus() + ")",
 					response.readEntity(StatusResponse.class));
@@ -337,7 +338,7 @@ public class StartStoppClient {
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		if ((response != null) && (response.getStatus() == Response.Status.CONFLICT.getStatusCode())) {
+		if (response.getStatus() == Response.Status.CONFLICT.getStatusCode()) {
 			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
 					+ "\"konnte nicht neu gestartet werden (Response: " + response.getStatus() + ")",
 					response.readEntity(StatusResponse.class));
@@ -356,7 +357,7 @@ public class StartStoppClient {
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		if ((response != null) && (response.getStatus() == Response.Status.CONFLICT.getStatusCode())) {
+		if (response.getStatus() == Response.Status.CONFLICT.getStatusCode()) {
 			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
 					+ "\"konnte nicht gestoppt gestartet werden (Response: " + response.getStatus() + ")",
 					response.readEntity(StatusResponse.class));
@@ -364,9 +365,4 @@ public class StartStoppClient {
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
 				+ "\"konnte nicht gestoppt werden (Response: " + response.getStatus() + ")");
 	}
-
-	public void setConnection(String host, int port) throws StartStoppException {
-
-	}
-
 }

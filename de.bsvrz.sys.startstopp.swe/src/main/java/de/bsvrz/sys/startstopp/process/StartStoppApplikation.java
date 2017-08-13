@@ -82,13 +82,13 @@ public class StartStoppApplikation extends Applikation {
 
 	private static final Debug LOGGER = Debug.getLogger();
 
-	private InkarnationsProzessIf process = null;
-	private List<ManagedApplikationListener> listeners = new ArrayList<>();
+	private transient InkarnationsProzessIf process = null;
+	private transient List<ManagedApplikationListener> listeners = new ArrayList<>();
 
-	private ScheduledFuture<?> warteTask;
-	private TimerTask intervallTask;
-	private ProzessManager prozessManager;
-	private SystemProzessListener systemProzessListener = new SystemProzessListener();
+	private transient ScheduledFuture<?> warteTask;
+	private transient TimerTask intervallTask;
+	private transient ProzessManager prozessManager;
+	private transient SystemProzessListener systemProzessListener = new SystemProzessListener();
 
 	public StartStoppApplikation(ProzessManager processmanager, StartStoppInkarnation inkarnation) {
 		this.prozessManager = processmanager;
@@ -198,6 +198,8 @@ public class StartStoppApplikation extends Applikation {
 			case MANUELL:
 				updateStatus(Applikation.Status.GESTOPPT, "");
 				break;
+			default:
+				break;
 			}
 		} else {
 			updateStatus(Applikation.Status.STOPPENWARTEN, "Stopp initialisiert");
@@ -260,6 +262,7 @@ public class StartStoppApplikation extends Applikation {
 			// TODO Intervallstarts implementieren
 			break;
 		case MANUELL:
+		default:
 			return;
 		}
 

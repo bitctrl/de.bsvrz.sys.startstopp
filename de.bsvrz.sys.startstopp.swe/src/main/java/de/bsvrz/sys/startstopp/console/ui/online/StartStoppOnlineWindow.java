@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
@@ -58,29 +60,25 @@ import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
 public class StartStoppOnlineWindow extends BasicWindow {
 
-	private final class Updater extends Thread {
+	private final class Updater implements Runnable {
 
-		private Updater() {
-			super("OnlineWindowUpdater");
-			setDaemon(true);
-		}
-
+		@Override
 		public void run() {
 
-			while (true) {
 				try {
-					List<Applikation> applikationen = StartStoppConsole.getClient().getApplikationen();
+					List<Applikation> aktuelleApplikationen = StartStoppConsole.getClient().getApplikationen();
 
-					if (applikationen.isEmpty()) {
+					if (aktuelleApplikationen.isEmpty()) {
 						StartStoppSkriptStatus skriptStatus = StartStoppConsole.getClient().getCurrentSkriptStatus();
 						if (skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
 							onlineDisplay.setStatus(OnlineDisplay.Status.SKRIPT_FEHLER);
 						}
 					}
 
-					table.updateApplikationen(applikationen);
+					table.updateApplikationen(aktuelleApplikationen);
 					onlineDisplay.setStatus(OnlineDisplay.Status.ONLINE);
 				} catch (StartStoppException e) {
+					LOGGER.fine(e.getLocalizedMessage());
 					table.updateApplikationen(Collections.emptyList());
 					onlineDisplay.setStatus(OnlineDisplay.Status.VERBINDUNG_FEHLER);
 				}
@@ -89,7 +87,6 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				} catch (InterruptedException e) {
 					LOGGER.warning(e.getLocalizedMessage());
 				}
-			}
 		}
 	}
 
@@ -111,7 +108,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				this.text = text;
 				this.color = color;
 			}
-		};
+		}
 
 		public OnlineDisplay() {
 			setLayoutManager(new GridLayout(3));
@@ -134,7 +131,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 	private List<Applikation> applikationen = new ArrayList<>();
 	private OnlineDisplay onlineDisplay;
 
-	public StartStoppOnlineWindow() throws StartStoppException {
+	public StartStoppOnlineWindow() {
 		super("StartStopp - Online");
 
 		this.table = new OnlineInkarnationTable(applikationen);
@@ -158,7 +155,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
 		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
 
-		new Updater().start();
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Updater(), 0, 2, TimeUnit.SECONDS);
 
 		setComponent(panel);
 	}
@@ -180,7 +177,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 						}
 					});
 				}
-				;
+
 				builder.build().showDialog(getTextGUI());
 				return true;
 

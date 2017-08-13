@@ -46,6 +46,7 @@ class MakroEditor extends StartStoppElementEditor<MakroDefinition> {
 		this.makroDefinition = (MakroDefinition) Util.cloneObject(makroDefinition);
 	}	
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
 

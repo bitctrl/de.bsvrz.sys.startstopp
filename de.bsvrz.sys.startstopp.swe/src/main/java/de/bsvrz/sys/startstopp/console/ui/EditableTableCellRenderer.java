@@ -35,12 +35,6 @@ import com.googlecode.lanterna.gui2.table.Table;
 
 public class EditableTableCellRenderer<T> extends DefaultTableCellRenderer<T> {
 
-	private EditableTable<T> table;
-
-	public EditableTableCellRenderer(EditableTable<T> table) {
-		this.table = table;
-	}
-	
 	@Override
 	public void drawCell(Table<T> table, T cell, int columnIndex, int rowIndex,
 			TextGUIGraphics textGUIGraphics) {
@@ -50,14 +44,14 @@ public class EditableTableCellRenderer<T> extends DefaultTableCellRenderer<T> {
 		textGUIGraphics.applyThemeStyle(style);
 		textGUIGraphics.fill(' '); 
 
-		String[] lines = getContent(columnIndex, cell);
+		String[] lines = getContent(table, columnIndex, cell);
 		int rowCount = 0;
 		for (String line : lines) {
 			textGUIGraphics.putString(0, rowCount++, line);
 		}
 	}
 
-	protected ThemeStyle getCellStyle(Table<T> table, T cell, int columnIndex, int rowIndex) {
+	protected ThemeStyle getCellStyle(Table<T> table, @SuppressWarnings("unused") T cell, int columnIndex, int rowIndex) {
 		ThemeDefinition themeDefinition = table.getThemeDefinition();
 		ThemeStyle style = themeDefinition.getNormal();
 		if ((table.getSelectedColumn() == columnIndex && table.getSelectedRow() == rowIndex)
@@ -73,7 +67,7 @@ public class EditableTableCellRenderer<T> extends DefaultTableCellRenderer<T> {
 
 	@Override
 	public TerminalSize getPreferredSize(Table<T> table, T cell, int columnIndex, int rowIndex) {
-		String[] lines = getContent(columnIndex, cell);
+		String[] lines = getContent(table, columnIndex, cell);
 		int breite = 0;
 		for( String line : lines) {
 			breite = Math.max(breite, line.length());
@@ -82,9 +76,9 @@ public class EditableTableCellRenderer<T> extends DefaultTableCellRenderer<T> {
 		return new TerminalSize(breite, lines.length);
 	}
 	
-	private String[] getContent(int columnIndex, T cell) {
+	private String[] getContent(Table<T> table, int columnIndex, T cell) {
 		String[] lines;
-		String text = table.getStringForColumn(columnIndex, cell);
+		String text = ((EditableTable<T>) table).getStringForColumn(columnIndex, cell);
 		if (cell == null) {
 			lines = new String[] { "" };
 		} else {

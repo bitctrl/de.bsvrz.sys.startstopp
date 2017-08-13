@@ -38,6 +38,8 @@ import de.bsvrz.sys.startstopp.process.ProzessManager;
 
 public class StartStopp {
 
+	private static final Debug LOGGER = Debug.getLogger();
+
 	private static StartStopp instance = new StartStopp();
 
 	public static StartStopp getInstance() {
@@ -80,6 +82,7 @@ public class StartStopp {
 		try {
 			skript = skriptManager.getCurrentSkript();
 		} catch (StartStoppException e) {
+			LOGGER.fine(e.getLocalizedMessage());
 			status.setStatus(StartStoppStatus.Status.CONFIGERROR);
 			return status;
 		}

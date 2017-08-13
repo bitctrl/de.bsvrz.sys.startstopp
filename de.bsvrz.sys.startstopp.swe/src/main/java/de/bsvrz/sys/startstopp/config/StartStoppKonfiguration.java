@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jetty.util.ConcurrentArrayQueue;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
@@ -56,6 +57,7 @@ import de.bsvrz.sys.startstopp.process.StartStoppInkarnation;
 
 public class StartStoppKonfiguration {
 
+	private static final Debug LOGGER = Debug.getLogger();
 	private StartStoppSkript skript;
 	private StartStoppSkriptStatus skriptStatus = new StartStoppSkriptStatus();
 	private String checkSumme = "";
@@ -143,6 +145,7 @@ public class StartStoppKonfiguration {
 					mustBeChecked.add(getInkarnation(vorgaenger));
 				}
 			} catch (StartStoppException e) {
+				LOGGER.fine(e.getLocalizedMessage());
 				throw new StartStoppException(
 						currentInkarnation.getInkarnationsName() + ": StartRegel hat keinen Vorgänger!");
 			}
@@ -188,6 +191,7 @@ public class StartStoppKonfiguration {
 					mustBeChecked.add(getInkarnation(nachfolger));
 				}
 			} catch (StartStoppException e) {
+				LOGGER.fine(e.getLocalizedMessage());
 				throw new StartStoppException(
 						currentInkarnation.getInkarnationsName() + ": StopRegel hat keinen Nachfolger!");
 			}
@@ -351,10 +355,12 @@ public class StartStoppKonfiguration {
 		if (wert == null) {
 			return null;
 		}
+		
+		String result = wert;
 
 		Map<String, String> resolvedMakros = getResolvedMakros();
 		Pattern pattern = Pattern.compile("%.*?%");
-		Matcher matcher = pattern.matcher(wert);
+		Matcher matcher = pattern.matcher(result);
 		while (matcher.find()) {
 			String part = matcher.group();
 			String key = part.substring(1, part.length() - 1);
@@ -362,10 +368,10 @@ public class StartStoppKonfiguration {
 			if (replacement == null) {
 				throw new StartStoppException("Das Makro " + key + "ist nicht definiert!");
 			}
-			wert = wert.replaceAll(part, replacement);
+			result = result.replaceAll(part, replacement);
 		}
 
-		return wert;
+		return result;
 	}
 
 	public ZugangDav getResolvedZugangDav() throws StartStoppException {

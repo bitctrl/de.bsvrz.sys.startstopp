@@ -163,7 +163,7 @@ public class DavConnector extends Thread {
 			parameters.setDavCommunicationAddress(zugangDav.getAdresse());
 			parameters.setDavCommunicationSubAddress(Integer.parseInt(zugangDav.getPort()));
 			connection = new ClientDavConnection(parameters);
-			connection.addConnectionListener((connection)->connection.disconnect(false, ""));
+			connection.addConnectionListener((conn)->conn.disconnect(false, ""));
 			connection.setCloseHandler((error)->LOGGER.info("Datenverteilerverbindung beendet: " + error));
 		} catch (MissingParameterException e) {
 			// TODO Auto-generated catch block

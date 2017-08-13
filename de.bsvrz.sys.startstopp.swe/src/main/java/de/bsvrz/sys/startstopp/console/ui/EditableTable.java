@@ -43,7 +43,7 @@ public abstract class EditableTable<T> extends Table<T> {
 
 	public EditableTable(List<T> dataList, String... columnName) {
 		super(columnName);
-		setTableCellRenderer(new EditableTableCellRenderer<T>(this));
+		setTableCellRenderer(new EditableTableCellRenderer<T>());
 		this.dataList = dataList;
 		for (T element : dataList) {
 			getTableModel().addRow(getElementArray(element));

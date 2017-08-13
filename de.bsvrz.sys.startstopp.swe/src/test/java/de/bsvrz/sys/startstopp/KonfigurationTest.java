@@ -29,13 +29,9 @@ package de.bsvrz.sys.startstopp;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -60,32 +56,34 @@ public class KonfigurationTest {
 			"testkonfigurationen/startStopp09.xml", "testkonfigurationen/startStopp10.xml" };
 
 	@Test
-	public void convertKonfiguration() throws ParserConfigurationException, SAXException, IOException,
-			XMLStreamException, TransformerFactoryConfigurationError, TransformerException, StartStoppException {
+	public void convertKonfiguration() throws IOException, TransformerFactoryConfigurationError, StartStoppException {
 		for (String file : files) {
-				StartStoppSkript skript = new StartStoppXMLParser().getKonfigurationFromRessource(file);
-				
-				StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(skript);
-				if (konfiguration.getSkriptStatus().getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
-					System.err.println("\nKonfigurationsfehler: " + file);
-					System.err.println("======================================================\n");
-					for (String line : konfiguration.getSkriptStatus().getMessages()) {
-						System.err.println(line);
-					}
+			StartStoppSkript skript = new StartStoppXMLParser().getKonfigurationFromRessource(file);
+
+			StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(skript);
+			if (konfiguration.getSkriptStatus().getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
+				System.err.println("\nKonfigurationsfehler: " + file);
+				System.err.println("======================================================\n");
+				for (String line : konfiguration.getSkriptStatus().getMessages()) {
+					System.err.println(line);
 				}
-				
-				ObjectMapper objectMapper = new ObjectMapper();
-				
-				//configure Object mapper for pretty print
-				objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-				
-				//writing to console, can write to any output stream such as file
-				StringWriter stringEmp = new StringWriter();
-				objectMapper.writeValue(stringEmp, skript);
-				
-//				StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(skript);
-//				Assert.assertTrue(file + ": " + konfiguration.getSkriptStatus().getMessages().toString(), konfiguration.getSkriptStatus().getMessages().isEmpty());
-//				Assert.assertEquals(konfiguration.getSkriptStatus().getStatus(), StartStoppSkriptStatus.Status.INITIALIZED);
+			}
+
+			ObjectMapper objectMapper = new ObjectMapper();
+
+			// configure Object mapper for pretty print
+			objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+
+			// writing to console, can write to any output stream such as file
+			StringWriter stringEmp = new StringWriter();
+			objectMapper.writeValue(stringEmp, skript);
+
+			// StartStoppKonfiguration konfiguration = new StartStoppKonfiguration(skript);
+			// Assert.assertTrue(file + ": " +
+			// konfiguration.getSkriptStatus().getMessages().toString(),
+			// konfiguration.getSkriptStatus().getMessages().isEmpty());
+			// Assert.assertEquals(konfiguration.getSkriptStatus().getStatus(),
+			// StartStoppSkriptStatus.Status.INITIALIZED);
 		}
 	}
 }

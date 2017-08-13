@@ -58,6 +58,7 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		this.inkarnation = (Inkarnation) Util.cloneObject(inkarnation);
 	}
 
+	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(2).setLeftMarginSize(1).setRightMarginSize(1).setTopMarginSize(1));
 
@@ -119,7 +120,7 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 
 	private void initInkarnationsTyp(Panel mainPanel) {
 		mainPanel.addComponent(new Label("Typ:"));
-		ComboBox<InkarnationsTyp> typSelektor = new ComboBox<InkarnationsTyp>(InkarnationsTyp.values());
+		ComboBox<InkarnationsTyp> typSelektor = new ComboBox<>(InkarnationsTyp.values());
 		for (int idx = 0; idx < typSelektor.getItemCount(); idx++) {
 			if (typSelektor.getItem(idx) == inkarnation.getInkarnationsTyp()) {
 				typSelektor.setSelectedIndex(idx);

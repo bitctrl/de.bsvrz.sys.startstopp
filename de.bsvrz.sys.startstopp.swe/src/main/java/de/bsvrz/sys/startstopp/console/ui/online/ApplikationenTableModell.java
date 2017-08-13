@@ -56,9 +56,9 @@ class ApplikationenTableModell extends TableModel<Object> {
 		}
 	}
 
-	public void updateApplikationen(List<Applikation> applikationen) {
-		for (int idx = 0; idx < applikationen.size(); idx++) {
-			Applikation applikation = applikationen.get(idx);
+	public void updateApplikationen(List<Applikation> neueApplikationen) {
+		for (int idx = 0; idx < neueApplikationen.size(); idx++) {
+			Applikation applikation = neueApplikationen.get(idx);
 			if (getRowCount() <= idx) {
 				addRow(applikation.getInkarnation().getInkarnationsName(), applikation.getStatus(),
 						applikation.getLetzteStartzeit());
@@ -70,7 +70,7 @@ class ApplikationenTableModell extends TableModel<Object> {
 			}
 		}
 
-		while (getRowCount() > applikationen.size()) {
+		while (getRowCount() > neueApplikationen.size()) {
 			removeRow(getRowCount() - 1);
 		}
 	}
