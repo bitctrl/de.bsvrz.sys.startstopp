@@ -67,10 +67,9 @@ dependencies {
     compile 'com.googlecode.lanterna:lanterna:3.0.0-rc1'
     compile 'net.java.dev.jna:jna:4.2.2'
     compile 'org.json:json:20170516'
-    compile 'de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}'
-    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.application:' + kernsoftware_version
-    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.crypt:' + kernsoftware_version
-    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.concurrent:' + kernsoftware_version
+    compile "de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}"
+    compile "de.bsvrz.sys:de.bsvrz.sys.funclib.application:${kernsoftware_version}"
+    compile "de.bsvrz.puk:de.bsvrz.puk.config:${kernsoftware_version}"
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.24'
     compile 'org.glassfish.jersey.containers:jersey-container-jetty-http:2.24'
     compile 'com.fasterxml.jackson.module:jackson-module-jsonSchema:' + jackson_version
@@ -81,8 +80,6 @@ dependencies {
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jackson_version
     compile 'org.jprocesses:jProcesses:1.6.3'
     compile 'com.nimbusds:srp6a:2.0.0'
-    compile 'com.google.inject:guice:4.1.0'
-    compile 'com.google.inject.extensions:guice-assistedinject:4.1.0'
     testCompile 'junit:junit:4.12'       
 }
 

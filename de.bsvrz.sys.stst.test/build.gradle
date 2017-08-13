@@ -8,10 +8,8 @@ repositories {
 }
 
 dependencies {
-    compile 'de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}'
-    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.application:' + kernsoftware_version
-    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.crypt:' + kernsoftware_version
-    compile 'de.bsvrz.sys:de.bsvrz.sys.funclib.concurrent:' + kernsoftware_version
+    compile "de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}"
+    compile "de.bsvrz.sys:de.bsvrz.sys.funclib.application:${kernsoftware_version}"
 }
 
 
