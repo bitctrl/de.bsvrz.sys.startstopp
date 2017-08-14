@@ -70,13 +70,13 @@ class AusgabeVerarbeitung {
 							line = null;
 						}
 					} else {
-						TimeUnit.SECONDS.sleep(1);
+						TimeUnit.MILLISECONDS.sleep(50);
 					}
-				} while (line != null);
+				} while (true);
 			} catch (IOException | InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} 
 
 			System.err.println("Stopped");
 		}
@@ -107,11 +107,11 @@ class AusgabeVerarbeitung {
 		ProcessReader errorReader = new ProcessReader(process.getErrorStream(), processStdError);
 		ScheduledFuture<?> errorFuture = executor.schedule(errorReader, 0, TimeUnit.MILLISECONDS);
 
-		ProcessReader outputReader = new ProcessReader(process.getInputStream(), processStdOutput);
-		ScheduledFuture<?> outputFuture = executor.schedule(outputReader, 0, TimeUnit.MILLISECONDS);
+//		ProcessReader outputReader = new ProcessReader(process.getInputStream(), processStdOutput);
+//		ScheduledFuture<?> outputFuture = executor.schedule(outputReader, 0, TimeUnit.MILLISECONDS);
 		executor.schedule(() -> {
 			errorFuture.cancel(true);
-			outputFuture.cancel(true);
+		//	outputFuture.cancel(true);
 			executor.shutdownNow();
 		}, 30, TimeUnit.SECONDS);
 	}
