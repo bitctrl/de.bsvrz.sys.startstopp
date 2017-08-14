@@ -40,6 +40,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 
 public class StartStoppApplikation extends Applikation {
 
@@ -182,7 +183,7 @@ public class StartStoppApplikation extends Applikation {
 		}
 	}
 
-	public void stoppeApplikation(boolean force) {
+	public void stoppeApplikation(boolean force) throws StartStoppException {
 		if (process == null) {
 			updateStatus(Applikation.Status.GESTOPPT, "");
 			switch (getInkarnation().getStartArt().getOption()) {
@@ -202,9 +203,7 @@ public class StartStoppApplikation extends Applikation {
 				break;
 			}
 		} else {
-			updateStatus(Applikation.Status.STOPPENWARTEN, "Stopp initialisiert");
 			process.kill();
-			// TODO process = null;
 		}
 	}
 
@@ -214,7 +213,7 @@ public class StartStoppApplikation extends Applikation {
 		case INSTALLIERT:
 		case GESTOPPT:
 		case STOPPENWARTEN:
-			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestoppt werden");
+//			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestoppt werden");
 
 		case GESTARTET:
 		case INITIALISIERT:
@@ -349,7 +348,7 @@ public class StartStoppApplikation extends Applikation {
 		setStartMeldung("");
 	}
 
-	private void handleStoppenWartenState(TaskType timerType) {
+	private void handleStoppenWartenState(TaskType timerType) throws StartStoppException {
 
 		Set<String> applikationen = prozessManager.waitForKernsystemStopp(this);
 		if (!applikationen.isEmpty()) {
@@ -387,7 +386,7 @@ public class StartStoppApplikation extends Applikation {
 			return;
 		}
 
-		stoppeApplikation(false);
+		prozessManager.stoppeApplikation(getInkarnation().getInkarnationsName(), StartStoppMode.SKRIPT);
 	}
 
 	private int convertToWarteZeitInMsec(String warteZeitStr) {
@@ -425,7 +424,12 @@ public class StartStoppApplikation extends Applikation {
 			handleStartenWartenState(timerType);
 			break;
 		case STOPPENWARTEN:
-			handleStoppenWartenState(timerType);
+			try {
+				handleStoppenWartenState(timerType);
+			} catch (StartStoppException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 		default:
 			break;
@@ -435,4 +439,14 @@ public class StartStoppApplikation extends Applikation {
 	private boolean warteTaskIsActive() {
 		return (warteTask != null) && warteTask.getDelay(TimeUnit.MILLISECONDS) > 0;
 	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	private String getName() {
+		return getInkarnation().getInkarnationsName();
+	}
+	
 }

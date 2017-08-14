@@ -41,6 +41,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
+import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 import de.bsvrz.sys.startstopp.process.StartStoppApplikation;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
@@ -135,7 +136,7 @@ public class ApplikationenService {
 	public Response responseApplikationStopp(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			StartStoppApplikation applikation = processManager.stoppeApplikationOhnePruefung(inkarnationsName);
+			StartStoppApplikation applikation = processManager.stoppeApplikation(inkarnationsName, StartStoppMode.EXTERNAL);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation);

@@ -27,10 +27,6 @@
 package de.bsvrz.sys.startstopp.process;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,12 +46,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 	private List<InkarnationsProzessListener> prozessListener = new ArrayList<>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see testproc.InkarnationsProzessIf#addProzessListener(testproc.
-	 * InkarnationsProzessListener)
-	 */
 	@Override
 	public void addProzessListener(final InkarnationsProzessListener listener) {
 		synchronized (prozessListener) {
@@ -63,12 +53,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see testproc.InkarnationsProzessIf#removeProzessListener(testproc.
-	 * InkarnationsProzessListener)
-	 */
 	@Override
 	public void removeProzessListener(final InkarnationsProzessListener listener) {
 		synchronized (prozessListener) {
@@ -76,12 +60,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see testproc.InkarnationsProzessIf#setLogger(de.bsvrz.sys.funclib.debug.
-	 * Debug)
-	 */
 	@Override
 	public void setLogger(Debug logger) {
 		this.logger = logger;
@@ -116,31 +94,16 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 	private String programmArgumente;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see testproc.InkarnationsProzessIf#getLastExitCode()
-	 */
 	@Override
 	public int getLastExitCode() {
 		return lastExitCode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see testproc.InkarnationsProzessIf#getStartFehler()
-	 */
 	@Override
 	public String getStartFehler() {
 		return startFehler;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see testproc.InkarnationsProzessIf#getStatus()
-	 */
 	@Override
 	public InkarnationsProzessStatus getStatus() {
 		return status;
@@ -156,18 +119,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			for (InkarnationsProzessListener l : new ArrayList<>(prozessListener)) {
 				l.statusChanged(status);
 			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see testproc.InkarnationsProzessIf#stopAusgabeUmlenkung()
-	 */
-	@Override
-	public void stopAusgabeUmlenkung() {
-		if (ausgabeUmlenkung != null) {
-			ausgabeUmlenkung.setRunning(false);
 		}
 	}
 
@@ -219,7 +170,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			} else {
 				// Umlenken der Standard- und Standardfehlerausgabe
 				ausgabeUmlenkung = new AusgabeVerarbeitung(getInkarnationsName(), process);
-
 				processInfo = Tools.findProcess(cmdLine.toString());
 				if (processInfo == null) {
 					getLogger().error("Prozessinfo kann nicht bestimmt werden!");
@@ -229,7 +179,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 				}
 
 				prozessGestartet();
-
 				ueberwacheProzess(startTime);
 			}
 		}
@@ -237,18 +186,8 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		private void ueberwacheProzess(long startTime) {
 			getLogger().finer("Prozess der Inkarnation '" + getInkarnationsName() + "' wird überwacht");
 
-			// Hier etwas warten, sonst sind die Startfehler nicht in der
-			// Ausgabeumlenkung!
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
 			try {
 				int exitCode = process.waitFor();
-				stoppAusgabeUmlenkung();
 				getLogger()
 						.fine("Prozess der Inkarnation '" + getInkarnationsName() + "' beendet mit Code: " + exitCode);
 				long endTime = System.currentTimeMillis();
@@ -266,11 +205,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 				logger.error("Prozessüberwachung unterbrochen: " + e.getMessage());
 			}
 		}
-
-		public void stoppAusgabeUmlenkung() {
-			ausgabeUmlenkung.setRunning(false);
-			ausgabeUmlenkung.interrupt();
-		}
 	}
 
 	private void prozessGestartet() {
@@ -282,11 +216,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		setStatus(InkarnationsProzessStatus.GESTOPPT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see testproc.InkarnationsProzessIf#start()
-	 */
 	@Override
 	public void start() {
 		if (getProgramm() == null || getProgramm().length() == 0) {
@@ -308,31 +237,22 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 	 */
 	@Override
 	public String getProzessAusgabe() {
-		StringBuffer ausgaben = new StringBuffer();
+		StringBuilder ausgaben = new StringBuilder(10240);
 
-		ausgaben.append("Prozessausgaben: ");
+		ausgaben.append("Prozessausgaben: \n");
 
-		Path path = Paths.get(ausgabeUmlenkung.getStdOutFile().toURI());
-		try {
-			String text = new String(Files.readAllBytes(path), Charset.defaultCharset());
-			if (text.length() > 0) {
-				ausgaben.append("Standardausgabe: ");
-				ausgaben.append(text);
-			}
-		} catch (IOException e) {
-			getLogger().config("Inkarnation '" + getInkarnationsName() + "': " + e.getMessage());
+		String logMeldungen = ausgabeUmlenkung.getStdOutText();
+		if (!logMeldungen.isEmpty()) {
+			ausgaben.append("Standardausgabe: \n");
+			ausgaben.append(logMeldungen);
+			ausgaben.append('\n');
 		}
 
-		path = Paths.get(ausgabeUmlenkung.getStdErrFile().toURI());
-		try {
-			String text = new String(Files.readAllBytes(path), Charset.defaultCharset());
-			if (text.length() > 0) {
-				ausgaben.append("Fehlerausgabe: ");
-				ausgaben.append(text);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		logMeldungen = ausgabeUmlenkung.getStdErrText();
+		if (!logMeldungen.isEmpty()) {
+			ausgaben.append("Fehlerausgabe: \n");
+			ausgaben.append(logMeldungen);
+			ausgaben.append('\n');
 		}
 
 		return ausgaben.toString();
@@ -377,7 +297,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 	@Override
 	public Integer getPid() {
-		if(processInfo != null) {
+		if (processInfo != null) {
 			return Integer.parseInt(processInfo.getPid());
 		}
 		return null;
@@ -385,10 +305,11 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 	@Override
 	public void terminate() {
-		if(Tools.isWindows()) {
+		if (Tools.isWindows()) {
 			int terminateWindowsProzess = Tools.terminateWindowsProzess(getPid());
-			if( terminateWindowsProzess != 0) {
-				getLogger().warning("Fehler beim Terminieren der Inkarnation '" + getInkarnationsName() + "': " + terminateWindowsProzess);
+			if (terminateWindowsProzess != 0) {
+				getLogger().warning("Fehler beim Terminieren der Inkarnation '" + getInkarnationsName() + "': "
+						+ terminateWindowsProzess);
 			}
 		} else {
 			process.destroy();

@@ -40,21 +40,24 @@ public interface InkarnationsProzessIf {
 	/**
 	 * F&uuml;gt einen {@link InkarnationsProzessListener} hinzu.
 	 * 
-	 * @param listener {@link InkarnationsProzessListener}
+	 * @param listener
+	 *            {@link InkarnationsProzessListener}
 	 */
 	void addProzessListener(InkarnationsProzessListener listener);
 
 	/**
 	 * Entfernt einen {@link InkarnationsProzessListener}.
 	 * 
-	 * @param listener {@link InkarnationsProzessListener}
+	 * @param listener
+	 *            {@link InkarnationsProzessListener}
 	 */
 	void removeProzessListener(InkarnationsProzessListener listener);
 
 	/**
 	 * Setzt den Logger.
 	 * 
-	 * @param logger {@link Debug}
+	 * @param logger
+	 *            {@link Debug}
 	 */
 	void setLogger(Debug logger);
 
@@ -80,37 +83,33 @@ public interface InkarnationsProzessIf {
 	InkarnationsProzessStatus getStatus();
 
 	/**
-	 * Stoppt die Protokollierung der Ausgabeumlenkung des Prozesses.
-	 * <p>Der Prozess wird immer mit aktiver Umlenkung der Standardausgabe 
-	 * und Standardfehlerausgabe gestartet, damit Startfehler analysiert werden k&ouml;nnen.
-	 * </p>
-	 * <p>Nach einem erfolgreichen Start sollte die Ausgabeumlenkung beendet werden, 
-	 * da diese eine nicht zu vernachl&auml;ssigende Last erzeugt und damit das 
-	 * Zeitverhalten des Prozesses beeinflussen kann. 
-	 * </p>
-	 */
-	void stopAusgabeUmlenkung();
-
-	/**
 	 * Startet den Prozess.
 	 */
 	void start();
 
 	/**
 	 * Terminiert den Prozess (weiche Variante).
-	 * <p>Unter Linux wird der Prozess &uuml;ber <code>Process.destroy</code> beendet (Signal 15).</p>
-	 * <p>Unter Windows wird ein CTRl-C-EVENT an den Konsolen-Prozess gesendet.</p>
+	 * <p>
+	 * Unter Linux wird der Prozess &uuml;ber <code>Process.destroy</code> beendet
+	 * (Signal 15).
+	 * </p>
+	 * <p>
+	 * Unter Windows wird ein CTRl-C-EVENT an den Konsolen-Prozess gesendet.
+	 * </p>
 	 */
 	void terminate();
-	
+
 	/**
 	 * Beendet den Prozess (harte Variante).
-	 * <p>Der Prozess wird &uuml;ber <code>Process.destroyForcibly</code> beendet.</p>
+	 * <p>
+	 * Der Prozess wird &uuml;ber <code>Process.destroyForcibly</code> beendet.
+	 * </p>
 	 */
 	void kill();
-	
+
 	/**
-	 * Gibt die gespeicherten Standardausgaben und Standardfehlerausgaben des Prozesses zur&uuml;ck.
+	 * Gibt die gespeicherten Standardausgaben und Standardfehlerausgaben des
+	 * Prozesses zur&uuml;ck.
 	 * 
 	 * @return Standardausgaben und Standardfehlerausgaben
 	 */
@@ -126,43 +125,46 @@ public interface InkarnationsProzessIf {
 	/**
 	 * Setzt den Inkarnationsnamen des Prozesses.
 	 * 
-	 * @param command der Name
+	 * @param command
+	 *            der Name
 	 */
 	void setInkarnationsName(String command);
 
-	
 	/**
 	 * Gibt das auszuf&uuml;rende Programm des Prozesses zur&uuml;ck.
 	 * 
-	 * @return auszuf&uuml;rendes Programm 
+	 * @return auszuf&uuml;rendes Programm
 	 */
 	String getProgramm();
 
 	/**
 	 * Setzt das auszuf&uuml;rende Programm des Prozesses.
 	 * 
-	 * @param command auszuf&uuml;rendes Programm 
+	 * @param command
+	 *            auszuf&uuml;rendes Programm
 	 */
 	void setProgramm(String command);
 
 	/**
 	 * Gibt die Programmargumente zur&uuml;ck.
 	 * 
-	 * @return  die Programmargumente
+	 * @return die Programmargumente
 	 */
 	String getProgrammArgumente();
 
 	/**
 	 * Setzt die Programmargumente.
 	 * 
-	 * @param args Programmargumente (Kommandozeile) 
+	 * @param args
+	 *            Programmargumente (Kommandozeile)
 	 */
 	void setProgrammArgumente(String args);
-	
+
 	/**
 	 * Gibt die Pid des Prozesses zur&uuml;ck.
 	 * 
-	 * @return  die Pid des Prozesses, <code>null</code> wenn der Prozess nicht gefunden werden konnte 
+	 * @return die Pid des Prozesses, <code>null</code> wenn der Prozess nicht
+	 *         gefunden werden konnte
 	 */
 	Integer getPid();
 }

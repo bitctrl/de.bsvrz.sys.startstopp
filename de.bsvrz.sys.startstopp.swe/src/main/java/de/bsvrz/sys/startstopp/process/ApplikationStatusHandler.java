@@ -71,7 +71,7 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 		private DataDescription terminierungsDesc;
 		private boolean subscription;
 
-		public DatenVerteiler(ClientDavConnection dav, SystemObject dvObj) {
+		DatenVerteiler(ClientDavConnection dav, SystemObject dvObj) {
 
 			this.dav = dav;
 			this.datenVerteilerObj = dvObj;

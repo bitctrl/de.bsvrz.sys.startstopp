@@ -82,11 +82,6 @@ public class StartStoppOnlineWindow extends BasicWindow {
 					table.updateApplikationen(Collections.emptyList());
 					onlineDisplay.setStatus(OnlineDisplay.Status.VERBINDUNG_FEHLER);
 				}
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					LOGGER.warning(e.getLocalizedMessage());
-				}
 		}
 	}
 
@@ -104,7 +99,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 			private String text;
 			private TextColor color;
 
-			private Status(String text, TextColor color) {
+			Status(String text, TextColor color) {
 				this.text = text;
 				this.color = color;
 			}

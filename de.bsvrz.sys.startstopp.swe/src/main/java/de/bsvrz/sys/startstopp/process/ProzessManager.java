@@ -162,13 +162,13 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 					+ "\" konnte nicht gefunden werden");
 		}
 
-		applikation.stoppSystemProcess();
+		stoppeApplikation(inkarnationsName, StartStoppMode.EXTERNAL);
 		applikation.startSystemProcess();
 
 		return applikation;
 	}
 
-	public StartStoppApplikation stoppeApplikationOhnePruefung(String inkarnationsName) throws StartStoppException {
+	public StartStoppApplikation stoppeApplikation(String inkarnationsName, StartStoppMode modus ) throws StartStoppException {
 		StartStoppApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation != null) {
 			try {

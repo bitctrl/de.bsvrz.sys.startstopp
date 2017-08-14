@@ -149,17 +149,14 @@ public class SkriptEditor extends BasicWindow {
 		setFocusedInteractable(table);
 	}
 
-	@Override
+	@Override 
 	public boolean handleInput(KeyStroke key) {
 
 		switch (key.getKeyType()) {
 		case Character:
 			switch (key.getCharacter()) {
 			case 's':
-				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addActions(new EditorVersionierenAction(skript), new EditorSichernAction(skript),
-						new EditorCloseAction(this));
-				builder.build().showDialog(getTextGUI());
+				showSystemActionMenu();
 				return true;
 
 			case 'm':
@@ -175,40 +172,19 @@ public class SkriptEditor extends BasicWindow {
 				return true;
 
 			case 'l':
-				FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
-				fileDialogBuilder.setTitle("StartStopp-Konfiguration auswählen");
-				fileDialogBuilder.setActionLabel("Laden");
-				File selectedFile = fileDialogBuilder.build().showDialog(getTextGUI());
-				if ((selectedFile != null) && selectedFile.exists()) {
-					try (InputStream stream = new FileInputStream(selectedFile)) {
-						ObjectMapper mapper = new ObjectMapper();
-						skript = mapper.readValue(stream, StartStoppSkript.class);
-					} catch (IOException e) {
-						new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
-					}
-				}
+				loadSkriptFromFile();
 				return true;
 
 			case 'k':
-				KernsystemEditor ksEditor = new KernsystemEditor(skript);
-				if (ksEditor.showDialog(getTextGUI())) {
-					skript.getGlobal().getKernsysteme().clear();
-					skript.getGlobal().getKernsysteme().addAll(ksEditor.getElement());
-				}
+				showKernsystemEditor();
 				return true;
 
 			case 'u':
-				UsvEditor usvEditor = new UsvEditor(skript);
-				if (usvEditor.showDialog(getTextGUI())) {
-					skript.getGlobal().setUsv(usvEditor.getElement());
-				}
+				showUsvEditor();
 				return true;
 
 			case 'z':
-				ZugangDavEditor zugangDavEditor = new ZugangDavEditor(skript);
-				if (zugangDavEditor.showDialog(getTextGUI())) {
-					skript.getGlobal().setZugangDav(zugangDavEditor.getElement());
-				}
+				showZugangDavEditor();
 				return true;
 
 			default:
@@ -221,6 +197,50 @@ public class SkriptEditor extends BasicWindow {
 		}
 
 		return super.handleInput(key);
+	}
+
+	private void showZugangDavEditor() {
+		ZugangDavEditor zugangDavEditor = new ZugangDavEditor(skript);
+		if (zugangDavEditor.showDialog(getTextGUI())) {
+			skript.getGlobal().setZugangDav(zugangDavEditor.getElement());
+		}
+	}
+
+	private void showUsvEditor() {
+		UsvEditor usvEditor = new UsvEditor(skript);
+		if (usvEditor.showDialog(getTextGUI())) {
+			skript.getGlobal().setUsv(usvEditor.getElement());
+		}
+	}
+
+	private void showKernsystemEditor() {
+		KernsystemEditor ksEditor = new KernsystemEditor(skript);
+		if (ksEditor.showDialog(getTextGUI())) {
+			skript.getGlobal().getKernsysteme().clear();
+			skript.getGlobal().getKernsysteme().addAll(ksEditor.getElement());
+		}
+	}
+
+	private void showSystemActionMenu() {
+		ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
+		builder.addActions(new EditorVersionierenAction(skript), new EditorSichernAction(skript),
+				new EditorCloseAction(this));
+		builder.build().showDialog(getTextGUI());
+	}
+
+	private void loadSkriptFromFile() {
+		FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
+		fileDialogBuilder.setTitle("StartStopp-Konfiguration auswählen");
+		fileDialogBuilder.setActionLabel("Laden");
+		File selectedFile = fileDialogBuilder.build().showDialog(getTextGUI());
+		if ((selectedFile != null) && selectedFile.exists()) {
+			try (InputStream stream = new FileInputStream(selectedFile)) {
+				ObjectMapper mapper = new ObjectMapper();
+				skript = mapper.readValue(stream, StartStoppSkript.class);
+			} catch (IOException e) {
+				new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
+			}
+		}
 	}
 
 	public static boolean isDeleteKey(KeyStroke key) {
