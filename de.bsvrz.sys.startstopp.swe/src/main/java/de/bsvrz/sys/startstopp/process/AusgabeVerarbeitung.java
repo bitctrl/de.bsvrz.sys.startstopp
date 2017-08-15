@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -42,6 +43,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.naming.spi.NamingManager;
+
 /**
  * Klasse zum Einlesen bzw. Auswerten der Standardausgabe bzw.
  * Standardfehlerausgabe einer Inkarnation. Der Thread wird automatisch durch
@@ -52,6 +55,7 @@ class AusgabeVerarbeitung {
 	public class ProcessReader implements Runnable {
 
 		private static final int MAX_LOG_SIZE = 500;
+		private static final long MAX_LOG_TIME_IN_MSEC = 30000L;
 		private List<String> destination;
 		private InputStream stream;
 
@@ -62,34 +66,41 @@ class AusgabeVerarbeitung {
 
 		@Override
 		public void run() {
+			long startTime = System.currentTimeMillis();
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()))) {
-				ExecutorService readerThreadPool = Executors.newFixedThreadPool(1);
+				ExecutorService readerExecutor = Executors.newSingleThreadExecutor(new NamingThreadFactory("Reader"));
 				String line = null;
+				boolean running = true;
 				do {
-					Future<String> future = readerThreadPool.submit(() -> {
+					Future<String> future = readerExecutor.submit(() -> {
 						return reader.readLine();
 					});
 					try {
 						line = future.get(1000, TimeUnit.MILLISECONDS);
 					} catch (@SuppressWarnings("unused") TimeoutException e) {
+						running = (System.currentTimeMillis() - startTime) < MAX_LOG_TIME_IN_MSEC;
+						System.err.println("Running: " + running);
 						continue;
 					}
+					running = (System.currentTimeMillis() - startTime) < MAX_LOG_TIME_IN_MSEC;
+					System.err.println("Running2: " + running);
 					if (line != null) {
 						destination.add(line);
 						if (destination.size() > MAX_LOG_SIZE) {
 							destination.add("Log-Limit überschritten!");
 							line = null;
 						}
+					} else {
+						running = false;
 					}
-				} while (line != null);
+				} while (running);
+				readerExecutor.shutdownNow();
 			} catch (IOException | InterruptedException | ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
-
-	private final ScheduledExecutorService executor;
 
 	private Process process;
 	private List<String> processStdOutput = new ArrayList<>();
@@ -107,17 +118,11 @@ class AusgabeVerarbeitung {
 	AusgabeVerarbeitung(final String inkarnation, final Process prozess) {
 		this.process = prozess;
 
-		executor = Executors.newScheduledThreadPool(3);
-
 		ProcessReader errorReader = new ProcessReader(process.getErrorStream(), processStdError);
-		ScheduledFuture<?> errorFuture = executor.schedule(errorReader, 0, TimeUnit.MILLISECONDS);
+		Executors.newSingleThreadExecutor(new NamingThreadFactory("StdErrReader_" + inkarnation)).submit(errorReader);
+		
 		ProcessReader outputReader = new ProcessReader(process.getInputStream(), processStdOutput);
-		ScheduledFuture<?> outputFuture = executor.schedule(outputReader, 0, TimeUnit.MILLISECONDS);
-		executor.schedule(() -> {
-			errorFuture.cancel(true);
-			outputFuture.cancel(true);
-			executor.shutdownNow();
-		}, 30, TimeUnit.SECONDS);
+		Executors.newSingleThreadExecutor(new NamingThreadFactory("StdOutReader_" + inkarnation)).submit(outputReader);
 	}
 
 	public String getStdErrText() {

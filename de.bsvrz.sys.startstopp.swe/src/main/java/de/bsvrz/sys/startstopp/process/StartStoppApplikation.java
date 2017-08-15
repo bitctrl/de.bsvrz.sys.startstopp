@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -404,7 +405,7 @@ public class StartStoppApplikation extends Applikation {
 			return;
 		}
 
-		warteTask = prozessManager.getExecutor().schedule(() -> checkState(TaskType.WARTETIMER), warteZeitInMsec,
+		warteTask = Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("Wartezeit: " + getName())).schedule(() -> checkState(TaskType.WARTETIMER), warteZeitInMsec,
 				TimeUnit.MILLISECONDS);
 	}
 

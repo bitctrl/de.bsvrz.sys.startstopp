@@ -35,7 +35,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
@@ -70,8 +69,6 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 	private DavConnector davConnector = new DavConnector(this);
 	private String inkarnationsPrefix;
 	private Map<String, RechnerManager> rechner = new LinkedHashMap<>();
-
-	private final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(10);
 
 	public ProzessManager() {
 		this(StartStopp.getInstance());
@@ -487,10 +484,6 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 
 	public Status getStatus() {
 		return managerStatus;
-	}
-
-	public ScheduledThreadPoolExecutor getExecutor() {
-		return executor;
 	}
 
 	public void davConnected() {
