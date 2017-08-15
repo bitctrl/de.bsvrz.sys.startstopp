@@ -183,7 +183,7 @@ public class StartStoppApplikation extends Applikation {
 		}
 	}
 
-	public void stoppeApplikation(boolean force) throws StartStoppException {
+	public void stoppeApplikation(boolean force) {
 		if (process == null) {
 			updateStatus(Applikation.Status.GESTOPPT, "");
 			switch (getInkarnation().getStartArt().getOption()) {

@@ -33,11 +33,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import de.bsvrz.sys.funclib.debug.Debug;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Klasse zum Einlesen bzw. Auswerten der Standardausgabe bzw.
@@ -52,7 +55,7 @@ class AusgabeVerarbeitung {
 		private List<String> destination;
 		private InputStream stream;
 
-		public ProcessReader(InputStream stream, List<String> destination) {
+		ProcessReader(InputStream stream, List<String> destination) {
 			this.stream = stream;
 			this.destination = destination;
 		}
@@ -60,31 +63,33 @@ class AusgabeVerarbeitung {
 		@Override
 		public void run() {
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()))) {
+				ExecutorService readerThreadPool = Executors.newFixedThreadPool(1);
 				String line = null;
 				do {
-					if (reader.ready()) {
-						line = reader.readLine();
+					Future<String> future = readerThreadPool.submit(() -> {
+						return reader.readLine();
+					});
+					try {
+						line = future.get(1000, TimeUnit.MILLISECONDS);
+					} catch (@SuppressWarnings("unused") TimeoutException e) {
+						continue;
+					}
+					if (line != null) {
 						destination.add(line);
 						if (destination.size() > MAX_LOG_SIZE) {
 							destination.add("Log-Limit überschritten!");
 							line = null;
 						}
-					} else {
-						TimeUnit.MILLISECONDS.sleep(50);
 					}
-				} while (true);
-			} catch (IOException | InterruptedException e) {
+				} while (line != null);
+			} catch (IOException | InterruptedException | ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
-
-			System.err.println("Stopped");
+			}
 		}
 	}
 
-	private static final Debug LOGGER = Debug.getLogger();
-
-	private final ScheduledThreadPoolExecutor executor;
+	private final ScheduledExecutorService executor;
 
 	private Process process;
 	private List<String> processStdOutput = new ArrayList<>();
@@ -102,16 +107,15 @@ class AusgabeVerarbeitung {
 	AusgabeVerarbeitung(final String inkarnation, final Process prozess) {
 		this.process = prozess;
 
-		executor = new ScheduledThreadPoolExecutor(3);
+		executor = Executors.newScheduledThreadPool(3);
 
 		ProcessReader errorReader = new ProcessReader(process.getErrorStream(), processStdError);
 		ScheduledFuture<?> errorFuture = executor.schedule(errorReader, 0, TimeUnit.MILLISECONDS);
-
-//		ProcessReader outputReader = new ProcessReader(process.getInputStream(), processStdOutput);
-//		ScheduledFuture<?> outputFuture = executor.schedule(outputReader, 0, TimeUnit.MILLISECONDS);
+		ProcessReader outputReader = new ProcessReader(process.getInputStream(), processStdOutput);
+		ScheduledFuture<?> outputFuture = executor.schedule(outputReader, 0, TimeUnit.MILLISECONDS);
 		executor.schedule(() -> {
 			errorFuture.cancel(true);
-		//	outputFuture.cancel(true);
+			outputFuture.cancel(true);
 			executor.shutdownNow();
 		}, 30, TimeUnit.SECONDS);
 	}

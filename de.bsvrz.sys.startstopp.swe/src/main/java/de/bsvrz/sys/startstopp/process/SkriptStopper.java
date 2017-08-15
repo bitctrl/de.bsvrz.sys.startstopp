@@ -44,7 +44,7 @@ class SkriptStopper implements Runnable {
 		private Map<String, StartStoppApplikation> applikations = new LinkedHashMap<>();
 		private Object lock = new Object();
 
-		public AppStopper(Collection<StartStoppApplikation> applikations) {
+		AppStopper(Collection<StartStoppApplikation> applikations) {
 			for (StartStoppApplikation applikation : applikations) {
 				if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
 					this.applikations.put(applikation.getInkarnation().getInkarnationsName(), applikation);
@@ -59,12 +59,10 @@ class SkriptStopper implements Runnable {
 				return;
 			}
 			for (StartStoppApplikation applikation : applikations.values()) {
-				System.err.println("Register: " + applikation);
 				CompletableFuture.runAsync(()->applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Skript wird angehalten"));
 			}
 			synchronized (lock) {
 				try {
-					System.err.println("Warte auf Ende");
 					lock.wait();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -74,15 +72,12 @@ class SkriptStopper implements Runnable {
 			for( StartStoppApplikation applikation : applikations.values()) {
 				applikation.removeManagedApplikationListener(this);
 			}
-			System.err.println("Ende erreicht");
 		}
 
 		@Override
 		public void applicationStatusChanged(StartStoppApplikation applikation, Status oldValue, Status newValue) {
-			System.err.println(applikation.getInkarnation().getInkarnationsName() + ": " + newValue);
 			if (newValue != Applikation.Status.STOPPENWARTEN) {
 				applikations.remove(applikation.getInkarnation().getInkarnationsName());
-				System.err.println(applikations.size() + " übrig: " + applikations);
 				if (applikations.isEmpty()) {
 					synchronized (lock) {
 						lock.notifyAll();

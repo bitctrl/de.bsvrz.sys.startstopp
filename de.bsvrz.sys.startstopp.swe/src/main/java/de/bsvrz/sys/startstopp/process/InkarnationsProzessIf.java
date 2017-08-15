@@ -37,6 +37,8 @@ import de.bsvrz.sys.funclib.debug.Debug;
  */
 public interface InkarnationsProzessIf {
 
+	static final int STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC = 5;
+
 	/**
 	 * F&uuml;gt einen {@link InkarnationsProzessListener} hinzu.
 	 * 
@@ -167,4 +169,11 @@ public interface InkarnationsProzessIf {
 	 *         gefunden werden konnte
 	 */
 	Integer getPid();
+
+	/**
+	 * gibt an, ob ein Prozess terminiert werden kann oder ob nur kill möglich ist.
+	 * 
+	 * @return den Status
+	 */
+	boolean terminateSupported();
 }

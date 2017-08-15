@@ -129,7 +129,6 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 	 */
 	private class InkarnationProcessThread extends Thread {
 
-		private static final int STARTFEHLER_LAUFZEIT_ERKENNUNG = 5;
 
 		/**
 		 * Konstruktor der Klasse.
@@ -192,9 +191,9 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 						.fine("Prozess der Inkarnation '" + getInkarnationsName() + "' beendet mit Code: " + exitCode);
 				long endTime = System.currentTimeMillis();
 
-				if ((endTime - startTime) < (STARTFEHLER_LAUFZEIT_ERKENNUNG * 1000)) {
+				if ((endTime - startTime) < (STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC * 1000)) {
 					getLogger().fine("Prozess der Inkarnation '" + getInkarnationsName() + "' lief weniger als "
-							+ STARTFEHLER_LAUFZEIT_ERKENNUNG + "s");
+							+ STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC + "s");
 					lastExitCode = exitCode;
 					prozessStartFehler(getProzessAusgabe());
 				} else {
@@ -319,5 +318,11 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 	@Override
 	public void kill() {
 		process.destroyForcibly();
+	}
+
+	@Override
+	public boolean terminateSupported() {
+		// TODO Eventuell unter Java 9 anpassen
+		return !Tools.isWindows();
 	}
 }

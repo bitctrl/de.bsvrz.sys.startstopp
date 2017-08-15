@@ -27,290 +27,223 @@
 package de.bsvrz.sys.startstopp.process;
 
 import java.io.File;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.bsvrz.sys.funclib.debug.Debug;
-
 public class TestInkarnationsProzess {
 
-	private InkarnationsProzessStatus status;
 	private static String classPath;
 
+	private Object lock = new Object();
+	private InkarnationsProzessIf process = new InkarnationsProzess();
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Debug.setHandlerLevel("StdErr", Level.FINE);
 		String startPath = new File(System.getProperty("user.dir")).toURI().getPath();
 		classPath = TestInkarnation.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 		classPath = classPath.replace(startPath, "");
-		Debug.getLogger().info("Set classpath to: " + classPath);
 	}
 
-	@Test
-	public final void testStartFehlerNoSuchFileOrDirecory() {
-		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
-		inkarnationsProzess.setProgramm("bubu");
-		inkarnationsProzess.setInkarnationsName("Test");
-		inkarnationsProzess.start();
-		while (inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTOPPT) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	@Test(timeout=10000)
+	public final void testStartFehlerNoSuchFileOrDirecory() throws InterruptedException {
+		process.setProgramm("bubu");
+		process.setInkarnationsName("Test");
+		process.addProzessListener((newStatus) -> {
+			if (newStatus == InkarnationsProzessStatus.STARTFEHLER)
+				triggerLock();
+		});
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
-		Assert.assertTrue("Startfehler", inkarnationsProzess.getStartFehler().contains("error=2"));
+		process.start();
+		waitForLock();
+		
+		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, process.getStatus());
+		Assert.assertTrue("Startfehler", process.getStartFehler().contains("error=2"));
 	}
 
-	@Test
-	public final void testStartFehlerMainClassNotFound() {
-		Debug logger = Debug.getLogger();
-		Debug.setHandlerLevel("StdErr", Level.FINE);
-		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
-		inkarnationsProzess.setProgramm("java bubu");
-		inkarnationsProzess.setInkarnationsName("Test");
-		inkarnationsProzess.start();
-		while (inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTOPPT
-				|| inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTARTET) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
-		String ausgabe = inkarnationsProzess.getProzessAusgabe().toLowerCase();
+	@Test(timeout=10000)
+	public final void testStartFehlerMainClassNotFound() throws InterruptedException {
+		process.setProgramm("java bubu");
+		process.setInkarnationsName("Test");
+		process.addProzessListener((newStatus) -> {
+			if (newStatus == InkarnationsProzessStatus.STARTFEHLER)
+				triggerLock();
+		});
+		process.start();
+		waitForLock();
+		
+		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, process.getStatus());
+		String ausgabe = process.getProzessAusgabe().toLowerCase();
 		Assert.assertTrue("Fehlermeldung: " + ausgabe,
 				ausgabe.contains("hauptklasse") || ausgabe.contains("mainclass"));
-		Assert.assertEquals("Exitcode", 1, inkarnationsProzess.getLastExitCode());
+		Assert.assertEquals("Exitcode", 1, process.getLastExitCode());
 	}
 
-	@Test
-	public final void testStartFehlerInvalidOption() {
-		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
-		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-invalidOption=");
-		inkarnationsProzess.setInkarnationsName("Test");
-		inkarnationsProzess.start();
-		while (inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTOPPT
-				|| inkarnationsProzess.getStatus() == InkarnationsProzessStatus.GESTARTET) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	@Test(timeout = 10000)
+	public final void testStartFehlerInvalidOption() throws InterruptedException {
+		process.setProgramm("java");
+		process.setProgrammArgumente("-invalidOption=");
+		process.setInkarnationsName("Test");
+		process.addProzessListener((newStatus) -> {
+			if (newStatus == InkarnationsProzessStatus.STARTFEHLER)
+				triggerLock();
+		});
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, inkarnationsProzess.getStatus());
-		String ausgabe = inkarnationsProzess.getProzessAusgabe().toLowerCase();
+		process.start();
+
+		waitForLock();
+
+		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, process.getStatus());
+		String ausgabe = process.getProzessAusgabe().toLowerCase();
 		Assert.assertTrue("Fehlermeldung: " + ausgabe, ausgabe.contains("fatal exception"));
-		Assert.assertEquals("Exitcode", 1, inkarnationsProzess.getLastExitCode());
+		Assert.assertEquals("Exitcode", 1, process.getLastExitCode());
 	}
 
-	@Test
+	@Test(timeout = 10000)
 	public final void testStartFehlerListener() throws InterruptedException {
-		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess();
-		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess.setProgrammArgumente("-invalidOption=");
-		inkarnationsProzess.setInkarnationsName("Test");
-		Object sync = new Object();
-		status = null;
-		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
 
-			@Override
-			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync) {
-					System.out.println("Neuer Status: " + neuerStatus);
-					status = neuerStatus;
-					sync.notify();
-				}
+		List<InkarnationsProzessStatus> empfangen = new ArrayList<>();
+		InkarnationsProzessStatus[] erwartet = { InkarnationsProzessStatus.GESTARTET,
+				InkarnationsProzessStatus.STARTFEHLER };
+
+		process.setProgramm("java");
+		process.setProgrammArgumente("-invalidOption=");
+		process.setInkarnationsName("Test");
+		process.addProzessListener((newStatus) -> {
+			empfangen.add(newStatus);
+			if (empfangen.size() >= erwartet.length) {
+				triggerLock();
 			}
 		});
-		inkarnationsProzess.start();
 
-		synchronized (sync) {
-			sync.wait(5000);
+		process.start();
+		waitForLock();
+		
+		for (int idx = 0; idx < erwartet.length; idx++) {
+			Assert.assertEquals("Unerwarteter Status", erwartet[idx], empfangen.get(idx));
 		}
-
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
-
-		synchronized (sync) {
-			sync.wait(2000);
-		}
-
-		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, status);
 	}
 
-	@Test
+	@Test(timeout=20000)
 	public final void testStart() throws InterruptedException {
-		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
-		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess
+		
+		List<InkarnationsProzessStatus> empfangen = new ArrayList<>();
+		InkarnationsProzessStatus[] erwartet = { InkarnationsProzessStatus.GESTARTET,
+				InkarnationsProzessStatus.GESTOPPT };
+		
+		process.setProgramm("java");
+		process
 				.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
-		inkarnationsProzess.setInkarnationsName("Bubu");
-		Object sync = new Object();
-		status = null;
+		process.setInkarnationsName("Bubu");
 
-		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-
-			@Override
-			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync) {
-					System.out.println("Neuer Status: " + neuerStatus);
-					status = neuerStatus;
-					sync.notify();
-				}
+		process.addProzessListener((newStatus) -> {
+			empfangen.add(newStatus);
+			if (empfangen.size() >= erwartet.length) {
+				triggerLock();
 			}
 		});
-		inkarnationsProzess.start();
 
-		synchronized (sync) {
-			sync.wait(6000);
+		process.start();
+
+		waitForLock();
+		for (int idx = 0; idx < erwartet.length; idx++) {
+			Assert.assertEquals("Unerwarteter Status", erwartet[idx], empfangen.get(idx));
 		}
-
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
-
-		synchronized (sync) {
-			sync.wait(15000);
-		}
-
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
 	}
 
-	@Test
+	@Test(timeout=20000)
 	public final void testTerminiere() throws InterruptedException {
 
-		Debug logger = Debug.getLogger();
-		Debug.setHandlerLevel("StdErr", Level.FINE);
-
-		if (Tools.isWindows()) {
-			logger.warning("TODO: Test not supported for Windows-Environment");
+		if (!process.terminateSupported()) {
+			System.err.println("TODO: Test not supported for this environment");
 			return;
 		}
 
-		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
-		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess
+		process.setProgramm("java");
+		process
 				.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
-		inkarnationsProzess.setInkarnationsName("Test");
-		Object sync = new Object();
-		status = null;
+		process.setInkarnationsName("Test");
 
-		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-
+		process.addProzessListener(new InkarnationsProzessListener() {
 			@Override
 			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync) {
-					System.out.println("Neuer Status: " + neuerStatus);
-					status = neuerStatus;
-					sync.notify();
-				}
+				triggerLock();
 			}
 		});
-		inkarnationsProzess.start();
 
-		synchronized (sync) {
-			sync.wait(6000);
-		}
+		process.start();
+		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
+		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, process.getStatus());
 
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		TimeUnit.SECONDS.sleep(InkarnationsProzessIf.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC);
+		process.terminate();
+		waitForLock();
 
-		inkarnationsProzess.terminate();
-
-		synchronized (sync) {
-			sync.wait(2000);
-		}
-
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
+		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, process.getStatus());
 	}
 
-	@Test
+	@Test(timeout=20000)
 	public final void testKill() throws InterruptedException {
-		Debug logger = Debug.getLogger();
-		Debug.setHandlerLevel("StdErr", Level.FINE);
-		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(logger);
-		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess
+		process.setProgramm("java");
+		process
 				.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
-		inkarnationsProzess.setInkarnationsName("Test");
-		Object sync = new Object();
-		status = null;
+		process.setInkarnationsName("Test");
 
-		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-
+		process.addProzessListener(new InkarnationsProzessListener() {
 			@Override
 			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync) {
-					System.out.println("Neuer Status: " + neuerStatus);
-					status = neuerStatus;
-					sync.notify();
-				}
+				triggerLock();
 			}
 		});
-		inkarnationsProzess.start();
 
-		synchronized (sync) {
-			sync.wait(6000);
-		}
+		process.start();
+		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
+		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, process.getStatus());
 
-		Thread.sleep(5000);
+		TimeUnit.SECONDS.sleep(InkarnationsProzessIf.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC);
+		process.kill();
+		waitForLock();
 
-		inkarnationsProzess.kill();
-
-		synchronized (sync) {
-			sync.wait(2000);
-		}
-
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, status);
+		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, process.getStatus());
 	}
 
 	@Test
 	public final void testStartMitUmlaut() throws InterruptedException {
-		InkarnationsProzessIf inkarnationsProzess = new InkarnationsProzess(Debug.getLogger());
-		inkarnationsProzess.setProgramm("java");
-		inkarnationsProzess
+
+		process.setProgramm("java");
+		process
 				.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation -üUmlaut");
-		inkarnationsProzess.setInkarnationsName("Bubu");
-		Object sync = new Object();
-		status = null;
-		inkarnationsProzess.start();
-
-		inkarnationsProzess.addProzessListener(new InkarnationsProzessListener() {
-
+		process.setInkarnationsName("Bubu");
+		process.addProzessListener(new InkarnationsProzessListener() {
 			@Override
 			public void statusChanged(InkarnationsProzessStatus neuerStatus) {
-				synchronized (sync) {
-					System.out.println("Neuer Status: " + neuerStatus);
-					status = neuerStatus;
-					sync.notify();
-				}
+				triggerLock();
 			}
 		});
-
-		synchronized (sync) {
-			sync.wait(200000);
-		}
-
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, status);
-
-		Assert.assertNotNull("Pid", inkarnationsProzess.getPid());
+		
+		process.start();
+		waitForLock();
+		
+		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, process.getStatus());
+		Assert.assertNotNull("Pid", process.getPid());
 	}
+
+	private void triggerLock() {
+		synchronized (lock) {
+			lock.notifyAll();
+		}
+	}
+
+	private void waitForLock() throws InterruptedException {
+		synchronized (lock) {
+			lock.wait();
+		}
+	}
+	
 }
