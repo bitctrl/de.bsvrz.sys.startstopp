@@ -1,0 +1,1 @@
+Platzhalterdatei, damit Ornderstruktur fuer Gradle in GitLab eingecheckt werden kann (Git ignoriert leere Ordner).
