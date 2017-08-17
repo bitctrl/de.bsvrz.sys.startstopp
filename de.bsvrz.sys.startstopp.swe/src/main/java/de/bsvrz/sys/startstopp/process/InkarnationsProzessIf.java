@@ -37,7 +37,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
  */
 public interface InkarnationsProzessIf {
 
-	static final int STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC = 5;
+	int STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC = 5;
 
 	/**
 	 * F&uuml;gt einen {@link InkarnationsProzessListener} hinzu.
@@ -176,4 +176,6 @@ public interface InkarnationsProzessIf {
 	 * @return den Status
 	 */
 	boolean terminateSupported();
+
+	void addProzessAusgabe(String meldung);
 }

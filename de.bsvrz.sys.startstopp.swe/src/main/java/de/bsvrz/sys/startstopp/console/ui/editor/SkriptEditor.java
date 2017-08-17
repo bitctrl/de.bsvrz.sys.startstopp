@@ -55,7 +55,7 @@ import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
 
-public class SkriptEditor extends BasicWindow {
+public final class SkriptEditor extends BasicWindow {
 
 	private StartStoppSkript skript;
 
@@ -69,7 +69,7 @@ public class SkriptEditor extends BasicWindow {
 		init();
 	}
 
-	void init() {
+	private void init() {
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.NO_DECORATIONS));
 
 		panel = new Panel();

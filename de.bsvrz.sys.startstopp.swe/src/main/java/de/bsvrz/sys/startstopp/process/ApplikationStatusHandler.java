@@ -294,7 +294,7 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 		String name = data.getTextValue("Inkarnationsname").getText();
 		boolean fertig = data.getUnscaledValue("InitialisierungFertig").intValue() == 1;
 
-		Debug.getLogger().info("Aktualisierung vom Dav: " + name + " ist fertig: " + fertig);
+		Debug.getLogger().info("Aktualisierung vom Dav: " + appObj + ": \"" + name + "\" ist fertig: " + fertig);
 
 		if (!name.isEmpty()) {
 			ApplikationStatus status = new ApplikationStatus(name, appObj, fertig);

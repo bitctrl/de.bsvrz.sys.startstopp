@@ -105,6 +105,10 @@ public class StartStoppApplikation extends Applikation {
 	}
 
 	public void dispose() {
+		if (warteTask != null) {
+			warteTask.cancel(true);
+		}
+
 		if (intervallTask != null) {
 			intervallTask.cancel();
 		}
@@ -214,7 +218,8 @@ public class StartStoppApplikation extends Applikation {
 		case INSTALLIERT:
 		case GESTOPPT:
 		case STOPPENWARTEN:
-//			throw new StartStoppException("Applikation kann im Status \"" + getStatus() + "\" nicht gestoppt werden");
+			// throw new StartStoppException("Applikation kann im Status \"" + getStatus() +
+			// "\" nicht gestoppt werden");
 
 		case GESTARTET:
 		case INITIALISIERT:
@@ -405,8 +410,8 @@ public class StartStoppApplikation extends Applikation {
 			return;
 		}
 
-		warteTask = Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("Wartezeit: " + getName())).schedule(() -> checkState(TaskType.WARTETIMER), warteZeitInMsec,
-				TimeUnit.MILLISECONDS);
+		warteTask = Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("Wartezeit: " + getName()))
+				.schedule(() -> checkState(TaskType.WARTETIMER), warteZeitInMsec, TimeUnit.MILLISECONDS);
 	}
 
 	public void checkState(TaskType timerType) {
@@ -440,7 +445,7 @@ public class StartStoppApplikation extends Applikation {
 	private boolean warteTaskIsActive() {
 		return (warteTask != null) && warteTask.getDelay(TimeUnit.MILLISECONDS) > 0;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName();
@@ -449,5 +454,5 @@ public class StartStoppApplikation extends Applikation {
 	private String getName() {
 		return getInkarnation().getInkarnationsName();
 	}
-	
+
 }

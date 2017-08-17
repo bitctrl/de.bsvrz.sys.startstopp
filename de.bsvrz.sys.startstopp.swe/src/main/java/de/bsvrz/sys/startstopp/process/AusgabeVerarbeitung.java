@@ -31,24 +31,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.sun.jna.platform.win32.COM.RunningObjectTable;
 
 /**
  * Klasse zum Einlesen bzw. Auswerten der Standardausgabe bzw.
  * Standardfehlerausgabe einer Inkarnation. Der Thread wird automatisch durch
  * den Konstruktor der Klasse gestartet.
  */
-class AusgabeVerarbeitung extends Thread {
+class AusgabeVerarbeitung implements Runnable {
 
 	private static final int MAX_LOG_SIZE = 500;
 	private static final long MAX_LOG_TIME_IN_MSEC = 30000L;
-	private List<String> destination = new ArrayList<>();
 	private InputStream stream;
+
 	private Object lock = new Object();
+
 	private boolean running;
+	private InkarnationsProzessIf inkarnation;
 
 	/**
 	 * Konstruktor der Klasse, startet automatisch den Thread, der die
@@ -59,35 +57,37 @@ class AusgabeVerarbeitung extends Thread {
 	 * @param prozess
 	 *            Systemprozess der Inkarnation
 	 */
-	AusgabeVerarbeitung(final String inkarnation, final Process prozess) {
-		super("Ausgabeverarbeitung_" + inkarnation);
-		setDaemon(true);
+	AusgabeVerarbeitung(final InkarnationsProzessIf inkarnation, final Process prozess) {
 		stream = prozess.getInputStream();
+		this.inkarnation = inkarnation;
 	}
 
 	@Override
 	public void run() {
 		long startTime = System.currentTimeMillis();
 		running = true;
+		int lineCounter = 0;
 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()))) {
 			String line = null;
 			do {
-				if (destination.size() > MAX_LOG_SIZE) {
-					destination.add("Log-Limit überschritten!");
-					running = false;
+				if (lineCounter > MAX_LOG_SIZE) {
+					inkarnation.addProzessAusgabe("Log-Limit überschritten!");
+					anhalten();
 					continue;
 				}
 				if ((System.currentTimeMillis() - startTime) > MAX_LOG_TIME_IN_MSEC) {
-					destination.add("Log-Zeit-Limit überschritten!");
-					running = false;
+					inkarnation.addProzessAusgabe("Log-Zeit-Limit überschritten!");
+					anhalten();
 					continue;
 				}
 
 				if (reader.ready()) {
 					line = reader.readLine();
+			//		System.err.println("Line: " + line);
 					if (line != null) {
-						destination.add(line);
+						inkarnation.addProzessAusgabe(line);
+						lineCounter++;
 					}
 				} else {
 					try {
@@ -103,22 +103,23 @@ class AusgabeVerarbeitung extends Thread {
 			while (reader.ready()) {
 				line = reader.readLine();
 				if (line != null) {
-					destination.add(line);
+					inkarnation.addProzessAusgabe(line);
 				}
 			}
 
 			stream.close();
-
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public String getText() {
-		return String.join("\n", destination);
-	}
+	public void anhalten() {
 
-	public void stopp() {
+		if( !running) {
+			return;
+		}
+		
 		synchronized (lock) {
 			running = false;
 			lock.notifyAll();

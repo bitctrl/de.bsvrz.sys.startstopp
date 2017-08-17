@@ -55,7 +55,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.process.StartStoppInkarnation;
 
-public class StartStoppKonfiguration {
+public final class StartStoppKonfiguration {
 
 	private static final Debug LOGGER = Debug.getLogger();
 	private StartStoppSkript skript;

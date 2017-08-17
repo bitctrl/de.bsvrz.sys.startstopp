@@ -282,7 +282,7 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 		}
 
 		String rechnerName = bedingung.getRechner();
-		if ((rechnerName != null) && !rechnerName.trim().isEmpty()) {
+		if (rechnerName != null && !rechnerName.trim().isEmpty()) {
 			return waitForRemoteStoppBedingung(managedApplikation, rechnerName, bedingung);
 		}
 

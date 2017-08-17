@@ -51,7 +51,7 @@ public class StartStopp {
 			instance.init(args);
 			instance.start();
 		} catch (Exception e) {
-			System.err.println(e.getLocalizedMessage());
+			System.err.println(e.getLocalizedMessage()); 
 			System.exit(-1);
 		}
 	}
