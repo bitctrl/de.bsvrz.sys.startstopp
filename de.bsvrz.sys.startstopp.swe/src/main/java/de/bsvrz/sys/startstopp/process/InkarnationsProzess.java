@@ -227,7 +227,8 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		}
 
 		InkarnationProcessThread processThread = new InkarnationProcessThread();
-		new Thread(processThread).start();
+//		new Thread(processThread).start();
+		CompletableFuture.runAsync(processThread);
 	}
 
 	/*
