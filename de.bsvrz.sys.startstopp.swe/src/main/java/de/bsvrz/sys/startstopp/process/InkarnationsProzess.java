@@ -169,6 +169,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			} else {
 				// Umlenken der Standard- und Standardfehlerausgabe
 				ausgabeUmlenkung = new AusgabeVerarbeitung(getInkarnationsName(), process);
+				ausgabeUmlenkung.start();
 				processInfo = Tools.findProcess(cmdLine.toString());
 				if (processInfo == null) {
 					getLogger().error("Prozessinfo kann nicht bestimmt werden!");
@@ -187,6 +188,8 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 			try {
 				int exitCode = process.waitFor();
+				ausgabeUmlenkung.stopp();
+				ausgabeUmlenkung.join();
 				getLogger()
 						.fine("Prozess der Inkarnation '" + getInkarnationsName() + "' beendet mit Code: " + exitCode);
 				long endTime = System.currentTimeMillis();
@@ -240,16 +243,8 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 		ausgaben.append("Prozessausgaben: \n");
 
-		String logMeldungen = ausgabeUmlenkung.getStdOutText();
+		String logMeldungen = ausgabeUmlenkung.getText();
 		if (!logMeldungen.isEmpty()) {
-			ausgaben.append("Standardausgabe: \n");
-			ausgaben.append(logMeldungen);
-			ausgaben.append('\n');
-		}
-
-		logMeldungen = ausgabeUmlenkung.getStdErrText();
-		if (!logMeldungen.isEmpty()) {
-			ausgaben.append("Fehlerausgabe: \n");
 			ausgaben.append(logMeldungen);
 			ausgaben.append('\n');
 		}

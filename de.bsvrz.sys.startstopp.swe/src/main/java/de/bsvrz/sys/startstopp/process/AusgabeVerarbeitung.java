@@ -31,80 +31,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import javax.naming.spi.NamingManager;
+import com.sun.jna.platform.win32.COM.RunningObjectTable;
 
 /**
  * Klasse zum Einlesen bzw. Auswerten der Standardausgabe bzw.
  * Standardfehlerausgabe einer Inkarnation. Der Thread wird automatisch durch
  * den Konstruktor der Klasse gestartet.
  */
-class AusgabeVerarbeitung {
+class AusgabeVerarbeitung extends Thread {
 
-	public class ProcessReader implements Runnable {
-
-		private static final int MAX_LOG_SIZE = 500;
-		private static final long MAX_LOG_TIME_IN_MSEC = 30000L;
-		private List<String> destination;
-		private InputStream stream;
-
-		ProcessReader(InputStream stream, List<String> destination) {
-			this.stream = stream;
-			this.destination = destination;
-		}
-
-		@Override
-		public void run() {
-			long startTime = System.currentTimeMillis();
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()))) {
-				ExecutorService readerExecutor = Executors.newSingleThreadExecutor(new NamingThreadFactory("Reader"));
-				String line = null;
-				boolean running = true;
-				do {
-					Future<String> future = readerExecutor.submit(() -> {
-						return reader.readLine();
-					});
-					try {
-						line = future.get(1000, TimeUnit.MILLISECONDS);
-					} catch (@SuppressWarnings("unused") TimeoutException e) {
-						running = (System.currentTimeMillis() - startTime) < MAX_LOG_TIME_IN_MSEC;
-						System.err.println("Running: " + running);
-						continue;
-					}
-					running = (System.currentTimeMillis() - startTime) < MAX_LOG_TIME_IN_MSEC;
-					System.err.println("Running2: " + running);
-					if (line != null) {
-						destination.add(line);
-						if (destination.size() > MAX_LOG_SIZE) {
-							destination.add("Log-Limit überschritten!");
-							line = null;
-						}
-					} else {
-						running = false;
-					}
-				} while (running);
-				readerExecutor.shutdownNow();
-			} catch (IOException | InterruptedException | ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private Process process;
-	private List<String> processStdOutput = new ArrayList<>();
-	private List<String> processStdError = new ArrayList<>();
+	private static final int MAX_LOG_SIZE = 500;
+	private static final long MAX_LOG_TIME_IN_MSEC = 30000L;
+	private List<String> destination = new ArrayList<>();
+	private InputStream stream;
+	private Object lock = new Object();
+	private boolean running;
 
 	/**
 	 * Konstruktor der Klasse, startet automatisch den Thread, der die
@@ -116,20 +60,68 @@ class AusgabeVerarbeitung {
 	 *            Systemprozess der Inkarnation
 	 */
 	AusgabeVerarbeitung(final String inkarnation, final Process prozess) {
-		this.process = prozess;
-
-		ProcessReader errorReader = new ProcessReader(process.getErrorStream(), processStdError);
-		Executors.newSingleThreadExecutor(new NamingThreadFactory("StdErrReader_" + inkarnation)).submit(errorReader);
-		
-		ProcessReader outputReader = new ProcessReader(process.getInputStream(), processStdOutput);
-		Executors.newSingleThreadExecutor(new NamingThreadFactory("StdOutReader_" + inkarnation)).submit(outputReader);
+		super("Ausgabeverarbeitung_" + inkarnation);
+		setDaemon(true);
+		stream = prozess.getInputStream();
 	}
 
-	public String getStdErrText() {
-		return String.join("\n", processStdError);
+	@Override
+	public void run() {
+		long startTime = System.currentTimeMillis();
+		running = true;
+
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()))) {
+			String line = null;
+			do {
+				if (destination.size() > MAX_LOG_SIZE) {
+					destination.add("Log-Limit überschritten!");
+					running = false;
+					continue;
+				}
+				if ((System.currentTimeMillis() - startTime) > MAX_LOG_TIME_IN_MSEC) {
+					destination.add("Log-Zeit-Limit überschritten!");
+					running = false;
+					continue;
+				}
+
+				if (reader.ready()) {
+					line = reader.readLine();
+					if (line != null) {
+						destination.add(line);
+					}
+				} else {
+					try {
+						synchronized (lock) {
+							lock.wait(300);
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			} while (running);
+
+			while (reader.ready()) {
+				line = reader.readLine();
+				if (line != null) {
+					destination.add(line);
+				}
+			}
+
+			stream.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public String getStdOutText() {
-		return String.join("\n", processStdOutput);
+	public String getText() {
+		return String.join("\n", destination);
+	}
+
+	public void stopp() {
+		synchronized (lock) {
+			running = false;
+			lock.notifyAll();
+		}
 	}
 }

@@ -30,18 +30,15 @@ import java.io.IOException;
 
 class ProzessStarter {
 
-	public static synchronized Process start(String cmdarray) throws IOException {
-		Process proc = null;
+	public static synchronized Process start(String cmdline) throws IOException {
 
-		String[] env = { "LANG=de_DE@euro" };
-
+		String[] cmdArray = cmdline.split("\\s");
+		ProcessBuilder builder = new ProcessBuilder(cmdArray);
+		builder.redirectErrorStream(true);
 		if (Tools.isWindows()) {
-			proc = Runtime.getRuntime().exec(cmdarray, null, null);
-		} else {
-			proc = Runtime.getRuntime().exec(cmdarray, env, null);
-		}
-		
-		return proc;
+			builder.environment().put("LANG", "de_DE@euro");
+		} 
+		return builder.start();
 	}
 
 }
