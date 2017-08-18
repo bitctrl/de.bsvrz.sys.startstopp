@@ -85,6 +85,7 @@ public class TestInkarnationsProzess {
 
 		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, process.getStatus());
 		String ausgabe = process.getProzessAusgabe().toLowerCase();
+		System.err.println("Ausgabe: " + ausgabe);
 		Assert.assertTrue("Fehlermeldung: " + ausgabe,
 				ausgabe.contains("hauptklasse") || ausgabe.contains("mainclass"));
 		Assert.assertEquals("Exitcode", 1, process.getLastExitCode());
