@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.jutils.jprocesses.model.ProcessInfo;
 
@@ -44,7 +46,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
  */
 public class InkarnationsProzess implements InkarnationsProzessIf {
 
-	private Debug logger = Debug.getLogger();
+	private static final Debug LOGGER = Debug.getLogger();
 
 	private final List<InkarnationsProzessListener> prozessListeners = new CopyOnWriteArrayList<>();
 
@@ -58,40 +60,16 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		prozessListeners.remove(listener);
 	}
 
-	@Override
-	public void setLogger(Debug logger) {
-		this.logger = logger;
-	}
-
-	public InkarnationsProzess(Debug logger) {
-		super();
-		this.logger = logger;
-	}
-
-	public InkarnationsProzess() {
-	}
-
-	private Debug getLogger() {
-		return logger;
-	}
-
-	ProcessInfo processInfo = null;
-
+//	private ExecutorService executor = Executors.newFixedThreadPool(2);
+	private ProcessInfo processInfo = null;
 	private Process process;
-
 	private String programm;
-
 	private String inkarnation;
-
-	private InkarnationsProzessStatus status = InkarnationsProzessStatus.GESTOPPT;
-
+	private InkarnationsProzessStatus status = InkarnationsProzessStatus.UNDEFINED;
 	private String startFehler;
 	private AusgabeVerarbeitung ausgabeUmlenkung;
-
 	private int lastExitCode;
-
 	private String programmArgumente;
-
 	private StringBuilder ausgaben = new StringBuilder(1024);
 
 	@Override
@@ -123,7 +101,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 	 * eigener Thread ausgeführt um zeitliche Abhängigkeiten (wie sleeps) zu
 	 * berücksichtigen.
 	 */
-	private class InkarnationProcessThread implements Runnable {
+	private class UeberwachungsRunnable implements Runnable {
 
 		private long startTime;
 		private long endTime;
@@ -137,7 +115,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		 * Methode zum Starten einer Inkarnation.
 		 */
 		private void starteInkarnation() {
-			getLogger().info("Starte Inkarnation '" + getInkarnationsName() + "'");
+			LOGGER.info("Starte Inkarnation '" + getInkarnationsName() + "'");
 			StringBuilder cmdLineBuilder = new StringBuilder();
 
 			try {
@@ -149,7 +127,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 
 				String cmdLine = cmdLineBuilder.toString();
 				String[] cmdArray = cmdLine.split("\\s");
-				getLogger().info("Commandline: '" + Arrays.toString(cmdArray) + "'");
+				LOGGER.info("Commandline: '" + Arrays.toString(cmdArray) + "'");
 				ProcessBuilder builder = new ProcessBuilder(cmdArray);
 				builder.redirectErrorStream(true);
 				if (!Tools.isWindows()) {
@@ -168,13 +146,14 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			} else {
 				// Umlenken der Standard- und Standardfehlerausgabe
 				ausgabeUmlenkung = new AusgabeVerarbeitung(InkarnationsProzess.this, process);
-				new Thread(ausgabeUmlenkung).start();
+//				executor.execute(ausgabeUmlenkung);
+				Executors.newSingleThreadExecutor().submit(ausgabeUmlenkung);
 				processInfo = Tools.findProcess(cmdLineBuilder.toString());
 				if (processInfo == null) {
-					getLogger().error("Prozessinfo kann nicht bestimmt werden!");
+					LOGGER.error("Prozessinfo kann nicht bestimmt werden!");
 				} else {
-					getLogger().fine("Inkarnation '" + getInkarnationsName() + "' gestartet (Pid: "
-							+ processInfo.getPid() + ")");
+					LOGGER.fine("Inkarnation '" + getInkarnationsName() + "' gestartet (Pid: " + processInfo.getPid()
+							+ ")");
 				}
 
 				prozessGestartet();
@@ -183,7 +162,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		}
 
 		private void ueberwacheProzess() {
-			getLogger().finer("Prozess der Inkarnation '" + getInkarnationsName() + "' wird überwacht");
+			LOGGER.finer("Prozess der Inkarnation '" + getInkarnationsName() + "' wird überwacht");
 			try {
 				process.waitFor();
 				endTime = System.currentTimeMillis();
@@ -191,19 +170,20 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 						.thenRun(() -> bereinigeProzess(process.exitValue()));
 			} catch (InterruptedException e) {
 				throw new IllegalStateException("Kann nicht passieren", e);
-			} 
+			}
 		}
 
 		private void bereinigeProzess(int exitCode) {
-			getLogger().fine("Prozess der Inkarnation '" + getInkarnationsName() + "' beendet mit Code: " + exitCode);
+			LOGGER.fine("Prozess der Inkarnation '" + getInkarnationsName() + "' beendet mit Code: " + exitCode);
 			if ((endTime - startTime) < (STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC * 1000)) {
-				getLogger().fine("Prozess der Inkarnation '" + getInkarnationsName() + "' lief weniger als "
+				LOGGER.fine("Prozess der Inkarnation '" + getInkarnationsName() + "' lief weniger als "
 						+ STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC + "s");
 				lastExitCode = exitCode;
 				prozessStartFehler(getProzessAusgabe());
 			} else {
 				prozessBeendet(exitCode);
 			}
+//			executor.shutdown();
 		}
 	}
 
@@ -226,9 +206,8 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			throw new IllegalStateException("Kein Inkarnationsname versorgt");
 		}
 
-		InkarnationProcessThread processThread = new InkarnationProcessThread();
-//		new Thread(processThread).start();
-		CompletableFuture.runAsync(processThread);
+		UeberwachungsRunnable processThread = new UeberwachungsRunnable();
+		Executors.newSingleThreadExecutor().submit(processThread);
 	}
 
 	/*
@@ -290,7 +269,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		if (Tools.isWindows()) {
 			int terminateWindowsProzess = Tools.terminateWindowsProzess(getPid());
 			if (terminateWindowsProzess != 0) {
-				getLogger().warning("Fehler beim Terminieren der Inkarnation '" + getInkarnationsName() + "': "
+				LOGGER.warning("Fehler beim Terminieren der Inkarnation '" + getInkarnationsName() + "': "
 						+ terminateWindowsProzess);
 			}
 		} else {

@@ -40,6 +40,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 
@@ -56,16 +57,20 @@ public class StartStoppApplikation extends Applikation {
 
 			switch (neuerStatus) {
 			case GESTOPPT:
-				updateStatus(Applikation.Status.GESTOPPT, "");
 				if (process != null) {
 					process.removeProzessListener(this);
 					process = null;
+				}
+				if( getInkarnation().getStartArt().getNeuStart()) {
+					updateStatus(Applikation.Status.INSTALLIERT, "");
+				} else {
+					updateStatus(Applikation.Status.GESTOPPT, "");
 				}
 				break;
 			case GESTARTET:
 				if (getInkarnation().getInitialize()) {
 					updateStatus(Applikation.Status.INITIALISIERT, "");
-				} else {
+				} else if (getStatus() != Applikation.Status.INITIALISIERT) {
 					updateStatus(Applikation.Status.GESTARTET, "");
 				}
 				break;
@@ -293,7 +298,13 @@ public class StartStoppApplikation extends Applikation {
 				updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf : " + applikationen);
 				return;
 			}
-			int warteZeitInMsec = convertToWarteZeitInMsec(startBedingung.getWartezeit());
+			long warteZeitInMsec;
+			try {
+				warteZeitInMsec = Util.convertToWarteZeitInMsec(startBedingung.getWartezeit());
+			} catch (StartStoppException e) {
+				throw new IllegalStateException(
+						"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
+			}
 			if (warteZeitInMsec > 0) {
 				updateStatus(Applikation.Status.STARTENWARTEN, getStartMeldung());
 				setWarteTimer(warteZeitInMsec);
@@ -336,7 +347,13 @@ public class StartStoppApplikation extends Applikation {
 					updateStatus(Applikation.Status.STARTENWARTEN, getStartMeldung());
 					return;
 				}
-				int warteZeitInMsec = convertToWarteZeitInMsec(startBedingung.getWartezeit());
+				long warteZeitInMsec;
+				try {
+					warteZeitInMsec = Util.convertToWarteZeitInMsec(startBedingung.getWartezeit());
+				} catch (StartStoppException e) {
+					throw new IllegalStateException(
+							"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
+				}
 				if (warteZeitInMsec > 0) {
 					updateStatus(Applikation.Status.STARTENWARTEN, "Wartezeit bis " + DateFormat.getDateTimeInstance()
 							.format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
@@ -354,7 +371,7 @@ public class StartStoppApplikation extends Applikation {
 		setStartMeldung("");
 	}
 
-	private void handleStoppenWartenState(TaskType timerType) throws StartStoppException {
+	private void handleStoppenWartenState(TaskType timerType) {
 
 		Set<String> applikationen = prozessManager.waitForKernsystemStopp(this);
 		if (!applikationen.isEmpty()) {
@@ -376,7 +393,13 @@ public class StartStoppApplikation extends Applikation {
 					updateStatus(Applikation.Status.STOPPENWARTEN, getStartMeldung());
 					return;
 				}
-				int warteZeitInMsec = convertToWarteZeitInMsec(stoppBedingung.getWartezeit());
+				long warteZeitInMsec;
+				try {
+					warteZeitInMsec = Util.convertToWarteZeitInMsec(stoppBedingung.getWartezeit());
+				} catch (StartStoppException e) {
+					throw new IllegalStateException(
+							"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
+				}
 				if (warteZeitInMsec > 0) {
 					updateStatus(Applikation.Status.STOPPENWARTEN, "Wartezeit bis " + DateFormat.getDateTimeInstance()
 							.format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
@@ -392,15 +415,15 @@ public class StartStoppApplikation extends Applikation {
 			return;
 		}
 
-		prozessManager.stoppeApplikation(getInkarnation().getInkarnationsName(), StartStoppMode.SKRIPT);
+		try {
+			prozessManager.stoppeApplikation(getInkarnation().getInkarnationsName(), StartStoppMode.SKRIPT);
+		} catch (StartStoppException e) {
+			throw new IllegalStateException("Sollte hier nicht passieren, weil die Applikation sich selbst beendet!",
+					e);
+		}
 	}
 
-	private int convertToWarteZeitInMsec(String warteZeitStr) {
-		// TODO Auto-generated method stub
-		return Integer.parseInt(warteZeitStr) * 1000;
-	}
-
-	private void setWarteTimer(int warteZeitInMsec) {
+	private void setWarteTimer(long warteZeitInMsec) {
 
 		if (warteTask != null) {
 			warteTask.cancel(true);
@@ -414,7 +437,7 @@ public class StartStoppApplikation extends Applikation {
 				.schedule(() -> checkState(TaskType.WARTETIMER), warteZeitInMsec, TimeUnit.MILLISECONDS);
 	}
 
-	public void checkState(TaskType timerType) {
+	public void checkState(TaskType taskType) {
 
 		switch (getStatus()) {
 		case GESTARTET:
@@ -427,15 +450,10 @@ public class StartStoppApplikation extends Applikation {
 			handleInstalliertState();
 			break;
 		case STARTENWARTEN:
-			handleStartenWartenState(timerType);
+			handleStartenWartenState(taskType);
 			break;
 		case STOPPENWARTEN:
-			try {
-				handleStoppenWartenState(timerType);
-			} catch (StartStoppException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			handleStoppenWartenState(taskType);
 			break;
 		default:
 			break;

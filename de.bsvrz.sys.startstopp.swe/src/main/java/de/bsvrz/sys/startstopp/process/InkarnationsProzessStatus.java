@@ -34,6 +34,7 @@ package de.bsvrz.sys.startstopp.process;
  *
  */
 public enum InkarnationsProzessStatus {
+	UNDEFINED,
 	GESTOPPT,
 	GESTARTET,
 	STARTFEHLER

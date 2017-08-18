@@ -37,14 +37,14 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 
 class RechnerEditor extends StartStoppElementEditor<Rechner> {
-	
+
 	private Rechner rechner;
 
 	RechnerEditor(StartStoppSkript skript, Rechner rechner) {
 		super(skript, "Rechner: " + rechner.getName());
 		this.rechner = (Rechner) Util.cloneObject(rechner);
 	}
-	
+
 	@Override
 	protected void initComponents(Panel mainPanel) {
 		mainPanel.setLayoutManager(new GridLayout(1).setLeftMarginSize(1).setRightMarginSize(1));
@@ -59,7 +59,7 @@ class RechnerEditor extends StartStoppElementEditor<Rechner> {
 		};
 		nameField.setText(rechner.getName());
 		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(1));
-		
+
 		mainPanel.addComponent(new Label("Adresse:"));
 		TextBox addresseField = new TextBox("") {
 			@Override
@@ -68,7 +68,8 @@ class RechnerEditor extends StartStoppElementEditor<Rechner> {
 				super.afterLeaveFocus(direction, nextInFocus);
 			}
 		};
-		addresseField.setText(rechner.getTcpAdresse());
+		String tcpAdresse = rechner.getTcpAdresse();
+		addresseField.setText(tcpAdresse);
 		mainPanel.addComponent(addresseField, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Port:"));

@@ -26,6 +26,9 @@
 
 package de.bsvrz.sys.startstopp.process;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import de.bsvrz.dav.daf.main.ClientDavConnection;
 import de.bsvrz.dav.daf.main.ClientDavParameters;
 import de.bsvrz.dav.daf.main.CommunicationError;
@@ -40,7 +43,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
 
-public class DavConnector extends Thread {
+public class DavConnector {
 
 	private static final Debug LOGGER = Debug.getLogger();
 
@@ -51,49 +54,36 @@ public class DavConnector extends Thread {
 	private ProzessManager processManager;
 	private ApplikationStatusHandler appStatusHandler;
 
-	DavConnector(ProzessManager processManager) {
-		super("DavConnector");
-		setDaemon(true);
-		this.processManager = processManager;
-		appStatusHandler = new ApplikationStatusHandler(processManager);
+	DavConnector(ProzessManager prozessManager) {
+		this.processManager = prozessManager;
+		appStatusHandler = new ApplikationStatusHandler(prozessManager);
+		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> connectToDav(), 0, 10, TimeUnit.SECONDS);
 	}
 
-	@Override
-	public void run() {
+	public void connectToDav() {
 
-		while (running) {
+		if (connection == null) {
+			connect();
+		}
 
-			if (connection == null) {
-				connect();
-			}
-
-			if (connection != null) {
-				try {
-					if (!connection.isConnected()) {
-						connection.connect();
-					}
-
-					if (!connection.isLoggedIn()) {
-						LOGGER.info("Anmelden als \"" + zugangDav.getUserName() + "\" Passwort: \""
-								+ zugangDav.getPassWord() + "\"");
-						connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
-						appStatusHandler.reconnect(connection);
-						processManager.davConnected();
-					}
-
-				} catch (CommunicationError | ConnectionException | RuntimeException e) {
-					LOGGER.warning(e.getLocalizedMessage());
-				} catch (InconsistentLoginException e1) {
-					LOGGER.warning(e1.getLocalizedMessage());
+		if (connection != null) {
+			try {
+				if (!connection.isConnected()) {
+					connection.connect();
 				}
-			}
 
-			synchronized (lock) {
-				try {
-					lock.wait(60000);
-				} catch (InterruptedException e) {
-					LOGGER.warning(e.getLocalizedMessage());
+				if (!connection.isLoggedIn()) {
+					LOGGER.info("Anmelden als \"" + zugangDav.getUserName() + "\" Passwort: \""
+							+ zugangDav.getPassWord() + "\"");
+					connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
+					appStatusHandler.reconnect(connection);
+					processManager.davConnected();
 				}
+
+			} catch (CommunicationError | ConnectionException | RuntimeException e) {
+				LOGGER.warning(e.getLocalizedMessage());
+			} catch (InconsistentLoginException e1) {
+				LOGGER.warning(e1.getLocalizedMessage());
 			}
 		}
 	}
@@ -158,16 +148,14 @@ public class DavConnector extends Thread {
 
 		try {
 			ClientDavParameters parameters = new ClientDavParameters();
-			// TODO Inkarnationsname korrekt bilden
-			parameters.setApplicationName("StartStopp");
+			parameters.setApplicationName(processManager.getOptions().getInkarnationsName());
 			parameters.setDavCommunicationAddress(zugangDav.getAdresse());
 			parameters.setDavCommunicationSubAddress(Integer.parseInt(zugangDav.getPort()));
 			connection = new ClientDavConnection(parameters);
-			connection.addConnectionListener((conn)->conn.disconnect(false, ""));
-			connection.setCloseHandler((error)->LOGGER.info("Datenverteilerverbindung beendet: " + error));
+			connection.addConnectionListener((conn) -> conn.disconnect(false, ""));
+			connection.setCloseHandler((error) -> LOGGER.info("Datenverteilerverbindung beendet: " + error));
 		} catch (MissingParameterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.warning("Datenverteilerverbindung kann nicht hergestellt werden!", e);
 		}
 	}
 
@@ -178,7 +166,7 @@ public class DavConnector extends Thread {
 	}
 
 	public void stoppApplikation(String name) throws StartStoppException {
-		if(isOnline()) {
+		if (isOnline()) {
 			appStatusHandler.terminiereAppPerDav(name);
 		} else {
 			throw new StartStoppException("Es besteht keine Datenverteilerverbindung");

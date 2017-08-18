@@ -260,6 +260,8 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 				iterator.remove();
 			}
 		}
+		
+		System.err.println("Applikation " + appObj + " aus Datenverteiler entfernt");
 	}
 
 	@Override

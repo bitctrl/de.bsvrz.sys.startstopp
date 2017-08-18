@@ -52,6 +52,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
+import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.process.StartStoppInkarnation;
 
@@ -62,12 +63,9 @@ public final class StartStoppKonfiguration {
 	private StartStoppSkriptStatus skriptStatus = new StartStoppSkriptStatus();
 	private String checkSumme = "";
 
-
 	public StartStoppKonfiguration(StartStoppSkript skript) {
 		this.skript = skript;
-		
 
-		
 		skriptStatus.getMessages().addAll(pruefeVollstaendigkeit());
 		skriptStatus.getMessages().addAll(pruefeZirkularitaet());
 
@@ -221,6 +219,32 @@ public final class StartStoppKonfiguration {
 			}
 		}
 
+		for (Inkarnation inkarnation : skript.getInkarnationen()) {
+			try {
+				StartStoppInkarnation startStoppInkarnation = new StartStoppInkarnation(this, inkarnation);
+				try {
+					if (startStoppInkarnation.getStartBedingung() != null) {
+						Util.convertToWarteZeitInMsec(startStoppInkarnation.getStartBedingung().getWartezeit());
+					}
+				} catch (StartStoppException e) {
+					result.add(inkarnation.getInkarnationsName()
+							+ ": Wartezeit für die Startbedingung kann nicht interpretiert werden: "
+							+ e.getLocalizedMessage());
+				}
+				try {
+					if (startStoppInkarnation.getStoppBedingung() != null) {
+						Util.convertToWarteZeitInMsec(startStoppInkarnation.getStoppBedingung().getWartezeit());
+					}
+				} catch (StartStoppException e) {
+					result.add(inkarnation.getInkarnationsName()
+							+ ": Wartezeit für die Stoppbedingung kann nicht interpretiert werden: "
+							+ e.getLocalizedMessage());
+				}
+			} catch (StartStoppException e) {
+				result.add(e.getLocalizedMessage());
+			}
+		}
+
 		// Angabe aller per JSON-Schema erforderlichen Attribute der Konfigurationsdatei
 		// Vollständige Definition des Datenverteilerzugangs
 		// Vollständige Auflösbarkeit aller Makros
@@ -355,7 +379,7 @@ public final class StartStoppKonfiguration {
 		if (wert == null) {
 			return null;
 		}
-		
+
 		String result = wert;
 
 		Map<String, String> resolvedMakros = getResolvedMakros();
@@ -450,7 +474,7 @@ public final class StartStoppKonfiguration {
 
 	public List<KernSystem> getKernSysteme() {
 		List<KernSystem> result = new ArrayList<>();
-		if( skript.getGlobal() != null) {
+		if (skript.getGlobal() != null) {
 			result.addAll(skript.getGlobal().getKernsysteme());
 		}
 		return result;

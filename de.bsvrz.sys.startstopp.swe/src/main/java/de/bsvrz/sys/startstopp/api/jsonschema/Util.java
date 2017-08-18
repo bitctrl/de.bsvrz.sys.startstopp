@@ -32,6 +32,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
+
+import de.bsvrz.sys.startstopp.config.StartStoppException;
 
 public class Util {
 
@@ -88,4 +91,11 @@ public class Util {
 		return string;
 	}
 
+	public static long convertToWarteZeitInMsec(String warteZeitStr) throws StartStoppException {
+		try {
+			return TimeUnit.SECONDS.toMillis(Integer.parseInt(warteZeitStr));
+		} catch (NumberFormatException e) {
+			throw new StartStoppException(e.getLocalizedMessage());
+		}
+	}
 }

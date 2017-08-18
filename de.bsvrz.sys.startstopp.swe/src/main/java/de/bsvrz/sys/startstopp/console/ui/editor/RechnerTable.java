@@ -40,17 +40,12 @@ class RechnerTable extends EditableTable<Rechner> {
 	RechnerTable(StartStoppSkript skript) {
 		super(skript.getGlobal().getRechner(), "Name", "Host", "Port");
 		this.skript = skript;
-
-		this.skript = skript;
-		for (Rechner rechner : skript.getGlobal().getRechner()) {
-			addElement(rechner);
-		}
 	}
 
 
 	@Override
 	protected Rechner requestNewElement() {
-		RechnerEditor dialog = new RechnerEditor(skript, new Rechner().withName("Neuer Rechner"));
+		RechnerEditor dialog = new RechnerEditor(skript, new Rechner().withName("Neuer Rechner").withTcpAdresse("0.0.0.0").withPort("3000"));
 		if( dialog.showDialog(getTextGUI())) {
 			return dialog.getElement();
 		}

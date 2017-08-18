@@ -26,8 +26,6 @@
 
 package de.bsvrz.sys.startstopp.process;
 
-import de.bsvrz.sys.funclib.debug.Debug;
-
 /**
  * Interface Systemprozess einer Inkarnation.
  * 
@@ -54,14 +52,6 @@ public interface InkarnationsProzessIf {
 	 *            {@link InkarnationsProzessListener}
 	 */
 	void removeProzessListener(InkarnationsProzessListener listener);
-
-	/**
-	 * Setzt den Logger.
-	 * 
-	 * @param logger
-	 *            {@link Debug}
-	 */
-	void setLogger(Debug logger);
 
 	/**
 	 * Gibt den letzten Exit-Code des Prozesses zur&uuml;ck.
