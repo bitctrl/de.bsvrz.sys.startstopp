@@ -64,7 +64,7 @@ dependencies {
 	compile 'net.java.dev.jna:jna:4.4.0'
 	compile 'net.java.dev.jna:jna-platform:4.4.0'
     compile 'commons-lang:commons-lang:2.6'
-    compile 'com.googlecode.lanterna:lanterna:3.0.0-rc1'
+    compile 'com.googlecode.lanterna:lanterna:3.0.0'
     compile 'net.java.dev.jna:jna:4.2.2'
     compile 'org.json:json:20170516'
     compile "de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}"
