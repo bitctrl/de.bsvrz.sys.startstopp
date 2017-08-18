@@ -44,6 +44,7 @@ class AusgabeVerarbeitung implements Runnable {
 	private InputStream stream;
 
 	private Object lock = new Object();
+	private Object completer = new Object();
 
 	private boolean running;
 	private InkarnationsProzessIf inkarnation;
@@ -84,7 +85,7 @@ class AusgabeVerarbeitung implements Runnable {
 
 				if (reader.ready()) {
 					line = reader.readLine();
-			//		System.err.println("Line: " + line);
+					// System.err.println("Line: " + line);
 					if (line != null) {
 						inkarnation.addProzessAusgabe(line);
 						lineCounter++;
@@ -108,7 +109,11 @@ class AusgabeVerarbeitung implements Runnable {
 			}
 
 			stream.close();
-			
+
+			synchronized (completer) {
+				completer.notifyAll();
+			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -116,13 +121,21 @@ class AusgabeVerarbeitung implements Runnable {
 
 	public void anhalten() {
 
-		if( !running) {
+		if (!running) {
 			return;
 		}
-		
-		synchronized (lock) {
-			running = false;
-			lock.notifyAll();
+
+		synchronized (completer) {
+			synchronized (lock) {
+				running = false;
+				lock.notifyAll();
+			}
+
+			try {
+				completer.wait(10000);
+			} catch (InterruptedException e) {
+				// ignore
+			}
 		}
 	}
 }
