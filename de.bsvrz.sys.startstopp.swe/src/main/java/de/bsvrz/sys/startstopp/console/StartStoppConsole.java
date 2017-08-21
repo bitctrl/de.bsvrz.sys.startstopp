@@ -67,6 +67,7 @@ public class StartStoppConsole {
 		INSTANZ.client = new StartStoppClient(INSTANZ.options.getHost(), INSTANZ.options.getPort());
 
 		DefaultTerminalFactory factory = new DefaultTerminalFactory();
+		factory.setPreferTerminalEmulator(true);
 		try (Terminal term = factory.createTerminal()) {
 			try (Screen screen = new TerminalScreen(term)) {
 				INSTANZ.gui = new MultiWindowTextGUI(screen);

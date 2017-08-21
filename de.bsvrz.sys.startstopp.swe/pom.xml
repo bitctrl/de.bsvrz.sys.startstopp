@@ -239,7 +239,7 @@
 			<artifactId>jackson-jaxrs-json-provider</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-		<dependency>
+ 		<dependency>
 			<groupId>com.profesorfalken</groupId>
 			<artifactId>WMI4Java</artifactId>
 			<version>1.6</version>
