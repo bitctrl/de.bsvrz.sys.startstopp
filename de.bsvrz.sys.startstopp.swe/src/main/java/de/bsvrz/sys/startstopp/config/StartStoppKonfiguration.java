@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jetty.util.ConcurrentArrayQueue;
 
+import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
@@ -196,6 +197,7 @@ public final class StartStoppKonfiguration {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private Collection<String> pruefeVollstaendigkeit() {
 
 		Collection<String> result = new ArrayList<>();
@@ -239,6 +241,31 @@ public final class StartStoppKonfiguration {
 					result.add(inkarnation.getInkarnationsName()
 							+ ": Wartezeit für die Stoppbedingung kann nicht interpretiert werden: "
 							+ e.getLocalizedMessage());
+				}
+				switch (startStoppInkarnation.getStartArt().getOption()) {
+				case INTERVALLABSOLUT:
+					try {
+						new CronDefinition(startStoppInkarnation.getStartArt().getIntervall());
+					} catch (IllegalArgumentException e) {
+						result.add(inkarnation.getInkarnationsName()
+								+ ": Die CRON-Syntax für die zyklische Ausführung kann nicht interpretiert werden: "
+								+ e.getLocalizedMessage());
+					}
+					break;
+				case INTERVALLRELATIV:
+					try {
+						Util.convertToWarteZeitInMsec(startStoppInkarnation.getStartArt().getIntervall());
+					} catch (StartStoppException e) {
+						result.add(inkarnation.getInkarnationsName()
+								+ ": Das Intervall für die zyklische Ausführung kann nicht interpretiert werden: "
+								+ e.getLocalizedMessage());
+					}
+					break;
+				case MANUELL:
+				case AUTOMATISCH:
+				default:
+					break;
+
 				}
 			} catch (StartStoppException e) {
 				result.add(e.getLocalizedMessage());

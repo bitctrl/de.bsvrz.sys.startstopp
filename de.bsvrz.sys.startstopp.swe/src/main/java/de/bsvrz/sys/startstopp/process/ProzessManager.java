@@ -224,6 +224,7 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 					StartStoppApplikation applikation = applikationen.remove(name);
 					if (applikation != null) {
 						applikation.stoppSystemProcess();
+						applikation.dispose();
 					}
 				}
 

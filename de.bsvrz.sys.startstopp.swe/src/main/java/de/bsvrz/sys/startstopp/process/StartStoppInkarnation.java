@@ -28,6 +28,7 @@ package de.bsvrz.sys.startstopp.process;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 
@@ -40,20 +41,25 @@ public class StartStoppInkarnation extends Inkarnation {
 	}
 
 	public StartStoppInkarnation(StartStoppKonfiguration skript, Inkarnation inkarnation) throws StartStoppException {
-		
+
 		for (KernSystem ks : skript.getSkript().getGlobal().getKernsysteme()) {
 			if (ks.getInkarnationsName().equals(inkarnation.getInkarnationsName())) {
 				this.kernSystem = ks;
 			}
 		}
-		
+
 		setApplikation(skript.makroResolvedString(inkarnation.getApplikation()));
-		for( String aufrufParameter : inkarnation.getAufrufParameter()) {
+		for (String aufrufParameter : inkarnation.getAufrufParameter()) {
 			getAufrufParameter().add(skript.makroResolvedString(aufrufParameter));
 		}
 		setInkarnationsName(inkarnation.getInkarnationsName());
 		setInkarnationsTyp(inkarnation.getInkarnationsTyp());
-		setStartArt(inkarnation.getStartArt());
+		StartArt startArt = inkarnation.getStartArt();
+		if (startArt == null) {
+			setStartArt(new StartArt().withOption(StartArt.Option.AUTOMATISCH));
+		} else {
+			setStartArt(startArt);
+		}
 		setInitialize(inkarnation.getInitialize());
 		setMitInkarnationsName(inkarnation.getMitInkarnationsName());
 		setStartBedingung(skript.getResolvedStartBedingung(inkarnation.getStartBedingung()));
@@ -65,32 +71,32 @@ public class StartStoppInkarnation extends Inkarnation {
 	public boolean isKernSystem() {
 		return kernSystem != null;
 	}
-	
+
 	public boolean isTransmitter() {
-		for( String parameter : getAufrufParameter()) {
-			if( parameter.contains("de.bsvrz.dav.dav.main.Transmitter")) {
+		for (String parameter : getAufrufParameter()) {
+			if (parameter.contains("de.bsvrz.dav.dav.main.Transmitter")) {
 				return true;
 			}
 
-			if( parameter.contains("de.bsvrz.dav.dav-runtime.jar")) {
+			if (parameter.contains("de.bsvrz.dav.dav-runtime.jar")) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
 	public boolean isConfiguration() {
-		for( String parameter : getAufrufParameter()) {
-			if( parameter.contains("de.bsvrz.puk.config.main.ConfigurationApp")) {
+		for (String parameter : getAufrufParameter()) {
+			if (parameter.contains("de.bsvrz.puk.config.main.ConfigurationApp")) {
 				return true;
 			}
 
-			if( parameter.contains("de.bsvrz.puk.config-runtime.jar")) {
+			if (parameter.contains("de.bsvrz.puk.config-runtime.jar")) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 }

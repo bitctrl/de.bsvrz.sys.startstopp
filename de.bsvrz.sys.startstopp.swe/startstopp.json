@@ -98,6 +98,24 @@
       "wiederholungen" : "0"
     }
   }, {
+    "applikation" : "java",
+    "aufrufParameter" : [ "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar", "de.bsvrz.sys.stst.test.ApplicationExit01", "%dav1.mitAuthentifizierung%" ],
+    "inkarnationsTyp" : "dav",
+    "inkarnationsName" : "ZyklischRelativ",
+    "initialize" : false,
+    "mitInkarnationsName" : true,
+    "startArt" : {
+      "option" : "intervallrelativ",
+      "neuStart" : false,
+      "intervall" : "77"
+    },
+    "startFehlerVerhalten" : {
+      "option" : "ignorieren"
+    },
+    "stoppFehlerVerhalten" : {
+      "option" : "ignorieren"
+    }
+  }, {
     "applikation" : "%java%",
     "aufrufParameter" : [ "-Xmx4g", "-cp %dist%/de.bsvrz.puk.config/de.bsvrz.puk.config-runtime.jar de.bsvrz.puk.config.main.ConfigurationApp", "%dav1.ohneAuthentifizierung%", "%debug.default%", "-benutzer=configuration", "-authentifizierung=%authentifizierung.passwortdatei%", "-verwaltung=%root%/konfiguration/verwaltungsdaten.xml", "-benutzerverwaltung=%root%/konfiguration/benutzerverwaltung.xml" ],
     "inkarnationsTyp" : "dav",
@@ -228,11 +246,29 @@
       "option" : "stopp",
       "wiederholungen" : "0"
     }
+  }, {
+    "applikation" : "java",
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar", "de.bsvrz.sys.stst.test.ApplicationExit01", "%dav1.mitAuthentifizierung%" ],
+    "inkarnationsTyp" : "dav",
+    "inkarnationsName" : "CronApplikation",
+    "initialize" : false,
+    "mitInkarnationsName" : true,
+    "startArt" : {
+      "option" : "intervallabsolut",
+      "neuStart" : false,
+      "intervall" : "*/5 * * * *"
+    },
+    "startFehlerVerhalten" : {
+      "option" : "ignorieren"
+    },
+    "stoppFehlerVerhalten" : {
+      "option" : "ignorieren"
+    }
   } ],
   "metaDaten" : {
-    "aenderungsGrund" : "Transmitter und Konfiguration intiailisieren",
-    "erstelltAm" : "2017-08-11T16:06:52.559",
+    "aenderungsGrund" : "sjhjfk",
+    "erstelltAm" : "2017-08-21T13:51:43.909",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1502460412559"
+    "versionsNummer" : "1503316303909"
   }
 }

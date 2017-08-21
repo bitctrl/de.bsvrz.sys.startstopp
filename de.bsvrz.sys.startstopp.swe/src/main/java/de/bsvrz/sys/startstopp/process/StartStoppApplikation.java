@@ -26,6 +26,7 @@
 
 package de.bsvrz.sys.startstopp.process;
 
+import java.lang.management.ManagementFactory;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,11 +34,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
@@ -61,12 +65,22 @@ public class StartStoppApplikation extends Applikation {
 					process.removeProzessListener(this);
 					process = null;
 				}
-				if( getInkarnation().getStartArt().getNeuStart()) {
+				switch (getInkarnation().getStartArt().getOption()) {
+				case INTERVALLABSOLUT:
+				case INTERVALLRELATIV:
 					updateStatus(Applikation.Status.INSTALLIERT, "");
-				} else {
-					updateStatus(Applikation.Status.GESTOPPT, "");
+					break;
+				default:
+					if (getInkarnation().getStartArt().getNeuStart()) {
+						updateStatus(Applikation.Status.INSTALLIERT, "");
+					} else {
+						updateStatus(Applikation.Status.GESTOPPT, "");
+					}
+					break;
+
 				}
 				break;
+
 			case GESTARTET:
 				if (getInkarnation().getInitialize()) {
 					updateStatus(Applikation.Status.INITIALISIERT, "");
@@ -77,6 +91,7 @@ public class StartStoppApplikation extends Applikation {
 			case STARTFEHLER:
 				updateStatus(Applikation.Status.GESTOPPT, "Fehler beim Starten");
 				if (process != null) {
+					System.err.println(process.getProzessAusgabe());
 					process.removeProzessListener(this);
 					process = null;
 				}
@@ -93,16 +108,28 @@ public class StartStoppApplikation extends Applikation {
 	private transient List<ManagedApplikationListener> listeners = new ArrayList<>();
 
 	private transient ScheduledFuture<?> warteTask;
-	private transient TimerTask intervallTask;
+	private ScheduledExecutorService warteZeitExecutor;
+
+	private transient ScheduledFuture<?> intervallTask;
+	private ScheduledExecutorService intervallExecutor;
+
 	private transient ProzessManager prozessManager;
 	private transient SystemProzessListener systemProzessListener = new SystemProzessListener();
+
+	private long zyklischerStart;
 
 	public StartStoppApplikation(ProzessManager processmanager, StartStoppInkarnation inkarnation) {
 		this.prozessManager = processmanager;
 		setInkarnation(inkarnation);
-		updateStatus(Applikation.Status.INSTALLIERT, "");
 		setLetzteStartzeit("noch nie gestartet");
 		setLetzteStoppzeit("noch nie gestoppt");
+
+		warteZeitExecutor = Executors
+				.newSingleThreadScheduledExecutor(new NamingThreadFactory("Wartezeit: " + getName()));
+		intervallExecutor = Executors
+				.newSingleThreadScheduledExecutor(new NamingThreadFactory("Intervall: " + getName()));
+
+		updateStatus(Applikation.Status.INSTALLIERT, "");
 	}
 
 	public void addManagedApplikationListener(ManagedApplikationListener listener) {
@@ -114,9 +141,18 @@ public class StartStoppApplikation extends Applikation {
 			warteTask.cancel(true);
 		}
 
-		if (intervallTask != null) {
-			intervallTask.cancel();
+		if (warteZeitExecutor != null) {
+			warteZeitExecutor.shutdown();
 		}
+
+		if (intervallTask != null) {
+			intervallTask.cancel(true);
+		}
+
+		if (intervallExecutor != null) {
+			intervallExecutor.shutdown();
+		}
+
 		if (process != null) {
 			process.removeProzessListener(systemProzessListener);
 		}
@@ -240,10 +276,12 @@ public class StartStoppApplikation extends Applikation {
 	public void updateStatus(Applikation.Status status, String message) {
 		Applikation.Status oldStatus = getStatus();
 		if (oldStatus != status) {
+			setStartMeldung(message);
 			setStatus(status);
 			fireStatusChanged(oldStatus, status);
+		} else {
+			setStartMeldung(message);
 		}
-		setStartMeldung(message);
 	}
 
 	public boolean isTransmitter() {
@@ -267,10 +305,19 @@ public class StartStoppApplikation extends Applikation {
 
 		switch (getInkarnation().getStartArt().getOption()) {
 		case AUTOMATISCH:
-		case INTERVALLABSOLUT:
-		case INTERVALLRELATIV:
-			// TODO Intervallstarts implementieren
 			break;
+		case INTERVALLRELATIV:
+		case INTERVALLABSOLUT:
+			try {
+				setZyklusTimer();
+				updateStatus(Applikation.Status.STARTENWARTEN,
+						"Nächster Ausführungszeitpunkt " + DateFormat.getDateTimeInstance().format(
+								new Date(System.currentTimeMillis() + intervallTask.getDelay(TimeUnit.MILLISECONDS))));
+			} catch (StartStoppException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return;
 		case MANUELL:
 		default:
 			return;
@@ -316,6 +363,14 @@ public class StartStoppApplikation extends Applikation {
 	}
 
 	private void handleStartenWartenState(TaskType timerType) {
+
+		if (timerType != TaskType.INTERVALLTIMER && intervallTaskIsActive()) {
+			setWarteTimer(0);
+			updateStatus(Applikation.Status.STARTENWARTEN,
+					"Nächster Ausführungszeitpunkt " + DateFormat.getDateTimeInstance().format(
+							new Date(System.currentTimeMillis() + intervallTask.getDelay(TimeUnit.MILLISECONDS))));
+			return;
+		}
 
 		Set<String> applikationen = prozessManager.waitForKernsystemStart(this);
 		if (!applikationen.isEmpty()) {
@@ -433,8 +488,37 @@ public class StartStoppApplikation extends Applikation {
 			return;
 		}
 
-		warteTask = Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("Wartezeit: " + getName()))
-				.schedule(() -> checkState(TaskType.WARTETIMER), warteZeitInMsec, TimeUnit.MILLISECONDS);
+		warteTask = warteZeitExecutor.schedule(() -> checkState(TaskType.WARTETIMER), warteZeitInMsec,
+				TimeUnit.MILLISECONDS);
+	}
+
+	private void setZyklusTimer() throws StartStoppException {
+
+		zyklischerStart = 0;
+
+		StartArt startArt = getInkarnation().getStartArt();
+		switch (startArt.getOption()) {
+		case INTERVALLABSOLUT:
+			zyklischerStart = new CronDefinition(startArt.getIntervall()).nextScheduledTime(System.currentTimeMillis());
+			break;
+		case INTERVALLRELATIV:
+			zyklischerStart = ManagementFactory.getRuntimeMXBean().getStartTime();
+			long intervalle = (System.currentTimeMillis() - zyklischerStart)
+					/ Util.convertToWarteZeitInMsec(startArt.getIntervall());
+			zyklischerStart += (intervalle + 1) * Util.convertToWarteZeitInMsec(startArt.getIntervall());
+			break;
+		default:
+			return;
+		}
+
+		if (intervallTask != null) {
+			intervallTask.cancel(true);
+		}
+
+		intervallTask = intervallExecutor.schedule(() -> {
+			intervallTask = null;
+			checkState(TaskType.INTERVALLTIMER);
+		}, zyklischerStart - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
 	}
 
 	public void checkState(TaskType taskType) {
@@ -462,6 +546,10 @@ public class StartStoppApplikation extends Applikation {
 
 	private boolean warteTaskIsActive() {
 		return (warteTask != null) && warteTask.getDelay(TimeUnit.MILLISECONDS) > 0;
+	}
+
+	private boolean intervallTaskIsActive() {
+		return (intervallTask != null) && intervallTask.getDelay(TimeUnit.MILLISECONDS) > 0;
 	}
 
 	@Override
