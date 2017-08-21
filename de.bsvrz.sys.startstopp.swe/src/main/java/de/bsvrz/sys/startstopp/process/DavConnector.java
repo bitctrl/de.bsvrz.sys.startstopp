@@ -57,7 +57,8 @@ public class DavConnector {
 	DavConnector(ProzessManager prozessManager) {
 		this.processManager = prozessManager;
 		appStatusHandler = new ApplikationStatusHandler(prozessManager);
-		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> connectToDav(), 0, 10, TimeUnit.SECONDS);
+		Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("DavConnector"))
+				.scheduleAtFixedRate(() -> connectToDav(), 0, 10, TimeUnit.SECONDS);
 	}
 
 	public void connectToDav() {

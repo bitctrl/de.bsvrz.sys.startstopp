@@ -147,7 +147,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 				// Umlenken der Standard- und Standardfehlerausgabe
 				ausgabeUmlenkung = new AusgabeVerarbeitung(InkarnationsProzess.this, process);
 //				executor.execute(ausgabeUmlenkung);
-				Executors.newSingleThreadExecutor().submit(ausgabeUmlenkung);
+				Executors.newSingleThreadExecutor(new NamingThreadFactory(getInkarnationsName() + "_Ausgabeumlenkung")).submit(ausgabeUmlenkung);
 				processInfo = Tools.findProcess(cmdLineBuilder.toString());
 				if (processInfo == null) {
 					LOGGER.error("Prozessinfo kann nicht bestimmt werden!");
@@ -207,7 +207,7 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		}
 
 		UeberwachungsRunnable processThread = new UeberwachungsRunnable();
-		Executors.newSingleThreadExecutor().submit(processThread);
+		Executors.newSingleThreadExecutor(new NamingThreadFactory(getInkarnationsName())).submit(processThread);
 	}
 
 	/*
