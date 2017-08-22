@@ -52,22 +52,10 @@ public class OSApplikation {
 
 	private final List<Consumer<OSApplikationStatus>> statusHandlers = new CopyOnWriteArrayList<>();
 
-	/**
-	 * F&uuml;gt einen {@link OSApplikationListener} hinzu.
-	 * 
-	 * @param listener
-	 *            {@link OSApplikationListener}
-	 */
 	public void addStatusHandler(final Consumer<OSApplikationStatus> handler) {
 		statusHandlers.add(handler);
 	}
 
-	/**
-	 * Entfernt einen {@link OSApplikationListener}.
-	 * 
-	 * @param listener
-	 *            {@link OSApplikationListener}
-	 */
 	public void removeStatusHandler(final Consumer<OSApplikationStatus> handler) {
 		statusHandlers.remove(handler);
 	}
