@@ -26,6 +26,7 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
+import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
@@ -43,10 +44,13 @@ class EditorVersionierenAction implements Runnable {
 	private WindowBasedTextGUI gui = StartStoppConsole.getGui();
 	private StartStoppClient client = StartStoppConsole.getClient();
 
-	EditorVersionierenAction(StartStoppSkript skript) {
+	private Window window;
+
+	EditorVersionierenAction(Window window, StartStoppSkript skript) {
+		this.window = window;
 		this.skript = skript;
 	}
-	
+
 	@Override
 	public void run() {
 		UrlasserDialog dialog = new UrlasserDialog("Versionieren");
@@ -54,14 +58,15 @@ class EditorVersionierenAction implements Runnable {
 		if (showDialog.equals(MessageDialogButton.OK)) {
 			try {
 				client.setCurrentSkript(dialog.getVeranlasser(), dialog.getPasswort(), null, dialog.getGrund(), skript);
+				window.close();
 			} catch (StartStoppException e) {
 
 				StringBuilder text = new StringBuilder(e.getLocalizedMessage());
-				for( String msg : e.getMessages()) {
+				for (String msg : e.getMessages()) {
 					text.append('\n');
 					text.append(msg);
 				}
-				
+
 				new InfoDialog("Fehler", text.toString()).display();
 			}
 		}

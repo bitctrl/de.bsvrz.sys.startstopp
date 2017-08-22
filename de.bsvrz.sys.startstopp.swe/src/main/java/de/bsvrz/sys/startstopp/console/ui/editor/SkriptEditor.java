@@ -223,7 +223,7 @@ public final class SkriptEditor extends BasicWindow {
 
 	private void showSystemActionMenu() {
 		ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-		builder.addActions(new EditorVersionierenAction(skript), new EditorSichernAction(skript),
+		builder.addActions(new EditorVersionierenAction(this, skript), new EditorSichernAction(skript),
 				new EditorCloseAction(this));
 		builder.build().showDialog(getTextGUI());
 	}

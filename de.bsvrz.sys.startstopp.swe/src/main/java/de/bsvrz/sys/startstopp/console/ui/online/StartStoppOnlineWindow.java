@@ -65,23 +65,24 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		@Override
 		public void run() {
 
-				try {
-					List<Applikation> aktuelleApplikationen = StartStoppConsole.getClient().getApplikationen();
+			try {
+				List<Applikation> aktuelleApplikationen = StartStoppConsole.getClient().getApplikationen();
 
-					if (aktuelleApplikationen.isEmpty()) {
-						StartStoppSkriptStatus skriptStatus = StartStoppConsole.getClient().getCurrentSkriptStatus();
-						if (skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
-							onlineDisplay.setStatus(OnlineDisplay.Status.SKRIPT_FEHLER);
-						}
+				if (aktuelleApplikationen.isEmpty()) {
+					StartStoppSkriptStatus skriptStatus = StartStoppConsole.getClient().getCurrentSkriptStatus();
+					if (skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
+						onlineDisplay.setStatus(OnlineDisplay.Status.SKRIPT_FEHLER);
 					}
-
-					table.updateApplikationen(aktuelleApplikationen);
+				} else {
 					onlineDisplay.setStatus(OnlineDisplay.Status.ONLINE);
-				} catch (StartStoppException e) {
-					LOGGER.fine(e.getLocalizedMessage());
-					table.updateApplikationen(Collections.emptyList());
-					onlineDisplay.setStatus(OnlineDisplay.Status.VERBINDUNG_FEHLER);
 				}
+
+				table.updateApplikationen(aktuelleApplikationen);
+			} catch (StartStoppException e) {
+				LOGGER.fine(e.getLocalizedMessage());
+				table.updateApplikationen(Collections.emptyList());
+				onlineDisplay.setStatus(OnlineDisplay.Status.VERBINDUNG_FEHLER);
+			}
 		}
 	}
 

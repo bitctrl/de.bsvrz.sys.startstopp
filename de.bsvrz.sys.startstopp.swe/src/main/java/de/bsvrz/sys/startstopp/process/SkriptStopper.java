@@ -55,7 +55,7 @@ class SkriptStopper implements Runnable {
 
 	@Override
 	public void run() {
-		AppStopper appStopper = new AppStopper(applikationen.values());
+		AppStopper appStopper = new AppStopper(applikationen.values(), false);
 		appStopper.run();
 
 		if (Tools.isWindows()) {
@@ -70,8 +70,10 @@ class SkriptStopper implements Runnable {
 					break;
 				}
 			}
+			appStopper = new AppStopper(kernsystem.values(), true);
+			appStopper.run();
 		} else {
-			appStopper = new AppStopper(kernsystem.values());
+			appStopper = new AppStopper(kernsystem.values(), false);
 			appStopper.run();
 		}
 	}

@@ -193,9 +193,8 @@
       "intervall" : ""
     },
     "startBedingung" : {
-      "vorgaenger" : [ "Applikation07" ],
+      "vorgaenger" : [ "Applikation01" ],
       "warteart" : "ende",
-      "rechner" : "rechner2",
       "wartezeit" : "20"
     },
     "startFehlerVerhalten" : {
@@ -266,9 +265,9 @@
     }
   } ],
   "metaDaten" : {
-    "aenderungsGrund" : "sjhjfk",
-    "erstelltAm" : "2017-08-21T13:51:43.909",
+    "aenderungsGrund" : "skljfkl ",
+    "erstelltAm" : "2017-08-22T14:09:15.553",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1503316303909"
+    "versionsNummer" : "1503403755553"
   }
 }

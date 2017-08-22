@@ -28,6 +28,7 @@ package de.bsvrz.sys.startstopp.process;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -94,7 +95,6 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 				}
 
 				managerStatus = Status.RUNNING;
-
 				for (StartStoppApplikation applikation : applikationen.values()) {
 					applikation.checkState();
 				}
@@ -155,12 +155,11 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 					+ "\" konnte nicht gefunden werden");
 		}
 
-		CompletableFuture.runAsync(new AppStopper(Collections.singleton(applikation))).thenRun(() -> {
+		CompletableFuture.runAsync(new AppStopper(Collections.singleton(applikation), false)).thenRun(() -> {
 			try {
 				applikation.startSystemProcess();
 			} catch (StartStoppException e) {
-				// TODO behandeln
-				e.printStackTrace();
+				LOGGER.warning(e.getLocalizedMessage());
 			}
 		});
 
@@ -208,46 +207,76 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 
 	@Override
 	public void skriptAktualisiert(StartStoppKonfiguration oldValue, StartStoppKonfiguration neueKonfiguration) {
+
+		boolean kernsystemGeandert = false;
+		List<String> entfernt = new ArrayList<>();
+		Map<String, InkarnationsAenderung> geandert = new LinkedHashMap<>();
+
 		if (aktuelleKonfiguration != null) {
 			try {
 				KonfigurationsVergleicher konfigurationsVergleicher = new KonfigurationsVergleicher();
 				konfigurationsVergleicher.vergleiche(aktuelleKonfiguration, neueKonfiguration);
-				boolean kernsystemGeandert = konfigurationsVergleicher.isKernsystemGeandert();
-				List<String> entfernt = konfigurationsVergleicher.getEntfernteInkarnationen();
-				Map<String, InkarnationsAenderung> geandert = konfigurationsVergleicher.getGeanderteInkarnationen();
-
-				aktuelleKonfiguration = neueKonfiguration;
-				davConnector.reconnect(aktuelleKonfiguration.getResolvedZugangDav());
-				rechnerManager.reconnect(aktuelleKonfiguration.getResolvedRechner());
-
-				for (String name : entfernt) {
-					StartStoppApplikation applikation = applikationen.remove(name);
-					if (applikation != null) {
-						applikation.stoppSystemProcess();
-						applikation.dispose();
-					}
-				}
-
-				for (StartStoppInkarnation inkarnation : aktuelleKonfiguration.getInkarnationen()) {
-					StartStoppApplikation applikation = applikationen.get(inkarnation.getInkarnationsName());
-					if (applikation == null) {
-						applikation = new StartStoppApplikation(this, inkarnation);
-						applikationen.put(applikation.getInkarnation().getInkarnationsName(), applikation);
-						applikation.addManagedApplikationListener(this);
-						applikation.updateStatus(Applikation.Status.INSTALLIERT, "Applikation angelegt");
-					} else {
-						applikation.setInkarnation(inkarnation);
-						if (geandert.containsKey(inkarnation.getInkarnationsName())) {
-							// TODO Änderungen genauer auswerten
-							restarteApplikation(inkarnation.getInkarnationsName());
-						}
-					}
-				}
-
+				kernsystemGeandert = konfigurationsVergleicher.isKernsystemGeandert();
+				entfernt.addAll(konfigurationsVergleicher.getEntfernteInkarnationen());
+				geandert.putAll(konfigurationsVergleicher.getGeanderteInkarnationen());
 			} catch (StartStoppException e) {
-				throw new IllegalStateException(
-						"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
+				LOGGER.warning(e.getLocalizedMessage());
+				return;
 			}
+		}
+
+		if (kernsystemGeandert) {
+			stoppeSkript().thenRun(() -> {
+				System.err.println("=====================================");
+				System.err.println("=       SKRIPT GESTOPPT             =");
+				System.err.println("=====================================");
+				aktuellesSkriptAnpassen(neueKonfiguration, entfernt, geandert);
+			});
+		} else {
+			aktuellesSkriptAnpassen(neueKonfiguration, entfernt, geandert);
+		}
+	}
+
+	private void aktuellesSkriptAnpassen(StartStoppKonfiguration neueKonfiguration, List<String> entfernt,
+			Map<String, InkarnationsAenderung> geandert) {
+		try {
+			aktuelleKonfiguration = neueKonfiguration;
+			davConnector.reconnect(aktuelleKonfiguration.getResolvedZugangDav());
+			rechnerManager.reconnect(aktuelleKonfiguration.getResolvedRechner());
+
+			for (String name : entfernt) {
+				StartStoppApplikation applikation = applikationen.remove(name);
+				if (applikation != null) {
+					applikation.stoppSystemProcess();
+					applikation.dispose();
+				}
+			}
+
+			for (StartStoppInkarnation inkarnation : aktuelleKonfiguration.getInkarnationen()) {
+				StartStoppApplikation applikation = applikationen.get(inkarnation.getInkarnationsName());
+				if (applikation == null) {
+					applikation = new StartStoppApplikation(this, inkarnation);
+					applikationen.put(applikation.getInkarnation().getInkarnationsName(), applikation);
+					applikation.addManagedApplikationListener(this);
+					applikation.updateStatus(Applikation.Status.INSTALLIERT, "Applikation angelegt");
+					if (managerStatus == Status.RUNNING) {
+						applikation.checkState();
+					}
+				} else {
+					applikation.setInkarnation(inkarnation);
+					if ((managerStatus == Status.RUNNING) && geandert.containsKey(inkarnation.getInkarnationsName())) {
+						// TODO Änderungen genauer auswerten
+						restarteApplikation(inkarnation.getInkarnationsName());
+					}
+				}
+			}
+
+			starteSkript();
+
+		} catch (StartStoppException e) {
+			LOGGER.error(e.getLocalizedMessage());
+			throw new IllegalStateException("Sollte hier nicht auftreten, da nur geprüfte Skripte verwendet werden!",
+					e);
 		}
 	}
 
@@ -508,6 +537,8 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 			if (applikation.getInkarnation().getStartArt().getOption() != StartArt.Option.MANUELL) {
 				if (applikation.getStatus() == Applikation.Status.GESTOPPT) {
 					applikation.updateStatus(Applikation.Status.INSTALLIERT, "");
+				} else if (applikation.getStatus() == Applikation.Status.INSTALLIERT) {
+					applikation.checkState();
 				}
 			}
 		}

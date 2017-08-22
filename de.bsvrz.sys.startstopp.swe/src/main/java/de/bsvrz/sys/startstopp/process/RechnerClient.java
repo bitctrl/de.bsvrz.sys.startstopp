@@ -42,6 +42,7 @@ class RechnerClient implements Runnable {
 	private StartStoppClient client;
 	private Map<String, Applikation> applikationen = new LinkedHashMap<>();
 	private boolean listeErmittelt = false;
+	private boolean fehlerGemeldet = false;
 	private Rechner rechner;
 
 	RechnerClient(Rechner rechner) {
@@ -52,7 +53,6 @@ class RechnerClient implements Runnable {
 	@Override
 	public void run() {
 		try {
-			LOGGER.info(rechner.getName() + ": Liste der Applikationen abrufen");
 			List<Applikation> remoteList = client.getApplikationen();
 			synchronized (applikationen) {
 				applikationen.clear();
@@ -60,10 +60,14 @@ class RechnerClient implements Runnable {
 					applikationen.put(applikation.getInkarnation().getInkarnationsName(), applikation);
 				}
 				listeErmittelt = true;
+				fehlerGemeldet = false;
 			}
 		} catch (StartStoppException e) {
-			LOGGER.fine(rechner.getName() + ": Liste der Applikationen konnte nicht abgerufen werden!",
-					e.getLocalizedMessage());
+			if (!fehlerGemeldet) {
+				LOGGER.fine(rechner.getName() + ": Liste der Applikationen konnte nicht abgerufen werden!",
+						e.getLocalizedMessage());
+				fehlerGemeldet = true;
+			}
 			synchronized (applikationen) {
 				applikationen.clear();
 				listeErmittelt = false;

@@ -54,10 +54,10 @@ public class StartStoppApplikation extends Applikation {
 		DEFAULT, WARTETIMER, INTERVALLTIMER;
 	}
 
-	public class SystemProzessListener implements InkarnationsProzessListener {
+	public class ProzessListener implements OSApplikationListener {
 
 		@Override
-		public void statusChanged(InkarnationsProzessStatus neuerStatus) {
+		public void statusChanged(OSApplikationStatus neuerStatus) {
 
 			switch (neuerStatus) {
 			case GESTOPPT:
@@ -104,7 +104,7 @@ public class StartStoppApplikation extends Applikation {
 
 	private static final Debug LOGGER = Debug.getLogger();
 
-	private transient InkarnationsProzessIf process = null;
+	private transient OSApplikation process = null;
 	private transient List<ManagedApplikationListener> listeners = new ArrayList<>();
 
 	private transient ScheduledFuture<?> warteTask;
@@ -114,7 +114,7 @@ public class StartStoppApplikation extends Applikation {
 	private ScheduledExecutorService intervallExecutor;
 
 	private transient ProzessManager prozessManager;
-	private transient SystemProzessListener systemProzessListener = new SystemProzessListener();
+	private transient ProzessListener systemProzessListener = new ProzessListener();
 
 	private long zyklischerStart;
 
@@ -205,7 +205,7 @@ public class StartStoppApplikation extends Applikation {
 
 	public void starteApplikation() {
 		updateStatus(Applikation.Status.GESTARTET, "Start initialisiert");
-		process = new InkarnationsProzess();
+		process = new OSApplikation();
 		process.setInkarnationsName(getInkarnation().getInkarnationsName());
 		process.setProgramm(getInkarnation().getApplikation());
 		process.setProgrammArgumente(getApplikationsArgumente());

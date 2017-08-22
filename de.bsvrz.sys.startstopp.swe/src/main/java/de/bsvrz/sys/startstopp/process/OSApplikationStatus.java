@@ -27,18 +27,15 @@
 package de.bsvrz.sys.startstopp.process;
 
 /**
- * Listener f&uuml;r Status&auml;nderungen.
+ * Status eines {@link OSApplikation}.
  * 
  * @author BitCtrl Systems GmbH, Gieseler
  * @version $Id: $
  *
  */
-public interface InkarnationsProzessListener {
-	/**
-	 * Wird aufgerufen, wenn sich der Status des {@link InkarnationsProzessIf} 
-	 * ge&auml;ndert hat.
-	 * 
-	 * @param neuerStatus {@link InkarnationsProzessStatus}
-	 */
-	void statusChanged(InkarnationsProzessStatus neuerStatus);
+public enum OSApplikationStatus {
+	UNDEFINED,
+	GESTOPPT,
+	GESTARTET,
+	STARTFEHLER
 }

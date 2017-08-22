@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.jutils.jprocesses.model.ProcessInfo;
@@ -44,50 +43,73 @@ import de.bsvrz.sys.funclib.debug.Debug;
  * @author gysi
  *
  */
-public class InkarnationsProzess implements InkarnationsProzessIf {
+public class OSApplikation {
+
+	public static final int STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC = 5;
 
 	private static final Debug LOGGER = Debug.getLogger();
 
-	private final List<InkarnationsProzessListener> prozessListeners = new CopyOnWriteArrayList<>();
+	private final List<OSApplikationListener> prozessListeners = new CopyOnWriteArrayList<>();
 
-	@Override
-	public void addProzessListener(final InkarnationsProzessListener listener) {
+	/**
+	 * F&uuml;gt einen {@link OSApplikationListener} hinzu.
+	 * 
+	 * @param listener
+	 *            {@link OSApplikationListener}
+	 */
+	public void addProzessListener(final OSApplikationListener listener) {
 		prozessListeners.add(listener);
 	}
 
-	@Override
-	public void removeProzessListener(final InkarnationsProzessListener listener) {
+	/**
+	 * Entfernt einen {@link OSApplikationListener}.
+	 * 
+	 * @param listener
+	 *            {@link OSApplikationListener}
+	 */
+	public void removeProzessListener(final OSApplikationListener listener) {
 		prozessListeners.remove(listener);
 	}
 
-//	private ExecutorService executor = Executors.newFixedThreadPool(2);
 	private ProcessInfo processInfo = null;
 	private Process process;
 	private String programm;
 	private String inkarnation;
-	private InkarnationsProzessStatus status = InkarnationsProzessStatus.UNDEFINED;
+	private OSApplikationStatus status = OSApplikationStatus.UNDEFINED;
 	private String startFehler;
 	private AusgabeVerarbeitung ausgabeUmlenkung;
 	private int lastExitCode;
 	private String programmArgumente;
 	private StringBuilder ausgaben = new StringBuilder(1024);
 
-	@Override
+	/**
+	 * Gibt den letzten Exit-Code des Prozesses zur&uuml;ck.
+	 * 
+	 * @return letzter Exit-Code
+	 */
 	public int getLastExitCode() {
 		return lastExitCode;
 	}
 
-	@Override
+	/**
+	 * Gibt Informationen zum Startfehler des Prozesses zur&uuml;ck.
+	 * 
+	 * @return Startfehler-Informationen
+	 */
 	public String getStartFehler() {
 		return startFehler;
 	}
 
-	@Override
-	public InkarnationsProzessStatus getStatus() {
+	/**
+	 * Gibt den aktuellen Status des Prozesses zur&uuml;ck.
+	 * 
+	 * @return {@link OSApplikationStatus}
+	 */
+	public OSApplikationStatus getStatus() {
 		return status;
 	}
 
-	private void setStatus(InkarnationsProzessStatus status) {
+	private void setStatus(OSApplikationStatus status) {
 		this.status = status;
 		notifyListener();
 	}
@@ -145,9 +167,10 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 				prozessStartFehler("Ursache unklar");
 			} else {
 				// Umlenken der Standard- und Standardfehlerausgabe
-				ausgabeUmlenkung = new AusgabeVerarbeitung(InkarnationsProzess.this, process);
-//				executor.execute(ausgabeUmlenkung);
-				Executors.newSingleThreadExecutor(new NamingThreadFactory(getInkarnationsName() + "_Ausgabeumlenkung")).submit(ausgabeUmlenkung);
+				ausgabeUmlenkung = new AusgabeVerarbeitung(OSApplikation.this, process);
+				// executor.execute(ausgabeUmlenkung);
+				Executors.newSingleThreadExecutor(new NamingThreadFactory(getInkarnationsName() + "_Ausgabeumlenkung"))
+						.submit(ausgabeUmlenkung);
 				processInfo = Tools.findProcess(cmdLineBuilder.toString());
 				if (processInfo == null) {
 					LOGGER.error("Prozessinfo kann nicht bestimmt werden!");
@@ -183,20 +206,22 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 			} else {
 				prozessBeendet(exitCode);
 			}
-//			executor.shutdown();
+			// executor.shutdown();
 		}
 	}
 
 	private void prozessGestartet() {
-		setStatus(InkarnationsProzessStatus.GESTARTET);
+		setStatus(OSApplikationStatus.GESTARTET);
 	}
 
 	private void prozessBeendet(int exitCode) {
 		lastExitCode = exitCode;
-		setStatus(InkarnationsProzessStatus.GESTOPPT);
+		setStatus(OSApplikationStatus.GESTOPPT);
 	}
 
-	@Override
+	/**
+	 * Startet den Prozess.
+	 */
 	public void start() {
 		if (getProgramm() == null || getProgramm().length() == 0) {
 			throw new IllegalStateException("Kein Programm versorgt");
@@ -210,53 +235,86 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		Executors.newSingleThreadExecutor(new NamingThreadFactory(getInkarnationsName())).submit(processThread);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Gibt die gespeicherten Standardausgaben und Standardfehlerausgaben des
+	 * Prozesses zur&uuml;ck.
 	 * 
-	 * @see testproc.InkarnationsProzessIf#getProzessAusgabe()
+	 * @return Standardausgaben und Standardfehlerausgaben
 	 */
-	@Override
+
 	public String getProzessAusgabe() {
 		return ausgaben.toString();
 	}
 
 	private void prozessStartFehler(String string) {
-		setStatus(InkarnationsProzessStatus.STARTFEHLER);
+		setStatus(OSApplikationStatus.STARTFEHLER);
 		startFehler = string;
 	}
 
-	@Override
+	/**
+	 * Gibt das auszuf&uuml;rende Programm des Prozesses zur&uuml;ck.
+	 * 
+	 * @return auszuf&uuml;rendes Programm
+	 */
 	public String getProgramm() {
 		return programm;
 	}
 
-	@Override
+	/**
+	 * Setzt das auszuf&uuml;rende Programm des Prozesses.
+	 * 
+	 * @param command
+	 *            auszuf&uuml;rendes Programm
+	 */
 	public void setProgramm(String command) {
 		this.programm = command;
 	}
 
-	@Override
+	/**
+	 * Gibt die Programmargumente zur&uuml;ck.
+	 * 
+	 * @return die Programmargumente
+	 */
 	public String getProgrammArgumente() {
 		return programmArgumente;
 	}
 
-	@Override
+	/**
+	 * Setzt die Programmargumente.
+	 * 
+	 * @param args
+	 *            Programmargumente (Kommandozeile)
+	 */
 	public void setProgrammArgumente(String args) {
 		this.programmArgumente = args;
 
 	}
 
-	@Override
+	/**
+	 * liefert den zugewiesenen Inkarnationsname.
+	 * 
+	 * @return der Name
+	 */
 	public String getInkarnationsName() {
 		return inkarnation;
 	}
 
-	@Override
+	/**
+	 * Setzt den Inkarnationsnamen des Prozesses.
+	 * 
+	 * @param command
+	 *            der Name
+	 */
 	public void setInkarnationsName(String command) {
 		inkarnation = command;
 	}
 
-	@Override
+	/**
+	 * Gibt die Pid des Prozesses zur&uuml;ck.
+	 * 
+	 * @return die Pid des Prozesses, <code>null</code> wenn der Prozess nicht
+	 *         gefunden werden konnte
+	 */
 	public Integer getPid() {
 		if (processInfo != null) {
 			return Integer.parseInt(processInfo.getPid());
@@ -264,7 +322,16 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		return null;
 	}
 
-	@Override
+	/**
+	 * Terminiert den Prozess (weiche Variante).
+	 * <p>
+	 * Unter Linux wird der Prozess &uuml;ber <code>Process.destroy</code> beendet
+	 * (Signal 15).
+	 * </p>
+	 * <p>
+	 * Unter Windows wird ein CTRl-C-EVENT an den Konsolen-Prozess gesendet.
+	 * </p>
+	 */
 	public void terminate() {
 		if (Tools.isWindows()) {
 			int terminateWindowsProzess = Tools.terminateWindowsProzess(getPid());
@@ -277,18 +344,31 @@ public class InkarnationsProzess implements InkarnationsProzessIf {
 		}
 	}
 
-	@Override
+	/**
+	 * Beendet den Prozess (harte Variante).
+	 * <p>
+	 * Der Prozess wird &uuml;ber <code>Process.destroyForcibly</code> beendet.
+	 * </p>
+	 */
 	public void kill() {
 		process.destroyForcibly();
 	}
 
-	@Override
+	/**
+	 * gibt an, ob ein Prozess terminiert werden kann oder ob nur kill möglich ist.
+	 * 
+	 * @return den Status
+	 */
 	public boolean terminateSupported() {
 		// TODO Eventuell unter Java 9 anpassen
 		return !Tools.isWindows();
 	}
 
-	@Override
+	/**
+	 * fügt der gesicherten Prozessausgabe eine Zeile hinzu
+	 * 
+	 * @param meldung
+	 */
 	public void addProzessAusgabe(String meldung) {
 		if (ausgaben.length() > 0) {
 			ausgaben.append('\n');

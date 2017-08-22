@@ -41,7 +41,7 @@ public class TestInkarnationsProzess {
 	private static String classPath;
 
 	private Object lock;
-	private InkarnationsProzessIf process;
+	private OSApplikation process;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -53,7 +53,7 @@ public class TestInkarnationsProzess {
 	@Before
 	public void setupTest() {
 		lock = new Object();
-		process = new InkarnationsProzess();
+		process = new OSApplikation();
 	}
 
 	@Test(timeout = 10000)
@@ -61,14 +61,14 @@ public class TestInkarnationsProzess {
 		process.setProgramm("bubu");
 		process.setInkarnationsName("testStartFehlerNoSuchFileOrDirecory");
 		process.addProzessListener((newStatus) -> {
-			if (newStatus == InkarnationsProzessStatus.STARTFEHLER)
+			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
 		});
 
 		process.start();
 		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, process.getStatus());
+		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
 		Assert.assertTrue("Startfehler", process.getStartFehler().contains("error=2"));
 	}
 
@@ -77,13 +77,13 @@ public class TestInkarnationsProzess {
 		process.setProgramm("java bubu");
 		process.setInkarnationsName("testStartFehlerMainClassNotFound");
 		process.addProzessListener((newStatus) -> {
-			if (newStatus == InkarnationsProzessStatus.STARTFEHLER)
+			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
 		});
 		process.start();
 		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, process.getStatus());
+		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
 		String ausgabe = process.getProzessAusgabe().toLowerCase();
 		System.err.println("Ausgabe: " + ausgabe);
 		Assert.assertTrue("Fehlermeldung: " + ausgabe,
@@ -97,7 +97,7 @@ public class TestInkarnationsProzess {
 		process.setProgrammArgumente("-invalidOption=");
 		process.setInkarnationsName("testStartFehlerInvalidOption");
 		process.addProzessListener((newStatus) -> {
-			if (newStatus == InkarnationsProzessStatus.STARTFEHLER)
+			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
 		});
 
@@ -105,7 +105,7 @@ public class TestInkarnationsProzess {
 
 		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.STARTFEHLER, process.getStatus());
+		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
 		String ausgabe = process.getProzessAusgabe().toLowerCase();
 		Assert.assertTrue("Fehlermeldung: " + ausgabe, ausgabe.contains("fatal exception"));
 		Assert.assertEquals("Exitcode", 1, process.getLastExitCode());
@@ -114,9 +114,9 @@ public class TestInkarnationsProzess {
 	@Test(timeout = 10000)
 	public final void testStartFehlerListener() throws InterruptedException {
 
-		List<InkarnationsProzessStatus> empfangen = new ArrayList<>();
-		InkarnationsProzessStatus[] erwartet = { InkarnationsProzessStatus.GESTARTET,
-				InkarnationsProzessStatus.STARTFEHLER };
+		List<OSApplikationStatus> empfangen = new ArrayList<>();
+		OSApplikationStatus[] erwartet = { OSApplikationStatus.GESTARTET,
+				OSApplikationStatus.STARTFEHLER };
 
 		process.setProgramm("java");
 		process.setProgrammArgumente("-invalidOption=");
@@ -139,9 +139,9 @@ public class TestInkarnationsProzess {
 	@Test(timeout = 20000)
 	public final void testStart() throws InterruptedException {
 
-		List<InkarnationsProzessStatus> empfangen = new ArrayList<>();
-		InkarnationsProzessStatus[] erwartet = { InkarnationsProzessStatus.GESTARTET,
-				InkarnationsProzessStatus.GESTOPPT };
+		List<OSApplikationStatus> empfangen = new ArrayList<>();
+		OSApplikationStatus[] erwartet = { OSApplikationStatus.GESTARTET,
+				OSApplikationStatus.GESTOPPT };
 
 		process.setProgramm("java");
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
@@ -179,13 +179,13 @@ public class TestInkarnationsProzess {
 		process.start();
 		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, process.getStatus());
+		Assert.assertEquals("Status", OSApplikationStatus.GESTARTET, process.getStatus());
 
-		TimeUnit.SECONDS.sleep(InkarnationsProzessIf.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC);
+		TimeUnit.SECONDS.sleep(OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC);
 		process.terminate();
 		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, process.getStatus());
+		Assert.assertEquals("Status", OSApplikationStatus.GESTOPPT, process.getStatus());
 	}
 
 	@Test(timeout = 20000)
@@ -199,13 +199,13 @@ public class TestInkarnationsProzess {
 		process.start();
 		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, process.getStatus());
+		Assert.assertEquals("Status", OSApplikationStatus.GESTARTET, process.getStatus());
 
-		TimeUnit.SECONDS.sleep(InkarnationsProzessIf.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC);
+		TimeUnit.SECONDS.sleep(OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC);
 		process.kill();
 		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTOPPT, process.getStatus());
+		Assert.assertEquals("Status", OSApplikationStatus.GESTOPPT, process.getStatus());
 	}
 
 	@Test
@@ -219,7 +219,7 @@ public class TestInkarnationsProzess {
 		process.start();
 		waitForLock();
 
-		Assert.assertEquals("Status", InkarnationsProzessStatus.GESTARTET, process.getStatus());
+		Assert.assertEquals("Status", OSApplikationStatus.GESTARTET, process.getStatus());
 		Assert.assertNotNull("Pid", process.getPid());
 	}
 

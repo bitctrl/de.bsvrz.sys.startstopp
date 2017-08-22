@@ -47,7 +47,7 @@ class AusgabeVerarbeitung implements Runnable {
 	private Object completer = new Object();
 
 	private boolean running;
-	private InkarnationsProzessIf inkarnation;
+	private OSApplikation inkarnation;
 
 	/**
 	 * Konstruktor der Klasse, startet automatisch den Thread, der die
@@ -58,7 +58,7 @@ class AusgabeVerarbeitung implements Runnable {
 	 * @param prozess
 	 *            Systemprozess der Inkarnation
 	 */
-	AusgabeVerarbeitung(final InkarnationsProzessIf inkarnation, final Process prozess) {
+	AusgabeVerarbeitung(final OSApplikation inkarnation, final Process prozess) {
 		stream = prozess.getInputStream();
 		this.inkarnation = inkarnation;
 	}
