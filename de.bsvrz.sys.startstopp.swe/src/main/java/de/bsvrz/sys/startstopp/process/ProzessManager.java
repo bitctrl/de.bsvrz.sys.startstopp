@@ -52,7 +52,7 @@ import de.bsvrz.sys.startstopp.process.StartStoppApplikation.TaskType;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 
-public final class ProzessManager implements SkriptManagerListener, ManagedApplikationListener {
+public final class ProzessManager implements SkriptManagerListener, StartStoppApplikationListener {
 
 	public enum Status {
 		INITIALIZED, RUNNING, STOPPING, STOPPED;
@@ -206,7 +206,7 @@ public final class ProzessManager implements SkriptManagerListener, ManagedAppli
 	}
 
 	@Override
-	public void skriptAktualisiert(StartStoppKonfiguration oldValue, StartStoppKonfiguration neueKonfiguration) {
+	public void skriptAktualisiert(StartStoppKonfiguration neueKonfiguration) {
 
 		boolean kernsystemGeandert = false;
 		List<String> entfernt = new ArrayList<>();

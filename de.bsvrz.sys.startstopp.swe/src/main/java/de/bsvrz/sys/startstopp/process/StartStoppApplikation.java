@@ -32,11 +32,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.funclib.debug.Debug;
@@ -54,58 +54,55 @@ public class StartStoppApplikation extends Applikation {
 		DEFAULT, WARTETIMER, INTERVALLTIMER;
 	}
 
-	public class ProzessListener implements OSApplikationListener {
-
-		@Override
-		public void statusChanged(OSApplikationStatus neuerStatus) {
-
-			switch (neuerStatus) {
-			case GESTOPPT:
-				if (process != null) {
-					process.removeProzessListener(this);
-					process = null;
-				}
-				switch (getInkarnation().getStartArt().getOption()) {
-				case INTERVALLABSOLUT:
-				case INTERVALLRELATIV:
-					updateStatus(Applikation.Status.INSTALLIERT, "");
-					break;
-				default:
-					if (getInkarnation().getStartArt().getNeuStart()) {
-						updateStatus(Applikation.Status.INSTALLIERT, "");
-					} else {
-						updateStatus(Applikation.Status.GESTOPPT, "");
-					}
-					break;
-
-				}
-				break;
-
-			case GESTARTET:
-				if (getInkarnation().getInitialize()) {
-					updateStatus(Applikation.Status.INITIALISIERT, "");
-				} else if (getStatus() != Applikation.Status.INITIALISIERT) {
-					updateStatus(Applikation.Status.GESTARTET, "");
-				}
-				break;
-			case STARTFEHLER:
-				updateStatus(Applikation.Status.GESTOPPT, "Fehler beim Starten");
-				if (process != null) {
-					System.err.println(process.getProzessAusgabe());
-					process.removeProzessListener(this);
-					process = null;
-				}
+	Consumer<OSApplikationStatus> osApplikationStatusHandler = this::handleOSApplikationStatus;
+	
+	public void handleOSApplikationStatus(OSApplikationStatus neuerStatus) {
+		switch (neuerStatus) {
+		case GESTOPPT:
+			if (process != null) {
+				process.removeStatusHandler(osApplikationStatusHandler);
+				process = null;
+			}
+			switch (getInkarnation().getStartArt().getOption()) {
+			case INTERVALLABSOLUT:
+			case INTERVALLRELATIV:
+				updateStatus(Applikation.Status.INSTALLIERT, "");
 				break;
 			default:
+				if (getInkarnation().getStartArt().getNeuStart()) {
+					updateStatus(Applikation.Status.INSTALLIERT, "");
+				} else {
+					updateStatus(Applikation.Status.GESTOPPT, "");
+				}
 				break;
+
 			}
+			break;
+
+		case GESTARTET:
+			if (getInkarnation().getInitialize()) {
+				updateStatus(Applikation.Status.INITIALISIERT, "");
+			} else if (getStatus() != Applikation.Status.INITIALISIERT) {
+				updateStatus(Applikation.Status.GESTARTET, "");
+			}
+			break;
+		case STARTFEHLER:
+			updateStatus(Applikation.Status.GESTOPPT, "Fehler beim Starten");
+			if (process != null) {
+				System.err.println(process.getProzessAusgabe());
+				process.removeStatusHandler(osApplikationStatusHandler);
+				process = null;
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
 	private static final Debug LOGGER = Debug.getLogger();
 
 	private transient OSApplikation process = null;
-	private transient List<ManagedApplikationListener> listeners = new ArrayList<>();
+	private transient List<StartStoppApplikationListener> listeners = new ArrayList<>();
 
 	private transient ScheduledFuture<?> warteTask;
 	private ScheduledExecutorService warteZeitExecutor;
@@ -114,7 +111,6 @@ public class StartStoppApplikation extends Applikation {
 	private ScheduledExecutorService intervallExecutor;
 
 	private transient ProzessManager prozessManager;
-	private transient ProzessListener systemProzessListener = new ProzessListener();
 
 	private long zyklischerStart;
 
@@ -132,7 +128,7 @@ public class StartStoppApplikation extends Applikation {
 		updateStatus(Applikation.Status.INSTALLIERT, "");
 	}
 
-	public void addManagedApplikationListener(ManagedApplikationListener listener) {
+	public void addManagedApplikationListener(StartStoppApplikationListener listener) {
 		listeners.add(listener);
 	}
 
@@ -154,17 +150,17 @@ public class StartStoppApplikation extends Applikation {
 		}
 
 		if (process != null) {
-			process.removeProzessListener(systemProzessListener);
+			process.removeStatusHandler(osApplikationStatusHandler);
 		}
 	}
 
 	private void fireStatusChanged(Applikation.Status oldStatus, Applikation.Status newStatus) {
-		List<ManagedApplikationListener> receiver;
+		List<StartStoppApplikationListener> receiver;
 		synchronized (listeners) {
 			receiver = new ArrayList<>(listeners);
 		}
 
-		for (ManagedApplikationListener listener : receiver) {
+		for (StartStoppApplikationListener listener : receiver) {
 			listener.applicationStatusChanged(this, oldStatus, newStatus);
 		}
 	}
@@ -199,7 +195,7 @@ public class StartStoppApplikation extends Applikation {
 		return getInkarnation().isKernSystem();
 	}
 
-	public void removeManagedApplikationListener(ManagedApplikationListener listener) {
+	public void removeManagedApplikationListener(StartStoppApplikationListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -209,7 +205,7 @@ public class StartStoppApplikation extends Applikation {
 		process.setInkarnationsName(getInkarnation().getInkarnationsName());
 		process.setProgramm(getInkarnation().getApplikation());
 		process.setProgrammArgumente(getApplikationsArgumente());
-		process.addProzessListener(systemProzessListener);
+		process.addStatusHandler(osApplikationStatusHandler);
 		process.start();
 	}
 

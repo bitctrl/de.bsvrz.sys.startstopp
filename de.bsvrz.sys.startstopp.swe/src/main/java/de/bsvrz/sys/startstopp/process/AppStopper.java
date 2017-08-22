@@ -5,11 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
 
-public class AppStopper implements Runnable, ManagedApplikationListener {
+public class AppStopper implements Runnable, StartStoppApplikationListener {
 
+	private static final Debug LOGGER = Debug.getLogger();
 	private Map<String, StartStoppApplikation> applikations = new LinkedHashMap<>();
 	private Object lock = new Object();
 	private boolean waitOnly;
@@ -37,16 +39,10 @@ public class AppStopper implements Runnable, ManagedApplikationListener {
 		}
 		synchronized (lock) {
 			try {
-				System.err.println("Warte auf Applikationen-Ende");
 				lock.wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.warning(e.getLocalizedMessage());
 			}
-		}
-		for (StartStoppApplikation applikation : applikations.values()) {
-			System.err.println("Entferne Listener für " + applikation.getInkarnation().getInkarnationsName());
-			applikation.removeManagedApplikationListener(this);
 		}
 	}
 
@@ -54,13 +50,12 @@ public class AppStopper implements Runnable, ManagedApplikationListener {
 	public void applicationStatusChanged(StartStoppApplikation applikation, Status oldValue, Status newValue) {
 		if (newValue != Applikation.Status.STOPPENWARTEN) {
 			applikations.remove(applikation.getInkarnation().getInkarnationsName());
+			applikation.removeManagedApplikationListener(this);
 			if (applikations.isEmpty()) {
 				synchronized (lock) {
 					lock.notifyAll();
 				}
-			} else {
-				System.err.println("Noch " + applikations.size() + " Applikationen");
-			}
+			} 
 		}
 	}
 }

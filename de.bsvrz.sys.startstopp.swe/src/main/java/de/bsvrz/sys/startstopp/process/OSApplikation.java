@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import org.jutils.jprocesses.model.ProcessInfo;
 
@@ -49,7 +50,7 @@ public class OSApplikation {
 
 	private static final Debug LOGGER = Debug.getLogger();
 
-	private final List<OSApplikationListener> prozessListeners = new CopyOnWriteArrayList<>();
+	private final List<Consumer<OSApplikationStatus>> statusHandlers = new CopyOnWriteArrayList<>();
 
 	/**
 	 * F&uuml;gt einen {@link OSApplikationListener} hinzu.
@@ -57,8 +58,8 @@ public class OSApplikation {
 	 * @param listener
 	 *            {@link OSApplikationListener}
 	 */
-	public void addProzessListener(final OSApplikationListener listener) {
-		prozessListeners.add(listener);
+	public void addStatusHandler(final Consumer<OSApplikationStatus> handler) {
+		statusHandlers.add(handler);
 	}
 
 	/**
@@ -67,8 +68,8 @@ public class OSApplikation {
 	 * @param listener
 	 *            {@link OSApplikationListener}
 	 */
-	public void removeProzessListener(final OSApplikationListener listener) {
-		prozessListeners.remove(listener);
+	public void removeStatusHandler(final Consumer<OSApplikationStatus> handler) {
+		statusHandlers.remove(handler);
 	}
 
 	private ProcessInfo processInfo = null;
@@ -115,7 +116,7 @@ public class OSApplikation {
 	}
 
 	private void notifyListener() {
-		prozessListeners.forEach(l -> l.statusChanged(status));
+		statusHandlers.forEach(l -> l.accept(status));
 	}
 
 	/**

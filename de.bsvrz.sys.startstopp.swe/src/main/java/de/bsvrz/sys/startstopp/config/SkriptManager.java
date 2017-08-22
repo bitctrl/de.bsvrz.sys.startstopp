@@ -306,7 +306,7 @@ public class SkriptManager {
 		}
 
 		for (SkriptManagerListener listener : receivers) {
-			listener.skriptAktualisiert(oldSkript, newSkript);
+			listener.skriptAktualisiert(newSkript);
 		}
 	}
 

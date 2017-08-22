@@ -60,7 +60,7 @@ public class TestInkarnationsProzess {
 	public final void testStartFehlerNoSuchFileOrDirecory() throws InterruptedException {
 		process.setProgramm("bubu");
 		process.setInkarnationsName("testStartFehlerNoSuchFileOrDirecory");
-		process.addProzessListener((newStatus) -> {
+		process.addStatusHandler((newStatus) -> {
 			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
 		});
@@ -76,7 +76,7 @@ public class TestInkarnationsProzess {
 	public final void testStartFehlerMainClassNotFound() throws InterruptedException {
 		process.setProgramm("java bubu");
 		process.setInkarnationsName("testStartFehlerMainClassNotFound");
-		process.addProzessListener((newStatus) -> {
+		process.addStatusHandler((newStatus) -> {
 			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
 		});
@@ -96,7 +96,7 @@ public class TestInkarnationsProzess {
 		process.setProgramm("java");
 		process.setProgrammArgumente("-invalidOption=");
 		process.setInkarnationsName("testStartFehlerInvalidOption");
-		process.addProzessListener((newStatus) -> {
+		process.addStatusHandler((newStatus) -> {
 			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
 		});
@@ -121,7 +121,7 @@ public class TestInkarnationsProzess {
 		process.setProgramm("java");
 		process.setProgrammArgumente("-invalidOption=");
 		process.setInkarnationsName("testStartFehlerListener");
-		process.addProzessListener((newStatus) -> {
+		process.addStatusHandler((newStatus) -> {
 			empfangen.add(newStatus);
 			if (empfangen.size() >= erwartet.length) {
 				triggerLock();
@@ -147,7 +147,7 @@ public class TestInkarnationsProzess {
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		process.setInkarnationsName("testStart");
 
-		process.addProzessListener((newStatus) -> {
+		process.addStatusHandler((newStatus) -> {
 			empfangen.add(newStatus);
 			if (empfangen.size() >= erwartet.length) {
 				triggerLock();
@@ -174,7 +174,7 @@ public class TestInkarnationsProzess {
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		process.setInkarnationsName("testTerminiere");
 
-		process.addProzessListener((neuerStatus)->triggerLock());
+		process.addStatusHandler((neuerStatus)->triggerLock());
 
 		process.start();
 		waitForLock();
@@ -194,7 +194,7 @@ public class TestInkarnationsProzess {
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
 		process.setInkarnationsName("testKill");
 
-		process.addProzessListener((neuerStatus) -> triggerLock());
+		process.addStatusHandler((neuerStatus) -> triggerLock());
 
 		process.start();
 		waitForLock();
@@ -214,7 +214,7 @@ public class TestInkarnationsProzess {
 		process.setProgramm("java");
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation -üUmlaut");
 		process.setInkarnationsName("testStartMitUmlaut");
-		process.addProzessListener((neuerStatus) -> triggerLock());
+		process.addStatusHandler((neuerStatus) -> triggerLock());
 
 		process.start();
 		waitForLock();
