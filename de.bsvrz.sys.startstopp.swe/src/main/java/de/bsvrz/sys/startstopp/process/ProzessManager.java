@@ -44,6 +44,8 @@ import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
@@ -58,21 +60,16 @@ import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 
 public final class ProzessManager {
 
-	public enum Status {
-		INITIALIZED, RUNNING, STOPPING, STOPPED;
-	}
-
 	public enum StartStoppMode {
 		SKRIPT, OS, MANUELL;
 	}
 
 	private static final Debug LOGGER = Debug.getLogger();
-	private Status managerStatus = Status.INITIALIZED;
+	private StartStoppStatus.Status managerStatus = StartStoppStatus.Status.INITIALIZED;
 
 	private Map<String, OnlineApplikation> applikationen = new LinkedHashMap<>();
 	private StartStoppKonfiguration aktuelleKonfiguration;
 	private DavConnector davConnector;
-	private String inkarnationsPrefix;
 	private RechnerManager rechnerManager = new RechnerManager();
 	private StartStopp startStopp;
 
@@ -103,6 +100,8 @@ public final class ProzessManager {
 				for (OnlineApplikation applikation : applikationen.values()) {
 					applikation.checkState();
 				}
+			} else {
+				managerStatus = Status.CONFIGERROR;
 			}
 		} catch (StartStoppException e) {
 			LOGGER.fine(e.getLocalizedMessage());
@@ -177,7 +176,7 @@ public final class ProzessManager {
 		if (applikation != null) {
 			try {
 				applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Beenden über Datenverteilernachricht");
-				davConnector.stoppApplikation(getInkarnationsPrefix() + inkarnationsName);
+				davConnector.stoppApplikation(inkarnationsName);
 			} catch (StartStoppException e) {
 				Debug.getLogger()
 						.warning("Die Applikation \"" + inkarnationsName
@@ -193,23 +192,25 @@ public final class ProzessManager {
 				"Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
-	public boolean isSkriptRunning() {
-		return managerStatus == Status.RUNNING;
-	}
-
-	public boolean isSkriptStopped() {
-		return managerStatus == Status.STOPPED;
-	}
-
 	public CompletableFuture<Void> stoppeSkript() {
 
-		if (managerStatus == Status.STOPPING) {
+		if (managerStatus != StartStoppStatus.Status.RUNNING) {
 			return new CompletableFuture<>();
 		}
-		managerStatus = Status.STOPPING;
+		managerStatus = StartStoppStatus.Status.STOPPING;
 		return CompletableFuture.runAsync(new SkriptStopper(this)).thenRun(() -> managerStatus = Status.STOPPED);
 	}
 
+	public CompletableFuture<Void> shutdownSkript() {
+
+		if (managerStatus == StartStoppStatus.Status.SHUTDOWN) {
+			return new CompletableFuture<>();
+		}
+		managerStatus = StartStoppStatus.Status.SHUTDOWN;
+		return CompletableFuture.runAsync(new SkriptStopper(this));
+	}
+
+	
 	private void skriptAktualisiert(StartStoppKonfiguration neueKonfiguration) {
 
 		boolean kernsystemGeandert = false;
@@ -494,26 +495,6 @@ public final class ProzessManager {
 		return davConnector.getConnectionMsg();
 	}
 
-	public String getInkarnationsPrefix() {
-
-		if (inkarnationsPrefix == null) {
-
-			StringBuilder builder = new StringBuilder(200);
-			builder.append("StartStopp_");
-			String hostName;
-			try {
-				hostName = InetAddress.getLocalHost().getHostName();
-				builder.append(hostName);
-			} catch (UnknownHostException e) {
-				LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
-				builder.append("unknown_host");
-			}
-			builder.append('_');
-			inkarnationsPrefix = builder.toString();
-		}
-
-		return inkarnationsPrefix;
-	}
 
 	public void updateFromDav(String inkarnationsName, boolean fertig) {
 		if (fertig) {

@@ -42,12 +42,14 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt.Option;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 import de.bsvrz.sys.startstopp.process.os.OSApplikation;
 import de.bsvrz.sys.startstopp.process.os.OSApplikationStatus;
+import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 import de.muspellheim.events.Event;
 
@@ -75,13 +77,21 @@ public class OnlineApplikation {
 
 	private OnlineInkarnation inkarnationsHandler;
 	private Applikation applikation;
+
+
+	private String inkarnationsPrefix;
 	
+
+	public OnlineApplikation(ProzessManager processmanager, OnlineInkarnation onlineInkarnation) {
+		this(StartStopp.getInstance(), processmanager, onlineInkarnation);
+	}
 	
-	public OnlineApplikation(ProzessManager processmanager, OnlineInkarnation inkarnationsHandler) {
+	public OnlineApplikation(StartStopp startStopp, ProzessManager processmanager, OnlineInkarnation onlineInkarnation) {
 		this.prozessManager = processmanager;
 		this.applikation = new Applikation();
-		applikation.setInkarnation(inkarnationsHandler.getInkarnation());
-		this.inkarnationsHandler = inkarnationsHandler;
+		this.inkarnationsPrefix = startStopp.getInkarnationsPrefix();
+		applikation.setInkarnation(onlineInkarnation.getInkarnation());
+		this.inkarnationsHandler = onlineInkarnation;
 		applikation.setLetzteStartzeit("noch nie gestartet"); 
 		applikation.setLetzteStoppzeit("noch nie gestoppt");
 
@@ -126,7 +136,7 @@ public class OnlineApplikation {
 
 		if (applikation.getInkarnation().getMitInkarnationsName()) {
 			builder.append(" -inkarnationsName=");
-			builder.append(prozessManager.getInkarnationsPrefix());
+			builder.append(inkarnationsPrefix);
 			builder.append(applikation.getInkarnation().getInkarnationsName());
 		}
 
@@ -236,7 +246,7 @@ public class OnlineApplikation {
 
 	private void handleInstalliertState() {
 
-		if (prozessManager.getStatus() != ProzessManager.Status.RUNNING) {
+		if (prozessManager.getStatus() != StartStoppStatus.Status.RUNNING) {
 			return;
 		}
 

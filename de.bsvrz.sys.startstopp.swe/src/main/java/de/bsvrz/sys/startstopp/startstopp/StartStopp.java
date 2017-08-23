@@ -26,6 +26,9 @@
 
 package de.bsvrz.sys.startstopp.startstopp;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
@@ -35,6 +38,7 @@ import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
+import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 
 public class StartStopp {
 
@@ -52,7 +56,7 @@ public class StartStopp {
 			instance.init(args);
 			instance.start();
 		} catch (Exception e) {
-			System.err.println(e.getLocalizedMessage()); 
+			System.err.println(e.getLocalizedMessage());
 			System.exit(-1);
 		}
 	}
@@ -64,6 +68,7 @@ public class StartStopp {
 	private ProzessManager processManager;
 
 	private ApiServer apiServer;
+	private String inkarnationsPrefix;
 
 	public StartStoppOptions getOptions() {
 		return options;
@@ -79,26 +84,15 @@ public class StartStopp {
 
 	public StartStoppStatus getStatus() {
 		StartStoppStatus status = new StartStoppStatus();
-		StartStoppKonfiguration skript = null;
 		try {
-			skript = skriptManager.getCurrentSkript();
+			skriptManager.getCurrentSkript();
 		} catch (StartStoppException e) {
 			LOGGER.fine(e.getLocalizedMessage());
 			status.setStatus(StartStoppStatus.Status.CONFIGERROR);
 			return status;
 		}
-		
-		if (skript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
-			status.setStatus(StartStoppStatus.Status.CONFIGERROR);
-		} else {
-			if (processManager.isSkriptRunning()) {
-				status.setStatus(StartStoppStatus.Status.RUNNING);
-			} else if (processManager.isSkriptStopped()) {
-				status.setStatus(StartStoppStatus.Status.STOPPED);
-			} else {
-				status.setStatus(StartStoppStatus.Status.INITIALIZED);
-			}
-		}
+
+		status.setStatus(processManager.getStatus());
 		return status;
 	}
 
@@ -117,6 +111,29 @@ public class StartStopp {
 	}
 
 	public void stoppStartStoppApplikation() {
-		processManager.stoppeSkript().thenRun(()->System.exit(0));
+		processManager.shutdownSkript().thenRun(() -> System.exit(0));
 	}
+	
+	public String getInkarnationsPrefix() {
+
+		if (inkarnationsPrefix == null) {
+
+			StringBuilder builder = new StringBuilder(200);
+			builder.append("StartStopp_");
+			String hostName;
+			try {
+				hostName = InetAddress.getLocalHost().getHostName();
+				builder.append(hostName);
+			} catch (UnknownHostException e) {
+				LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
+				builder.append("unknown_host");
+			}
+			builder.append('_');
+			inkarnationsPrefix = builder.toString();
+		}
+
+		return inkarnationsPrefix;
+	}
+
+	
 }

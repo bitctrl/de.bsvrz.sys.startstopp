@@ -42,6 +42,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
+import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
@@ -56,8 +57,15 @@ public class DavConnector {
 	private ApplikationStatusHandler appStatusHandler;
 	private UsvHandler usvHandler;
 
+	private String inkarnationsPrefix;
+
 	public DavConnector(ProzessManager prozessManager) {
+		this(StartStopp.getInstance(), prozessManager);
+	}
+
+	public DavConnector(StartStopp startStopp, ProzessManager prozessManager) {
 		this.processManager = prozessManager;
+		this.inkarnationsPrefix = startStopp.getInkarnationsPrefix();
 		appStatusHandler = new ApplikationStatusHandler(prozessManager);
 		usvHandler = new UsvHandler(processManager);
 		Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("DavConnector"))
@@ -176,7 +184,7 @@ public class DavConnector {
 
 	public void stoppApplikation(String name) throws StartStoppException {
 		if (isOnline()) {
-			appStatusHandler.terminiereAppPerDav(name);
+			appStatusHandler.terminiereAppPerDav(inkarnationsPrefix + name);
 		} else {
 			throw new StartStoppException("Es besteht keine Datenverteilerverbindung");
 		}

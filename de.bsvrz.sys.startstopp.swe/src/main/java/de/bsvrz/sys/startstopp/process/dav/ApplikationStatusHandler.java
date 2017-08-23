@@ -53,6 +53,7 @@ import de.bsvrz.dav.daf.main.config.SystemObjectType;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
+import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 class ApplikationStatusHandler implements DynamicObjectCreatedListener, InvalidationListener, ClientReceiverInterface {
 
@@ -80,9 +81,15 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 	private ClientDavConnection dav;
 	private Map<String, ApplikationStatus> applikationStatus = new LinkedHashMap<>();
 	private Set<DatenVerteiler> datenVerteiler = new LinkedHashSet<>();
+	private String inkarnationsPrefix;
 
 	ApplikationStatusHandler(ProzessManager processManager) {
+		this(StartStopp.getInstance(), processManager);
+	}
+
+	ApplikationStatusHandler(StartStopp startstopp, ProzessManager processManager) {
 		this.processManager = processManager;
+		this.inkarnationsPrefix = startstopp.getInkarnationsPrefix();
 	}
 
 	public void terminiereAppPerDav(String name) throws StartStoppException {
@@ -114,7 +121,7 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 		if (connection != null) {
 			dav = connection;
 			DataModel dataModel = dav.getDataModel();
- 
+
 			SystemObjectType datenVerteilerTyp = dataModel.getType("typ.datenverteiler");
 			datenVerteilerTyp.getElements().forEach(dvObj -> datenVerteiler.add(new DatenVerteiler(dav, dvObj)));
 
@@ -212,8 +219,8 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 		if (!name.isEmpty()) {
 			ApplikationStatus status = new ApplikationStatus(name, appObj, fertig);
 			applikationStatus.put(name, status);
-			if (name.startsWith(processManager.getInkarnationsPrefix())) {
-				String processMgrInkarnation = name.substring(processManager.getInkarnationsPrefix().length());
+			if (name.startsWith(inkarnationsPrefix)) {
+				String processMgrInkarnation = name.substring(inkarnationsPrefix.length());
 				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
 				processManager.updateFromDav(processMgrInkarnation, status.fertig);
 			}
