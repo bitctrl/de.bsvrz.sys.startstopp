@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.process;
+package de.bsvrz.sys.startstopp.process.os;
 
 import java.io.BufferedReader;
 import java.io.IOException;

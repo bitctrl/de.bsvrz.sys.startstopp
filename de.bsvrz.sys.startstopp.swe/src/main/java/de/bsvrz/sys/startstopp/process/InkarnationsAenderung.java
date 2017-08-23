@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+
 
 public class InkarnationsAenderung {
 
@@ -40,7 +42,7 @@ public class InkarnationsAenderung {
 
 	private Set<Typ> aenderungen = new LinkedHashSet<>();
 
-	public InkarnationsAenderung(StartStoppInkarnation inkarnation, StartStoppInkarnation letzteInkarnation) {
+	public InkarnationsAenderung(Inkarnation inkarnation, Inkarnation letzteInkarnation) {
 		if (!inkarnation.getApplikation().equals(letzteInkarnation.getApplikation())) {
 			aenderungen.add(Typ.APP);
 		}

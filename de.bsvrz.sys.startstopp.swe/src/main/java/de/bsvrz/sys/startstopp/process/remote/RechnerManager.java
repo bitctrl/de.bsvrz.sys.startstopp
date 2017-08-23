@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.process;
+package de.bsvrz.sys.startstopp.process.remote;
 
 import java.util.Collection;
 import java.util.Iterator;

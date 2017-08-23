@@ -42,7 +42,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
-import de.bsvrz.sys.startstopp.process.StartStoppApplikation;
+import de.bsvrz.sys.startstopp.process.OnlineApplikation;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/applikationen")
@@ -65,8 +65,8 @@ public class ApplikationenService {
 
 		
 		List<Applikation> applikationen = new ArrayList<>();
-		for( StartStoppApplikation applikation : processManager.getApplikationen()) {
-			applikationen.add(applikation);
+		for( OnlineApplikation applikation : processManager.getApplikationen()) {
+			applikationen.add(applikation.getApplikation());
 		}
 
 		Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
@@ -98,7 +98,7 @@ public class ApplikationenService {
 	public Response responseApplikationStart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			StartStoppApplikation applikation = processManager.starteApplikationOhnePruefung(inkarnationsName);
+			OnlineApplikation applikation = processManager.starteApplikationOhnePruefung(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation);
@@ -117,7 +117,7 @@ public class ApplikationenService {
 	public Response responseApplikationRestart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			StartStoppApplikation applikation = processManager.restarteApplikation(inkarnationsName);
+			OnlineApplikation applikation = processManager.restarteApplikation(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation);
@@ -136,7 +136,7 @@ public class ApplikationenService {
 	public Response responseApplikationStopp(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			StartStoppApplikation applikation = processManager.stoppeApplikation(inkarnationsName, StartStoppMode.MANUELL);
+			OnlineApplikation applikation = processManager.stoppeApplikation(inkarnationsName, StartStoppMode.MANUELL);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation);

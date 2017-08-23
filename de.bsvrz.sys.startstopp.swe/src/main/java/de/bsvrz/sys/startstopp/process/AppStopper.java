@@ -30,24 +30,48 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
 
-public class AppStopper implements Runnable, StartStoppApplikationListener {
+public class AppStopper implements Runnable {
+
+	class AppStatusHandler implements Consumer<Status> {
+
+		private OnlineApplikation applikation;
+
+		AppStatusHandler(OnlineApplikation applikation) {
+			this.applikation = applikation;
+		}
+
+		@Override
+		public void accept(Status status) {
+			if (status != Applikation.Status.STOPPENWARTEN) {
+				applikations.remove(applikation.getName());
+				applikation.onStatusChanged.removeHandler(this);
+				if (applikations.isEmpty()) {
+					synchronized (lock) {
+						lock.notifyAll();
+					}
+				} 
+			}
+
+		}
+	}
 
 	private static final Debug LOGGER = Debug.getLogger();
-	private Map<String, StartStoppApplikation> applikations = new LinkedHashMap<>();
+	private Map<String, OnlineApplikation> applikations = new LinkedHashMap<>();
 	private Object lock = new Object();
 	private boolean waitOnly;
 
-	AppStopper(Collection<StartStoppApplikation> applikations, boolean waitOnly) {
+	AppStopper(Collection<OnlineApplikation> applikations, boolean waitOnly) {
 		this.waitOnly = waitOnly;
-		for (StartStoppApplikation applikation : applikations) {
+		for (OnlineApplikation applikation : applikations) {
 			if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
-				this.applikations.put(applikation.getInkarnation().getInkarnationsName(), applikation);
-				applikation.addManagedApplikationListener(this);
+				this.applikations.put(applikation.getName(), applikation);
+				applikation.onStatusChanged.addHandler(new AppStatusHandler(applikation));
 			}
 		}
 	}
@@ -58,7 +82,7 @@ public class AppStopper implements Runnable, StartStoppApplikationListener {
 			return;
 		}
 		if (!waitOnly) {
-			for (StartStoppApplikation applikation : applikations.values()) {
+			for (OnlineApplikation applikation : applikations.values()) {
 				CompletableFuture.runAsync(
 						() -> applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Skript wird angehalten"));
 			}
@@ -69,19 +93,6 @@ public class AppStopper implements Runnable, StartStoppApplikationListener {
 			} catch (InterruptedException e) {
 				LOGGER.warning(e.getLocalizedMessage());
 			}
-		}
-	}
-
-	@Override
-	public void applicationStatusChanged(StartStoppApplikation applikation, Status oldValue, Status newValue) {
-		if (newValue != Applikation.Status.STOPPENWARTEN) {
-			applikations.remove(applikation.getInkarnation().getInkarnationsName());
-			applikation.removeManagedApplikationListener(this);
-			if (applikations.isEmpty()) {
-				synchronized (lock) {
-					lock.notifyAll();
-				}
-			} 
 		}
 	}
 }

@@ -32,40 +32,41 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 
-public class StartStoppInkarnation extends Inkarnation {
+public class OnlineInkarnation {
 
+	private Inkarnation inkarnation;
 	private KernSystem kernSystem = null;
 
-	public KernSystem getKernSystem() {
-		return kernSystem;
-	}
 
-	public StartStoppInkarnation(StartStoppKonfiguration skript, Inkarnation inkarnation) throws StartStoppException {
+	public OnlineInkarnation(StartStoppKonfiguration skript, Inkarnation quelle) throws StartStoppException {
 
 		for (KernSystem ks : skript.getSkript().getGlobal().getKernsysteme()) {
-			if (ks.getInkarnationsName().equals(inkarnation.getInkarnationsName())) {
+			if (ks.getInkarnationsName().equals(quelle.getInkarnationsName())) {
 				this.kernSystem = ks;
+				break;
 			}
 		}
 
-		setApplikation(skript.makroResolvedString(inkarnation.getApplikation()));
-		for (String aufrufParameter : inkarnation.getAufrufParameter()) {
-			getAufrufParameter().add(skript.makroResolvedString(aufrufParameter));
+		inkarnation = new Inkarnation();
+		
+		inkarnation.setApplikation(skript.makroResolvedString(quelle.getApplikation()));
+		for (String aufrufParameter : quelle.getAufrufParameter()) {
+			inkarnation.getAufrufParameter().add(skript.makroResolvedString(aufrufParameter));
 		}
-		setInkarnationsName(inkarnation.getInkarnationsName());
-		setInkarnationsTyp(inkarnation.getInkarnationsTyp());
-		StartArt startArt = inkarnation.getStartArt();
+		inkarnation.setInkarnationsName(quelle.getInkarnationsName());
+		inkarnation.setInkarnationsTyp(quelle.getInkarnationsTyp());
+		StartArt startArt = quelle.getStartArt();
 		if (startArt == null) {
-			setStartArt(new StartArt().withOption(StartArt.Option.AUTOMATISCH));
+			inkarnation.setStartArt(new StartArt().withOption(StartArt.Option.AUTOMATISCH));
 		} else {
-			setStartArt(startArt);
+			inkarnation.setStartArt(startArt);
 		}
-		setInitialize(inkarnation.getInitialize());
-		setMitInkarnationsName(inkarnation.getMitInkarnationsName());
-		setStartBedingung(skript.getResolvedStartBedingung(inkarnation.getStartBedingung()));
-		setStartFehlerVerhalten(skript.getResolvedStartFehlerVerhalten(inkarnation.getStartFehlerVerhalten()));
-		setStoppBedingung(skript.getResolvedStoppBedingung(inkarnation.getStoppBedingung()));
-		setStoppFehlerVerhalten(skript.getResolvedStoppFehlerVerhalten(inkarnation.getStoppFehlerVerhalten()));
+		inkarnation.setInitialize(quelle.getInitialize());
+		inkarnation.setMitInkarnationsName(quelle.getMitInkarnationsName());
+		inkarnation.setStartBedingung(skript.getResolvedStartBedingung(quelle.getStartBedingung()));
+		inkarnation.setStartFehlerVerhalten(skript.getResolvedStartFehlerVerhalten(quelle.getStartFehlerVerhalten()));
+		inkarnation.setStoppBedingung(skript.getResolvedStoppBedingung(quelle.getStoppBedingung()));
+		inkarnation.setStoppFehlerVerhalten(skript.getResolvedStoppFehlerVerhalten(quelle.getStoppFehlerVerhalten()));
 	}
 
 	public boolean isKernSystem() {
@@ -73,7 +74,7 @@ public class StartStoppInkarnation extends Inkarnation {
 	}
 
 	public boolean isTransmitter() {
-		for (String parameter : getAufrufParameter()) {
+		for (String parameter : inkarnation.getAufrufParameter()) {
 			if (parameter.contains("de.bsvrz.dav.dav.main.Transmitter")) {
 				return true;
 			}
@@ -86,8 +87,12 @@ public class StartStoppInkarnation extends Inkarnation {
 		return false;
 	}
 
+	public KernSystem getKernSystem() {
+		return kernSystem;
+	}
+	
 	public boolean isConfiguration() {
-		for (String parameter : getAufrufParameter()) {
+		for (String parameter : inkarnation.getAufrufParameter()) {
 			if (parameter.contains("de.bsvrz.puk.config.main.ConfigurationApp")) {
 				return true;
 			}
@@ -98,5 +103,13 @@ public class StartStoppInkarnation extends Inkarnation {
 		}
 
 		return false;
+	}
+
+	public String getName() {
+		return inkarnation.getInkarnationsName();
+	}
+
+	public Inkarnation getInkarnation() {
+		return inkarnation;
 	}
 }

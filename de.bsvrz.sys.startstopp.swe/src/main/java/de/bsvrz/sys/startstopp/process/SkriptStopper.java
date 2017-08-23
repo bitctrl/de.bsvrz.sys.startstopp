@@ -32,23 +32,24 @@ import java.util.Map;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
+import de.bsvrz.sys.startstopp.process.os.OSTools;
 
 class SkriptStopper implements Runnable {
 
 	private static final Debug LOGGER = Debug.getLogger();
-	private final Map<String, StartStoppApplikation> applikationen = new LinkedHashMap<>();
-	private final Map<String, StartStoppApplikation> kernsystem = new LinkedHashMap<>();
+	private final Map<String, OnlineApplikation> applikationen = new LinkedHashMap<>();
+	private final Map<String, OnlineApplikation> kernsystem = new LinkedHashMap<>();
 	private ProzessManager processManager;
 
 	SkriptStopper(ProzessManager processManager) {
 
 		this.processManager = processManager;
 
-		for (StartStoppApplikation applikation : processManager.getApplikationen()) {
+		for (OnlineApplikation applikation : processManager.getApplikationen()) {
 			if (applikation.isKernsystem()) {
-				kernsystem.put(applikation.getInkarnation().getInkarnationsName(), applikation);
+				kernsystem.put(applikation.getName(), applikation);
 			} else {
-				this.applikationen.put(applikation.getInkarnation().getInkarnationsName(), applikation);
+				this.applikationen.put(applikation.getName(), applikation);
 			}
 		}
 	}
@@ -58,12 +59,11 @@ class SkriptStopper implements Runnable {
 		AppStopper appStopper = new AppStopper(applikationen.values(), false);
 		appStopper.run();
 
-		if (Tools.isWindows()) {
-			for (StartStoppApplikation applikation : kernsystem.values()) {
+		if (OSTools.isWindows()) {
+			for (OnlineApplikation applikation : kernsystem.values()) {
 				if (applikation.isTransmitter()) {
 					try {
-						processManager.stoppeApplikation(applikation.getInkarnation().getInkarnationsName(),
-								StartStoppMode.SKRIPT);
+						processManager.stoppeApplikation(applikation.getName(), StartStoppMode.SKRIPT);
 					} catch (StartStoppException e) {
 						LOGGER.warning(e.getLocalizedMessage());
 					}

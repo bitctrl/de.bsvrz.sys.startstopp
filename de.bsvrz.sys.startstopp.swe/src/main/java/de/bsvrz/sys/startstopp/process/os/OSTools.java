@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.process;
+package de.bsvrz.sys.startstopp.process.os;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,10 +40,8 @@ import com.sun.jna.platform.win32.Kernel32;
  * Tools f&uuml;r die Inkarnationsprozesse.
  * 
  * @author BitCtrl Systems GmbH, Gieseler
- * @version $Id: $
- *
  */
-public class Tools {
+public class OSTools {
 	/**
 	 * Stellt fest, ob es sich um ein Windows System handelt.
 	 * 

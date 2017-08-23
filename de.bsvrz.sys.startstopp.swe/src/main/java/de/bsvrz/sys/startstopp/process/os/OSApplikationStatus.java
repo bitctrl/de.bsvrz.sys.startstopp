@@ -24,26 +24,16 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.process;
+package de.bsvrz.sys.startstopp.process.os;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-
-public class NamingThreadFactory implements ThreadFactory {
-
-	private String name;
-
-	public NamingThreadFactory(String name) {
-		this.name = name;
-	}
-
-	@Override
-	public Thread newThread(Runnable r) {
-		Thread thread = Executors.defaultThreadFactory().newThread(r);
-		if( thread != null) {
-			thread.setName(name + "_" + thread.getId());
-		}
-		return thread;
-	}
-
+/**
+ * Status eines {@link OSApplikation}.
+ * 
+ * @author BitCtrl Systems GmbH, Gieseler
+ */
+public enum OSApplikationStatus {
+	UNDEFINED,
+	GESTOPPT,
+	GESTARTET,
+	STARTFEHLER
 }

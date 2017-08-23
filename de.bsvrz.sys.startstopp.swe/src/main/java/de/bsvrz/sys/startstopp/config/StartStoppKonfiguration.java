@@ -53,9 +53,10 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
+import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
-import de.bsvrz.sys.startstopp.process.StartStoppInkarnation;
+import de.bsvrz.sys.startstopp.process.OnlineInkarnation;
 
 public final class StartStoppKonfiguration {
 
@@ -102,7 +103,7 @@ public final class StartStoppKonfiguration {
 		return result;
 	}
 
-	private StartStoppInkarnation getInkarnation(String name) throws StartStoppException {
+	private OnlineInkarnation getInkarnation(String name) throws StartStoppException {
 
 		if (name == null) {
 			throw new StartStoppException("Inkarnationsname fehlt!");
@@ -110,7 +111,7 @@ public final class StartStoppKonfiguration {
 
 		for (Inkarnation inkarnation : skript.getInkarnationen()) {
 			if (name.equals(inkarnation.getInkarnationsName())) {
-				return new StartStoppInkarnation(this, inkarnation);
+				return new OnlineInkarnation(this, inkarnation);
 			}
 		}
 		throw new StartStoppException("Ein referenziertes Skript mit dem Name \"" + name + "\" ist nicht definiert");
@@ -141,7 +142,7 @@ public final class StartStoppKonfiguration {
 			}
 			try {
 				for (String vorgaenger : startBedingung.getVorgaenger()) {
-					mustBeChecked.add(getInkarnation(vorgaenger));
+					mustBeChecked.add(getInkarnation(vorgaenger).getInkarnation());
 				}
 			} catch (StartStoppException e) {
 				LOGGER.fine(e.getLocalizedMessage());
@@ -187,7 +188,7 @@ public final class StartStoppKonfiguration {
 			}
 			try {
 				for (String nachfolger : stoppBedingung.getNachfolger()) {
-					mustBeChecked.add(getInkarnation(nachfolger));
+					mustBeChecked.add(getInkarnation(nachfolger).getInkarnation());
 				}
 			} catch (StartStoppException e) {
 				LOGGER.fine(e.getLocalizedMessage());
@@ -223,40 +224,40 @@ public final class StartStoppKonfiguration {
 
 		for (Inkarnation inkarnation : skript.getInkarnationen()) {
 			try {
-				StartStoppInkarnation startStoppInkarnation = new StartStoppInkarnation(this, inkarnation);
+				OnlineInkarnation onlineInkarnation = new OnlineInkarnation(this, inkarnation);
 				try {
-					if (startStoppInkarnation.getStartBedingung() != null) {
-						Util.convertToWarteZeitInMsec(startStoppInkarnation.getStartBedingung().getWartezeit());
+					if (onlineInkarnation.getInkarnation().getStartBedingung() != null) {
+						Util.convertToWarteZeitInMsec(onlineInkarnation.getInkarnation().getStartBedingung().getWartezeit());
 					}
 				} catch (StartStoppException e) {
-					result.add(inkarnation.getInkarnationsName()
+					result.add(onlineInkarnation.getInkarnation().getInkarnationsName()
 							+ ": Wartezeit für die Startbedingung kann nicht interpretiert werden: "
 							+ e.getLocalizedMessage());
 				}
 				try {
-					if (startStoppInkarnation.getStoppBedingung() != null) {
-						Util.convertToWarteZeitInMsec(startStoppInkarnation.getStoppBedingung().getWartezeit());
+					if (onlineInkarnation.getInkarnation().getStoppBedingung() != null) {
+						Util.convertToWarteZeitInMsec(onlineInkarnation.getInkarnation().getStoppBedingung().getWartezeit());
 					}
 				} catch (StartStoppException e) {
-					result.add(inkarnation.getInkarnationsName()
+					result.add(onlineInkarnation.getInkarnation().getInkarnationsName()
 							+ ": Wartezeit für die Stoppbedingung kann nicht interpretiert werden: "
 							+ e.getLocalizedMessage());
 				}
-				switch (startStoppInkarnation.getStartArt().getOption()) {
+				switch (onlineInkarnation.getInkarnation().getStartArt().getOption()) {
 				case INTERVALLABSOLUT:
 					try {
-						new CronDefinition(startStoppInkarnation.getStartArt().getIntervall());
+						new CronDefinition(onlineInkarnation.getInkarnation().getStartArt().getIntervall());
 					} catch (IllegalArgumentException e) {
-						result.add(inkarnation.getInkarnationsName()
+						result.add(onlineInkarnation.getInkarnation().getInkarnationsName()
 								+ ": Die CRON-Syntax für die zyklische Ausführung kann nicht interpretiert werden: "
 								+ e.getLocalizedMessage());
 					}
 					break;
 				case INTERVALLRELATIV:
 					try {
-						Util.convertToWarteZeitInMsec(startStoppInkarnation.getStartArt().getIntervall());
+						Util.convertToWarteZeitInMsec(onlineInkarnation.getInkarnation().getStartArt().getIntervall());
 					} catch (StartStoppException e) {
-						result.add(inkarnation.getInkarnationsName()
+						result.add(onlineInkarnation.getInkarnation().getInkarnationsName()
 								+ ": Das Intervall für die zyklische Ausführung kann nicht interpretiert werden: "
 								+ e.getLocalizedMessage());
 					}
@@ -293,14 +294,14 @@ public final class StartStoppKonfiguration {
 		return skriptStatus;
 	}
 
-	public Collection<StartStoppInkarnation> getInkarnationen() throws StartStoppException {
+	public Collection<OnlineInkarnation> getInkarnationen() throws StartStoppException {
 		if (skriptStatus.getStatus() != StartStoppSkriptStatus.Status.INITIALIZED) {
 			throw new StartStoppException("Das geladene StartStoppSkript ist nicht korrekt versioniert!");
 		}
 
-		Collection<StartStoppInkarnation> result = new ArrayList<>();
+		Collection<OnlineInkarnation> result = new ArrayList<>();
 		for (Inkarnation inkarnation : skript.getInkarnationen()) {
-			StartStoppInkarnation startStoppInkarnation = new StartStoppInkarnation(this, inkarnation);
+			OnlineInkarnation startStoppInkarnation = new OnlineInkarnation(this, inkarnation);
 			result.add(startStoppInkarnation);
 		}
 		return result;
@@ -505,5 +506,31 @@ public final class StartStoppKonfiguration {
 			result.addAll(skript.getGlobal().getKernsysteme());
 		}
 		return result;
+	}
+
+	public Usv getResolvedUsv() throws StartStoppException {
+		
+		Map<String, String> resolvedMakros = getResolvedMakros();
+		Pattern pattern = Pattern.compile("%.*?%");
+
+		Usv usv = getSkript().getGlobal().getUsv();
+		if( usv == null) {
+			return null;
+		}
+		
+		Usv resolvedUsv = new Usv();
+		String pid = usv.getPid();
+		Matcher matcher = pattern.matcher(pid);
+		while (matcher.find()) {
+			String part = matcher.group();
+			String key = part.substring(1, part.length() - 1);
+			String replacement = resolvedMakros.get(key);
+			if (replacement == null) {
+				throw new StartStoppException("Das Makro " + key + "ist nicht definiert!");
+			}
+			pid = pid.replaceAll(part, replacement);
+		}
+		resolvedUsv.setPid(pid);
+		return resolvedUsv;
 	}
 }

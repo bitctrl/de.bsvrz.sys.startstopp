@@ -42,27 +42,27 @@ public class KonfigurationsVergleicher {
 
 	public void vergleiche(StartStoppKonfiguration letzteKonfiguration, StartStoppKonfiguration neueKonfiguration) throws StartStoppException {
 
-		Map<String, StartStoppInkarnation> letzteInkarnationen = new LinkedHashMap<>();
-		for( StartStoppInkarnation inkarnation : letzteKonfiguration.getInkarnationen()) {
-			letzteInkarnationen.put(inkarnation.getInkarnationsName(), inkarnation);
+		Map<String, OnlineInkarnation> letzteInkarnationen = new LinkedHashMap<>();
+		for( OnlineInkarnation inkarnation : letzteKonfiguration.getInkarnationen()) {
+			letzteInkarnationen.put(inkarnation.getName(), inkarnation);
 		}
 
-		for( StartStoppInkarnation inkarnation : neueKonfiguration.getInkarnationen()) {
-			StartStoppInkarnation letzteInkarnation = letzteInkarnationen.remove(inkarnation.getInkarnationsName());
+		for( OnlineInkarnation inkarnation : neueKonfiguration.getInkarnationen()) {
+			OnlineInkarnation letzteInkarnation = letzteInkarnationen.remove(inkarnation.getName());
 			if( letzteInkarnation == null) {
 				kernSystemGeaendert = kernSystemGeaendert || inkarnation.isKernSystem();
 				continue;
 			}
 			
-			InkarnationsAenderung aenderung = new InkarnationsAenderung(inkarnation, letzteInkarnation);
+			InkarnationsAenderung aenderung = new InkarnationsAenderung(inkarnation.getInkarnation(), letzteInkarnation.getInkarnation());
 			if( !aenderung.getAenderungen().isEmpty()) {
-				geanderteInkarnationen.put(inkarnation.getInkarnationsName(), aenderung);
+				geanderteInkarnationen.put(inkarnation.getName(), aenderung);
 				kernSystemGeaendert = kernSystemGeaendert || inkarnation.isKernSystem() || letzteInkarnation.isKernSystem();
 			}
 		}
 
-		for( StartStoppInkarnation inkarnation : letzteInkarnationen.values()) {
-			entfernteInkarnationen.add(inkarnation.getInkarnationsName());
+		for( OnlineInkarnation inkarnation : letzteInkarnationen.values()) {
+			entfernteInkarnationen.add(inkarnation.getName());
 			kernSystemGeaendert = kernSystemGeaendert || inkarnation.isKernSystem();
 		}
 	}

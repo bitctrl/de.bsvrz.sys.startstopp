@@ -80,6 +80,7 @@ dependencies {
     compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:' + jackson_version
     compile 'org.jprocesses:jProcesses:1.6.3'
     compile 'com.nimbusds:srp6a:2.0.0'
+    compile 'de.muspellheim:events:1.1.0'
     testCompile 'junit:junit:4.12'       
 }
 

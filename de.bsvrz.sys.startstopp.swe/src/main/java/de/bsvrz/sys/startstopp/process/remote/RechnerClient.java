@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.process;
+package de.bsvrz.sys.startstopp.process.remote;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,7 +36,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-class RechnerClient implements Runnable {
+public class RechnerClient implements Runnable {
 
 	private static final Debug LOGGER = Debug.getLogger();
 	private StartStoppClient client;

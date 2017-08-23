@@ -41,7 +41,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.SortedMap;
@@ -70,6 +69,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.VersionierungsRequest;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
 import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
+import de.muspellheim.events.Event;
 
 /**
  * 
@@ -83,11 +83,11 @@ public class SkriptManager {
 
 	private static final Debug LOGGER = Debug.getLogger();
 	private final StartStopp startStopp;
-	private final List<SkriptManagerListener> listeners = new ArrayList<>();
 	private final SortedMap<Long, StartStoppVersion> versions = new TreeMap<>();
-
 	private StartStoppKonfiguration aktuelleKonfiguration;
 
+	public final Event<StartStoppKonfiguration> onKonfigurationChanged = new Event<>();
+	
 	public SkriptManager() {
 		this(StartStopp.getInstance());
 	}
@@ -203,7 +203,7 @@ public class SkriptManager {
 		if (newSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
 			newSkript = versionieren(newSkript, request);
 			aktuelleKonfiguration = newSkript;
-			fireSkriptChanged(aktuelleKonfiguration);
+			onKonfigurationChanged.send(aktuelleKonfiguration);
 			return aktuelleKonfiguration.getSkript();
 		}
 
@@ -296,25 +296,6 @@ public class SkriptManager {
 		}
 
 		throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" konnte nicht verifiziert werden!");
-	}
-
-	private void fireSkriptChanged(StartStoppKonfiguration newSkript) {
-		List<SkriptManagerListener> receivers;
-		synchronized (listeners) {
-			receivers = new ArrayList<>(listeners);
-		}
-
-		for (SkriptManagerListener listener : receivers) {
-			listener.skriptAktualisiert(newSkript);
-		}
-	}
-
-	public void addSkriptManagerListener(SkriptManagerListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeSkriptManagerListener(SkriptManagerListener listener) {
-		listeners.remove(listener);
 	}
 
 	public StartStoppKonfiguration versionieren(StartStoppKonfiguration skript, VersionierungsRequest request)

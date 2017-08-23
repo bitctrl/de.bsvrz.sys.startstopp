@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.process;
+package de.bsvrz.sys.startstopp.process.dav;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +41,9 @@ import de.bsvrz.dav.daf.main.config.management.UserAdministration;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
+import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 public class DavConnector {
 
@@ -52,10 +54,12 @@ public class DavConnector {
 	private ClientDavConnection connection = null;
 	private ProzessManager processManager;
 	private ApplikationStatusHandler appStatusHandler;
+	private UsvHandler usvHandler;
 
-	DavConnector(ProzessManager prozessManager) {
+	public DavConnector(ProzessManager prozessManager) {
 		this.processManager = prozessManager;
 		appStatusHandler = new ApplikationStatusHandler(prozessManager);
+		usvHandler = new UsvHandler(processManager);
 		Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("DavConnector"))
 				.scheduleAtFixedRate(() -> connectToDav(), 0, 10, TimeUnit.SECONDS);
 	}
@@ -77,6 +81,7 @@ public class DavConnector {
 							+ zugangDav.getPassWord() + "\"");
 					connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
 					appStatusHandler.reconnect(connection);
+					usvHandler.reconnect(connection);
 					processManager.davConnected();
 				}
 
@@ -126,7 +131,9 @@ public class DavConnector {
 		}
 	}
 
-	public void reconnect(ZugangDav newZugangDav) {
+	public void reconnect() {
+		ZugangDav newZugangDav = processManager.getZugangDav();
+
 		if (!newZugangDav.equals(zugangDav)) {
 			this.zugangDav = newZugangDav;
 			if (connection != null && connection.isConnected()) {
@@ -135,8 +142,9 @@ public class DavConnector {
 
 			connect();
 		} else {
-			LOGGER.info("Kein Reconnect erforderlich, Zugangsdaten wurden nicht verändert!");
+			usvHandler.reconnect(connection);
 		}
+
 		trigger();
 	}
 
@@ -154,6 +162,7 @@ public class DavConnector {
 			connection = new ClientDavConnection(parameters);
 			connection.addConnectionListener((conn) -> conn.disconnect(false, ""));
 			connection.setCloseHandler((error) -> LOGGER.info("Datenverteilerverbindung beendet: " + error));
+		
 		} catch (MissingParameterException e) {
 			LOGGER.warning("Datenverteilerverbindung kann nicht hergestellt werden!", e);
 		}

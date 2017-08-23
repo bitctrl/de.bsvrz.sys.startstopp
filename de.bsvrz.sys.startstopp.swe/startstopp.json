@@ -71,6 +71,9 @@
       "port" : "%dav1.appPort%",
       "userName" : "TestDatenverteilerBenutzer"
     },
+    "usv" : {
+      "pid" : "asp.anfrage"
+    },
     "rechner" : [ {
       "name" : "rechner2",
       "tcpAdresse" : "%rechner2.ip%",
@@ -265,9 +268,9 @@
     }
   } ],
   "metaDaten" : {
-    "aenderungsGrund" : "fjks sdkjfh ",
-    "erstelltAm" : "2017-08-22T15:54:13.425",
+    "aenderungsGrund" : "USV ergänzt",
+    "erstelltAm" : "2017-08-23T10:43:58.815",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1503410053425"
+    "versionsNummer" : "1503477838815"
   }
 }
