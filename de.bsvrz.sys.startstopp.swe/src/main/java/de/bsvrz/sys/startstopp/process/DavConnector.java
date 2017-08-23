@@ -49,7 +49,6 @@ public class DavConnector {
 
 	private ZugangDav zugangDav;
 	private Object lock = new Object();
-	private boolean running = true;
 	private ClientDavConnection connection = null;
 	private ProzessManager processManager;
 	private ApplikationStatusHandler appStatusHandler;

@@ -32,6 +32,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
+import de.bsvrz.sys.funclib.debug.Debug;
+
 /**
  * Klasse zum Einlesen bzw. Auswerten der Standardausgabe bzw.
  * Standardfehlerausgabe einer Inkarnation. Der Thread wird automatisch durch
@@ -39,6 +41,7 @@ import java.nio.charset.Charset;
  */
 class AusgabeVerarbeitung implements Runnable {
 
+	private static final Debug LOGGER = Debug.getLogger();
 	private static final int MAX_LOG_SIZE = 500;
 	private static final long MAX_LOG_TIME_IN_MSEC = 30000L;
 	private InputStream stream;
@@ -134,7 +137,7 @@ class AusgabeVerarbeitung implements Runnable {
 			try {
 				completer.wait(10000);
 			} catch (InterruptedException e) {
-				// ignore
+				LOGGER.warning(e.getLocalizedMessage());
 			}
 		}
 	}

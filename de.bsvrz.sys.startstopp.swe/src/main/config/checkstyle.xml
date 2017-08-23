@@ -62,6 +62,6 @@
   <module name="FileLength"/>
   <module name="UniqueProperties"/>
   <module name="SuppressionFilter">
-    <property name="file" value="${config_loc}checkstyle-suppressions.xml"/>
+    <property name="file" value="${config_loc}/checkstyle-suppressions.xml"/>
   </module>
 </module>

@@ -201,10 +201,9 @@ public class SkriptManager {
 
 		StartStoppKonfiguration newSkript = new StartStoppKonfiguration(request.getSkript());
 		if (newSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
-			StartStoppKonfiguration oldSkript = aktuelleKonfiguration;
 			newSkript = versionieren(newSkript, request);
 			aktuelleKonfiguration = newSkript;
-			fireSkriptChanged(oldSkript, aktuelleKonfiguration);
+			fireSkriptChanged(aktuelleKonfiguration);
 			return aktuelleKonfiguration.getSkript();
 		}
 
@@ -299,7 +298,7 @@ public class SkriptManager {
 		throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" konnte nicht verifiziert werden!");
 	}
 
-	private void fireSkriptChanged(StartStoppKonfiguration oldSkript, StartStoppKonfiguration newSkript) {
+	private void fireSkriptChanged(StartStoppKonfiguration newSkript) {
 		List<SkriptManagerListener> receivers;
 		synchronized (listeners) {
 			receivers = new ArrayList<>(listeners);

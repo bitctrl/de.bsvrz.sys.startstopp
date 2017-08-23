@@ -59,7 +59,7 @@ public final class ProzessManager implements SkriptManagerListener, StartStoppAp
 	}
 
 	public enum StartStoppMode {
-		SKRIPT, OS, EXTERNAL;
+		SKRIPT, OS, MANUELL;
 	}
 
 	private static final Debug LOGGER = Debug.getLogger();

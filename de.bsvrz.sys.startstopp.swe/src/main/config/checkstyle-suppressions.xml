@@ -6,5 +6,9 @@
 
 <suppressions>
 	<suppress files="[/\\]target[/\\]" checks=".*" />
-    <suppress files="[/\\]build[/\\]" checks=".*" />
+	<suppress files="[/\\]build[/\\]" checks=".*" />
+	<suppress checks="ClassDataAbstractionCoupling" files="StartStoppConsole.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="StartBedingungEditor.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="StoppBedingungEditor.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="SkriptEditor.java" />
 </suppressions>
