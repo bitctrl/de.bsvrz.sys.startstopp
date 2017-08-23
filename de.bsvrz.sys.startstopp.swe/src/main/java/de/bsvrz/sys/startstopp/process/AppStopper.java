@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
+import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 
 public class AppStopper implements Runnable {
 
@@ -65,9 +66,11 @@ public class AppStopper implements Runnable {
 	private Map<String, OnlineApplikation> applikations = new LinkedHashMap<>();
 	private Object lock = new Object();
 	private boolean waitOnly;
+	private StartStoppMode modus;
 
-	AppStopper(Collection<OnlineApplikation> applikations, boolean waitOnly) {
+	AppStopper(Collection<OnlineApplikation> applikations, StartStoppMode modus, boolean waitOnly) {
 		this.waitOnly = waitOnly;
+		this.modus = modus;
 		for (OnlineApplikation applikation : applikations) {
 			if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
 				this.applikations.put(applikation.getName(), applikation);
@@ -84,7 +87,7 @@ public class AppStopper implements Runnable {
 		if (!waitOnly) {
 			for (OnlineApplikation applikation : applikations.values()) {
 				CompletableFuture.runAsync(
-						() -> applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Skript wird angehalten"));
+						() -> applikation.updateStatus(Applikation.Status.STOPPENWARTEN, modus, "Skript wird angehalten"));
 			}
 		}
 		synchronized (lock) {

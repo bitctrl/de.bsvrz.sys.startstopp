@@ -37,7 +37,7 @@ import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 class OnlineInkarnationTable extends EditableTable<Applikation> {
 
 	OnlineInkarnationTable(List<Applikation> applikationen) {
-		super(applikationen, "Inkarnation", "Status", "Startzeit");
+		super(applikationen, "Inkarnation", "Status", "Meldung");
 		setTableCellRenderer(new OnlineTableCellRenderer());
 	}
 

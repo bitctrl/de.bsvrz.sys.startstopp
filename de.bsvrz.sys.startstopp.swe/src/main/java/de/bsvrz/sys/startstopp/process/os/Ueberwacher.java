@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
+import org.jutils.jprocesses.model.ProcessInfo;
+
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 /**
@@ -45,6 +47,7 @@ class Ueberwacher implements Runnable {
 	 * 
 	 */
 	private final OSApplikation osApplikation;
+	private AusgabeVerarbeitung ausgabeUmlenkung;
 
 	/**
 	 * @param osApplikation
@@ -57,15 +60,14 @@ class Ueberwacher implements Runnable {
 	private long endTime;
 
 	private void bereinigeProzess(int exitCode) {
-		OSApplikation.LOGGER.fine("Prozess der Inkarnation '" + this.osApplikation.getInkarnationsName()
+		OSApplikation.LOGGER.fine("Prozess der Inkarnation '" + osApplikation.getInkarnationsName()
 				+ "' beendet mit Code: " + exitCode);
 		if ((endTime - startTime) < (OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC * 1000)) {
-			OSApplikation.LOGGER.fine("Prozess der Inkarnation '" + this.osApplikation.getInkarnationsName()
+			OSApplikation.LOGGER.fine("Prozess der Inkarnation '" + osApplikation.getInkarnationsName()
 					+ "' lief weniger als " + OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC + "s");
-			this.osApplikation.lastExitCode = exitCode;
-			this.osApplikation.prozessStartFehler(this.osApplikation.getProzessAusgabe());
+			osApplikation.prozessStartFehler(exitCode);
 		} else {
-			this.osApplikation.prozessBeendet(exitCode);
+			osApplikation.prozessBeendet(exitCode);
 		}
 	}
 
@@ -78,15 +80,16 @@ class Ueberwacher implements Runnable {
 	 * Methode zum Starten einer Inkarnation.
 	 */
 	private void starteInkarnation() {
-		OSApplikation.LOGGER.info("Starte Inkarnation '" + this.osApplikation.getInkarnationsName() + "'");
+		OSApplikation.LOGGER.info("Starte Inkarnation '" + osApplikation.getInkarnationsName() + "'");
 		StringBuilder cmdLineBuilder = new StringBuilder();
 
+		Process process;
 		try {
-			cmdLineBuilder.append(this.osApplikation.getProgramm());
-			if (this.osApplikation.getProgrammArgumente() != null
-					&& this.osApplikation.getProgrammArgumente().length() > 0) {
+			cmdLineBuilder.append(osApplikation.getProgramm());
+			if (osApplikation.getProgrammArgumente() != null
+					&& osApplikation.getProgrammArgumente().length() > 0) {
 				cmdLineBuilder.append(" ");
-				cmdLineBuilder.append(this.osApplikation.getProgrammArgumente());
+				cmdLineBuilder.append(osApplikation.getProgrammArgumente());
 			}
 
 			String cmdLine = cmdLineBuilder.toString();
@@ -98,44 +101,44 @@ class Ueberwacher implements Runnable {
 				// TODO prüfen, ob das tatsächlich notwendig ist
 				builder.environment().put("LANG", "de_DE@euro");
 			}
-			this.osApplikation.process = builder.start();
+			process = builder.start();
 		} catch (IOException ioe) {
-			this.osApplikation.prozessStartFehler(ioe.getMessage());
+			osApplikation.prozessStartFehler(-1, ioe.getLocalizedMessage());
 			return;
 		}
+		
 		startTime = System.currentTimeMillis();
-
-		if (this.osApplikation.process == null) {
-			this.osApplikation.prozessStartFehler("Ursache unklar");
+		if (process == null) {
+			osApplikation.prozessStartFehler(-1, "Ursache unklar");
 		} else {
+			osApplikation.setProcess(process);
 			// Umlenken der Standard- und Standardfehlerausgabe
-			this.osApplikation.ausgabeUmlenkung = new AusgabeVerarbeitung(this.osApplikation,
-					this.osApplikation.process);
+			ausgabeUmlenkung = new AusgabeVerarbeitung(osApplikation,
+					process);
 			Executors
 					.newSingleThreadExecutor(
-							new NamingThreadFactory(this.osApplikation.getInkarnationsName() + "_Ausgabeumlenkung"))
-					.submit(this.osApplikation.ausgabeUmlenkung);
-			this.osApplikation.processInfo = OSTools.findProcess(cmdLineBuilder.toString());
-			if (this.osApplikation.processInfo == null) {
+							new NamingThreadFactory(osApplikation.getInkarnationsName() + "_Ausgabeumlenkung"))
+					.submit(ausgabeUmlenkung);
+			ProcessInfo processInfo = OSTools.findProcess(cmdLineBuilder.toString());
+			if (processInfo == null) {
 				OSApplikation.LOGGER.error("Prozessinfo kann nicht bestimmt werden!");
 			} else {
-				OSApplikation.LOGGER.fine("Inkarnation '" + this.osApplikation.getInkarnationsName()
-						+ "' gestartet (Pid: " + this.osApplikation.processInfo.getPid() + ")");
+				osApplikation.setPid(processInfo.getPid());
 			}
 
-			this.osApplikation.prozessGestartet();
-			ueberwacheProzess();
+			osApplikation.prozessGestartet();
+			ueberwacheProzess(process);
 		}
 	}
 
-	private void ueberwacheProzess() {
+	private void ueberwacheProzess(Process process) {
 		OSApplikation.LOGGER
-				.finer("Prozess der Inkarnation '" + this.osApplikation.getInkarnationsName() + "' wird überwacht");
+				.finer("Prozess der Inkarnation '" + osApplikation.getInkarnationsName() + "' wird überwacht");
 		try {
-			this.osApplikation.process.waitFor();
+			process.waitFor();
 			endTime = System.currentTimeMillis();
-			CompletableFuture.runAsync(() -> this.osApplikation.ausgabeUmlenkung.anhalten())
-					.thenRun(() -> bereinigeProzess(this.osApplikation.process.exitValue()));
+			CompletableFuture.runAsync(() -> ausgabeUmlenkung.anhalten())
+					.thenRun(() -> bereinigeProzess(process.exitValue()));
 		} catch (InterruptedException e) {
 			throw new IllegalStateException("Kann nicht passieren", e);
 		}

@@ -98,10 +98,10 @@ public class ApplikationenService {
 	public Response responseApplikationStart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			OnlineApplikation applikation = processManager.starteApplikationOhnePruefung(inkarnationsName);
+			OnlineApplikation applikation = processManager.starteApplikationOhnePruefung(inkarnationsName, StartStoppMode.MANUELL);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
-			responseBuilder.entity(applikation);
+			responseBuilder.entity(applikation.getApplikation());
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
 			StatusResponse status = new StatusResponse();
@@ -117,10 +117,10 @@ public class ApplikationenService {
 	public Response responseApplikationRestart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			OnlineApplikation applikation = processManager.restarteApplikation(inkarnationsName);
+			OnlineApplikation applikation = processManager.restarteApplikation(inkarnationsName, StartStoppMode.MANUELL);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
-			responseBuilder.entity(applikation);
+			responseBuilder.entity(applikation.getApplikation());
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
 			StatusResponse status = new StatusResponse();
@@ -139,7 +139,7 @@ public class ApplikationenService {
 			OnlineApplikation applikation = processManager.stoppeApplikation(inkarnationsName, StartStoppMode.MANUELL);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
-			responseBuilder.entity(applikation);
+			responseBuilder.entity(applikation.getApplikation());
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
 			StatusResponse status = new StatusResponse();

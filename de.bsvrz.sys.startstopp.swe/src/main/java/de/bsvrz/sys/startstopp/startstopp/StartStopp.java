@@ -31,12 +31,10 @@ import java.net.UnknownHostException;
 
 import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
 import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 
@@ -110,8 +108,8 @@ public class StartStopp {
 		apiServer.start();
 	}
 
-	public void stoppStartStoppApplikation() {
-		processManager.shutdownSkript().thenRun(() -> System.exit(0));
+	public void stoppStartStoppApplikation(StartStoppMode modus) {
+		processManager.shutdownSkript(modus).thenRun(() -> System.exit(0));
 	}
 	
 	public String getInkarnationsPrefix() {

@@ -122,7 +122,8 @@ public class OSTools {
 	 * 
 	 * @param pid
 	 */
-	public static int terminateWindowsProzess(Integer pid) {
+	public static int terminateWindowsProzess(int pid) {
+
 		if(!isWindows()) {
 			throw new IllegalStateException("Das ist kein Windows-System");
 		}

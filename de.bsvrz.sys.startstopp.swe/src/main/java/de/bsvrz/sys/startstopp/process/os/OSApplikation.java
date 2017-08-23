@@ -26,9 +26,10 @@
 
 package de.bsvrz.sys.startstopp.process.os;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executors;
-
-import org.jutils.jprocesses.model.ProcessInfo;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
@@ -38,37 +39,42 @@ import de.muspellheim.events.Event;
  * Systemprozess einer Inkarnation.
  * 
  * @author gysi
- *
  */
 public class OSApplikation {
 
 	public static final int STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC = 5;
 
 	static final Debug LOGGER = Debug.getLogger();
+
+	private final String programm;
+	private final String inkarnation;
+	private String programmArgumente;
+	
+	private Process process;
 	
 	public final Event<OSApplikationStatus> onStatusChange = new Event<>();
-	ProcessInfo processInfo = null;
-	Process process;
-	private String programm;
-	private String inkarnation;
 	private OSApplikationStatus status = OSApplikationStatus.UNDEFINED;
-	private String startFehler;
-	AusgabeVerarbeitung ausgabeUmlenkung;
-	int lastExitCode;
-	private String programmArgumente;
+	private int exitCode;
 
-	private StringBuilder ausgaben = new StringBuilder(1024);
+	private List<String> ausgaben = new ArrayList<>();
+	private Integer pid;
 
+	public OSApplikation(String inkarnation, String programm) {
+		super();
+		this.inkarnation = inkarnation;
+		this.programm = programm;
+	}
+	
 	/**
 	 * fügt der gesicherten Prozessausgabe eine Zeile hinzu
 	 * 
 	 * @param meldung
 	 */
-	public void addProzessAusgabe(String meldung) {
-		if (ausgaben.length() > 0) {
-			ausgaben.append('\n');
+	 void addProzessAusgabe(String meldung) {
+		if( ausgaben.isEmpty() && meldung.trim().isEmpty()) {
+			return;
 		}
-		ausgaben.append(meldung);
+		ausgaben.add(meldung);
 	}
 
 	/**
@@ -76,7 +82,7 @@ public class OSApplikation {
 	 * 
 	 * @return der Name
 	 */
-	public String getInkarnationsName() {
+	String getInkarnationsName() {
 		return inkarnation;
 	}
 
@@ -85,8 +91,8 @@ public class OSApplikation {
 	 * 
 	 * @return letzter Exit-Code
 	 */
-	public int getLastExitCode() {
-		return lastExitCode;
+	public int getExitCode() {
+		return exitCode;
 	}
 
 	/**
@@ -96,10 +102,7 @@ public class OSApplikation {
 	 *         gefunden werden konnte
 	 */
 	public Integer getPid() {
-		if (processInfo != null) {
-			return Integer.parseInt(processInfo.getPid());
-		}
-		return null;
+		return pid;
 	}
 
 	/**
@@ -107,7 +110,7 @@ public class OSApplikation {
 	 * 
 	 * @return auszuf&uuml;rendes Programm
 	 */
-	public String getProgramm() {
+	String getProgramm() {
 		return programm;
 	}
 
@@ -116,7 +119,7 @@ public class OSApplikation {
 	 * 
 	 * @return die Programmargumente
 	 */
-	public String getProgrammArgumente() {
+	String getProgrammArgumente() {
 		return programmArgumente;
 	}
 
@@ -127,17 +130,8 @@ public class OSApplikation {
 	 * @return Standardausgaben und Standardfehlerausgaben
 	 */
 
-	public String getProzessAusgabe() {
-		return ausgaben.toString();
-	}
-
-	/**
-	 * Gibt Informationen zum Startfehler des Prozesses zur&uuml;ck.
-	 * 
-	 * @return Startfehler-Informationen
-	 */
-	public String getStartFehler() {
-		return startFehler;
+	public List<String> getProzessAusgabe() {
+		return Collections.unmodifiableList(ausgaben);
 	}
 
 	/**
@@ -159,8 +153,8 @@ public class OSApplikation {
 		process.destroyForcibly();
 	}
 
-	void prozessBeendet(int exitCode) {
-		lastExitCode = exitCode;
+	void prozessBeendet(int code) {
+		this.exitCode = code;
 		setStatus(OSApplikationStatus.GESTOPPT);
 	}
 
@@ -168,29 +162,16 @@ public class OSApplikation {
 		setStatus(OSApplikationStatus.GESTARTET);
 	}
 
-	void prozessStartFehler(String string) {
+	void prozessStartFehler(int code) {
+		prozessStartFehler(code, null);
+	}
+	
+	void prozessStartFehler(int code, String message) {
+		this.exitCode = code;
+		if( message != null) {
+			addProzessAusgabe(message);
+		}
 		setStatus(OSApplikationStatus.STARTFEHLER);
-		startFehler = string;
-	}
-
-	/**
-	 * Setzt den Inkarnationsnamen des Prozesses.
-	 * 
-	 * @param command
-	 *            der Name
-	 */
-	public void setInkarnationsName(String command) {
-		inkarnation = command;
-	}
-
-	/**
-	 * Setzt das auszuf&uuml;rende Programm des Prozesses.
-	 * 
-	 * @param command
-	 *            auszuf&uuml;rendes Programm
-	 */
-	public void setProgramm(String command) {
-		this.programm = command;
 	}
 
 	/**
@@ -236,8 +217,8 @@ public class OSApplikation {
 	 * </p>
 	 */
 	public void terminate() {
-		if (OSTools.isWindows()) {
-			int terminateWindowsProzess = OSTools.terminateWindowsProzess(getPid());
+		if (OSTools.isWindows() && pid != null) {
+			int terminateWindowsProzess = OSTools.terminateWindowsProzess(pid);
 			if (terminateWindowsProzess != 0) {
 				LOGGER.warning("Fehler beim Terminieren der Inkarnation '" + getInkarnationsName() + "': "
 						+ terminateWindowsProzess);
@@ -255,5 +236,17 @@ public class OSApplikation {
 	public boolean terminateSupported() {
 		// TODO Eventuell unter Java 9 anpassen
 		return !OSTools.isWindows();
+	}
+
+	void setPid(String pidStr) {
+		try {
+			this.pid = Integer.parseInt(pidStr);
+		} catch (NumberFormatException e) {
+			LOGGER.error("PID kann nicht ermittelt werden: " + e.getLocalizedMessage());
+		}
+	}
+
+	void setProcess(Process process) {
+		this.process = process;
 	}
 }

@@ -32,6 +32,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/system")
@@ -61,7 +62,7 @@ public class SystemService {
 	@Path("exit")
 	public Response responseStartStoppExit() {
 		Response response = Response.accepted().build();
-		startStopp.stoppStartStoppApplikation();
+		startStopp.stoppStartStoppApplikation(StartStoppMode.MANUELL);
 		return response;
 	}
 
@@ -69,7 +70,7 @@ public class SystemService {
 	@Path("stopp")
 	public Response responseStartStoppStopp() {
 		Response response = Response.accepted().build();
-		startStopp.getProcessManager().stoppeSkript();
+		startStopp.getProcessManager().stoppeSkript(StartStoppMode.MANUELL);
 		return response;
 	}
 
@@ -77,7 +78,7 @@ public class SystemService {
 	@Path("restart")
 	public Response responseStartStoppRestart() {
 		Response response = Response.accepted().build();
-		startStopp.getProcessManager().stoppeSkript().thenRun(() -> startStopp.getProcessManager().starteSkript());
+		startStopp.getProcessManager().stoppeSkript(StartStoppMode.MANUELL).thenRun(() -> startStopp.getProcessManager().starteSkript(StartStoppMode.MANUELL));
 		return response;
 	}
 
@@ -85,7 +86,7 @@ public class SystemService {
 	@Path("start")
 	public Response responseStartStoppStart() {
 		Response response = Response.accepted().build();
-		startStopp.getProcessManager().starteSkript();
+		startStopp.getProcessManager().starteSkript(StartStoppMode.MANUELL);
 		return response;
 	}
 

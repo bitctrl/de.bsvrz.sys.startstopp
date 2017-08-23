@@ -40,10 +40,12 @@ class SkriptStopper implements Runnable {
 	private final Map<String, OnlineApplikation> applikationen = new LinkedHashMap<>();
 	private final Map<String, OnlineApplikation> kernsystem = new LinkedHashMap<>();
 	private ProzessManager processManager;
+	private StartStoppMode modus;
 
-	SkriptStopper(ProzessManager processManager) {
+	SkriptStopper(ProzessManager processManager, StartStoppMode modus) {
 
 		this.processManager = processManager;
+		this.modus = modus;
 
 		for (OnlineApplikation applikation : processManager.getApplikationen()) {
 			if (applikation.isKernsystem()) {
@@ -56,24 +58,24 @@ class SkriptStopper implements Runnable {
 
 	@Override
 	public void run() {
-		AppStopper appStopper = new AppStopper(applikationen.values(), false);
+		AppStopper appStopper = new AppStopper(applikationen.values(), modus, false);
 		appStopper.run();
 
 		if (OSTools.isWindows()) {
 			for (OnlineApplikation applikation : kernsystem.values()) {
 				if (applikation.isTransmitter()) {
 					try {
-						processManager.stoppeApplikation(applikation.getName(), StartStoppMode.SKRIPT);
+						processManager.stoppeApplikation(applikation.getName(), modus);
 					} catch (StartStoppException e) {
 						LOGGER.warning(e.getLocalizedMessage());
 					}
 					break;
 				}
 			}
-			appStopper = new AppStopper(kernsystem.values(), true);
+			appStopper = new AppStopper(kernsystem.values(), modus, true);
 			appStopper.run();
 		} else {
-			appStopper = new AppStopper(kernsystem.values(), false);
+			appStopper = new AppStopper(kernsystem.values(), modus, false);
 			appStopper.run();
 		}
 	}

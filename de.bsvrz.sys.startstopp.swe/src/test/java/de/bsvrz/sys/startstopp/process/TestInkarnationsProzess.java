@@ -44,7 +44,6 @@ public class TestInkarnationsProzess {
 	private static String classPath;
 
 	private Object lock;
-	private OSApplikation process;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -56,13 +55,11 @@ public class TestInkarnationsProzess {
 	@Before
 	public void setupTest() {
 		lock = new Object();
-		process = new OSApplikation();
 	}
 
 	@Test(timeout = 10000)
 	public final void testStartFehlerNoSuchFileOrDirecory() throws InterruptedException {
-		process.setProgramm("bubu");
-		process.setInkarnationsName("testStartFehlerNoSuchFileOrDirecory");
+		OSApplikation process = new OSApplikation("testStartFehlerNoSuchFileOrDirecory", "bubu");
 		process.onStatusChange.addHandler((newStatus) -> {
 			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
@@ -72,13 +69,12 @@ public class TestInkarnationsProzess {
 		waitForLock();
 
 		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
-		Assert.assertTrue("Startfehler", process.getStartFehler().contains("error=2"));
+		Assert.assertTrue("Fehlermeldung ist leer", !process.getProzessAusgabe().isEmpty());
 	}
 
 	@Test(timeout = 10000)
 	public final void testStartFehlerMainClassNotFound() throws InterruptedException {
-		process.setProgramm("java bubu");
-		process.setInkarnationsName("testStartFehlerMainClassNotFound");
+		OSApplikation process = new OSApplikation("testStartFehlerMainClassNotFound", "java bubu");
 		process.onStatusChange.addHandler((newStatus) -> {
 			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
@@ -87,16 +83,14 @@ public class TestInkarnationsProzess {
 		waitForLock();
 
 		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
-		String ausgabe = process.getProzessAusgabe().toLowerCase();
-		Assert.assertTrue("Fehlermeldung ist leer", !ausgabe.trim().isEmpty());
-		Assert.assertEquals("Exitcode", 1, process.getLastExitCode());
+		Assert.assertTrue("Fehlermeldung ist leer", !process.getProzessAusgabe().isEmpty());
+		Assert.assertEquals("Exitcode", 1, process.getExitCode());
 	}
 
 	@Test(timeout = 10000)
 	public final void testStartFehlerInvalidOption() throws InterruptedException {
-		process.setProgramm("java");
+		OSApplikation process = new OSApplikation("testStartFehlerInvalidOption", "java");
 		process.setProgrammArgumente("-invalidOption=");
-		process.setInkarnationsName("testStartFehlerInvalidOption");
 		process.onStatusChange.addHandler((newStatus) -> {
 			if (newStatus == OSApplikationStatus.STARTFEHLER)
 				triggerLock();
@@ -107,9 +101,8 @@ public class TestInkarnationsProzess {
 		waitForLock();
 
 		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
-		String ausgabe = process.getProzessAusgabe().toLowerCase();
-		Assert.assertTrue("Fehlermeldung ist leer", !ausgabe.trim().isEmpty());
-		Assert.assertEquals("Exitcode", 1, process.getLastExitCode());
+		Assert.assertTrue("Fehlermeldung ist leer", !process.getProzessAusgabe().isEmpty());
+		Assert.assertEquals("Exitcode", 1, process.getExitCode());
 	}
 
 	@Test(timeout = 10000)
@@ -119,9 +112,8 @@ public class TestInkarnationsProzess {
 		OSApplikationStatus[] erwartet = { OSApplikationStatus.GESTARTET,
 				OSApplikationStatus.STARTFEHLER };
 
-		process.setProgramm("java");
+		OSApplikation process = new OSApplikation("testStartFehlerListener", "java");
 		process.setProgrammArgumente("-invalidOption=");
-		process.setInkarnationsName("testStartFehlerListener");
 		process.onStatusChange.addHandler((newStatus) -> {
 			empfangen.add(newStatus);
 			if (empfangen.size() >= erwartet.length) {
@@ -144,9 +136,8 @@ public class TestInkarnationsProzess {
 		OSApplikationStatus[] erwartet = { OSApplikationStatus.GESTARTET,
 				OSApplikationStatus.GESTOPPT };
 
-		process.setProgramm("java");
+		OSApplikation process = new OSApplikation("testStart", "java");
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
-		process.setInkarnationsName("testStart");
 
 		process.onStatusChange.addHandler((newStatus) -> {
 			empfangen.add(newStatus);
@@ -166,15 +157,12 @@ public class TestInkarnationsProzess {
 	@Test(timeout = 20000)
 	public final void testTerminiere() throws InterruptedException {
 
+		OSApplikation process = new OSApplikation("testTerminiere", "java");
 		if (!process.terminateSupported()) {
 			System.err.println("TODO: Test not supported for this environment");
 			return;
 		}
-
-		process.setProgramm("java");
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
-		process.setInkarnationsName("testTerminiere");
-
 		process.onStatusChange.addHandler((neuerStatus)->triggerLock());
 
 		process.start();
@@ -191,9 +179,9 @@ public class TestInkarnationsProzess {
 
 	@Test(timeout = 20000)
 	public final void testKill() throws InterruptedException {
-		process.setProgramm("java");
+
+		OSApplikation process = new OSApplikation("testKill", "java");
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation");
-		process.setInkarnationsName("testKill");
 
 		process.onStatusChange.addHandler((neuerStatus) -> triggerLock());
 
@@ -212,9 +200,8 @@ public class TestInkarnationsProzess {
 	@Test
 	public final void testStartMitUmlaut() throws InterruptedException {
 
-		process.setProgramm("java");
+		OSApplikation process = new OSApplikation("testStartMitUmlaut", "java");
 		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation -üUmlaut");
-		process.setInkarnationsName("testStartMitUmlaut");
 		process.onStatusChange.addHandler((neuerStatus) -> triggerLock());
 
 		process.start();

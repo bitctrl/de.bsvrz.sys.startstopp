@@ -26,8 +26,6 @@
 
 package de.bsvrz.sys.startstopp.process;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -128,14 +126,14 @@ public final class ProzessManager {
 				"Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
-	public OnlineApplikation starteApplikationOhnePruefung(String inkarnationsName) throws StartStoppException {
+	public OnlineApplikation starteApplikationOhnePruefung(String inkarnationsName, StartStoppMode modus) throws StartStoppException {
 		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation == null) {
 			throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName
 					+ "\" konnte nicht gefunden werden");
 		}
 
-		applikation.startSystemProcess();
+		applikation.startSystemProcess(modus);
 		return applikation;
 	}
 
@@ -152,16 +150,16 @@ public final class ProzessManager {
 	 * @throws StartStoppException
 	 *             der Neustart ist fehlgeschlagen
 	 */
-	public OnlineApplikation restarteApplikation(String inkarnationsName) throws StartStoppException {
+	public OnlineApplikation restarteApplikation(String inkarnationsName, StartStoppMode modus) throws StartStoppException {
 		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation == null) {
 			throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName
 					+ "\" konnte nicht gefunden werden");
 		}
 
-		CompletableFuture.runAsync(new AppStopper(Collections.singleton(applikation), false)).thenRun(() -> {
+		CompletableFuture.runAsync(new AppStopper(Collections.singleton(applikation), modus, false)).thenRun(() -> {
 			try {
-				applikation.startSystemProcess();
+				applikation.startSystemProcess(modus);
 			} catch (StartStoppException e) {
 				LOGGER.warning(e.getLocalizedMessage());
 			}
@@ -175,14 +173,14 @@ public final class ProzessManager {
 		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation != null) {
 			try {
-				applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Beenden über Datenverteilernachricht");
+				applikation.updateStatus(Applikation.Status.STOPPENWARTEN, modus, "Beenden über Datenverteilernachricht");
 				davConnector.stoppApplikation(inkarnationsName);
 			} catch (StartStoppException e) {
 				Debug.getLogger()
 						.warning("Die Applikation \"" + inkarnationsName
 								+ "\" konnte nicht über die Dav-Terminierungsschnittstelle beendet werden: "
 								+ e.getLocalizedMessage());
-				applikation.stoppSystemProcess();
+				applikation.stoppSystemProcess(modus);
 			}
 
 			return applikation;
@@ -192,22 +190,22 @@ public final class ProzessManager {
 				"Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName + "\" konnte nicht gefunden werden");
 	}
 
-	public CompletableFuture<Void> stoppeSkript() {
+	public CompletableFuture<Void> stoppeSkript(StartStoppMode modus) {
 
 		if (managerStatus != StartStoppStatus.Status.RUNNING) {
 			return new CompletableFuture<>();
 		}
 		managerStatus = StartStoppStatus.Status.STOPPING;
-		return CompletableFuture.runAsync(new SkriptStopper(this)).thenRun(() -> managerStatus = Status.STOPPED);
+		return CompletableFuture.runAsync(new SkriptStopper(this, modus)).thenRun(() -> managerStatus = Status.STOPPED);
 	}
 
-	public CompletableFuture<Void> shutdownSkript() {
+	public CompletableFuture<Void> shutdownSkript(StartStoppMode modus) {
 
 		if (managerStatus == StartStoppStatus.Status.SHUTDOWN) {
 			return new CompletableFuture<>();
 		}
 		managerStatus = StartStoppStatus.Status.SHUTDOWN;
-		return CompletableFuture.runAsync(new SkriptStopper(this));
+		return CompletableFuture.runAsync(new SkriptStopper(this, modus));
 	}
 
 	
@@ -231,7 +229,7 @@ public final class ProzessManager {
 		}
 
 		if (kernsystemGeandert) {
-			stoppeSkript().thenRun(() -> {
+			stoppeSkript(StartStoppMode.SKRIPT).thenRun(() -> {
 				System.err.println("=====================================");
 				System.err.println("=       SKRIPT GESTOPPT             =");
 				System.err.println("=====================================");
@@ -252,7 +250,7 @@ public final class ProzessManager {
 			for (String name : entfernt) {
 				OnlineApplikation applikation = applikationen.remove(name);
 				if (applikation != null) {
-					applikation.stoppSystemProcess();
+					applikation.stoppSystemProcess(StartStoppMode.SKRIPT);
 					applikation.dispose();
 				}
 			}
@@ -263,7 +261,7 @@ public final class ProzessManager {
 					applikation = new OnlineApplikation(this, inkarnation);
 					applikationen.put(applikation.getName(), applikation);
 					applikation.onStatusChanged.addHandler((status) -> applikationStatusChanged());
-					applikation.updateStatus(Applikation.Status.INSTALLIERT, "Applikation angelegt");
+					applikation.updateStatus(Applikation.Status.INSTALLIERT, StartStoppMode.SKRIPT, "Applikation angelegt");
 					if (managerStatus == Status.RUNNING) {
 						applikation.checkState();
 					}
@@ -271,12 +269,12 @@ public final class ProzessManager {
 					applikation.getApplikation().setInkarnation(inkarnation.getInkarnation());
 					if ((managerStatus == Status.RUNNING) && geandert.containsKey(inkarnation.getName())) {
 						// TODO Änderungen genauer auswerten
-						restarteApplikation(inkarnation.getName());
+						restarteApplikation(inkarnation.getName(), StartStoppMode.SKRIPT);
 					}
 				}
 			}
 
-			starteSkript();
+			starteSkript(StartStoppMode.SKRIPT);
 
 		} catch (StartStoppException e) {
 			LOGGER.error(e.getLocalizedMessage());
@@ -497,29 +495,28 @@ public final class ProzessManager {
 
 
 	public void updateFromDav(String inkarnationsName, boolean fertig) {
+		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (fertig) {
-			OnlineApplikation applikation = applikationen.get(inkarnationsName);
 			if (applikation.getStatus() == Applikation.Status.GESTARTET) {
-				System.err.println("Setze " + inkarnationsName + " auf initialisiert");
 				applikation.updateStatus(Applikation.Status.INITIALISIERT, "");
 			} else {
 				LOGGER.warning(applikation.getName() + " ist im Status "
 						+ applikation.getStatus());
 			}
-		}
+		} 
 	}
 
 	public void stopperFinished() {
 		managerStatus = Status.STOPPED;
 	}
 
-	public void starteSkript() {
+	public void starteSkript(StartStoppMode modus) {
 
 		managerStatus = Status.RUNNING;
 		for (OnlineApplikation applikation : applikationen.values()) {
 			if (applikation.getStartArtOption() != StartArt.Option.MANUELL) {
 				if (applikation.getStatus() == Applikation.Status.GESTOPPT) {
-					applikation.updateStatus(Applikation.Status.INSTALLIERT, "");
+					applikation.updateStatus(Applikation.Status.INSTALLIERT, modus, "");
 				} else if (applikation.getStatus() == Applikation.Status.INSTALLIERT) {
 					applikation.checkState();
 				}

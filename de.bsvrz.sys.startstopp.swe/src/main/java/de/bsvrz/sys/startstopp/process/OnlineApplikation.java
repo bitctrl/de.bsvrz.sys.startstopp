@@ -28,7 +28,9 @@ package de.bsvrz.sys.startstopp.process;
 
 import java.lang.management.ManagementFactory;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -60,7 +62,6 @@ public class OnlineApplikation {
 	}
 
 	Consumer<OSApplikationStatus> osApplikationStatusHandler = this::handleOSApplikationStatus;
-	
 
 	private static final Debug LOGGER = Debug.getLogger();
 
@@ -78,21 +79,24 @@ public class OnlineApplikation {
 	private OnlineInkarnation inkarnationsHandler;
 	private Applikation applikation;
 
-
 	private String inkarnationsPrefix;
-	
+
+	private List<String> prozessAusgaben = new ArrayList<>();
+
+	private StartStoppMode startStoppModus = StartStoppMode.SKRIPT;
 
 	public OnlineApplikation(ProzessManager processmanager, OnlineInkarnation onlineInkarnation) {
 		this(StartStopp.getInstance(), processmanager, onlineInkarnation);
 	}
-	
-	public OnlineApplikation(StartStopp startStopp, ProzessManager processmanager, OnlineInkarnation onlineInkarnation) {
+
+	public OnlineApplikation(StartStopp startStopp, ProzessManager processmanager,
+			OnlineInkarnation onlineInkarnation) {
 		this.prozessManager = processmanager;
 		this.applikation = new Applikation();
 		this.inkarnationsPrefix = startStopp.getInkarnationsPrefix();
 		applikation.setInkarnation(onlineInkarnation.getInkarnation());
 		this.inkarnationsHandler = onlineInkarnation;
-		applikation.setLetzteStartzeit("noch nie gestartet"); 
+		applikation.setLetzteStartzeit("noch nie gestartet");
 		applikation.setLetzteStoppzeit("noch nie gestoppt");
 
 		warteZeitExecutor = Executors
@@ -100,7 +104,7 @@ public class OnlineApplikation {
 		intervallExecutor = Executors
 				.newSingleThreadScheduledExecutor(new NamingThreadFactory("Intervall: " + getName()));
 
-		updateStatus(Applikation.Status.INSTALLIERT, "");
+		updateStatus(Applikation.Status.INSTALLIERT, StartStoppMode.SKRIPT, "");
 	}
 
 	public void dispose() {
@@ -155,47 +159,47 @@ public class OnlineApplikation {
 		return inkarnationsHandler.isKernSystem();
 	}
 
-	public void starteApplikation() {
-		updateStatus(Applikation.Status.GESTARTET, "Start initialisiert");
-		process = new OSApplikation();
-		process.setInkarnationsName(applikation.getInkarnation().getInkarnationsName());
-		process.setProgramm(applikation.getInkarnation().getApplikation());
+	public void starteApplikation(StartStoppMode modus) {
+		prozessAusgaben.clear();
+		updateStatus(Applikation.Status.GESTARTET, modus, "Start initialisiert");
+		process = new OSApplikation(getName(), applikation.getInkarnation().getApplikation());
 		process.setProgrammArgumente(getApplikationsArgumente());
 		process.onStatusChange.addHandler(osApplikationStatusHandler);
 		process.start();
 	}
 
-	public void startSystemProcess() throws StartStoppException {
+	public void startSystemProcess(StartStoppMode modus) throws StartStoppException {
 		switch (applikation.getStatus()) {
 		case INSTALLIERT:
 		case GESTOPPT:
 		case STARTENWARTEN:
-			starteApplikation();
+			starteApplikation(modus);
 			break;
 		case GESTARTET:
 		case INITIALISIERT:
 		case STOPPENWARTEN:
-			throw new StartStoppException("Applikation kann im Status \"" + applikation.getStatus() + "\" nicht gestartet werden");
+			throw new StartStoppException(
+					"Applikation kann im Status \"" + applikation.getStatus() + "\" nicht gestartet werden");
 		default:
 			break;
 		}
 	}
 
-	public void stoppeApplikation(boolean force) {
+	public void stoppeApplikation(StartStoppMode modus, boolean force) {
 		if (process == null) {
-			updateStatus(Applikation.Status.GESTOPPT, "");
+			updateStatus(Applikation.Status.GESTOPPT, modus, "");
 			switch (applikation.getInkarnation().getStartArt().getOption()) {
 			case INTERVALLABSOLUT:
 			case INTERVALLRELATIV:
 				if (force) {
-					updateStatus(Applikation.Status.GESTOPPT, "Zyklische Ausführung angehalten");
+					updateStatus(Applikation.Status.GESTOPPT, modus, "Zyklische Ausführung angehalten");
 				} else {
-					updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf nächsten Start");
+					updateStatus(Applikation.Status.STARTENWARTEN, modus, "Warte auf nächsten Start");
 				}
 				break;
 			case AUTOMATISCH:
 			case MANUELL:
-				updateStatus(Applikation.Status.GESTOPPT, "");
+				updateStatus(Applikation.Status.GESTOPPT, modus, "");
 				break;
 			default:
 				break;
@@ -205,7 +209,7 @@ public class OnlineApplikation {
 		}
 	}
 
-	public void stoppSystemProcess() throws StartStoppException {
+	public void stoppSystemProcess(StartStoppMode modus) throws StartStoppException {
 
 		switch (applikation.getStatus()) {
 		case INSTALLIERT:
@@ -222,10 +226,15 @@ public class OnlineApplikation {
 			break;
 		}
 
-		stoppeApplikation(true);
+		stoppeApplikation(modus, true);
 	}
 
 	public void updateStatus(Applikation.Status status, String message) {
+		updateStatus(status, startStoppModus, message);
+	}
+
+	public void updateStatus(Applikation.Status status, StartStoppMode modus, String message) {
+		this.startStoppModus = modus;
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
 			applikation.setStartMeldung(message);
@@ -306,7 +315,7 @@ public class OnlineApplikation {
 			}
 		}
 
-		starteApplikation();
+		starteApplikation(startStoppModus);
 	}
 
 	private void handleStartenWartenState(TaskType timerType) {
@@ -369,7 +378,7 @@ public class OnlineApplikation {
 			return;
 		}
 
-		starteApplikation();
+		starteApplikation(startStoppModus);
 		applikation.setStartMeldung("");
 	}
 
@@ -418,7 +427,7 @@ public class OnlineApplikation {
 		}
 
 		try {
-			prozessManager.stoppeApplikation(applikation.getInkarnation().getInkarnationsName(), StartStoppMode.SKRIPT);
+			prozessManager.stoppeApplikation(applikation.getInkarnation().getInkarnationsName(), startStoppModus);
 		} catch (StartStoppException e) {
 			throw new IllegalStateException("Sollte hier nicht passieren, weil die Applikation sich selbst beendet!",
 					e);
@@ -474,8 +483,8 @@ public class OnlineApplikation {
 		case GESTARTET:
 		case GESTOPPT:
 		case INITIALISIERT:
-			LOGGER.finest(
-					applikation.getStatus() + ": " + applikation.getInkarnation().getInkarnationsName() + " keine Aktualisierung möglich");
+			LOGGER.finest(applikation.getStatus() + ": " + applikation.getInkarnation().getInkarnationsName()
+					+ " keine Aktualisierung möglich");
 			break;
 		case INSTALLIERT:
 			handleInstalliertState();
@@ -518,10 +527,14 @@ public class OnlineApplikation {
 			switch (applikation.getInkarnation().getStartArt().getOption()) {
 			case INTERVALLABSOLUT:
 			case INTERVALLRELATIV:
-				updateStatus(Applikation.Status.INSTALLIERT, "");
+				if (startStoppModus == StartStoppMode.MANUELL) {
+					updateStatus(Applikation.Status.GESTOPPT, "");
+				} else {
+					updateStatus(Applikation.Status.INSTALLIERT, "");
+				}
 				break;
 			default:
-				if (applikation.getInkarnation().getStartArt().getNeuStart()) {
+				if ((startStoppModus != StartStoppMode.MANUELL) && applikation.getInkarnation().getStartArt().getNeuStart()) {
 					updateStatus(Applikation.Status.INSTALLIERT, "");
 				} else {
 					updateStatus(Applikation.Status.GESTOPPT, "");
@@ -541,7 +554,10 @@ public class OnlineApplikation {
 		case STARTFEHLER:
 			updateStatus(Applikation.Status.GESTOPPT, "Fehler beim Starten");
 			if (process != null) {
-				System.err.println(process.getProzessAusgabe());
+				prozessAusgaben.addAll(process.getProzessAusgabe());
+				if (!prozessAusgaben.isEmpty()) {
+					applikation.setStartMeldung(prozessAusgaben.get(0));
+				}
 				process.onStatusChange.removeHandler(osApplikationStatusHandler);
 				process = null;
 			}
