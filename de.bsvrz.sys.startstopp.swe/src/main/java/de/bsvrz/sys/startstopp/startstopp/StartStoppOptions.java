@@ -37,13 +37,12 @@ public class StartStoppOptions {
 	private static final String PARAM_STARTSTOPP_KONFIGURATION = "-startStoppKonfiguration=.";
 	private static final String PARAM_BENUTZER_KONFIGURATION = "-benutzerKonfiguration";
 	private static final String PARAM_AUTHENTIFIZIERUNG = "-authentifizierung";
-	private static final String PARAM_HTTPS_PORT= "-port=3000";
-	private static final String PARAM_HTTP_PORT= "-httpport=0";
+	private static final String PARAM_HTTPS_PORT = "-port=3000";
+	private static final String PARAM_HTTP_PORT = "-httpport=0";
 	private static final String PARAM_INKARNATIONSNAME = "-inkarnationsName=StartStopp";
 	private static final String PARAM_RECHNER_PID = "-rechner";
 	private static final String PARAM_MASTER = "-master";
-	
-	
+
 	private final String skriptDir;
 	private final int httpsPort;
 	private final int httpPort;
@@ -51,47 +50,56 @@ public class StartStoppOptions {
 	private String userConfigurationName;
 	private String authentifizierung;
 	private String rechnerPid;
-	
+
 	private String masterHost;
 	private int masterPort = 3000;
 
-	public String getRechnerPid() {
-		return rechnerPid;
-	}
-
-	public StartStoppOptions(String[] args) {
+	public StartStoppOptions(String ... args) {
 		ArgumentList argumentList = new ArgumentList(args);
 		skriptDir = argumentList.fetchArgument(PARAM_STARTSTOPP_KONFIGURATION).asString();
 		httpsPort = argumentList.fetchArgument(PARAM_HTTPS_PORT).intValue();
 		httpPort = argumentList.fetchArgument(PARAM_HTTP_PORT).intValue();
 		inkarnationsName = argumentList.fetchArgument(PARAM_INKARNATIONSNAME).asString();
-		
-		if( argumentList.hasArgument(PARAM_BENUTZER_KONFIGURATION)) {
+
+		if (argumentList.hasArgument(PARAM_BENUTZER_KONFIGURATION)) {
 			userConfigurationName = argumentList.fetchArgument(PARAM_BENUTZER_KONFIGURATION).asString();
 		}
 
-		if( argumentList.hasArgument(PARAM_AUTHENTIFIZIERUNG)) {
+		if (argumentList.hasArgument(PARAM_AUTHENTIFIZIERUNG)) {
 			authentifizierung = argumentList.fetchArgument(PARAM_AUTHENTIFIZIERUNG).asString();
 		}
 
-		if( argumentList.hasArgument(PARAM_RECHNER_PID)) {
+		if (argumentList.hasArgument(PARAM_RECHNER_PID)) {
 			rechnerPid = argumentList.fetchArgument(PARAM_RECHNER_PID).asString();
 		}
 
-		if( argumentList.hasArgument(PARAM_MASTER)) {
+		if (argumentList.hasArgument(PARAM_MASTER)) {
 			String masterStr = argumentList.fetchArgument(PARAM_MASTER).asString();
 			String[] parts = masterStr.trim().split(":");
-			if( parts.length > 0) {
+			if (parts.length > 0) {
 				masterHost = parts[0];
 			}
-			if( parts.length > 1) {
+			if (parts.length > 1) {
 				try {
 					masterPort = Integer.parseInt(parts[1]);
 				} catch (NumberFormatException e) {
-					LOGGER.warning("Port konnte nicht interpretiert werden: \"" + parts[1] + "\"!: " + e.getLocalizedMessage());
+					LOGGER.warning("Port konnte nicht interpretiert werden: \"" + parts[1] + "\"!: "
+							+ e.getLocalizedMessage());
 				}
 			}
 		}
+	}
+
+	public int getHttpPort() {
+		return httpPort;
+	}
+
+	public int getHttpsPort() {
+		return httpsPort;
+	}
+
+	public String getInkarnationsName() {
+		return inkarnationsName;
 	}
 
 	public String getMasterHost() {
@@ -102,45 +110,33 @@ public class StartStoppOptions {
 		return masterPort;
 	}
 
-	public int getHttpPort() {
-		return httpPort;
-	}
-	
-	public int getHttpsPort() {
-		return httpsPort;
-	}
-	
-	public String getInkarnationsName() {
-		return inkarnationsName;
+	public File getPasswdFile() {
+		if (authentifizierung != null) {
+			File file = new File(authentifizierung);
+			if (file.exists() && file.isFile()) {
+				return file;
+			}
+		}
+
+		return null;
 	}
 
-	public String  getSkriptDir() {
+	public String getRechnerPid() {
+		return rechnerPid;
+	}
+
+	public String getSkriptDir() {
 		return skriptDir;
 	}
 
 	public File getUserManagementFile() {
-		if( userConfigurationName == null) {
-			return null;
+		if (userConfigurationName != null) {
+			File file = new File(userConfigurationName);
+			if (file.exists() && file.isFile()) {
+				return file;
+			}
 		}
-		
-		File file = new File(userConfigurationName);
-		if( file.exists() && file.isFile()) {
-			return file;
-		}
-		
-		return null;
-	}
 
-	public File getPasswdFile() {
-		if( authentifizierung == null) {
-			return null;
-		}
-		
-		File file = new File(authentifizierung);
-		if( file.exists() && file.isFile()) {
-			return file;
-		}
-		
 		return null;
 	}
 

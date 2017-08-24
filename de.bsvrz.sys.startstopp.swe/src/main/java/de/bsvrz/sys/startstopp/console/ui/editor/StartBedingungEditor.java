@@ -78,7 +78,7 @@ class StartBedingungEditor extends StartStoppElementEditor<StartBedingung> {
 
 	private StartBedingung startBedingung;
 	private StartStoppSkript skript;
-	private boolean bedingungUsed = false;
+	private boolean bedingungUsed;
 
 	StartBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "Startbedingung");
@@ -158,8 +158,13 @@ class StartBedingungEditor extends StartStoppElementEditor<StartBedingung> {
 		mainPanel.addComponent(rechnerSelektor, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Wartezeit:"));
-		TextBox warteZeitField = new TextBox(
-				startBedingung.getWartezeit() == null ? "" : startBedingung.getWartezeit()) {
+		String warteZeitStr;
+		if( startBedingung.getWartezeit() == null) {
+			warteZeitStr = "";
+		} else {
+			warteZeitStr = startBedingung.getWartezeit();
+		}
+		TextBox warteZeitField = new TextBox(warteZeitStr) {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
 				String neueWarteZeit = getText();

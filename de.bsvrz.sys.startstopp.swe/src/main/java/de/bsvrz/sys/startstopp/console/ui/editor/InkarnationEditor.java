@@ -51,7 +51,6 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 	private Inkarnation inkarnation;
 	private StartStoppSkript skript;
 
-
 	InkarnationEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "Inkarnation: " + inkarnation.getInkarnationsName());
 		this.skript = skript;
@@ -115,7 +114,11 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		});
 		mainPanel.addComponent(parameterButton, GridLayout.createHorizontallyFilledLayoutData(1));
 		List<String> aufrufParameter = inkarnation.getAufrufParameter();
-		mainPanel.addComponent(new Label(aufrufParameter.isEmpty() ? "" : aufrufParameter.get(0) + ", ..."));
+		String parameterStr = "";
+		if (!aufrufParameter.isEmpty()) {
+			parameterStr = aufrufParameter.get(0) + ", ...";
+		}
+		mainPanel.addComponent(new Label(parameterStr));
 	}
 
 	private void initInkarnationsTyp(Panel mainPanel) {
@@ -187,7 +190,13 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		});
 		mainPanel.addComponent(startBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
 		StartBedingung startBedingung = inkarnation.getStartBedingung();
-		mainPanel.addComponent(new Label(startBedingung == null ? "Keine" : startBedingung.getVorgaenger().get(0)));
+		String bedingungStr;
+		if ((startBedingung == null) || startBedingung.getVorgaenger().isEmpty()) {
+			bedingungStr = "Keine";
+		} else {
+			bedingungStr = startBedingung.getVorgaenger().get(0);
+		}
+		mainPanel.addComponent(new Label(bedingungStr));
 	}
 
 	private void initStartFehlerverhalten(Panel mainPanel) {
@@ -218,8 +227,13 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 		});
 		mainPanel.addComponent(stoppBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
 		StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
-		mainPanel.addComponent(new Label(stoppBedingung == null || stoppBedingung.getNachfolger().isEmpty() ? "Keine"
-				: stoppBedingung.getNachfolger().get(0)));
+		String bedingungStr;
+		if ((stoppBedingung == null) || stoppBedingung.getNachfolger().isEmpty()) {
+			bedingungStr = "Keine";
+		} else {
+			bedingungStr = stoppBedingung.getNachfolger().get(0);
+		}
+		mainPanel.addComponent(new Label(bedingungStr));
 	}
 
 	private void initStoppFehlerverhalten(Panel mainPanel) {

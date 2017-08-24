@@ -34,7 +34,7 @@ public class StartStoppConsoleOptions {
 	private final int port;
 	private final boolean monochrome;
 
-	public StartStoppConsoleOptions(String[] args) {
+	public StartStoppConsoleOptions(String ... args) {
 		ArgumentList argList = new ArgumentList(args);
 		host = argList.fetchArgument("-host=localhost").asNonEmptyString();
 		port = argList.fetchArgument("-port=3000").intValue();

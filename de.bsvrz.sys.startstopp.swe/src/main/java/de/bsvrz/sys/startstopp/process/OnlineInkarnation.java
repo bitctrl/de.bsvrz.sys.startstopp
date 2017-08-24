@@ -35,7 +35,7 @@ import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 public class OnlineInkarnation {
 
 	private Inkarnation inkarnation;
-	private KernSystem kernSystem = null;
+	private KernSystem kernSystem;
 
 
 	public OnlineInkarnation(StartStoppKonfiguration skript, Inkarnation quelle) throws StartStoppException {

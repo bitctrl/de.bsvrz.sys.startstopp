@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 
 import org.jutils.jprocesses.model.ProcessInfo;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 /**
@@ -43,11 +44,13 @@ import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
  */
 class Ueberwacher implements Runnable {
 
-	/**
-	 * 
-	 */
+	private static final Debug LOGGER = Debug.getLogger();
 	private final OSApplikation osApplikation;
 	private AusgabeVerarbeitung ausgabeUmlenkung;
+
+	private long startTime;
+
+	private long endTime;
 
 	/**
 	 * @param osApplikation
@@ -56,15 +59,12 @@ class Ueberwacher implements Runnable {
 		this.osApplikation = osApplikation;
 	}
 
-	private long startTime;
-	private long endTime;
-
 	private void bereinigeProzess(int exitCode) {
-		OSApplikation.LOGGER.fine("Prozess der Inkarnation '" + osApplikation.getInkarnationsName()
-				+ "' beendet mit Code: " + exitCode);
+		LOGGER.fine(
+				"Prozess der Inkarnation '" + osApplikation.getInkarnationsName() + "' beendet mit Code: " + exitCode);
 		if ((endTime - startTime) < (OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC * 1000)) {
-			OSApplikation.LOGGER.fine("Prozess der Inkarnation '" + osApplikation.getInkarnationsName()
-					+ "' lief weniger als " + OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC + "s");
+			LOGGER.fine("Prozess der Inkarnation '" + osApplikation.getInkarnationsName() + "' lief weniger als "
+					+ OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC + "s");
 			osApplikation.prozessStartFehler(exitCode);
 		} else {
 			osApplikation.prozessBeendet(exitCode);
@@ -80,21 +80,20 @@ class Ueberwacher implements Runnable {
 	 * Methode zum Starten einer Inkarnation.
 	 */
 	private void starteInkarnation() {
-		OSApplikation.LOGGER.info("Starte Inkarnation '" + osApplikation.getInkarnationsName() + "'");
+		LOGGER.info("Starte Inkarnation '" + osApplikation.getInkarnationsName() + "'");
 		StringBuilder cmdLineBuilder = new StringBuilder();
 
 		Process process;
 		try {
 			cmdLineBuilder.append(osApplikation.getProgramm());
-			if (osApplikation.getProgrammArgumente() != null
-					&& osApplikation.getProgrammArgumente().length() > 0) {
+			if (osApplikation.getProgrammArgumente() != null && osApplikation.getProgrammArgumente().length() > 0) {
 				cmdLineBuilder.append(" ");
 				cmdLineBuilder.append(osApplikation.getProgrammArgumente());
 			}
 
 			String cmdLine = cmdLineBuilder.toString();
 			String[] cmdArray = cmdLine.split("\\s");
-			OSApplikation.LOGGER.info("Commandline: '" + Arrays.toString(cmdArray) + "'");
+			LOGGER.info("Commandline: '" + Arrays.toString(cmdArray) + "'");
 			ProcessBuilder builder = new ProcessBuilder(cmdArray);
 			builder.redirectErrorStream(true);
 			if (!OSTools.isWindows()) {
@@ -106,22 +105,21 @@ class Ueberwacher implements Runnable {
 			osApplikation.prozessStartFehler(-1, ioe.getLocalizedMessage());
 			return;
 		}
-		
+
 		startTime = System.currentTimeMillis();
 		if (process == null) {
 			osApplikation.prozessStartFehler(-1, "Ursache unklar");
 		} else {
 			osApplikation.setProcess(process);
 			// Umlenken der Standard- und Standardfehlerausgabe
-			ausgabeUmlenkung = new AusgabeVerarbeitung(osApplikation,
-					process);
+			ausgabeUmlenkung = new AusgabeVerarbeitung(osApplikation, process);
 			Executors
 					.newSingleThreadExecutor(
 							new NamingThreadFactory(osApplikation.getInkarnationsName() + "_Ausgabeumlenkung"))
 					.submit(ausgabeUmlenkung);
 			ProcessInfo processInfo = OSTools.findProcess(cmdLineBuilder.toString());
 			if (processInfo == null) {
-				OSApplikation.LOGGER.error("Prozessinfo kann nicht bestimmt werden!");
+				LOGGER.error("Prozessinfo kann nicht bestimmt werden!");
 			} else {
 				osApplikation.setPid(processInfo.getPid());
 			}
@@ -132,13 +130,14 @@ class Ueberwacher implements Runnable {
 	}
 
 	private void ueberwacheProzess(Process process) {
-		OSApplikation.LOGGER
-				.finer("Prozess der Inkarnation '" + osApplikation.getInkarnationsName() + "' wird überwacht");
+		LOGGER.finer("Prozess der Inkarnation '" + osApplikation.getInkarnationsName() + "' wird überwacht");
 		try {
 			process.waitFor();
 			endTime = System.currentTimeMillis();
-			CompletableFuture.runAsync(() -> ausgabeUmlenkung.anhalten())
-					.thenRun(() -> bereinigeProzess(process.exitValue()));
+//			CompletableFuture.runAsync(() -> ausgabeUmlenkung.anhalten(), Executors.newSingleThreadExecutor(new NamingThreadFactory(osApplikation.getInkarnationsName() + "_Stopp-Ausgabeumlenkung")))
+//					.thenRun(() -> bereinigeProzess(process.exitValue()));
+			ausgabeUmlenkung.anhalten();
+			bereinigeProzess(process.exitValue());
 		} catch (InterruptedException e) {
 			throw new IllegalStateException("Kann nicht passieren", e);
 		}

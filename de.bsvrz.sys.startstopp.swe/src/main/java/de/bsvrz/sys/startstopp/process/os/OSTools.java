@@ -41,7 +41,12 @@ import com.sun.jna.platform.win32.Kernel32;
  * 
  * @author BitCtrl Systems GmbH, Gieseler
  */
-public class OSTools {
+public final class OSTools {
+
+	private OSTools() {
+		// es werden keine Instanzen der Klasse angelegt.
+	}
+	
 	/**
 	 * Stellt fest, ob es sich um ein Windows System handelt.
 	 * 

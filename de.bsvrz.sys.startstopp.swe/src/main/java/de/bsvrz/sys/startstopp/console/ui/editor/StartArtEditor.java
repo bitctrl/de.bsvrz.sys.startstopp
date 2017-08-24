@@ -76,7 +76,13 @@ class StartArtEditor extends StartStoppElementEditor<StartArt> {
 		mainPanel.addComponent(neustartField, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Intervall:"));
-		TextBox intervallField = new TextBox(startArt.getIntervall() == null ? "" : startArt.getIntervall()) {
+		String intervallStr;
+		if( startArt.getIntervall() == null) {
+			intervallStr = "";
+		} else {
+			intervallStr = startArt.getIntervall();
+		}
+		TextBox intervallField = new TextBox(intervallStr) {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
 				startArt.setIntervall(getText());

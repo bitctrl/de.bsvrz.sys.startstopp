@@ -44,6 +44,16 @@ public class StartStopp {
 
 	private static StartStopp instance = new StartStopp();
 
+	private StartStoppOptions options;
+
+	private SkriptManager skriptManager;
+
+	private ProzessManager processManager;
+
+	private ApiServer apiServer;
+	private String inkarnationsPrefix;
+
+	
 	public static StartStopp getInstance() {
 		return instance;
 	}
@@ -59,14 +69,27 @@ public class StartStopp {
 		}
 	}
 
-	private StartStoppOptions options;
 
-	private SkriptManager skriptManager;
+	public String getInkarnationsPrefix() {
 
-	private ProzessManager processManager;
+		if (inkarnationsPrefix == null) {
 
-	private ApiServer apiServer;
-	private String inkarnationsPrefix;
+			StringBuilder builder = new StringBuilder(200);
+			builder.append("StartStopp_");
+			String hostName;
+			try {
+				hostName = InetAddress.getLocalHost().getHostName();
+				builder.append(hostName);
+			} catch (UnknownHostException e) {
+				LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
+				builder.append("unknown_host");
+			}
+			builder.append('_');
+			inkarnationsPrefix = builder.toString();
+		}
+
+		return inkarnationsPrefix;
+	}
 
 	public StartStoppOptions getOptions() {
 		return options;
@@ -94,7 +117,7 @@ public class StartStopp {
 		return status;
 	}
 
-	private void init(String[] args) throws Exception {
+	private void init(String ... args) throws Exception {
 
 		Debug.init("StartStopp", new ArgumentList(args));
 
@@ -107,30 +130,9 @@ public class StartStopp {
 	private void start() throws Exception {
 		apiServer.start();
 	}
-
+	
 	public void stoppStartStoppApplikation(StartStoppMode modus) {
 		processManager.shutdownSkript(modus).thenRun(() -> System.exit(0));
-	}
-	
-	public String getInkarnationsPrefix() {
-
-		if (inkarnationsPrefix == null) {
-
-			StringBuilder builder = new StringBuilder(200);
-			builder.append("StartStopp_");
-			String hostName;
-			try {
-				hostName = InetAddress.getLocalHost().getHostName();
-				builder.append(hostName);
-			} catch (UnknownHostException e) {
-				LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
-				builder.append("unknown_host");
-			}
-			builder.append('_');
-			inkarnationsPrefix = builder.toString();
-		}
-
-		return inkarnationsPrefix;
 	}
 
 	

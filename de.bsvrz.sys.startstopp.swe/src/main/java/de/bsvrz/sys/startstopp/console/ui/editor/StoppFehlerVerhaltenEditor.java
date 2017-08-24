@@ -73,8 +73,15 @@ class StoppFehlerVerhaltenEditor extends StartStoppElementEditor<StoppFehlerVerh
 		mainPanel.addComponent(optionSelektor, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Wiederholungen:"));
-		TextBox warteZeitField = new TextBox(
-				stoppFehlerVerhalten.getWiederholungen() == null ? "" : stoppFehlerVerhalten.getWiederholungen()) {
+
+		String wiederholungenStr;
+		if (stoppFehlerVerhalten.getWiederholungen() == null) {
+			wiederholungenStr = "";
+		} else {
+			wiederholungenStr = stoppFehlerVerhalten.getWiederholungen();
+		}
+
+		TextBox warteZeitField = new TextBox(wiederholungenStr) {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
 				stoppFehlerVerhalten.setWiederholungen(getText());

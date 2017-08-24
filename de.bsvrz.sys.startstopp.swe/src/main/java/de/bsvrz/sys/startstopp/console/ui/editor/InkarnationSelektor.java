@@ -37,7 +37,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 
 public class InkarnationSelektor {
 	
-	private Inkarnation selected = null;
+	private Inkarnation selected;
 	private ActionListDialogBuilder builder;
 
 	private SortedMap<String, Inkarnation> inkarnationen = new TreeMap<>();

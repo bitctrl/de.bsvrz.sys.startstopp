@@ -36,8 +36,13 @@ import java.util.concurrent.TimeUnit;
 
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 
-public class Util {
+public final class Util {
 
+	private Util() {
+		// es werden keine Instanzen der Klasse angelegt.
+	}
+
+	
 	public static Object cloneObject(Serializable src) {
 		try {
 			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();

@@ -29,43 +29,37 @@ package de.bsvrz.sys.startstopp.process;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
+import de.bsvrz.sys.startstopp.process.OnlineApplikation.ApplikationStatus;
 import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
+import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 public class AppStopper implements Runnable {
 
-	class AppStatusHandler implements Consumer<Status> {
-
-		private OnlineApplikation applikation;
-
-		AppStatusHandler(OnlineApplikation applikation) {
-			this.applikation = applikation;
-		}
+	class AppStatusHandler implements Consumer<ApplikationStatus> {
 
 		@Override
-		public void accept(Status status) {
-			if (status != Applikation.Status.STOPPENWARTEN) {
-				applikations.remove(applikation.getName());
-				applikation.onStatusChanged.removeHandler(this);
-				if (applikations.isEmpty()) {
-					synchronized (lock) {
-						lock.notifyAll();
-					}
-				} 
+		public void accept(ApplikationStatus status) {
+			if (status.status == Applikation.Status.GESTOPPT) {
+				status.applikation.onStatusChanged.removeHandler(this);
+				synchronized (lock) {
+					lock.notifyAll();
+				}
 			}
-
 		}
 	}
 
 	private static final Debug LOGGER = Debug.getLogger();
 	private Map<String, OnlineApplikation> applikations = new LinkedHashMap<>();
 	private Object lock = new Object();
+
 	private boolean waitOnly;
+
 	private StartStoppMode modus;
 
 	AppStopper(Collection<OnlineApplikation> applikations, StartStoppMode modus, boolean waitOnly) {
@@ -74,28 +68,55 @@ public class AppStopper implements Runnable {
 		for (OnlineApplikation applikation : applikations) {
 			if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
 				this.applikations.put(applikation.getName(), applikation);
-				applikation.onStatusChanged.addHandler(new AppStatusHandler(applikation));
+				applikation.onStatusChanged.addHandler(new AppStatusHandler());
 			}
 		}
 	}
 
 	@Override
 	public void run() {
-		if (applikations.isEmpty()) {
+		if (allAppsStopped()) {
 			return;
 		}
+		
+		
+		
+		ExecutorService appStopperExecutor = null;
 		if (!waitOnly) {
+			appStopperExecutor = Executors.newFixedThreadPool(applikations.size(), new NamingThreadFactory("AppStopper"));
+			
+			System.err.println("Applikationen: " + applikations.values());
 			for (OnlineApplikation applikation : applikations.values()) {
-				CompletableFuture.runAsync(
-						() -> applikation.updateStatus(Applikation.Status.STOPPENWARTEN, modus, "Skript wird angehalten"));
+				appStopperExecutor.submit(() -> {
+							System.err.println("Setze STOPPENWARTEN für " + applikation.getName());
+							applikation.updateStatus(Applikation.Status.STOPPENWARTEN, modus, "Skript wird angehalten");
+						});
 			}
 		}
-		synchronized (lock) {
-			try {
-				lock.wait();
-			} catch (InterruptedException e) {
-				LOGGER.warning(e.getLocalizedMessage());
+
+		while (!allAppsStopped()) {
+			System.err.println("Warte auf Apps");
+			synchronized (lock) {
+				try {
+					lock.wait(1000);
+				} catch (InterruptedException e) {
+					LOGGER.warning(e.getLocalizedMessage());
+				}
 			}
+		}
+		
+		if( appStopperExecutor != null) {
+			appStopperExecutor.shutdown();
 		}
 	}
+
+	private boolean allAppsStopped() {
+		for (OnlineApplikation applikation : applikations.values()) {
+			if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }

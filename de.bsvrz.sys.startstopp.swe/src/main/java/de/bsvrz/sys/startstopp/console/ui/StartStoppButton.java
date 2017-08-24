@@ -53,9 +53,6 @@ public class StartStoppButton extends Button implements HasHotkey {
 		@Override
 		public void drawComponent(TextGUIGraphics graphics, Button button) {
 
-			StartStoppButton startStoppButton = (StartStoppButton) button;
-			int hotkeyOffset = startStoppButton.getHotkeyOffset();
-
 			ThemeDefinition themeDefinition = button.getThemeDefinition();
 			if (button.isFocused()) {
 				graphics.applyThemeStyle(themeDefinition.getActive());
@@ -72,7 +69,11 @@ public class StartStoppButton extends Button implements HasHotkey {
 			} else {
 				graphics.applyThemeStyle(themeDefinition.getPreLight());
 			}
+
 			int labelShift = getLabelShift(button, graphics.getSize());
+			StartStoppButton startStoppButton = (StartStoppButton) button;
+			int hotkeyOffset = startStoppButton.getHotkeyOffset();
+
 			graphics.setCharacter(1 + labelShift + hotkeyOffset, 0, button.getLabel().charAt(hotkeyOffset));
 
 			if (TerminalTextUtils.getColumnWidth(button.getLabel()) == 1) {

@@ -36,11 +36,28 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 
 class ApplikationenTableModell extends TableModel<Object> {
 
+	private final List<Applikation> applikationen = new ArrayList<>();
+
 	ApplikationenTableModell() {
 		super("Inkarnation", "Status", "Startzeit");
 	}
 
-	private final List<Applikation> applikationen = new ArrayList<>();
+	public Applikation getApplikation(int row) {
+
+		if ((row < 0) || (row >= applikationen.size())) {
+			return null;
+		}
+
+		return applikationen.get(row);
+	}
+
+	private Collection<Object> getValues(Applikation applikation) {
+		Collection<Object> result = new ArrayList<>();
+		result.add(applikation.getInkarnation().getInkarnationsName());
+		result.add(applikation.getStatus());
+		result.add(applikation.getStartMeldung());
+		return result;
+	}
 
 	public void setApplikationen(List<Applikation> applikationen) {
 
@@ -73,22 +90,5 @@ class ApplikationenTableModell extends TableModel<Object> {
 		while (getRowCount() > neueApplikationen.size()) {
 			removeRow(getRowCount() - 1);
 		}
-	}
-
-	private Collection<Object> getValues(Applikation applikation) {
-		Collection<Object> result = new ArrayList<>();
-		result.add(applikation.getInkarnation().getInkarnationsName());
-		result.add(applikation.getStatus());
-		result.add(applikation.getStartMeldung());
-		return result;
-	}
-
-	public Applikation getApplikation(int row) {
-
-		if ((row < 0) || (row >= applikationen.size())) {
-			return null;
-		}
-
-		return applikationen.get(row);
 	}
 }

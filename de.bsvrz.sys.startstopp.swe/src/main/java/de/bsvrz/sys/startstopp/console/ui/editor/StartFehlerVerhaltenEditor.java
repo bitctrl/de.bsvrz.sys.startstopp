@@ -45,7 +45,6 @@ class StartFehlerVerhaltenEditor extends StartStoppElementEditor<StartFehlerVerh
 	StartFehlerVerhaltenEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "Startfehlerverhalten");
 
-
 		if (inkarnation.getStartFehlerVerhalten() == null) {
 			this.startFehlerVerhalten = new StartFehlerVerhalten();
 		} else {
@@ -74,8 +73,14 @@ class StartFehlerVerhaltenEditor extends StartStoppElementEditor<StartFehlerVerh
 		mainPanel.addComponent(optionSelektor, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		mainPanel.addComponent(new Label("Wiederholungen:"));
-		TextBox warteZeitField = new TextBox(
-				startFehlerVerhalten.getWiederholungen() == null ? "" : startFehlerVerhalten.getWiederholungen()) {
+		String wiederHolungStr;
+		if (startFehlerVerhalten.getWiederholungen() == null) {
+			wiederHolungStr = "";
+		} else {
+			wiederHolungStr = startFehlerVerhalten.getWiederholungen();
+		}
+
+		TextBox warteZeitField = new TextBox(wiederHolungStr) {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
 				startFehlerVerhalten.setWiederholungen(getText());

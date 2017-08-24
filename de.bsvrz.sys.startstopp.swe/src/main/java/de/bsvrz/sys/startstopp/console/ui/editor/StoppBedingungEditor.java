@@ -77,7 +77,7 @@ class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung> {
 	private static final String KEIN_RECHNER = "<kein Rechner>";
 	private StoppBedingung stoppBedingung;
 	private StartStoppSkript skript;
-	private boolean bedingungUsed = false;
+	private boolean bedingungUsed;
 
 	StoppBedingungEditor(StartStoppSkript skript, Inkarnation inkarnation) {
 		super(skript, "StartStopp - Editor: Inkarnation: ");
@@ -139,8 +139,13 @@ class StoppBedingungEditor extends StartStoppElementEditor<StoppBedingung> {
 		});
 
 		mainPanel.addComponent(new Label("Wartezeit:"));
-		TextBox warteZeitField = new TextBox(
-				stoppBedingung.getWartezeit() == null ? "" : stoppBedingung.getWartezeit()) {
+		String warteZeitStr;
+		if (stoppBedingung.getWartezeit() == null) {
+			warteZeitStr = "";
+		} else {
+			warteZeitStr = stoppBedingung.getWartezeit();
+		}
+		TextBox warteZeitField = new TextBox(warteZeitStr) {
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
 				stoppBedingung.setWartezeit(getText());

@@ -52,7 +52,7 @@ public class DavConnector {
 
 	private ZugangDav zugangDav;
 	private Object lock = new Object();
-	private ClientDavConnection connection = null;
+	private ClientDavConnection connection;
 	private ProzessManager processManager;
 	private ApplikationStatusHandler appStatusHandler;
 	private UsvHandler usvHandler;
@@ -102,13 +102,18 @@ public class DavConnector {
 	}
 
 	public String getConnectionMsg() {
+
+		String result = null;
+
 		if (connection != null) {
-			if (connection.isConnected() && connection.isLoggedIn()) {
-				return null;
+			if (!(connection.isConnected() && connection.isLoggedIn())) {
+				result = "Verbindung zum Datenverteiler konnte noch nicht hergestellt werden!";
 			}
-			return "Verbindung zum Datenverteiler konnte noch nicht hergestellt werden!";
+		} else {
+			result = "Anmeldedaten für den Datenverteiler sind nicht gültig!";
 		}
-		return "Anmeldedaten für den Datenverteiler sind nicht gültig!";
+
+		return result;
 	}
 
 	private boolean isOnline() {
@@ -169,11 +174,16 @@ public class DavConnector {
 			parameters.setDavCommunicationSubAddress(Integer.parseInt(zugangDav.getPort()));
 			connection = new ClientDavConnection(parameters);
 			connection.addConnectionListener((conn) -> conn.disconnect(false, ""));
-			connection.setCloseHandler((error) -> LOGGER.info("Datenverteilerverbindung beendet: " + error));
-		
+			connection.setCloseHandler((error) -> handleDisconnect(error)  );
+
 		} catch (MissingParameterException e) {
 			LOGGER.warning("Datenverteilerverbindung kann nicht hergestellt werden!", e);
 		}
+	}
+
+	private void handleDisconnect(String error) {
+		LOGGER.info("Datenverteilerverbindung beendet: " + error);
+		appStatusHandler.disconnect();
 	}
 
 	void trigger() {

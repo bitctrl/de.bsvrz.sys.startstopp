@@ -39,6 +39,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
+import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 public class RechnerManager {
 
@@ -47,7 +48,7 @@ public class RechnerManager {
 		private ScheduledFuture<?> future;
 	}
 
-	private ScheduledThreadPoolExecutor rechnerExecutor = new ScheduledThreadPoolExecutor(5);
+	private ScheduledThreadPoolExecutor rechnerExecutor = new ScheduledThreadPoolExecutor(5, new NamingThreadFactory("Rechnermanager"));
 	private Map<String, ManagedRechner> managedRechner = new LinkedHashMap<>();
 
 	public RechnerManager() {
@@ -61,18 +62,18 @@ public class RechnerManager {
 			String name = rechnerEintrag.getName();
 			names.add(name);
 			ManagedRechner managed = managedRechner.get(name);
-			if ((managed == null) || !Objects.equals(rechnerEintrag, managed.client.getRechner())) {
+			if (managed == null || !Objects.equals(rechnerEintrag, managed.client.getRechner())) {
 				if (managed != null) {
 					managed.future.cancel(true);
 				}
 				addRechnerClient(rechnerEintrag, name);
 			}
 		}
-		
+
 		Iterator<Entry<String, ManagedRechner>> iterator = managedRechner.entrySet().iterator();
-		while( iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Entry<String, ManagedRechner> entry = iterator.next();
-			if( !names.contains(entry.getKey())) {
+			if (!names.contains(entry.getKey())) {
 				entry.getValue().future.cancel(true);
 				iterator.remove();
 			}
@@ -89,10 +90,10 @@ public class RechnerManager {
 
 	public RechnerClient getClient(String rechnerName) {
 		ManagedRechner managed = managedRechner.get(rechnerName);
-		if( managed == null) {
+		if (managed == null) {
 			return null;
 		}
-		
+
 		return managed.client;
 	}
 }

@@ -54,6 +54,47 @@
     <module name="MethodLength"/>
     <module name="OuterTypeNumber"/>
     <module name="ParameterNumber"/>
+    <module name="HiddenField">
+      <property name="ignoreConstructorParameter" value="true"/>
+      <property name="ignoreSetter" value="true"/>
+    </module>
+    <module name="GenericWhitespace"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="RedundantImport"/>
+    <module name="UnusedImports"/>
+    <module name="AvoidNestedBlocks"/>
+    <module name="EmptyBlock">
+      <property name="option" value="text"/>
+      <property name="tokens" value="LITERAL_WHILE,LITERAL_TRY,LITERAL_FINALLY,LITERAL_DO,LITERAL_IF,LITERAL_ELSE,LITERAL_FOR,INSTANCE_INIT,STATIC_INIT,LITERAL_SWITCH,LITERAL_SYNCHRONIZED"/>
+    </module>
+    <module name="EmptyCatchBlock"/>
+    <module name="AvoidInlineConditionals"/>
+    <module name="DeclarationOrder"/>
+    <module name="EmptyStatement"/>
+    <module name="EqualsAvoidNull"/>
+    <module name="ExplicitInitialization"/>
+    <module name="FallThrough"/>
+    <module name="IllegalInstantiation"/>
+    <module name="IllegalTokenText"/>
+    <module name="IllegalType">
+      <property name="tokens" value="METHOD_DEF,PARAMETER_DEF,VARIABLE_DEF"/>
+    </module>
+    <module name="InnerAssignment"/>
+    <module name="MissingSwitchDefault"/>
+    <module name="ModifiedControlVariable"/>
+    <module name="MultipleVariableDeclarations"/>
+    <module name="ParameterAssignment"/>
+    <module name="ReturnCount">
+      <property name="severity" value="info"/>
+    </module>
+    <module name="SimplifyBooleanExpression"/>
+    <module name="UnnecessaryParentheses"/>
+    <module name="OneStatementPerLine"/>
+    <module name="VariableDeclarationUsageDistance"/>
+    <module name="OverloadMethodsDeclarationOrder"/>
+    <module name="HideUtilityClassConstructor"/>
+    <module name="MutableException"/>
+    <module name="ThrowsCount"/>
   </module>
   <module name="Header">
     <property name="headerFile" value="${checkstyle.header.file}"/>

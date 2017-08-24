@@ -28,6 +28,7 @@ package de.bsvrz.sys.startstopp.process;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -69,6 +70,7 @@ public class TestInkarnationsProzess {
 		waitForLock();
 
 		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
+		System.out.println(process.getProzessAusgabe());
 		Assert.assertTrue("Fehlermeldung ist leer", !process.getProzessAusgabe().isEmpty());
 	}
 
@@ -83,6 +85,7 @@ public class TestInkarnationsProzess {
 		waitForLock();
 
 		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
+		System.out.println(process.getProzessAusgabe());
 		Assert.assertTrue("Fehlermeldung ist leer", !process.getProzessAusgabe().isEmpty());
 		Assert.assertEquals("Exitcode", 1, process.getExitCode());
 	}
@@ -101,6 +104,7 @@ public class TestInkarnationsProzess {
 		waitForLock();
 
 		Assert.assertEquals("Status", OSApplikationStatus.STARTFEHLER, process.getStatus());
+		System.out.println(process.getProzessAusgabe());
 		Assert.assertTrue("Fehlermeldung ist leer", !process.getProzessAusgabe().isEmpty());
 		Assert.assertEquals("Exitcode", 1, process.getExitCode());
 	}

@@ -26,8 +26,12 @@
 
 package de.bsvrz.sys.startstopp.process;
 
-public class TestInkarnation {
+public final class TestInkarnation {
 
+	private TestInkarnation() {
+		// es werden keine Instanzen der Klasse angelegt.
+	}
+	
 	public static void main(String[] args) {
 		for(int i = 0; i<10; i++) {
 			System.out.println("Test: " + i);

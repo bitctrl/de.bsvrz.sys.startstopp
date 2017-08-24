@@ -36,8 +36,12 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 
-public class AppTest {
+public final class AppTest {
 
+	private AppTest() {
+		// es werden keine Instanzen der Klasse angelegt.
+	}
+	
 	public static void main(String[] args) {
 
 		try {

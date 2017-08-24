@@ -61,11 +61,14 @@ class SkriptStopper implements Runnable {
 		AppStopper appStopper = new AppStopper(applikationen.values(), modus, false);
 		appStopper.run();
 
+		System.err.println("Applikationen beendet");
+		
 		if (OSTools.isWindows()) {
+			System.err.println("Suche Transmitter");
 			for (OnlineApplikation applikation : kernsystem.values()) {
 				if (applikation.isTransmitter()) {
 					try {
-						processManager.stoppeApplikation(applikation.getName(), modus);
+						processManager.stoppeApplikation(applikation.getName(), StartStoppMode.MANUELL);
 					} catch (StartStoppException e) {
 						LOGGER.warning(e.getLocalizedMessage());
 					}

@@ -81,12 +81,15 @@ import de.muspellheim.events.Event;
  */
 public class SkriptManager {
 
+
 	private static final Debug LOGGER = Debug.getLogger();
+	
+	public final Event<StartStoppKonfiguration> onKonfigurationChanged = new Event<>();
+
 	private final StartStopp startStopp;
 	private final SortedMap<Long, StartStoppVersion> versions = new TreeMap<>();
 	private StartStoppKonfiguration aktuelleKonfiguration;
 
-	public final Event<StartStoppKonfiguration> onKonfigurationChanged = new Event<>();
 	
 	public SkriptManager() {
 		this(StartStopp.getInstance());
@@ -149,93 +152,36 @@ public class SkriptManager {
 			LOGGER.warning("Fehler beim Einlesen des XML-StartStopp-Skripts!", e);
 		}
 	}
+	
+	private File addNewHistory(long utcNow, VersionierungsRequest request, Checksum checkSum)
+			throws StartStoppException {
 
-	private File getStartStoppSkriptFile() {
-		return new File(startStopp.getOptions().getSkriptDir(), "startstopp.json");
-	}
-
-	private File getStartStoppHistoryFile() {
-
-		File versionDir = new File(startStopp.getOptions().getSkriptDir(), "history");
-		if (!versionDir.exists()) {
-			versionDir.mkdirs();
-		}
-
-		return new File(versionDir, "startstopp_history.json");
-	}
-
-	private void initSkriptHistory() {
-
-		File historyFile = getStartStoppHistoryFile();
-		ObjectMapper mapper = new ObjectMapper();
+		File tempFile;
 		try {
-			List<StartStoppVersion> versionsListe = mapper.readValue(historyFile,
-					new TypeReference<List<StartStoppVersion>>() {
-						// Kein weiterer Code erforderlich
-					});
-			for (StartStoppVersion version : versionsListe) {
-				versions.put(Long.parseLong(version.getVersion()), version);
-			}
-		} catch (Exception e) {
-			LOGGER.warning("Fehler beim Einlesen der StartStopp-Historie!", e);
+			tempFile = File.createTempFile("STARTSTOPP_HIST", null);
+			tempFile.deleteOnExit();
+		} catch (IOException e) {
+			throw new StartStoppException(e);
 		}
 
-		// TODO Auto-generated method stub
+		StartStoppVersion version = new StartStoppVersion();
+		version.setAenderungsGrund(request.getAenderungsgrund());
+		version.setErstelltDurch(request.getVeranlasser());
+		version.setName(request.getName());
+		version.setPruefsumme(Long.toString(checkSum.getValue()));
+		version.setVersion(Long.toString(utcNow));
+		versions.put(Long.parseLong(version.getVersion()), version);
 
-	}
-
-	public StartStoppKonfiguration getCurrentSkript() throws StartStoppException {
-		if (aktuelleKonfiguration == null) {
-			throw new StartStoppException("Die StartStopp-Applikation hat kein aktuelles Skript geladen");
-		}
-		return aktuelleKonfiguration;
-	}
-
-	public StartStoppSkriptStatus getCurrentSkriptStatus() throws StartStoppException {
-		return getCurrentSkript().getSkriptStatus();
-	}
-
-	public StartStoppSkript setNewSkript(VersionierungsRequest request) throws StartStoppException {
-
-		checkRequest(request);
-
-		StartStoppKonfiguration newSkript = new StartStoppKonfiguration(request.getSkript());
-		if (newSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
-			newSkript = versionieren(newSkript, request);
-			aktuelleKonfiguration = newSkript;
-			onKonfigurationChanged.send(aktuelleKonfiguration);
-			return aktuelleKonfiguration.getSkript();
+		ObjectMapper mapper = new ObjectMapper();
+		try (OutputStream stream = new FileOutputStream(tempFile);
+				Writer writer = new OutputStreamWriter(stream, "UTF-8")) {
+			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+			mapper.writeValue(writer, versions.values());
+		} catch (IOException e) {
+			throw new StartStoppException(e);
 		}
 
-		StatusResponse status = new StatusResponse();
-		status.setCode(-1);
-		status.getMessages().addAll(newSkript.getSkriptStatus().getMessages());
-		throw new StartStoppStatusException("Skript konnte nicht übernommen und versioniert werden!", status);
-	}
-
-	private void checkRequest(VersionierungsRequest request) throws StartStoppException {
-
-		if (request == null || request.getSkript() == null) {
-			throw new StartStoppException("Es wurde kein Skript übermittelt!");
-		}
-
-		String veranlasser = request.getVeranlasser();
-		String passwort = request.getPasswort();
-
-		if (veranlasser == null || veranlasser.trim().isEmpty()) {
-			throw new StartStoppException("Es muss ein Veranlasser übergeben werden!");
-		}
-
-		if (passwort == null || passwort.trim().isEmpty()) {
-			throw new StartStoppException("Es muss ein Passwort übergeben werden!");
-		}
-
-		checkAuthentification(veranlasser, passwort);
-
-		if (request.getAenderungsgrund() == null || request.getAenderungsgrund().trim().isEmpty()) {
-			throw new StartStoppException("Es muss ein Änderungsgrund übergeben werden!");
-		}
-
+		return tempFile;
 	}
 
 	private void checkAuthentification(String veranlasser, String passwort) throws StartStoppException {
@@ -298,57 +244,74 @@ public class SkriptManager {
 		throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" konnte nicht verifiziert werden!");
 	}
 
-	public StartStoppKonfiguration versionieren(StartStoppKonfiguration skript, VersionierungsRequest request)
-			throws StartStoppException {
+	private void checkRequest(VersionierungsRequest request) throws StartStoppException {
 
-		long utcNow = Clock.systemUTC().millis();
-		Checksum checkSum = new CRC32();
-		File tempSkript = saveTempSkript(utcNow, skript, request, checkSum);
-		File tempHistoryFile = addNewHistory(utcNow, request, checkSum);
-
-		try {
-			Files.copy(tempSkript.toPath(), getStartStoppSkriptFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-			Files.copy(tempHistoryFile.toPath(), getStartStoppHistoryFile().toPath(),
-					StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			throw new StartStoppException(e);
-		} finally {
-			tempSkript.delete();
-			tempHistoryFile.delete();
+		if (request == null || request.getSkript() == null) {
+			throw new StartStoppException("Es wurde kein Skript übermittelt!");
 		}
 
-		return skript;
+		String veranlasser = request.getVeranlasser();
+		String passwort = request.getPasswort();
+
+		if (veranlasser == null || veranlasser.trim().isEmpty()) {
+			throw new StartStoppException("Es muss ein Veranlasser übergeben werden!");
+		}
+
+		if (passwort == null || passwort.trim().isEmpty()) {
+			throw new StartStoppException("Es muss ein Passwort übergeben werden!");
+		}
+
+		checkAuthentification(veranlasser, passwort);
+
+		if (request.getAenderungsgrund() == null || request.getAenderungsgrund().trim().isEmpty()) {
+			throw new StartStoppException("Es muss ein Änderungsgrund übergeben werden!");
+		}
+
 	}
 
-	private File addNewHistory(long utcNow, VersionierungsRequest request, Checksum checkSum)
-			throws StartStoppException {
+	public StartStoppKonfiguration getCurrentSkript() throws StartStoppException {
+		if (aktuelleKonfiguration == null) {
+			throw new StartStoppException("Die StartStopp-Applikation hat kein aktuelles Skript geladen");
+		}
+		return aktuelleKonfiguration;
+	}
 
-		File tempFile;
-		try {
-			tempFile = File.createTempFile("STARTSTOPP_HIST", null);
-			tempFile.deleteOnExit();
-		} catch (IOException e) {
-			throw new StartStoppException(e);
+	public StartStoppSkriptStatus getCurrentSkriptStatus() throws StartStoppException {
+		return getCurrentSkript().getSkriptStatus();
+	}
+
+	private File getStartStoppHistoryFile() {
+
+		File versionDir = new File(startStopp.getOptions().getSkriptDir(), "history");
+		if (!versionDir.exists()) {
+			versionDir.mkdirs();
 		}
 
-		StartStoppVersion version = new StartStoppVersion();
-		version.setAenderungsGrund(request.getAenderungsgrund());
-		version.setErstelltDurch(request.getVeranlasser());
-		version.setName(request.getName());
-		version.setPruefsumme(Long.toString(checkSum.getValue()));
-		version.setVersion(Long.toString(utcNow));
-		versions.put(Long.parseLong(version.getVersion()), version);
+		return new File(versionDir, "startstopp_history.json");
+	}
 
+	private File getStartStoppSkriptFile() {
+		return new File(startStopp.getOptions().getSkriptDir(), "startstopp.json");
+	}
+
+	private void initSkriptHistory() {
+
+		File historyFile = getStartStoppHistoryFile();
 		ObjectMapper mapper = new ObjectMapper();
-		try (OutputStream stream = new FileOutputStream(tempFile);
-				Writer writer = new OutputStreamWriter(stream, "UTF-8")) {
-			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-			mapper.writeValue(writer, versions.values());
-		} catch (IOException e) {
-			throw new StartStoppException(e);
+		try {
+			List<StartStoppVersion> versionsListe = mapper.readValue(historyFile,
+					new TypeReference<List<StartStoppVersion>>() {
+						// Kein weiterer Code erforderlich
+					});
+			for (StartStoppVersion version : versionsListe) {
+				versions.put(Long.parseLong(version.getVersion()), version);
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Fehler beim Einlesen der StartStopp-Historie!", e);
 		}
 
-		return tempFile;
+		// TODO Auto-generated method stub
+
 	}
 
 	private File saveTempSkript(long utcNow, StartStoppKonfiguration skript, VersionierungsRequest request,
@@ -383,5 +346,45 @@ public class SkriptManager {
 		}
 
 		return tempFile;
+	}
+
+	public StartStoppSkript setNewSkript(VersionierungsRequest request) throws StartStoppException {
+
+		checkRequest(request);
+
+		StartStoppKonfiguration newSkript = new StartStoppKonfiguration(request.getSkript());
+		if (newSkript.getSkriptStatus().getStatus() == StartStoppSkriptStatus.Status.INITIALIZED) {
+			newSkript = versionieren(newSkript, request);
+			aktuelleKonfiguration = newSkript;
+			onKonfigurationChanged.send(aktuelleKonfiguration);
+			return aktuelleKonfiguration.getSkript();
+		}
+
+		StatusResponse status = new StatusResponse();
+		status.setCode(-1);
+		status.getMessages().addAll(newSkript.getSkriptStatus().getMessages());
+		throw new StartStoppStatusException("Skript konnte nicht übernommen und versioniert werden!", status);
+	}
+
+	public StartStoppKonfiguration versionieren(StartStoppKonfiguration skript, VersionierungsRequest request)
+			throws StartStoppException {
+
+		long utcNow = Clock.systemUTC().millis();
+		Checksum checkSum = new CRC32();
+		File tempSkript = saveTempSkript(utcNow, skript, request, checkSum);
+		File tempHistoryFile = addNewHistory(utcNow, request, checkSum);
+
+		try {
+			Files.copy(tempSkript.toPath(), getStartStoppSkriptFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(tempHistoryFile.toPath(), getStartStoppHistoryFile().toPath(),
+					StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			throw new StartStoppException(e);
+		} finally {
+			tempSkript.delete();
+			tempHistoryFile.delete();
+		}
+
+		return skript;
 	}
 }

@@ -31,7 +31,7 @@ import java.util.List;
 
 public class StartStoppException extends Exception {
 
-	private List<String> messages = new ArrayList<>();
+	private final List<String> messages = new ArrayList<>();
 
 	public StartStoppException(String string) {
 		super(string);

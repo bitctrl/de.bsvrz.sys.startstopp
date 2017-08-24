@@ -76,7 +76,7 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 	}
 
 	private ProzessManager processManager;
-	private DynamicObjectType applikationTyp = null;
+	private DynamicObjectType applikationTyp;
 	private DataDescription applikationsFertigMeldungDesc;
 	private ClientDavConnection dav;
 	private Map<String, ApplikationStatus> applikationStatus = new LinkedHashMap<>();
@@ -143,16 +143,14 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 		if (dav == null) {
 			Debug.getLogger().warning("Es besteht keine Datenverteilerverbindung! Applikation " + appObj
 					+ " kann nicht registriert werden!");
-			return;
-		}
-		if (applikationsFertigMeldungDesc == null) {
+		} else if (applikationsFertigMeldungDesc == null) {
 			Debug.getLogger().warning(
 					"Die Datenbeschreibung für Applikationsfertigmeldungen wurde nicht initialisiert! Applikation "
 							+ appObj + " kann nicht registriert werden!");
-			return;
+		} else {
+			dav.subscribeReceiver(this, appObj, applikationsFertigMeldungDesc, ReceiveOptions.normal(),
+					ReceiverRole.receiver());
 		}
-		dav.subscribeReceiver(this, appObj, applikationsFertigMeldungDesc, ReceiveOptions.normal(),
-				ReceiverRole.receiver());
 	}
 
 	@Override
@@ -164,20 +162,18 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 		if (dav == null) {
 			Debug.getLogger().warning("Es besteht keine Datenverteilerverbindung! Applikation " + appObj
 					+ " kann nicht abgemeldet werden!");
-			return;
-		}
-		if (applikationsFertigMeldungDesc == null) {
+		} else if (applikationsFertigMeldungDesc == null) {
 			Debug.getLogger().warning(
 					"Die Datenbeschreibung für Applikationsfertigmeldungen wurde nicht initialisiert! Applikation "
 							+ appObj + " kann nicht abgemeldet werden!");
-			return;
-		}
-		dav.unsubscribeReceiver(this, appObj, applikationsFertigMeldungDesc);
-		Iterator<ApplikationStatus> iterator = applikationStatus.values().iterator();
-		while (iterator.hasNext()) {
-			ApplikationStatus status = iterator.next();
-			if (status.appObj.equals(appObj)) {
-				iterator.remove();
+		} else {
+			dav.unsubscribeReceiver(this, appObj, applikationsFertigMeldungDesc);
+			Iterator<ApplikationStatus> iterator = applikationStatus.values().iterator();
+			while (iterator.hasNext()) {
+				ApplikationStatus status = iterator.next();
+				if (status.appObj.equals(appObj)) {
+					iterator.remove();
+				}
 			}
 		}
 	}
@@ -225,5 +221,16 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 				processManager.updateFromDav(processMgrInkarnation, status.fertig);
 			}
 		}
+	}
+
+	public void disconnect() {
+		for( String name : applikationStatus.keySet()) {
+			if (name.startsWith(inkarnationsPrefix)) {
+				String processMgrInkarnation = name.substring(inkarnationsPrefix.length());
+				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
+				processManager.updateFromDav(processMgrInkarnation, false);
+			}
+		}
+		reconnect(null);
 	}
 }

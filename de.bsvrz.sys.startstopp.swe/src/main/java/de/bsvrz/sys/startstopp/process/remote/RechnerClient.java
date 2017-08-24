@@ -41,8 +41,8 @@ public class RechnerClient implements Runnable {
 	private static final Debug LOGGER = Debug.getLogger();
 	private StartStoppClient client;
 	private Map<String, Applikation> applikationen = new LinkedHashMap<>();
-	private boolean listeErmittelt = false;
-	private boolean fehlerGemeldet = false;
+	private boolean listeErmittelt;
+	private boolean fehlerGemeldet;
 	private Rechner rechner;
 
 	RechnerClient(Rechner rechner) {

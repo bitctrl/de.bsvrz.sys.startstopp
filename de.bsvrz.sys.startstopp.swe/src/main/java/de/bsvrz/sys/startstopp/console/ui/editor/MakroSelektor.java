@@ -34,7 +34,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 
 public class MakroSelektor {
 	
-	private MakroDefinition selectedMakroDefinition = null;
+	private MakroDefinition selectedMakroDefinition;
 	private ActionListDialogBuilder builder;
 	private WindowBasedTextGUI gui;
 	

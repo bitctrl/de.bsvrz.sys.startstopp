@@ -44,7 +44,8 @@ public class OSApplikation {
 
 	public static final int STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC = 5;
 
-	static final Debug LOGGER = Debug.getLogger();
+	private static final Debug LOGGER = Debug.getLogger();
+	public final Event<OSApplikationStatus> onStatusChange = new Event<>();
 
 	private final String programm;
 	private final String inkarnation;
@@ -52,12 +53,12 @@ public class OSApplikation {
 	
 	private Process process;
 	
-	public final Event<OSApplikationStatus> onStatusChange = new Event<>();
 	private OSApplikationStatus status = OSApplikationStatus.UNDEFINED;
 	private int exitCode;
 
 	private List<String> ausgaben = new ArrayList<>();
 	private Integer pid;
+
 
 	public OSApplikation(String inkarnation, String programm) {
 		super();
