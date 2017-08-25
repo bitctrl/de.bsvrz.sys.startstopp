@@ -36,7 +36,6 @@ import java.util.function.Consumer;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.ApplikationStatus;
-import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 public class AppStopper implements Runnable {
@@ -46,7 +45,7 @@ public class AppStopper implements Runnable {
 		@Override
 		public void accept(ApplikationStatus status) {
 			if (status.status == Applikation.Status.GESTOPPT) {
-				status.applikation.onStatusChanged.removeHandler(this);
+				status.event.removeHandler(this);
 				synchronized (lock) {
 					lock.notifyAll();
 				}
@@ -60,11 +59,8 @@ public class AppStopper implements Runnable {
 
 	private boolean waitOnly;
 
-	private StartStoppMode modus;
-
-	AppStopper(Collection<OnlineApplikation> applikations, StartStoppMode modus, boolean waitOnly) {
+	AppStopper(Collection<OnlineApplikation> applikations, boolean waitOnly) {
 		this.waitOnly = waitOnly;
-		this.modus = modus;
 		for (OnlineApplikation applikation : applikations) {
 			if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
 				this.applikations.put(applikation.getName(), applikation);
@@ -85,17 +81,14 @@ public class AppStopper implements Runnable {
 		if (!waitOnly) {
 			appStopperExecutor = Executors.newFixedThreadPool(applikations.size(), new NamingThreadFactory("AppStopper"));
 			
-			System.err.println("Applikationen: " + applikations.values());
 			for (OnlineApplikation applikation : applikations.values()) {
 				appStopperExecutor.submit(() -> {
-							System.err.println("Setze STOPPENWARTEN für " + applikation.getName());
-							applikation.updateStatus(Applikation.Status.STOPPENWARTEN, modus, "Skript wird angehalten");
+							applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Skript wird angehalten");
 						});
 			}
 		}
 
 		while (!allAppsStopped()) {
-			System.err.println("Warte auf Apps");
 			synchronized (lock) {
 				try {
 					lock.wait(1000);

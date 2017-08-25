@@ -26,8 +26,6 @@
 
 package de.bsvrz.sys.startstopp.api.server;
 
-import java.util.concurrent.CompletableFuture;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -36,7 +34,6 @@ import javax.ws.rs.core.Response;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/system")
@@ -67,7 +64,7 @@ public class SystemService {
 	@Path("exit")
 	public Response responseStartStoppExit() {
 		Response response = Response.accepted().build();
-		startStopp.stoppStartStoppApplikation(StartStoppMode.MANUELL);
+		startStopp.getProcessManager().shutdownSkript();
 		return response;
 	}
 
@@ -75,29 +72,23 @@ public class SystemService {
 	@Path("stopp")
 	public Response responseStartStoppStopp() {
 		Response response = Response.accepted().build();
-		startStopp.getProcessManager().stoppeSkript(StartStoppMode.MANUELL);
+		startStopp.getProcessManager().stoppeSkript();
 		return response;
 	}
 
 	@POST
 	@Path("restart")
 	public Response responseStartStoppRestart() {
-		CompletableFuture<Void> future = startStopp.getProcessManager().stoppeSkript(StartStoppMode.MANUELL);
-		future.thenRun(() -> {
-			try {
-				startStopp.getProcessManager().starteSkript(StartStoppMode.MANUELL);
-			} catch (StartStoppException e) {
-				LOGGER.warning(e.getLocalizedMessage());
-			}
-		});
-		return Response.accepted().build();
+		Response response = Response.accepted().build();
+		startStopp.getProcessManager().restarteSkript();
+		return response;
 	}
 
 	@POST
 	@Path("start")
 	public Response responseStartStoppStart() {
 		try {
-			startStopp.getProcessManager().starteSkript(StartStoppMode.MANUELL);
+			startStopp.getProcessManager().starteSkript();
 		} catch (StartStoppException e) {
 			LOGGER.warning(e.getLocalizedMessage());
 		}

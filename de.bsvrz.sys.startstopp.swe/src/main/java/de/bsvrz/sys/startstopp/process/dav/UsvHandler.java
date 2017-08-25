@@ -38,8 +38,6 @@ import de.bsvrz.dav.daf.main.config.SystemObject;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
-import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
-import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 public class UsvHandler implements ClientReceiverInterface {
 
@@ -96,8 +94,8 @@ public class UsvHandler implements ClientReceiverInterface {
 			if( result.hasData()) {
 				int zustand = result.getData().getUnscaledValue("KritischerZustand").intValue();
 				if( zustand == 1) {
-					StartStopp.getInstance().stoppStartStoppApplikation(StartStoppMode.SKRIPT);
-					return;
+					prozessManager.shutdownSkript();
+					break;
 				}
 			}
 		}

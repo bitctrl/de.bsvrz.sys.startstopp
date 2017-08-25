@@ -88,7 +88,6 @@ class AusgabeVerarbeitung implements Runnable {
 
 				if (reader.ready()) {
 					line = reader.readLine();
-					// System.err.println("Line: " + line);
 					if (line != null) {
 						inkarnation.addProzessAusgabe(line);
 						lineCounter++;

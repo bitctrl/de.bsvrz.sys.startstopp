@@ -24,32 +24,25 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.console.ui.online;
+package de.bsvrz.sys.startstopp.process.dav;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.console.StartStoppConsole;
-import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
+import de.bsvrz.dav.daf.main.config.SystemObject;
 
-class ApplikationStartAction implements Runnable {
+public class DavApplikationStatus {
 
-	private final Applikation applikation;
+	public final String name;
+	public final boolean fertig;
 
-	ApplikationStartAction(Applikation applikation) {
-		this.applikation = applikation;
-	}
+	final SystemObject appObj;
 
-	@Override
-	public void run() {
-		try {
-			StartStoppConsole.getClient().starteApplikation(applikation.getInkarnation().getInkarnationsName());
-		} catch (StartStoppException e) {
-			new InfoDialog("FEHLER", e.getFullString()).display();
-		}
+	DavApplikationStatus(String name, SystemObject appObj, boolean fertig) {
+		this.name = name;
+		this.appObj = appObj;
+		this.fertig = fertig;
 	}
 
 	@Override
 	public String toString() {
-		return "Starten";
+		return "ApplikationStatus [name=" + name + ", appObj=" + appObj + ", fertig=" + fertig + "]";
 	}
 }

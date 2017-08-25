@@ -40,9 +40,8 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.process.ProzessManager;
-import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation;
+import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 @Path("/ststapi/v1/applikationen")
@@ -98,7 +97,7 @@ public class ApplikationenService {
 	public Response responseApplikationStart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			OnlineApplikation applikation = processManager.starteApplikation(inkarnationsName, StartStoppMode.MANUELL);
+			OnlineApplikation applikation = processManager.starteApplikation(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation.getApplikation());
@@ -117,7 +116,7 @@ public class ApplikationenService {
 	public Response responseApplikationRestart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			OnlineApplikation applikation = processManager.restarteApplikation(inkarnationsName, StartStoppMode.MANUELL);
+			OnlineApplikation applikation = processManager.restarteApplikation(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation.getApplikation());
@@ -136,7 +135,7 @@ public class ApplikationenService {
 	public Response responseApplikationStopp(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			OnlineApplikation applikation = processManager.stoppeApplikation(inkarnationsName, StartStoppMode.MANUELL);
+			OnlineApplikation applikation = processManager.stoppeApplikation(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation.getApplikation());

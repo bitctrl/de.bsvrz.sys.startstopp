@@ -52,48 +52,30 @@ import de.bsvrz.dav.daf.main.config.SystemObject;
 import de.bsvrz.dav.daf.main.config.SystemObjectType;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
+import de.muspellheim.events.Event;
 
 class ApplikationStatusHandler implements DynamicObjectCreatedListener, InvalidationListener, ClientReceiverInterface {
 
-	private static class ApplikationStatus {
-
-		private String name;
-		private SystemObject appObj;
-		private boolean fertig;
-
-		ApplikationStatus(String name, SystemObject appObj, boolean fertig) {
-			this.name = name;
-			this.appObj = appObj;
-			this.fertig = fertig;
-		}
-
-		@Override
-		public String toString() {
-			return "ApplikationStatus [name=" + name + ", appObj=" + appObj + ", fertig=" + fertig + "]";
-		}
-	}
-
-	private ProzessManager processManager;
+	final Event<DavApplikationStatus> onStatusChange = new Event<>();
+	
 	private DynamicObjectType applikationTyp;
 	private DataDescription applikationsFertigMeldungDesc;
 	private ClientDavConnection dav;
-	private Map<String, ApplikationStatus> applikationStatus = new LinkedHashMap<>();
+	private Map<String, DavApplikationStatus> applikationStatus = new LinkedHashMap<>();
 	private Set<DatenVerteiler> datenVerteiler = new LinkedHashSet<>();
 	private String inkarnationsPrefix;
 
-	ApplikationStatusHandler(ProzessManager processManager) {
-		this(StartStopp.getInstance(), processManager);
+	ApplikationStatusHandler() {
+		this(StartStopp.getInstance());
 	}
 
-	ApplikationStatusHandler(StartStopp startstopp, ProzessManager processManager) {
-		this.processManager = processManager;
+	ApplikationStatusHandler(StartStopp startstopp) {
 		this.inkarnationsPrefix = startstopp.getInkarnationsPrefix();
 	}
 
 	public void terminiereAppPerDav(String name) throws StartStoppException {
-		ApplikationStatus status = applikationStatus.get(name);
+		DavApplikationStatus status = applikationStatus.get(name);
 		if (status == null) {
 			throw new StartStoppException("Die Applikation \"" + name + "\" ist nicht bekannt!");
 		}
@@ -111,7 +93,7 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 
 	public void reconnect(ClientDavConnection connection) {
 
-		Collection<ApplikationStatus> statusValues = new ArrayList<>(applikationStatus.values());
+		Collection<DavApplikationStatus> statusValues = new ArrayList<>(applikationStatus.values());
 		applikationStatus.clear();
 		statusValues.forEach(app -> disconnectApplikation(app.appObj));
 
@@ -168,9 +150,9 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 							+ appObj + " kann nicht abgemeldet werden!");
 		} else {
 			dav.unsubscribeReceiver(this, appObj, applikationsFertigMeldungDesc);
-			Iterator<ApplikationStatus> iterator = applikationStatus.values().iterator();
+			Iterator<DavApplikationStatus> iterator = applikationStatus.values().iterator();
 			while (iterator.hasNext()) {
-				ApplikationStatus status = iterator.next();
+				DavApplikationStatus status = iterator.next();
 				if (status.appObj.equals(appObj)) {
 					iterator.remove();
 				}
@@ -208,17 +190,21 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 
 	private void updateApplikationStatus(SystemObject appObj, Data data) {
 		String name = data.getTextValue("Inkarnationsname").getText();
+		if( !name.startsWith(inkarnationsPrefix)) {
+			return;
+		}
+		
 		boolean fertig = data.getUnscaledValue("InitialisierungFertig").intValue() == 1;
-
 		Debug.getLogger().info("Aktualisierung vom Dav: " + appObj + ": \"" + name + "\" ist fertig: " + fertig);
 
 		if (!name.isEmpty()) {
-			ApplikationStatus status = new ApplikationStatus(name, appObj, fertig);
-			applikationStatus.put(name, status);
-			if (name.startsWith(inkarnationsPrefix)) {
-				String processMgrInkarnation = name.substring(inkarnationsPrefix.length());
-				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
-				processManager.updateFromDav(processMgrInkarnation, status.fertig);
+			DavApplikationStatus status = new DavApplikationStatus(name, appObj, fertig);
+			DavApplikationStatus lastStatus = applikationStatus.put(name, status);
+			if (!status.equals(lastStatus)) {
+//				String processMgrInkarnation = name.substring(inkarnationsPrefix.length());
+				onStatusChange.send(status);
+//				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
+//				processManager.updateFromDav(processMgrInkarnation, status.fertig);
 			}
 		}
 	}
@@ -228,7 +214,7 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 			if (name.startsWith(inkarnationsPrefix)) {
 				String processMgrInkarnation = name.substring(inkarnationsPrefix.length());
 				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
-				processManager.updateFromDav(processMgrInkarnation, false);
+// TODO				processManager.updateFromDav(processMgrInkarnation, false);
 			}
 		}
 		reconnect(null);

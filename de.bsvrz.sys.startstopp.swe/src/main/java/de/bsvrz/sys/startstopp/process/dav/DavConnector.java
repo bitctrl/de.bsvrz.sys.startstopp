@@ -45,10 +45,12 @@ import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
+import de.muspellheim.events.Event;
 
 public class DavConnector {
 
 	private static final Debug LOGGER = Debug.getLogger();
+	public final Event<DavApplikationStatus> onAppStatusChanged = new Event<>();
 
 	private ZugangDav zugangDav;
 	private Object lock = new Object();
@@ -66,10 +68,16 @@ public class DavConnector {
 	public DavConnector(StartStopp startStopp, ProzessManager prozessManager) {
 		this.processManager = prozessManager;
 		this.inkarnationsPrefix = startStopp.getInkarnationsPrefix();
-		appStatusHandler = new ApplikationStatusHandler(prozessManager);
+		appStatusHandler = new ApplikationStatusHandler();
+		appStatusHandler.onStatusChange.addHandler((status) -> appStatusChanged(status));
+
 		usvHandler = new UsvHandler(processManager);
 		Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("DavConnector"))
 				.scheduleAtFixedRate(() -> connectToDav(), 0, 10, TimeUnit.SECONDS);
+	}
+
+	private void appStatusChanged(DavApplikationStatus status) {
+		onAppStatusChanged.send(status);
 	}
 
 	public void connectToDav() {
@@ -174,7 +182,7 @@ public class DavConnector {
 			parameters.setDavCommunicationSubAddress(Integer.parseInt(zugangDav.getPort()));
 			connection = new ClientDavConnection(parameters);
 			connection.addConnectionListener((conn) -> conn.disconnect(false, ""));
-			connection.setCloseHandler((error) -> handleDisconnect(error)  );
+			connection.setCloseHandler((error) -> handleDisconnect(error));
 
 		} catch (MissingParameterException e) {
 			LOGGER.warning("Datenverteilerverbindung kann nicht hergestellt werden!", e);

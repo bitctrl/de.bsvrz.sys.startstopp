@@ -36,7 +36,6 @@ import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
-import de.bsvrz.sys.startstopp.process.ProzessManager.StartStoppMode;
 
 public class StartStopp {
 
@@ -130,10 +129,4 @@ public class StartStopp {
 	private void start() throws Exception {
 		apiServer.start();
 	}
-	
-	public void stoppStartStoppApplikation(StartStoppMode modus) {
-		processManager.shutdownSkript(modus).thenRun(() -> System.exit(0));
-	}
-
-	
 }
