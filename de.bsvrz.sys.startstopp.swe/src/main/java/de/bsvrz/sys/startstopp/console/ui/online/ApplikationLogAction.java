@@ -28,7 +28,6 @@ package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.Collections;
 
-import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window.Hint;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
@@ -36,23 +35,23 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 
-class ApplikationDetailAction implements Runnable {
+class ApplikationLogAction implements Runnable {
 
 
 	private Applikation applikation;
 
-	ApplikationDetailAction(Applikation applikation) {
+	ApplikationLogAction(Applikation applikation) {
 		this.applikation = applikation;
 	}
 	
 	@Override
 	public void run() {
-		ApplikationDetailWindow window = new ApplikationDetailWindow("Details: " + applikation.getInkarnation().getInkarnationsName());
+		ApplikationLogWindow window = new ApplikationLogWindow("Meldungen: " + applikation.getInkarnation().getInkarnationsName());
 		window.setHints(Collections.singleton(Hint.EXPANDED));
 		StartStoppConsole.getGui().addWindow(window);
-		
+
 		try {
-			window.setApplikation(StartStoppConsole.getClient().getApplikation(applikation.getInkarnation().getInkarnationsName()));
+			window.setLog(StartStoppConsole.getClient().getApplikationLog(applikation.getInkarnation().getInkarnationsName()));
 		} catch (StartStoppException e) {
 			new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
 		}
@@ -60,6 +59,6 @@ class ApplikationDetailAction implements Runnable {
 
 	@Override
 	public String toString() {
-		return "Details anzeigen";
+		return "Ausgaben anzeigen";
 	}
 }

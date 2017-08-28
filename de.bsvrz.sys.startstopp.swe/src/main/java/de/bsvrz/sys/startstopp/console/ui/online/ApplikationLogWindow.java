@@ -30,54 +30,46 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.GridLayout.Alignment;
-import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.input.KeyStroke;
 
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 
-class ApplikationDetailWindow extends BasicWindow {
+class ApplikationLogWindow extends BasicWindow {
 
-	private final Label applikationLabel = new Label("");
-	private final Table<String> parameterTable = new Table<>("Parameter");
+	private Table<String> messagesTable;
 
-	ApplikationDetailWindow(String string) {
+	ApplikationLogWindow(String string) {
 		super(string);
 		setCloseWindowWithEscape(true);
 		initUI();
 	}
 
 	private void initUI() {
-
 		
 		Panel panel = new Panel();
-		panel.setLayoutManager(new GridLayout(2));
-		panel.setLayoutData(GridLayout.createHorizontallyEndAlignedLayoutData(1));
-
-		panel.addComponent(new Label("Applikation: "));
-		panel.addComponent(applikationLabel);
+		panel.setLayoutManager(new GridLayout(1));
+		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
 		
-		parameterTable.setLayoutData(GridLayout.createHorizontallyEndAlignedLayoutData(2));
-		parameterTable.setVisibleRows(3);
+		messagesTable = new Table<>("Meldungen");
+		messagesTable.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
+		addWindowListener(new WindowListenerAdapter() {
+			@Override
+			public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
+				messagesTable.setVisibleRows(newSize.getRows() - 3);
+				messagesTable.setVisibleColumns(newSize.getColumns() - 3);
+			}
+		});
 
-		panel.addComponent(parameterTable);
+		panel.addComponent(messagesTable);
 		setComponent(panel);
 	}
 
-	@Override
-	public boolean handleInput(KeyStroke key) {
-		// TODO implementieren
-		return super.handleInput(key);
-	}
-
-	public void setApplikation(Applikation applikation) {
-		applikationLabel.setText(applikation.getInkarnation().getApplikation());
-		for( String parameter : applikation.getInkarnation().getAufrufParameter()) {
-			parameterTable.getTableModel().addRow(parameter);
+	public void setLog(ApplikationLog applikationLog) {
+		for (String message : applikationLog.getMessages()) {
+			messagesTable.getTableModel().addRow(message);
 		}
-		// TODO Auto-generated method stub
 	}
 }

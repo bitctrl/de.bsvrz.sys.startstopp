@@ -39,6 +39,7 @@ import java.util.concurrent.Executors;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
@@ -138,10 +139,10 @@ public final class ProzessManager {
 		return Collections.unmodifiableCollection(applikationen.values());
 	}
 
-	public Applikation getApplikation(String inkarnationsName) throws StartStoppException {
+	public OnlineApplikation getApplikation(String inkarnationsName) throws StartStoppException {
 		OnlineApplikation managedApplikation = applikationen.get(inkarnationsName);
 		if (managedApplikation != null) {
-			return managedApplikation.getApplikation();
+			return managedApplikation;
 		}
 
 		throw new StartStoppException(
@@ -525,7 +526,7 @@ public final class ProzessManager {
 				for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
 					if (found) {
 						try {
-							Applikation ksApplikation = getApplikation(ks.getInkarnationsName());
+							OnlineApplikation ksApplikation = getApplikation(ks.getInkarnationsName());
 							if (ksApplikation.getStatus() != Applikation.Status.GESTOPPT) {
 								result.add(ks.getInkarnationsName());
 							}
@@ -578,7 +579,18 @@ public final class ProzessManager {
 		setManagerStatus(Status.RUNNING);
 		for (OnlineApplikation applikation : applikationen.values()) {
 			if (applikation.getStartArtOption() != StartArt.Option.MANUELL) {
-				applikation.updateStatus(Applikation.Status.INSTALLIERT, "");
+				switch (applikation.getStatus()) {
+				case GESTOPPT:
+				case STOPPENWARTEN:
+					applikation.updateStatus(Applikation.Status.INSTALLIERT, "");
+					break;
+				case GESTARTET:
+				case INITIALISIERT:
+				case STARTENWARTEN:
+				case INSTALLIERT:
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -634,6 +646,10 @@ public final class ProzessManager {
 		}
 
 		return null;
+	}
+
+	public ApplikationLog getApplikationLog(String inkarnationsName) throws StartStoppException {
+		return getApplikation(inkarnationsName).getLog();
 	}
 
 }

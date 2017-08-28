@@ -41,6 +41,7 @@ import java.util.function.Consumer;
 import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt.Option;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
@@ -102,7 +103,7 @@ public final class OnlineApplikation {
 
 	private String inkarnationsPrefix;
 
-	private List<String> prozessAusgaben = new ArrayList<>();
+	private final List<String> prozessAusgaben = new ArrayList<>();
 
 	public OnlineApplikation(ProzessManager processmanager, OnlineInkarnation onlineInkarnation) {
 		this(StartStopp.getInstance(), processmanager, onlineInkarnation);
@@ -414,7 +415,7 @@ public final class OnlineApplikation {
 		case STARTFEHLER:
 			updateStatus(Applikation.Status.GESTOPPT, "Fehler beim Starten");
 			if (process != null) {
-				prozessAusgaben.addAll(process.getProzessAusgabe());
+				updateProzessAusgaben();
 				if (!prozessAusgaben.isEmpty()) {
 					applikation.setStartMeldung(prozessAusgaben.get(0));
 				}
@@ -428,6 +429,13 @@ public final class OnlineApplikation {
 			break;
 		default:
 			break;
+		}
+	}
+
+	private void updateProzessAusgaben() {
+		if (process != null) {
+			prozessAusgaben.clear();
+			prozessAusgaben.addAll(process.getProzessAusgabe());
 		}
 	}
 
@@ -713,8 +721,22 @@ public final class OnlineApplikation {
 	private boolean stoppFehlerTaskIsActive() {
 		return (stoppFehlerTask != null) && stoppFehlerTask.getDelay(TimeUnit.MILLISECONDS) > 0;
 	}
-	
+
 	private boolean warteTaskIsActive() {
 		return (warteTask != null) && warteTask.getDelay(TimeUnit.MILLISECONDS) > 0;
+	}
+
+	public ApplikationLog getLog() {
+		ApplikationLog log = new ApplikationLog().withInkarnation(getName());
+		updateProzessAusgaben();
+		if (prozessAusgaben.isEmpty()) {
+			String startMeldung = applikation.getStartMeldung();
+			if ((startMeldung != null) && !startMeldung.trim().isEmpty()) {
+				log.getMessages().add(startMeldung.trim());
+			}
+		} else {
+			log.getMessages().addAll(prozessAusgaben);
+		}
+		return log;
 	}
 }

@@ -43,6 +43,7 @@ import org.glassfish.jersey.client.ClientConfig;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
@@ -309,6 +310,25 @@ public class StartStoppClient {
 				+ "\"konnte nicht abgerufen werden (Response: " + response.getStatus() + ")");
 	}
 
+
+	public ApplikationLog getApplikationLog(String inkarnationsName) throws StartStoppException {
+		Response response = null;
+		try {
+			response = createGetResponse("/applikationen/" + inkarnationsName + "/log");
+			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+				return response.readEntity(ApplikationLog.class);
+			}
+		} catch (Exception e) {
+			LOGGER.fine(e.getLocalizedMessage());
+		}
+		if (response == null) {
+			throw new StartStoppException("Keine Verbindung zu StartStopp!");
+		}
+		throw new StartStoppException("Die Ausgaben der Applikation \"" + inkarnationsName
+				+ "\"konnten nicht abgerufen werden (Response: " + response.getStatus() + ")");
+	}
+
+	
 	public Applikation starteApplikation(String inkarnationsName) throws StartStoppException {
 		Response response = null;
 		try {

@@ -38,6 +38,7 @@ import javax.ws.rs.core.Response;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation;
@@ -80,10 +81,10 @@ public class ApplikationenService {
 	public Response responseApplikation(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			Applikation applikation = processManager.getApplikation(inkarnationsName);
+			OnlineApplikation applikation = processManager.getApplikation(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
-			responseBuilder.entity(applikation);
+			responseBuilder.entity(applikation.getApplikation());
 			return responseBuilder.build();
 		} catch (StartStoppException e) {
 			LOGGER.fine(e.getLocalizedMessage());
@@ -91,6 +92,24 @@ public class ApplikationenService {
 		}
 	}
 
+	@GET
+	@Path("{inkarnationsname}/log")
+	@Produces("application/json")
+	public Response responseApplikationLog(@PathParam("inkarnationsname") String inkarnationsName) {
+
+		try {
+			ApplikationLog applikationLog = processManager.getApplikationLog(inkarnationsName);
+			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
+					"application/json");
+			responseBuilder.entity(applikationLog);
+			return responseBuilder.build();
+		} catch (StartStoppException e) {
+			LOGGER.fine(e.getLocalizedMessage());
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+	}
+
+	
 	@POST
 	@Path("{inkarnationsname}/start")
 	@Produces("application/json")

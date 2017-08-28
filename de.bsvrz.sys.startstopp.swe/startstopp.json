@@ -160,7 +160,7 @@
     }
   }, {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application01", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application01", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=INFO -debugLevelFileText=FINE" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation01",
     "initialize" : false,
@@ -230,7 +230,7 @@
     }
   }, {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application11", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation06",
     "initialize" : false,
@@ -268,9 +268,9 @@
     }
   } ],
   "metaDaten" : {
-    "aenderungsGrund" : "jksdf sdkjfh",
-    "erstelltAm" : "2017-08-25T09:59:21.375",
+    "aenderungsGrund" : "klsdfkl sdj",
+    "erstelltAm" : "2017-08-28T13:42:09.508",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1503647961375"
+    "versionsNummer" : "1503920529508"
   }
 }

@@ -62,6 +62,7 @@ class OnlineInkarnationTable extends EditableTable<Applikation> {
 			builder.addAction(new ApplikationRestartAction(applikation));
 			builder.addAction(new ApplikationStoppAction(applikation));
 			builder.addAction(new ApplikationDetailAction(applikation));
+			builder.addAction(new ApplikationLogAction(applikation));
 			builder.build().showDialog(getTextGUI());
 		}
 		return null;

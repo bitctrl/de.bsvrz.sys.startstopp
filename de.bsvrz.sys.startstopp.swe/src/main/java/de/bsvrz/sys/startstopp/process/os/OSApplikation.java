@@ -72,6 +72,9 @@ public class OSApplikation {
 	 * @param meldung
 	 */
 	 void addProzessAusgabe(String meldung) {
+		 
+		 System.err.println("Add: " + meldung);
+		 
 		if( ausgaben.isEmpty() && meldung.trim().isEmpty()) {
 			return;
 		}

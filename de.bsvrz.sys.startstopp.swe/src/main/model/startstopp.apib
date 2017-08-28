@@ -136,6 +136,19 @@ Liefert den Status der referenzierten Applikation.
 
     + Attributes (Applikation)
 
+## Startmeldungen einer Applikation [/ststapi/v1/applikationen/{inkarnationsname}/log]
+Liefert die Startmeldungen der referenzierten Applikation.
+
++ Parameters
+
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
+
+### GET
+
++ Response 200 (application/json)
+    
+    + Attributes (ApplikationLog)
+
 ## Applikation starten [/ststapi/v1/applikationen/{inkarnationsname}/start]
 Startet die referenzierte Applikation.
 
@@ -381,6 +394,9 @@ Alle bei StartStopp definierten Rechner
   + gestoppt (string)
 + startMeldung `undefiniert' (string, required)
 
+## ApplikationLog (object)  
++ inkarnation (string, required) - der Name der Inkarnation
++ messages (array[string], fixed-type)
   
 ## StartStoppVersion (object)
 
