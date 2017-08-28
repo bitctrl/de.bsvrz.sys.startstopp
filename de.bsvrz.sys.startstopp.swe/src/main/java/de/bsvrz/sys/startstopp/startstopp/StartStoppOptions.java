@@ -42,6 +42,7 @@ public class StartStoppOptions {
 	private static final String PARAM_INKARNATIONSNAME = "-inkarnationsName=StartStopp";
 	private static final String PARAM_RECHNER_PID = "-rechner";
 	private static final String PARAM_MASTER = "-master";
+	private static final String PARAM_BETRIEBSMELDUNG = "-betriebsMeldungVersenden=ja";
 
 	private final String skriptDir;
 	private final int httpsPort;
@@ -53,6 +54,7 @@ public class StartStoppOptions {
 
 	private String masterHost;
 	private int masterPort = 3000;
+	private boolean betriebsMeldungVersenden;
 
 	public StartStoppOptions(String ... args) {
 		ArgumentList argumentList = new ArgumentList(args);
@@ -88,6 +90,8 @@ public class StartStoppOptions {
 				}
 			}
 		}
+
+		betriebsMeldungVersenden = argumentList.fetchArgument(PARAM_BETRIEBSMELDUNG).booleanValue();
 	}
 
 	public int getHttpPort() {
@@ -138,6 +142,10 @@ public class StartStoppOptions {
 		}
 
 		return null;
+	}
+
+	boolean isBetriebsMeldungVersenden() {
+		return betriebsMeldungVersenden;
 	}
 
 }

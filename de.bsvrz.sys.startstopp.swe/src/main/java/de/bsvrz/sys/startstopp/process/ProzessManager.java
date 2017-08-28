@@ -156,7 +156,7 @@ public final class ProzessManager {
 					+ "\" konnte nicht gefunden werden");
 		}
 
-		applikation.startSystemProcess();
+		applikation.starteApplikation();
 		return applikation;
 	}
 
@@ -193,7 +193,7 @@ public final class ProzessManager {
 						.newSingleThreadExecutor(new NamingThreadFactory(inkarnationsName + "_StoppForRestart")))
 				.thenRun(() -> {
 					try {
-						applikation.startSystemProcess();
+						applikation.starteApplikation();
 					} catch (StartStoppException e) {
 						LOGGER.warning(e.getLocalizedMessage());
 					}

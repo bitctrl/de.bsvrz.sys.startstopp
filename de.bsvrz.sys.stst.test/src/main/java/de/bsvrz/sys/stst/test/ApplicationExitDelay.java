@@ -20,6 +20,7 @@ class ApplicationExitDelay implements Runnable {
 				Debug.getLogger().warning("Ich sollte beendet werden, warte noch " + sekunden + " Sekunden");
 				TimeUnit.SECONDS.sleep(sekunden);
 				Debug.getLogger().warning("Applikation beendet");
+				System.exit(0);
 			} catch (InterruptedException e) {
 				Debug.getLogger().error("Interrupted", e);
 			}

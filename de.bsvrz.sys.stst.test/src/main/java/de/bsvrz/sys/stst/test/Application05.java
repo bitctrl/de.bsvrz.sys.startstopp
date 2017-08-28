@@ -1,16 +1,12 @@
 package de.bsvrz.sys.stst.test;
 
-import java.util.Random;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import de.bsvrz.dav.daf.main.ApplicationCloseActionHandler;
 import de.bsvrz.dav.daf.main.ClientDavInterface;
 import de.bsvrz.sys.funclib.application.StandardApplication;
 import de.bsvrz.sys.funclib.application.StandardApplicationRunner;
 import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
-import de.bsvrz.sys.funclib.debug.Debug;
 
 public class Application05 implements StandardApplication {
 
