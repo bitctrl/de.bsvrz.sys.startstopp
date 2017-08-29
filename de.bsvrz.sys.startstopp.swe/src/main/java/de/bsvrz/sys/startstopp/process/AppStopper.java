@@ -35,15 +35,14 @@ import java.util.function.Consumer;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.process.OnlineApplikation.ApplikationStatus;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 public class AppStopper implements Runnable {
 
-	class AppStatusHandler implements Consumer<ApplikationStatus> {
+	class AppStatusHandler implements Consumer<ApplikationEvent> {
 
 		@Override
-		public void accept(ApplikationStatus status) {
+		public void accept(ApplikationEvent status) {
 			if (status.status == Applikation.Status.GESTOPPT) {
 				status.event.removeHandler(this);
 				synchronized (lock) {

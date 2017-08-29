@@ -26,14 +26,10 @@
 
 package de.bsvrz.sys.startstopp.console.ui.online;
 
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.GridLayout.Alignment;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
-import com.googlecode.lanterna.gui2.Window;
-import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -67,17 +63,11 @@ class ApplikationDetailWindow extends BasicWindow {
 		setComponent(panel);
 	}
 
-	@Override
-	public boolean handleInput(KeyStroke key) {
-		// TODO implementieren
-		return super.handleInput(key);
-	}
-
 	public void setApplikation(Applikation applikation) {
 		applikationLabel.setText(applikation.getInkarnation().getApplikation());
 		for( String parameter : applikation.getInkarnation().getAufrufParameter()) {
 			parameterTable.getTableModel().addRow(parameter);
 		}
-		// TODO Auto-generated method stub
+		// TODO weitere Daten ergänzen
 	}
 }

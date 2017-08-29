@@ -242,7 +242,7 @@
     },
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : "0"
+      "wiederholungen" : "10"
     },
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
@@ -268,9 +268,9 @@
     }
   } ],
   "metaDaten" : {
-    "aenderungsGrund" : "klsdfkl sdj",
-    "erstelltAm" : "2017-08-28T13:42:09.508",
+    "aenderungsGrund" : "skldjf sdlkfj sdf",
+    "erstelltAm" : "2017-08-29T13:22:12.675",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1503920529508"
+    "versionsNummer" : "1504005732675"
   }
 }

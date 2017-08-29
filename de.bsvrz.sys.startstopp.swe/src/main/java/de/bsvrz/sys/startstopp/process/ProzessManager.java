@@ -51,7 +51,6 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
-import de.bsvrz.sys.startstopp.process.OnlineApplikation.ApplikationStatus;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 import de.bsvrz.sys.startstopp.process.dav.DavConnector;
 import de.bsvrz.sys.startstopp.process.os.OSTools;
@@ -66,9 +65,9 @@ public final class ProzessManager {
 
 	private static final Debug LOGGER = Debug.getLogger();
 
-	public final Event<StartStoppStatus.Status> onManagerStatusChanged = new Event<>();
+	public final Event<StartStoppStatus.Status> onStartStoppStatusChanged = new Event<>();
 
-	private StartStoppStatus.Status managerStatus = StartStoppStatus.Status.INITIALIZED;
+	private StartStoppStatus.Status startStoppStatus = StartStoppStatus.Status.INITIALIZED;
 	private Map<String, OnlineApplikation> applikationen = new LinkedHashMap<>();
 	private StartStoppKonfiguration aktuelleKonfiguration;
 	private DavConnector davConnector;
@@ -100,12 +99,12 @@ public final class ProzessManager {
 					applikationen.put(applikation.getName(), applikation);
 				}
 
-				setManagerStatus(Status.RUNNING);
+				setStartStoppStatus(Status.RUNNING);
 				for (OnlineApplikation applikation : applikationen.values()) {
 					applikation.checkState(TaskType.DEFAULT);
 				}
 			} else {
-				setManagerStatus(Status.CONFIGERROR);
+				setStartStoppStatus(Status.CONFIGERROR);
 			}
 		} catch (StartStoppException e) {
 			LOGGER.fine(e.getLocalizedMessage());
@@ -114,7 +113,7 @@ public final class ProzessManager {
 
 	}
 
-	private void setManagerStatus(StartStoppStatus.Status status) {
+	void setStartStoppStatus(StartStoppStatus.Status status) {
 
 		switch (status) {
 		case STOPPED:
@@ -125,9 +124,9 @@ public final class ProzessManager {
 			break;
 		}
 
-		if (managerStatus != status) {
-			managerStatus = status;
-			onManagerStatusChanged.send(status);
+		if (startStoppStatus != status) {
+			startStoppStatus = status;
+			onStartStoppStatusChanged.send(status);
 		}
 	}
 
@@ -150,22 +149,15 @@ public final class ProzessManager {
 	}
 
 	public OnlineApplikation starteApplikation(String inkarnationsName) throws StartStoppException {
-		checkStartModus();
+		checkManualStartModus();
 		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation == null) {
 			throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName
 					+ "\" konnte nicht gefunden werden");
 		}
 
-		applikation.starteApplikation();
+		applikation.starteApplikationManuell();
 		return applikation;
-	}
-
-	private void checkStartModus() throws StartStoppException {
-		if (managerStatus != StartStoppStatus.Status.RUNNING) {
-			throw new StartStoppException(
-					"Eine Applikation kann im Status: " + managerStatus + " nicht gestartet werden!");
-		}
 	}
 
 	/**
@@ -182,7 +174,7 @@ public final class ProzessManager {
 	 *             der Neustart ist fehlgeschlagen
 	 */
 	public OnlineApplikation restarteApplikation(String inkarnationsName) throws StartStoppException {
-		checkStartModus();
+		checkManualStartModus();
 		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation == null) {
 			throw new StartStoppException("Eine Applikation mit dem Inkarnationsname \"" + inkarnationsName
@@ -194,7 +186,7 @@ public final class ProzessManager {
 						.newSingleThreadExecutor(new NamingThreadFactory(inkarnationsName + "_StoppForRestart")))
 				.thenRun(() -> {
 					try {
-						applikation.starteApplikation();
+						applikation.starteApplikationManuell();
 					} catch (StartStoppException e) {
 						LOGGER.warning(e.getLocalizedMessage());
 					}
@@ -226,16 +218,28 @@ public final class ProzessManager {
 
 	public void stoppeSkript() {
 
-		if (managerStatus == StartStoppStatus.Status.RUNNING) {
-			setManagerStatus(Status.STOPPING);
+		switch(startStoppStatus) {
+		case RUNNING_CANCELED:
+		case RUNNING:
+		case STOPPING_CANCELED:
+			setStartStoppStatus(Status.STOPPING);
+			break;
+		case SHUTDOWN:
+		case STOPPED:
+		case STOPPING:
+		case CONFIGERROR:
+		case INITIALIZED:
+		default:
+			break;
+		
 		}
 	}
 
 	public void restarteSkript() {
-		if (managerStatus == StartStoppStatus.Status.RUNNING) {
+		if (startStoppStatus == StartStoppStatus.Status.RUNNING) {
 			neuStartGeplant = true;
-			setManagerStatus(Status.STOPPING);
-		} else if (managerStatus == StartStoppStatus.Status.STOPPED) {
+			setStartStoppStatus(Status.STOPPING);
+		} else if (startStoppStatus == StartStoppStatus.Status.STOPPED) {
 			try {
 				starteSkript();
 			} catch (StartStoppException e) {
@@ -245,10 +249,10 @@ public final class ProzessManager {
 	}
 
 	public void shutdownSkript() {
-		switch (managerStatus) {
+		switch (startStoppStatus) {
 		case RUNNING:
 		case STOPPING:
-			setManagerStatus(Status.SHUTDOWN);
+			setStartStoppStatus(Status.SHUTDOWN);
 			break;
 		case CONFIGERROR:
 		case INITIALIZED:
@@ -309,14 +313,12 @@ public final class ProzessManager {
 					applikationen.put(applikation.getName(), applikation);
 					applikation.onStatusChanged.addHandler((status) -> applikationStatusChanged(status));
 					applikation.updateStatus(Applikation.Status.INSTALLIERT, "Applikation angelegt");
-					if (managerStatus == Status.RUNNING) {
+					if (startStoppStatus == Status.RUNNING) {
 						applikation.checkState(TaskType.DEFAULT);
 					}
 				} else {
-					applikation.getApplikation().setInkarnation(inkarnation.getInkarnation());
-					if ((managerStatus == Status.RUNNING) && geandert.containsKey(inkarnation.getName())) {
-						// TODO Änderungen genauer auswerten
-						restarteApplikation(inkarnation.getName());
+					if (geandert.containsKey(inkarnation.getName())) {
+						applikation.reinit(inkarnation.getInkarnation());
 					}
 				}
 			}
@@ -329,6 +331,7 @@ public final class ProzessManager {
 					e);
 		}
 	}
+
 
 	public Set<String> waitForStartBedingung(OnlineApplikation managedApplikation) {
 
@@ -542,7 +545,7 @@ public final class ProzessManager {
 		return result;
 	}
 
-	public void applikationStatusChanged(ApplikationStatus status) {
+	public void applikationStatusChanged(ApplikationEvent status) {
 		boolean allStopped = true;
 		for (OnlineApplikation applikation : applikationen.values()) {
 			if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
@@ -553,8 +556,8 @@ public final class ProzessManager {
 			}
 		}
 
-		if ((managerStatus == Status.STOPPING) && allStopped) {
-			setManagerStatus(Status.STOPPED);
+		if ((startStoppStatus == Status.STOPPING) && allStopped) {
+			setStartStoppStatus(Status.STOPPED);
 			if (neuStartGeplant) {
 				try {
 					starteSkript();
@@ -564,7 +567,7 @@ public final class ProzessManager {
 			}
 		}
 
-		if ((managerStatus == Status.SHUTDOWN) && allStopped) {
+		if ((startStoppStatus == Status.SHUTDOWN) && allStopped) {
 			System.exit(0);
 		}
 	}
@@ -576,7 +579,7 @@ public final class ProzessManager {
 	public void starteSkript() throws StartStoppException {
 
 		checkSkriptStart();
-		setManagerStatus(Status.RUNNING);
+		setStartStoppStatus(Status.RUNNING);
 		for (OnlineApplikation applikation : applikationen.values()) {
 			if (applikation.getStartArtOption() != StartArt.Option.MANUELL) {
 				switch (applikation.getStatus()) {
@@ -595,8 +598,25 @@ public final class ProzessManager {
 		}
 	}
 
+	private void checkManualStartModus() throws StartStoppException {
+		switch(startStoppStatus) {
+		case RUNNING:
+		case RUNNING_CANCELED:
+		case STOPPED:
+		case STOPPING_CANCELED:
+			break;
+		case STOPPING:
+		case SHUTDOWN:
+		case CONFIGERROR:
+		case INITIALIZED:
+		default:
+			throw new StartStoppException(
+					"Eine Applikation kann im Status: " + startStoppStatus + " nicht gestartet werden!");
+		}
+	}
+	
 	private void checkSkriptStart() throws StartStoppException {
-		switch (managerStatus) {
+		switch (startStoppStatus) {
 		case RUNNING:
 		case STOPPED:
 			break;
@@ -605,15 +625,15 @@ public final class ProzessManager {
 		case INITIALIZED:
 		case SHUTDOWN:
 			throw new StartStoppException(
-					"Der Prozessmanager kann im Status " + managerStatus + " nicht neu gestartet werden");
+					"Der Prozessmanager kann im Status " + startStoppStatus + " nicht neu gestartet werden");
 		default:
 			break;
 
 		}
 	}
 
-	public Status getStatus() {
-		return managerStatus;
+	public Status getStartStoppStatus() {
+		return startStoppStatus;
 	}
 
 	public void davConnected() {

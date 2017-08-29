@@ -112,7 +112,7 @@ public class StartStopp {
 			return status;
 		}
 
-		status.setStatus(processManager.getStatus());
+		status.setStatus(processManager.getStartStoppStatus());
 		return status;
 	}
 

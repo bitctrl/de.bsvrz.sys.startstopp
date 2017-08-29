@@ -7,7 +7,9 @@
       "enum": [
         "initialized",
         "running",
+        "running_canceled",
         "stopping",
+        "stopping_canceled",
         "stopped",
         "shutdown",
         "configerror"
