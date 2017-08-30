@@ -14,6 +14,7 @@ start /b %java% ^
  %dav1einstellungen% ^
  -rechtePruefung=nein ^
  -benutzer=TestDatenverteilerBenutzer ^
+ -warteAufParametrierung=nein ^
  -authentifizierung=passwd ^
  -debugLevelStdErrText=INFO ^
  -debugLevelFileText=CONFIG
@@ -40,16 +41,16 @@ rem Verzeichnis für Parameter anlegen, wenn noch nicht vorhanden
 if not exist ..\parameter mkdir ..\parameter
 
 rem Parametrierung im Hintergrund starten
-start /b %java% ^
- -cp ..\distributionspakete\de.kappich.puk.param\de.kappich.puk.param-runtime.jar ^
- de.kappich.puk.param.main.ParamApp ^
+start /b %java% -jar ..\distributionspakete\de.bsvrz.puk.param\de.bsvrz.puk.param-runtime.jar ^
  %dav1OhneAuthentifizierung% ^
  -benutzer=parameter ^
  -authentifizierung=passwd ^
- -sleep=200 ^
- -parameterVerzeichnis=..\parameter ^
+ -persistenzModul=de.bsvrz.puk.param.param.DerbyPersistenz ^
+ -persistenz=..\parameter ^
+ -cacheGroesse=200000 ^
+ -oldDefault=nein ^
  -debugLevelStdErrText=WARNING ^
- -debugLevelFileText=CONFIG
+ -debugLevelFileText=FINE
  rem -parametrierung=parametrierung.global
 
 rem Betriebsmeldungsverwaltung im Hintergrund starten

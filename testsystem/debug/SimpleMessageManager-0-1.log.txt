@@ -1,8 +1,8 @@
 
--------30.08.2017 15:16:44,781:+0200(TID:......) ---------------------- STATUS
+-------30.08.2017 16:04:54,940:+0200(TID:......) ---------------------- STATUS
 Ausgabedatei angelegt.
 
-#000000 30.08.2017 15:16:44,780:+0200 (TID:000001) ---------------------- 
+#000000 30.08.2017 16:04:54,940:+0200 (TID:000001) ---------------------- 
 INFO   : SimpleMessageManager
 Aktuelle Debugeinstellungen
 ----------------------------------------------
@@ -13,57 +13,57 @@ Registrierte DebugLogger:
   Name:   Level: INFO
 
 
-#000001 30.08.2017 15:16:44,781:+0200 (TID:000001) ---------------------- 
+#000001 30.08.2017 16:04:54,940:+0200 (TID:000001) ---------------------- 
 INFO   : SimpleMessageManager
 Aufrufargumente von SimpleMessageManager: ArgumentList[-datenverteiler=localhost:8083, -benutzer=AutostartApplikation, -authentifizierung=passwd, -debugFilePath=.., -debugLevelStdErrText=WARNING, -debugLevelFileText=CONFIG]
 
-#000002 30.08.2017 15:16:44,807:+0200 (TID:000001) ---------------------- 
+#000002 30.08.2017 16:04:54,970:+0200 (TID:000001) ---------------------- 
 INFO   : SimpleMessageManager.de.bsvrz.dav.daf.main.ClientDavConnection
 Datenverteiler-Applikationsfunktionen 'de.bsvrz.dav.daf', Release: Kernsoftware 3.9.2, Version: 866ec7f8528df5f1c8965c1d289385ec3737472a, Stand: 26.05.2017 11:17:53
 
-#000005 30.08.2017 15:16:44,842:+0200 (TID:000001) ---------------------- 
+#000005 30.08.2017 16:04:55,005:+0200 (TID:000001) ---------------------- 
 INFO   : SimpleMessageManager.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
-TCP-Verbindung aktiv  aufgebaut, /127.0.0.1:50985 --> localhost/127.0.0.1:8083
+TCP-Verbindung aktiv  aufgebaut, /127.0.0.1:51237 --> localhost/127.0.0.1:8083
 
-#000010 30.08.2017 15:16:47,831:+0200 (TID:000001) ---------------------- 
+#000010 30.08.2017 16:04:57,752:+0200 (TID:000001) ---------------------- 
 INFO   : SimpleMessageManager.de.bsvrz.dav.daf.communication.protocol.ClientHighLevelCommunication
 Verschlüsselte Verbindung aufgebaut mit: AES_128/GCM/NoPadding
 
-#000015 30.08.2017 15:16:48,225:+0200 (TID:000018) ---------------------- 
+#000015 30.08.2017 16:04:57,968:+0200 (TID:000018) ---------------------- 
 INFO   : SimpleMessageManager.de.bsvrz.dav.daf.main.impl.SubscriptionManager
 Die Konfiguration ist für Anfragen bereit
 
-#000016 30.08.2017 15:16:48,969:+0200 (TID:000001) ---------------------- 
+#000016 30.08.2017 16:04:58,572:+0200 (TID:000001) ---------------------- 
 INFO   : SimpleMessageManager.de.bsvrz.dav.daf.main.impl.config.DafDataModel
 Protokollversion für Konfigurationsanfragen: 2
 
-#000061 30.08.2017 15:16:49,111:+0200 (TID:000001) ...................... 
+#000061 30.08.2017 16:04:58,658:+0200 (TID:000001) ...................... 
 KONFIG : SimpleMessageManager.de.bsvrz.sys.funclib.operatingMessage.MessageSender
 Der MessageSender wurde initialisiert und ist bereit zum Senden von Betriebsmeldungen.
 
-#000062 30.08.2017 15:16:49,112:+0200 (TID:000001) ---------------------- 
+#000062 30.08.2017 16:04:58,658:+0200 (TID:000001) ---------------------- 
 INFO   : SimpleMessageManager.de.kappich.vew.bmvew.main.SimpleMessageManager
 Die Verwaltung nutzt folgendes BetriebsMeldungsVerwaltungsObjekt: TestKonfiguration (kv.testKonfiguration)
 
-#000070 30.08.2017 15:16:49,116:+0200 (TID:000001) ...................... 
+#000070 30.08.2017 16:04:58,661:+0200 (TID:000001) ...................... 
 KONFIG : SimpleMessageManager.de.kappich.vew.bmvew.main.SimpleMessageManager
 Die Quelle für Betriebsmeldungen ist bereit.
 
-#000071 30.08.2017 15:16:49,117:+0200 (TID:000001) ...................... 
+#000071 30.08.2017 16:04:58,662:+0200 (TID:000001) ...................... 
 KONFIG : SimpleMessageManager.de.kappich.vew.bmvew.main.SimpleMessageManager
 Die Senke für Betriebsmeldungen ist bereit.
 
-#000079 30.08.2017 15:18:54,219:+0200 (TID:000025) ###################### 
+#000077 30.08.2017 16:07:49,801:+0200 (TID:000025) ###################### 
 FEHLER : SimpleMessageManager.de.bsvrz.dav.daf.communication.protocol.ClientHighLevelCommunication
 Verbindung zum Datenverteiler wird terminiert. Ursache: Kommunikationsfehler beim Lesen eines Telegramms: java.net.SocketException: Connection reset
 
-#000082 30.08.2017 15:18:54,221:+0200 (TID:000016) ---------------------- 
+#000080 30.08.2017 16:07:49,802:+0200 (TID:000016) ---------------------- 
 INFO   : SimpleMessageManager.de.bsvrz.dav.daf.communication.lowLevel.LowLevelCommunication
 [ip.uz.wwaa23:8083]: SendingChannel beendet sich jetzt weil die Sende-Queue geschlossen wurde
 
-#000086 30.08.2017 15:18:54,222:+0200 (TID:000025) ---------------------- 
+#000084 30.08.2017 16:07:49,802:+0200 (TID:000025) ---------------------- 
 INFO   : SimpleMessageManager.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
-TCP-Verbindung wird terminiert,  /127.0.0.1:50985 -|- localhost/127.0.0.1:8083
+TCP-Verbindung wird terminiert,  /127.0.0.1:51237 -|- localhost/127.0.0.1:8083
 
--------30.08.2017 15:18:54,226:+0200(TID:......) ---------------------- STATUS
+-------30.08.2017 16:07:49,808:+0200(TID:......) ---------------------- STATUS
 Ausgabedatei korrekt abgeschlossenen.
