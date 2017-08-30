@@ -1,8 +1,8 @@
 
--------30.08.2017 15:16:44,781:+0200(TID:......) ---------------------- STATUS
+-------30.08.2017 15:38:39,386:+0200(TID:......) ---------------------- STATUS
 Ausgabedatei angelegt.
 
-#000000 30.08.2017 15:16:44,780:+0200 (TID:000001) ---------------------- 
+#000000 30.08.2017 15:38:39,385:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp
 Aktuelle Debugeinstellungen
 ----------------------------------------------
@@ -13,35 +13,35 @@ Registrierte DebugLogger:
   Name:   Level: INFO
 
 
-#000001 30.08.2017 15:16:44,782:+0200 (TID:000001) ---------------------- 
+#000001 30.08.2017 15:38:39,386:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp
 Aufrufargumente von ConfigurationApp: ArgumentList[-datenverteiler=localhost:8083, -debugFilePath=.., -benutzer=configuration, -authentifizierung=passwd, -verwaltung=..\konfiguration\verwaltungsdaten.xml, -benutzerverwaltung=..\konfiguration\benutzerverwaltung.xml, -debugLevelStdErrText=INFO, -debugLevelFileText=CONFIG]
 
-#000002 30.08.2017 15:16:44,786:+0200 (TID:000001) ---------------------- 
+#000002 30.08.2017 15:38:39,391:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.main.ConfigurationApp
 Konfiguration wird mit folgender Benutzerverwaltungsdatei gestartet: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\skripte-dosshell\..\konfiguration\benutzerverwaltung.xml
 
-#000003 30.08.2017 15:16:44,835:+0200 (TID:000001) ---------------------- 
+#000003 30.08.2017 15:38:39,417:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.main.ConfigurationApp
 Konfiguration wird gestartet: verwaltungsdaten.xml
 
-#000004 30.08.2017 15:16:44,862:+0200 (TID:000001) ...................... 
+#000004 30.08.2017 15:38:39,440:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.main.managementfile.ManagementFile
 Datei wird eingelesen: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\verwaltungsdaten.xml
 
-#000006 30.08.2017 15:16:44,902:+0200 (TID:000001) ...................... 
+#000006 30.08.2017 15:38:39,477:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.main.managementfile.ManagementFile
 Verzeichnisbasis für die Konfigurationsbereiche: file:/C:/Users/Ch.%20Hösel/git/de.bsvrz.sys.startstopp/testsystem/konfiguration/
 
-#000007 30.08.2017 15:16:44,911:+0200 (TID:000001) ...................... 
+#000007 30.08.2017 15:38:39,487:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.main.managementfile.ManagementFile
 Verwaltungsdaten der Konfiguration wurden vollständig eingelesen.
 
-#000009 30.08.2017 15:16:44,917:+0200 (TID:000001) ---------------------- 
+#000009 30.08.2017 15:38:39,499:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.systemModellGlobal.config
 
-#000010 30.08.2017 15:16:44,923:+0200 (TID:000001) ...................... 
+#000010 30.08.2017 15:38:39,507:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 36 nächste aktive Version: 37 
 Kennung 2: 
@@ -89,11 +89,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000011 30.08.2017 15:16:44,956:+0200 (TID:000001) ---------------------- 
+#000011 30.08.2017 15:38:39,552:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.bea.config
 
-#000012 30.08.2017 15:16:44,958:+0200 (TID:000001) ...................... 
+#000012 30.08.2017 15:38:39,554:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 0 nächste aktive Version: 1 
 Kennung 2: 
@@ -106,11 +106,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000013 30.08.2017 15:16:44,959:+0200 (TID:000001) ---------------------- 
+#000013 30.08.2017 15:38:39,555:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.dambach.config
 
-#000014 30.08.2017 15:16:44,960:+0200 (TID:000001) ...................... 
+#000014 30.08.2017 15:38:39,556:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 0 nächste aktive Version: 1 
 Kennung 2: 
@@ -123,11 +123,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000015 30.08.2017 15:16:44,963:+0200 (TID:000001) ---------------------- 
+#000015 30.08.2017 15:38:39,559:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmVewEngstellenGlobal.config
 
-#000016 30.08.2017 15:16:44,964:+0200 (TID:000001) ...................... 
+#000016 30.08.2017 15:38:39,561:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 2 nächste aktive Version: 3 
 Kennung 2: 
@@ -141,11 +141,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000017 30.08.2017 15:16:44,968:+0200 (TID:000001) ---------------------- 
+#000017 30.08.2017 15:38:39,565:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmRechner.config
 
-#000018 30.08.2017 15:16:44,971:+0200 (TID:000001) ...................... 
+#000018 30.08.2017 15:38:39,566:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 4 nächste aktive Version: 5 
 Kennung 2: 
@@ -161,11 +161,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000019 30.08.2017 15:16:44,976:+0200 (TID:000001) ---------------------- 
+#000019 30.08.2017 15:38:39,574:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmVewBetriebGlobal.config
 
-#000020 30.08.2017 15:16:44,977:+0200 (TID:000001) ...................... 
+#000020 30.08.2017 15:38:39,577:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 6 nächste aktive Version: 7 
 Kennung 2: 
@@ -183,11 +183,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000021 30.08.2017 15:16:44,982:+0200 (TID:000001) ---------------------- 
+#000021 30.08.2017 15:38:39,583:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.testKonfiguration.config
 
-#000022 30.08.2017 15:16:44,984:+0200 (TID:000001) ...................... 
+#000022 30.08.2017 15:38:39,587:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 2 nächste aktive Version: 3 
 Kennung 2: 
@@ -201,11 +201,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000023 30.08.2017 15:16:44,985:+0200 (TID:000001) ---------------------- 
+#000023 30.08.2017 15:38:39,589:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.inovat.config
 
-#000024 30.08.2017 15:16:44,986:+0200 (TID:000001) ...................... 
+#000024 30.08.2017 15:38:39,590:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 0 nächste aktive Version: 1 
 Kennung 2: 
@@ -218,11 +218,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000025 30.08.2017 15:16:44,989:+0200 (TID:000001) ---------------------- 
+#000025 30.08.2017 15:38:39,594:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmKExTlsGlobal.config
 
-#000026 30.08.2017 15:16:44,992:+0200 (TID:000001) ...................... 
+#000026 30.08.2017 15:38:39,599:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 23 nächste aktive Version: 24 
 Kennung 2: 
@@ -257,11 +257,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000027 30.08.2017 15:16:45,042:+0200 (TID:000001) ---------------------- 
+#000027 30.08.2017 15:38:39,674:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.objekteTestUnterzentraleK2S_100_MessQuerschnitte.config
 
-#000028 30.08.2017 15:16:45,044:+0200 (TID:000001) ...................... 
+#000028 30.08.2017 15:38:39,675:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 3 nächste aktive Version: 4 
 Kennung 2: 
@@ -276,11 +276,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000029 30.08.2017 15:16:45,058:+0200 (TID:000001) ---------------------- 
+#000029 30.08.2017 15:38:39,686:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmIlseTls.config
 
-#000030 30.08.2017 15:16:45,059:+0200 (TID:000001) ...................... 
+#000030 30.08.2017 15:38:39,687:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 4 nächste aktive Version: 5 
 Kennung 2: 
@@ -296,11 +296,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000031 30.08.2017 15:16:45,063:+0200 (TID:000001) ---------------------- 
+#000031 30.08.2017 15:38:39,691:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.objekteTestSystem.config
 
-#000032 30.08.2017 15:16:45,065:+0200 (TID:000001) ...................... 
+#000032 30.08.2017 15:38:39,692:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 3 nächste aktive Version: 4 
 Kennung 2: 
@@ -315,11 +315,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000033 30.08.2017 15:16:45,068:+0200 (TID:000001) ---------------------- 
+#000033 30.08.2017 15:38:39,695:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmVewProtokolleGlobal.config
 
-#000034 30.08.2017 15:16:45,070:+0200 (TID:000001) ...................... 
+#000034 30.08.2017 15:38:39,696:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 5 nächste aktive Version: 6 
 Kennung 2: 
@@ -336,11 +336,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000035 30.08.2017 15:16:45,073:+0200 (TID:000001) ---------------------- 
+#000035 30.08.2017 15:38:39,701:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.ilse.config
 
-#000036 30.08.2017 15:16:45,076:+0200 (TID:000001) ...................... 
+#000036 30.08.2017 15:38:39,703:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 5 nächste aktive Version: 6 
 Kennung 2: 
@@ -357,11 +357,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000037 30.08.2017 15:16:45,079:+0200 (TID:000001) ---------------------- 
+#000037 30.08.2017 15:38:39,705:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmSystemKalenderGlobal.config
 
-#000038 30.08.2017 15:16:45,080:+0200 (TID:000001) ...................... 
+#000038 30.08.2017 15:38:39,706:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 7 nächste aktive Version: 8 
 Kennung 2: 
@@ -380,11 +380,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000039 30.08.2017 15:16:45,082:+0200 (TID:000001) ---------------------- 
+#000039 30.08.2017 15:38:39,709:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmTmcGlobal.config
 
-#000040 30.08.2017 15:16:45,084:+0200 (TID:000001) ...................... 
+#000040 30.08.2017 15:38:39,712:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 4 nächste aktive Version: 5 
 Kennung 2: 
@@ -400,11 +400,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000041 30.08.2017 15:16:45,091:+0200 (TID:000001) ---------------------- 
+#000041 30.08.2017 15:38:39,718:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.metaModellGlobal.config
 
-#000042 30.08.2017 15:16:45,092:+0200 (TID:000001) ...................... 
+#000042 30.08.2017 15:38:39,721:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 16 nächste aktive Version: 17 
 Kennung 2: 
@@ -432,11 +432,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000043 30.08.2017 15:16:45,103:+0200 (TID:000001) ---------------------- 
+#000043 30.08.2017 15:38:39,731:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.ptv.config
 
-#000044 30.08.2017 15:16:45,104:+0200 (TID:000001) ...................... 
+#000044 30.08.2017 15:38:39,732:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 0 nächste aktive Version: 1 
 Kennung 2: 
@@ -449,11 +449,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000045 30.08.2017 15:16:45,105:+0200 (TID:000001) ---------------------- 
+#000045 30.08.2017 15:38:39,735:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmGeoReferenzierungGlobal.config
 
-#000046 30.08.2017 15:16:45,107:+0200 (TID:000001) ...................... 
+#000046 30.08.2017 15:38:39,736:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 2 nächste aktive Version: 3 
 Kennung 2: 
@@ -467,11 +467,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000047 30.08.2017 15:16:45,112:+0200 (TID:000001) ---------------------- 
+#000047 30.08.2017 15:38:39,740:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.systemModellAoe.config
 
-#000048 30.08.2017 15:16:45,114:+0200 (TID:000001) ...................... 
+#000048 30.08.2017 15:38:39,742:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 7 nächste aktive Version: 8 
 Kennung 2: 
@@ -490,11 +490,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000049 30.08.2017 15:16:45,116:+0200 (TID:000001) ---------------------- 
+#000049 30.08.2017 15:38:39,744:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.bitctrl.config
 
-#000050 30.08.2017 15:16:45,120:+0200 (TID:000001) ...................... 
+#000050 30.08.2017 15:38:39,745:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 0 nächste aktive Version: 1 
 Kennung 2: 
@@ -507,11 +507,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000051 30.08.2017 15:16:45,123:+0200 (TID:000001) ---------------------- 
+#000051 30.08.2017 15:38:39,747:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.default.testKonfiguration.config
 
-#000052 30.08.2017 15:16:45,125:+0200 (TID:000001) ...................... 
+#000052 30.08.2017 15:38:39,747:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
 Kennung 2: 
@@ -524,11 +524,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000053 30.08.2017 15:16:45,126:+0200 (TID:000001) ---------------------- 
+#000053 30.08.2017 15:38:39,749:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.kappich.config
 
-#000054 30.08.2017 15:16:45,127:+0200 (TID:000001) ...................... 
+#000054 30.08.2017 15:38:39,750:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 0 nächste aktive Version: 1 
 Kennung 2: 
@@ -541,11 +541,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000055 30.08.2017 15:16:45,130:+0200 (TID:000001) ---------------------- 
+#000055 30.08.2017 15:38:39,752:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.logos.config
 
-#000056 30.08.2017 15:16:45,132:+0200 (TID:000001) ...................... 
+#000056 30.08.2017 15:38:39,753:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 0 nächste aktive Version: 1 
 Kennung 2: 
@@ -558,11 +558,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000057 30.08.2017 15:16:45,133:+0200 (TID:000001) ---------------------- 
+#000057 30.08.2017 15:38:39,755:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmVerkehrGlobal.config
 
-#000058 30.08.2017 15:16:45,138:+0200 (TID:000001) ...................... 
+#000058 30.08.2017 15:38:39,759:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 59 nächste aktive Version: 60 
 Kennung 2: 
@@ -633,11 +633,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000059 30.08.2017 15:16:45,187:+0200 (TID:000001) ---------------------- 
+#000059 30.08.2017 15:38:39,804:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.fachModellGlobal.config
 
-#000060 30.08.2017 15:16:45,190:+0200 (TID:000001) ...................... 
+#000060 30.08.2017 15:38:39,806:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 10 nächste aktive Version: 11 
 Kennung 2: 
@@ -659,11 +659,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000061 30.08.2017 15:16:45,197:+0200 (TID:000001) ---------------------- 
+#000061 30.08.2017 15:38:39,812:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmGanglinienGlobal.config
 
-#000062 30.08.2017 15:16:45,200:+0200 (TID:000001) ...................... 
+#000062 30.08.2017 15:38:39,814:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 11 nächste aktive Version: 12 
 Kennung 2: 
@@ -686,11 +686,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000063 30.08.2017 15:16:45,205:+0200 (TID:000001) ---------------------- 
+#000063 30.08.2017 15:38:39,819:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmUmfeldDatenGlobal.config
 
-#000064 30.08.2017 15:16:45,207:+0200 (TID:000001) ...................... 
+#000064 30.08.2017 15:38:39,821:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 25 nächste aktive Version: 26 
 Kennung 2: 
@@ -727,11 +727,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000065 30.08.2017 15:16:45,270:+0200 (TID:000001) ---------------------- 
+#000065 30.08.2017 15:38:39,898:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmBuVGlobal.config
 
-#000066 30.08.2017 15:16:45,272:+0200 (TID:000001) ...................... 
+#000066 30.08.2017 15:38:39,899:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 5 nächste aktive Version: 6 
 Kennung 2: 
@@ -748,11 +748,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000067 30.08.2017 15:16:45,274:+0200 (TID:000001) ---------------------- 
+#000067 30.08.2017 15:38:39,902:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.objekteIntegrationsTestTools.config
 
-#000068 30.08.2017 15:16:45,275:+0200 (TID:000001) ...................... 
+#000068 30.08.2017 15:38:39,904:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 0 nächste aktive Version: 1 
 Kennung 2: 
@@ -765,11 +765,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000069 30.08.2017 15:16:45,276:+0200 (TID:000001) ---------------------- 
+#000069 30.08.2017 15:38:39,905:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmEreignisKalenderGlobal.config
 
-#000070 30.08.2017 15:16:45,277:+0200 (TID:000001) ...................... 
+#000070 30.08.2017 15:38:39,906:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 10 nächste aktive Version: 11 
 Kennung 2: 
@@ -791,11 +791,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000071 30.08.2017 15:16:45,282:+0200 (TID:000001) ---------------------- 
+#000071 30.08.2017 15:38:39,910:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmLangZeitVerkehrsDaten.config
 
-#000072 30.08.2017 15:16:45,284:+0200 (TID:000001) ...................... 
+#000072 30.08.2017 15:38:39,912:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 3 nächste aktive Version: 4 
 Kennung 2: 
@@ -810,11 +810,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000073 30.08.2017 15:16:45,300:+0200 (TID:000001) ---------------------- 
+#000073 30.08.2017 15:38:39,925:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmVewSimulationGlobal.config
 
-#000074 30.08.2017 15:16:45,304:+0200 (TID:000001) ...................... 
+#000074 30.08.2017 15:38:39,927:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 7 nächste aktive Version: 8 
 Kennung 2: 
@@ -833,11 +833,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000075 30.08.2017 15:16:45,312:+0200 (TID:000001) ---------------------- 
+#000075 30.08.2017 15:38:39,934:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.objekteTestUnterzentraleK2S_10_MessQuerschnitte.config
 
-#000076 30.08.2017 15:16:45,314:+0200 (TID:000001) ...................... 
+#000076 30.08.2017 15:38:39,935:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 3 nächste aktive Version: 4 
 Kennung 2: 
@@ -852,11 +852,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000077 30.08.2017 15:16:45,316:+0200 (TID:000001) ---------------------- 
+#000077 30.08.2017 15:38:39,938:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.objekteZugriffsrechteBasis.config
 
-#000078 30.08.2017 15:16:45,318:+0200 (TID:000001) ...................... 
+#000078 30.08.2017 15:38:39,939:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 3 nächste aktive Version: 4 
 Kennung 2: 
@@ -871,11 +871,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000079 30.08.2017 15:16:45,319:+0200 (TID:000001) ---------------------- 
+#000079 30.08.2017 15:38:39,941:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.modellOsi3Umleitung.config
 
-#000080 30.08.2017 15:16:45,321:+0200 (TID:000001) ...................... 
+#000080 30.08.2017 15:38:39,943:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 3 nächste aktive Version: 4 
 Kennung 2: 
@@ -890,11 +890,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000081 30.08.2017 15:16:45,323:+0200 (TID:000001) ---------------------- 
+#000081 30.08.2017 15:38:39,945:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.kv.testKonfigurationB.config
 
-#000082 30.08.2017 15:16:45,324:+0200 (TID:000001) ...................... 
+#000082 30.08.2017 15:38:39,946:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
 Kennung 2: 
@@ -907,11 +907,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000083 30.08.2017 15:16:45,325:+0200 (TID:000001) ---------------------- 
+#000083 30.08.2017 15:38:39,948:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.default.testKonfigurationB.config
 
-#000084 30.08.2017 15:16:45,326:+0200 (TID:000001) ...................... 
+#000084 30.08.2017 15:38:39,948:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
 Kennung 2: 
@@ -924,11 +924,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000085 30.08.2017 15:16:45,327:+0200 (TID:000001) ---------------------- 
+#000085 30.08.2017 15:38:39,949:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.modellKExTlsLkwParken.config
 
-#000086 30.08.2017 15:16:45,332:+0200 (TID:000001) ...................... 
+#000086 30.08.2017 15:38:39,951:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 6 nächste aktive Version: 7 
 Kennung 2: 
@@ -946,11 +946,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000087 30.08.2017 15:16:45,334:+0200 (TID:000001) ---------------------- 
+#000087 30.08.2017 15:38:39,955:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.modellLkwParken.config
 
-#000088 30.08.2017 15:16:45,336:+0200 (TID:000001) ...................... 
+#000088 30.08.2017 15:38:39,956:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 9 nächste aktive Version: 10 
 Kennung 2: 
@@ -971,11 +971,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000089 30.08.2017 15:16:45,339:+0200 (TID:000001) ---------------------- 
+#000089 30.08.2017 15:38:39,961:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.systemModellKExDaV.config
 
-#000090 30.08.2017 15:16:45,340:+0200 (TID:000001) ...................... 
+#000090 30.08.2017 15:38:39,962:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 2 nächste aktive Version: 3 
 Kennung 2: 
@@ -989,11 +989,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000091 30.08.2017 15:16:45,343:+0200 (TID:000001) ---------------------- 
+#000091 30.08.2017 15:38:39,965:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmKExTlsFG9.config
 
-#000092 30.08.2017 15:16:45,344:+0200 (TID:000001) ...................... 
+#000092 30.08.2017 15:38:39,966:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 2 nächste aktive Version: 3 
 Kennung 2: 
@@ -1007,11 +1007,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000093 30.08.2017 15:16:45,352:+0200 (TID:000001) ---------------------- 
+#000093 30.08.2017 15:38:39,971:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmDatenAbgabeUeberwachung.config
 
-#000094 30.08.2017 15:16:45,354:+0200 (TID:000001) ...................... 
+#000094 30.08.2017 15:38:39,972:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 3 nächste aktive Version: 4 
 Kennung 2: 
@@ -1026,11 +1026,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000095 30.08.2017 15:16:45,357:+0200 (TID:000001) ---------------------- 
+#000095 30.08.2017 15:38:39,974:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmBAStBandExportImport.config
 
-#000096 30.08.2017 15:16:45,358:+0200 (TID:000001) ...................... 
+#000096 30.08.2017 15:38:39,975:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 4 nächste aktive Version: 5 
 Kennung 2: 
@@ -1046,11 +1046,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000097 30.08.2017 15:16:45,360:+0200 (TID:000001) ---------------------- 
+#000097 30.08.2017 15:38:39,977:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmAggrLzzsDTV.config
 
-#000098 30.08.2017 15:16:45,361:+0200 (TID:000001) ...................... 
+#000098 30.08.2017 15:38:39,978:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 3 nächste aktive Version: 4 
 Kennung 2: 
@@ -1065,11 +1065,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000099 30.08.2017 15:16:45,363:+0200 (TID:000001) ---------------------- 
+#000099 30.08.2017 15:38:39,979:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmAggrAxl.config
 
-#000100 30.08.2017 15:16:45,365:+0200 (TID:000001) ...................... 
+#000100 30.08.2017 15:38:39,982:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
 Kennung 2: 
@@ -1082,11 +1082,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000101 30.08.2017 15:16:45,367:+0200 (TID:000001) ---------------------- 
+#000101 30.08.2017 15:38:39,983:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmKExTlsDeAbruf.config
 
-#000102 30.08.2017 15:16:45,370:+0200 (TID:000001) ...................... 
+#000102 30.08.2017 15:38:39,985:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
 Kennung 2: 
@@ -1099,11 +1099,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000103 30.08.2017 15:16:45,371:+0200 (TID:000001) ---------------------- 
+#000103 30.08.2017 15:38:39,986:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmKExTlsFG9Pro.config
 
-#000104 30.08.2017 15:16:45,372:+0200 (TID:000001) ...................... 
+#000104 30.08.2017 15:38:39,988:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 10 nächste aktive Version: 11 
 Kennung 2: 
@@ -1125,11 +1125,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000105 30.08.2017 15:16:45,378:+0200 (TID:000001) ---------------------- 
+#000105 30.08.2017 15:38:39,991:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmKExTlsZeitSync.config
 
-#000106 30.08.2017 15:16:45,379:+0200 (TID:000001) ...................... 
+#000106 30.08.2017 15:38:39,992:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
 Kennung 2: 
@@ -1142,11 +1142,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000107 30.08.2017 15:16:45,380:+0200 (TID:000001) ---------------------- 
+#000107 30.08.2017 15:38:39,993:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmWetterBerichteDWD.config
 
-#000108 30.08.2017 15:16:45,381:+0200 (TID:000001) ...................... 
+#000108 30.08.2017 15:38:39,994:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 5 nächste aktive Version: 6 
 Kennung 2: 
@@ -1163,11 +1163,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000109 30.08.2017 15:16:45,382:+0200 (TID:000001) ---------------------- 
+#000109 30.08.2017 15:38:39,997:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmNbaGlobal.config
 
-#000110 30.08.2017 15:16:45,384:+0200 (TID:000001) ...................... 
+#000110 30.08.2017 15:38:39,999:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 35 nächste aktive Version: 36 
 Kennung 2: 
@@ -1214,11 +1214,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000111 30.08.2017 15:16:45,407:+0200 (TID:000001) ---------------------- 
+#000111 30.08.2017 15:38:40,019:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmAnzeigenGlobal.config
 
-#000112 30.08.2017 15:16:45,408:+0200 (TID:000001) ...................... 
+#000112 30.08.2017 15:38:40,021:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 16 nächste aktive Version: 17 
 Kennung 2: 
@@ -1246,11 +1246,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000113 30.08.2017 15:16:45,413:+0200 (TID:000001) ---------------------- 
+#000113 30.08.2017 15:38:40,030:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmGeraeteEinbauOrte.config
 
-#000114 30.08.2017 15:16:45,414:+0200 (TID:000001) ...................... 
+#000114 30.08.2017 15:38:40,031:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 2 nächste aktive Version: 3 
 Kennung 2: 
@@ -1264,11 +1264,11 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000115 30.08.2017 15:16:45,417:+0200 (TID:000001) ---------------------- 
+#000115 30.08.2017 15:38:40,034:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
 Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.modellNbaAnzeige.config
 
-#000116 30.08.2017 15:16:45,419:+0200 (TID:000001) ...................... 
+#000116 30.08.2017 15:38:40,035:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
 Kennung 1 (nicht maßgeblich): aktive Version: 4 nächste aktive Version: 5 
 Kennung 2: 
@@ -1284,7 +1284,92 @@ Kennung 9: Version unter der die Objekte erstellt wurden 1
 Kennung 10: Serialisiererversion 3
 
 
-#000144 30.08.2017 15:16:45,584:+0200 (TID:000001) ====================== 
+#000117 30.08.2017 15:38:40,039:+0200 (TID:000001) ---------------------- 
+INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
+Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.tmUsv.config
+
+#000118 30.08.2017 15:38:40,041:+0200 (TID:000001) ...................... 
+KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
+Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
+Kennung 2: 
+Kennung 3: relative Position ungültig dynamisch Block 0
+Kennung 4: relative Position Id-Index: 0
+Kennung 5: relative Position HashCodePid-Index: 0
+Kennung 6: relative Position Mischobjektmenge: 0
+Kennung 7: Pid des Konfigurationsbereichs: kb.tmUsv
+Kennung 9: Version unter der die Objekte erstellt wurden 1
+Kennung 10: Serialisiererversion 3
+
+
+#000119 30.08.2017 15:38:40,043:+0200 (TID:000001) ---------------------- 
+INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
+Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.testModell.config
+
+#000120 30.08.2017 15:38:40,044:+0200 (TID:000001) ...................... 
+KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
+Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
+Kennung 2: 
+Kennung 3: relative Position ungültig dynamisch Block 0
+Kennung 4: relative Position Id-Index: 0
+Kennung 5: relative Position HashCodePid-Index: 0
+Kennung 6: relative Position Mischobjektmenge: 0
+Kennung 7: Pid des Konfigurationsbereichs: kb.testModell
+Kennung 9: Version unter der die Objekte erstellt wurden 1
+Kennung 10: Serialisiererversion 3
+
+
+#000121 30.08.2017 15:38:40,045:+0200 (TID:000001) ---------------------- 
+INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
+Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.testObjekte.config
+
+#000122 30.08.2017 15:38:40,048:+0200 (TID:000001) ...................... 
+KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
+Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
+Kennung 2: 
+Kennung 3: relative Position ungültig dynamisch Block 0
+Kennung 4: relative Position Id-Index: 0
+Kennung 5: relative Position HashCodePid-Index: 0
+Kennung 6: relative Position Mischobjektmenge: 0
+Kennung 7: Pid des Konfigurationsbereichs: kb.testObjekte
+Kennung 9: Version unter der die Objekte erstellt wurden 1
+Kennung 10: Serialisiererversion 3
+
+
+#000123 30.08.2017 15:38:40,049:+0200 (TID:000001) ---------------------- 
+INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
+Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.testRechner.config
+
+#000124 30.08.2017 15:38:40,052:+0200 (TID:000001) ...................... 
+KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
+Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
+Kennung 2: 
+Kennung 3: relative Position ungültig dynamisch Block 0
+Kennung 4: relative Position Id-Index: 0
+Kennung 5: relative Position HashCodePid-Index: 0
+Kennung 6: relative Position Mischobjektmenge: 0
+Kennung 7: Pid des Konfigurationsbereichs: kb.testRechner
+Kennung 9: Version unter der die Objekte erstellt wurden 1
+Kennung 10: Serialisiererversion 3
+
+
+#000125 30.08.2017 15:38:40,053:+0200 (TID:000001) ---------------------- 
+INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigAreaFile
+Laden der Konfigurationsdatei: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\kb.testUsv.config
+
+#000126 30.08.2017 15:38:40,053:+0200 (TID:000001) ...................... 
+KONFIG : ConfigurationApp.de.bsvrz.puk.config.configFile.fileaccess.ConfigFileHeaderInfo
+Kennung 1 (nicht maßgeblich): aktive Version: 1 nächste aktive Version: 2 
+Kennung 2: 
+Kennung 3: relative Position ungültig dynamisch Block 0
+Kennung 4: relative Position Id-Index: 0
+Kennung 5: relative Position HashCodePid-Index: 0
+Kennung 6: relative Position Mischobjektmenge: 0
+Kennung 7: Pid des Konfigurationsbereichs: kb.testUsv
+Kennung 9: Version unter der die Objekte erstellt wurden 1
+Kennung 10: Serialisiererversion 3
+
+
+#000154 30.08.2017 15:38:40,205:+0200 (TID:000001) ====================== 
 WARNUNG: ConfigurationApp.de.bsvrz.puk.config.configFile.datamodel.AreaDependencyChecker
 Für den Bereich kb.kv.bea wurden mögliche Abhängigkeiten noch nicht erfasst. 
 Für den Bereich kb.kv.ptv wurden mögliche Abhängigkeiten noch nicht erfasst. 
@@ -1295,76 +1380,76 @@ Für den Bereich kb.kv.testKonfigurationB wurden mögliche Abhängigkeiten noch nic
 Für den Bereich kb.tmGeraeteEinbauOrte wurden mögliche Abhängigkeiten noch nicht erfasst. 
 
 
-#000150 30.08.2017 15:16:45,606:+0200 (TID:000001) ---------------------- 
+#000160 30.08.2017 15:38:40,225:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.configFile.datamodel.ConfigDataModel
 Das Datenmodell wurde geladen. Dauer in Sekunden: 0
 
-#000152 30.08.2017 15:16:45,623:+0200 (TID:000001) ---------------------- 
+#000162 30.08.2017 15:38:40,242:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.dav.daf.main.ClientDavConnection
 Datenverteiler-Applikationsfunktionen 'de.bsvrz.dav.daf', Release: Kernsoftware 3.9.2, Version: 866ec7f8528df5f1c8965c1d289385ec3737472a, Stand: 26.05.2017 11:17:53
 
-#000156 30.08.2017 15:16:45,642:+0200 (TID:000001) ---------------------- 
+#000166 30.08.2017 15:38:40,259:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
-TCP-Verbindung aktiv  aufgebaut, /127.0.0.1:50987 --> localhost/127.0.0.1:8083
+TCP-Verbindung aktiv  aufgebaut, /127.0.0.1:51105 --> localhost/127.0.0.1:8083
 
-#000162 30.08.2017 15:16:45,940:+0200 (TID:000001) ---------------------- 
+#000172 30.08.2017 15:38:40,555:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.dav.daf.communication.protocol.ClientHighLevelCommunication
 Verschlüsselte Verbindung aufgebaut mit: AES_128/GCM/NoPadding
 
-#000165 30.08.2017 15:16:46,011:+0200 (TID:000001) ...................... 
+#000175 30.08.2017 15:38:40,626:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.main.authentication.ConfigAuthentication
 Datei wird eingelesen: C:\Users\Ch. Hösel\git\de.bsvrz.sys.startstopp\testsystem\konfiguration\benutzerverwaltung.xml
 
-#000167 30.08.2017 15:16:46,013:+0200 (TID:000001) ...................... 
+#000177 30.08.2017 15:38:40,629:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.main.authentication.ConfigAuthentication
 Verzeichnisbasis für die Benutzer der Konfiguration: file:/C:/Users/Ch.%20Hösel/git/de.bsvrz.sys.startstopp/testsystem/konfiguration/
 
-#000168 30.08.2017 15:16:46,014:+0200 (TID:000001) ...................... 
+#000178 30.08.2017 15:38:40,630:+0200 (TID:000001) ...................... 
 KONFIG : ConfigurationApp.de.bsvrz.puk.config.main.authentication.ConfigAuthentication
 Benutzerdaten der Konfiguration wurden vollständig eingelesen.
 
-#000169 30.08.2017 15:16:46,025:+0200 (TID:000001) ---------------------- 
+#000179 30.08.2017 15:38:40,640:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.main.communication.ConfigurationRequesterCommunicator
 Eindeutige Kodierung des lokalen Konfigurationsverantwortlichen: 5211
 
-#000170 30.08.2017 15:16:46,025:+0200 (TID:000001) ---------------------- 
+#000180 30.08.2017 15:38:40,640:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.main.communication.ConfigurationRequesterCommunicator
 Maske zum Erzeugen neuer Objekte: 1466766103639228416
 
-#005923 30.08.2017 15:16:46,125:+0200 (TID:000001) ---------------------- 
+#005954 30.08.2017 15:38:40,725:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.main.ConfigurationApp
 Konfiguration: Konfiguration { Verwaltungsdatei = '..\konfiguration\verwaltungsdaten.xml'}
 
-#005924 30.08.2017 15:16:46,126:+0200 (TID:000001) ---------------------- 
+#005955 30.08.2017 15:38:40,726:+0200 (TID:000001) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.main.ConfigurationApp
 Konfiguration ist bereit für Anfragen
 
-#035010 30.08.2017 15:16:47,351:+0200 (TID:000025) ====================== 
+#035204 30.08.2017 15:38:41,869:+0200 (TID:000025) ====================== 
 WARNUNG: ConfigurationApp.de.bsvrz.puk.config.main.authentication.ConfigAuthentication
 Zum Benutzernamen "TestDatenverteilerBenutzer" gibt es 2 SystemObjekte, davon sind 1 der lokalen AOE zugeordnet: 
 benutzer.testDatenverteiler (kv.kappich)
 benutzer.testdatenverteilerbenutzer (kv.testKonfiguration)
 Der Benutzer des lokalen AOE kv.testKonfiguration wird verwendet
 
-#040986 30.08.2017 15:17:15,342:+0200 (TID:000018) ---------------------- 
+#041234 30.08.2017 15:39:03,853:+0200 (TID:000018) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.main.communication.ConfigurationRequesterCommunicator
-KonfigurationsSchreibAntwort wird für Applikation GenericTestMonitor id 1466766103639706224 abgemeldet
+KonfigurationsSchreibAntwort wird für Applikation GenericTestMonitor id 1466766103639706260 abgemeldet
 
-#040991 30.08.2017 15:17:15,343:+0200 (TID:000018) ---------------------- 
+#041236 30.08.2017 15:39:03,853:+0200 (TID:000018) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.puk.config.main.communication.ConfigurationRequesterCommunicator
-KonfigurationsAntwort wird für Applikation GenericTestMonitor id 1466766103639706224 abgemeldet
+KonfigurationsAntwort wird für Applikation GenericTestMonitor id 1466766103639706260 abgemeldet
 
-#040995 30.08.2017 15:18:54,219:+0200 (TID:000030) ###################### 
+#041243 30.08.2017 15:39:17,499:+0200 (TID:000030) ###################### 
 FEHLER : ConfigurationApp.de.bsvrz.dav.daf.communication.protocol.ClientHighLevelCommunication
 Verbindung zum Datenverteiler wird terminiert. Ursache: Kommunikationsfehler beim Lesen eines Telegramms: java.net.SocketException: Connection reset
 
-#040998 30.08.2017 15:18:54,219:+0200 (TID:000016) ---------------------- 
+#041245 30.08.2017 15:39:17,501:+0200 (TID:000016) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.dav.daf.communication.lowLevel.LowLevelCommunication
 [ip.uz.wwaa23:8083]: SendingChannel beendet sich jetzt weil die Sende-Queue geschlossen wurde
 
-#041002 30.08.2017 15:18:54,221:+0200 (TID:000030) ---------------------- 
+#041249 30.08.2017 15:39:17,501:+0200 (TID:000030) ---------------------- 
 INFO   : ConfigurationApp.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
-TCP-Verbindung wird terminiert,  /127.0.0.1:50987 -|- localhost/127.0.0.1:8083
+TCP-Verbindung wird terminiert,  /127.0.0.1:51105 -|- localhost/127.0.0.1:8083
 
--------30.08.2017 15:18:54,223:+0200(TID:......) ---------------------- STATUS
+-------30.08.2017 15:39:17,503:+0200(TID:......) ---------------------- STATUS
 Ausgabedatei korrekt abgeschlossenen.

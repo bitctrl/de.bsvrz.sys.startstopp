@@ -321,4 +321,21 @@
 <version nr="3" zeitpunkt="22.11.2015 13:37:43,136"/>
 <version nr="4" zeitpunkt="09.06.2016 11:14:28,904"/>
 </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmUsv" verzeichnis="">
+        
+    <version nr="1" zeitpunkt="30.08.2017 15:36:50,137"/>
+</konfigurationsbereich>
+
+<konfigurationsbereich pid="kb.testModell" verzeichnis="">
+<version nr="1" zeitpunkt="30.08.2017 15:38:26,738"/>
+</konfigurationsbereich>
+<konfigurationsbereich pid="kb.testObjekte" verzeichnis="">
+<version nr="1" zeitpunkt="30.08.2017 15:38:26,738"/>
+</konfigurationsbereich>
+<konfigurationsbereich pid="kb.testRechner" verzeichnis="">
+<version nr="1" zeitpunkt="30.08.2017 15:38:26,738"/>
+</konfigurationsbereich>
+<konfigurationsbereich pid="kb.testUsv" verzeichnis="">
+<version nr="1" zeitpunkt="30.08.2017 15:38:26,738"/>
+</konfigurationsbereich>
 </verwaltungsdaten>

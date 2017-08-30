@@ -3,7 +3,7 @@ call einstellungen.bat
 
 title Import
 
-set bereiche=kb.testModell,kb.testObjekte
+set bereiche=kb.testModell,kb.testObjekte,kb.testRechner,kb.testUsv
 
 %java% ^
  -cp ..\distributionspakete\de.bsvrz.puk.config\de.bsvrz.puk.config-runtime.jar ^
