@@ -32,7 +32,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import de.bsvrz.sys.funclib.debug.Debug;
@@ -45,7 +44,6 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.dav.DavApplikationStatus;
 import de.bsvrz.sys.startstopp.process.os.OSApplikation;
@@ -79,8 +77,7 @@ public final class OnlineApplikation {
 	private final List<String> prozessAusgaben = new ArrayList<>();
 	private int startFehlerCounter;
 	private OnlineApplikationTimer onlineApplikationTimer;
-	private OnlineApplikationStatus onlineApplikationStatus;
-	
+
 	public OnlineApplikation(ProzessManager processmanager, OnlineInkarnation onlineInkarnation) {
 		this(StartStopp.getInstance(), processmanager, onlineInkarnation);
 	}
@@ -96,7 +93,7 @@ public final class OnlineApplikation {
 		applikation.setLetzteStoppzeit("noch nie gestoppt");
 
 		onlineApplikationTimer = new OnlineApplikationTimer(this);
-		
+
 		this.prozessManager.onStartStoppStatusChanged.addHandler(prozessManagerStatusHandler);
 		this.prozessManager.getDavConnector().onAppStatusChanged.addHandler(davAppStatusChangedHandler);
 
@@ -173,27 +170,38 @@ public final class OnlineApplikation {
 		return true;
 	}
 
-	public void checkState(TaskType taskType) {
+	void checkState(TaskType taskType) {
+		getStatusHandler().wechsleStatus(taskType, prozessManager.getStartStoppStatus());
+	}
 
-		switch (getStatus()) {
+	private OnlineApplikationStatus getStatusHandler() {
+
+		OnlineApplikationStatus handler = null;
+
+		switch (applikation.getStatus()) {
 		case GESTARTET:
+			handler = new GestartetStatus(this);
+			break;
 		case GESTOPPT:
+			handler = new GestopptStatus(this);
+			break;
 		case INITIALISIERT:
-			LOGGER.finest(applikation.getStatus() + ": " + applikation.getInkarnation().getInkarnationsName()
-					+ " keine Aktualisierung möglich");
+			handler = new InitialisiertStatus(this);
 			break;
 		case INSTALLIERT:
-			handleInstalliertState(taskType);
+			handler = new InstalliertStatus(this);
 			break;
 		case STARTENWARTEN:
-			handleStartenWartenState(taskType);
+			handler = new StartenWartenStatus(this);
 			break;
 		case STOPPENWARTEN:
-			handleStoppenWartenState(taskType);
+			handler = new StoppenWartenStatus(this);
 			break;
 		default:
-			break;
+			throw new IllegalStateException("Unbekannter Applikationsstatus: " + applikation.getStatus());
+
 		}
+		return handler;
 	}
 
 	public void dispose() {
@@ -251,75 +259,6 @@ public final class OnlineApplikation {
 
 	public StoppBedingung getStoppBedingung() {
 		return applikation.getInkarnation().getStoppBedingung();
-	}
-
-	private void handleInstalliertState(TaskType taskType) {
-
-		if (taskType != TaskType.DEFAULT) {
-			return;
-		}
-
-		if (!manuellGestartetOderGestoppt && (prozessManager.getStartStoppStatus() != StartStoppStatus.Status.RUNNING)) {
-			return;
-		}
-
-		switch (applikation.getInkarnation().getStartArt().getOption()) {
-		case AUTOMATISCH:
-			break;
-		case INTERVALLRELATIV:
-		case INTERVALLABSOLUT:
-			try {
-				onlineApplikationTimer.initZyklusTimer();
-				updateStatus(Applikation.Status.STARTENWARTEN,
-						"Nächster Ausführungszeitpunkt " + DateFormat.getDateTimeInstance().format(
-								new Date(System.currentTimeMillis() + onlineApplikationTimer.getTaskDelay(TimeUnit.MILLISECONDS))));
-			} catch (StartStoppException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			return;
-		case MANUELL:
-		default:
-			return;
-		}
-
-		Set<String> applikationen = prozessManager.waitForKernsystemStart(this);
-		if (!applikationen.isEmpty()) {
-			updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf Kernsystem: " + applikationen.toString());
-			return;
-		}
-
-		if (!isKernsystem()) {
-			String davConnectionMsg = prozessManager.getDavConnectionMsg();
-			if (davConnectionMsg != null) {
-				LOGGER.info(applikation.getInkarnation().getInkarnationsName() + ": " + davConnectionMsg);
-				updateStatus(Applikation.Status.STARTENWARTEN, davConnectionMsg);
-				return;
-			}
-		}
-
-		StartBedingung startBedingung = getStartBedingung();
-		if (startBedingung != null) {
-			applikationen = prozessManager.waitForStartBedingung(this);
-			if (!applikationen.isEmpty()) {
-				updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf : " + applikationen);
-				return;
-			}
-			long warteZeitInMsec;
-			try {
-				warteZeitInMsec = Util.convertToWarteZeitInMsec(startBedingung.getWartezeit());
-			} catch (StartStoppException e) {
-				throw new IllegalStateException(
-						"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
-			}
-			if (warteZeitInMsec > 0) {
-				updateStatus(Applikation.Status.STARTENWARTEN, applikation.getStartMeldung());
-				onlineApplikationTimer.initWarteTask(warteZeitInMsec);
-				return;
-			}
-		}
-
-		starteOSApplikation();
 	}
 
 	public void handleOSApplikationStatus(OSApplikationStatus neuerStatus) {
@@ -426,138 +365,6 @@ public final class OnlineApplikation {
 		}
 	}
 
-	private void handleStartenWartenState(TaskType taskType) {
-
-		if (taskType == TaskType.STOPPFEHLER) {
-			return;
-		}
-
-		if (!manuellGestartetOderGestoppt && prozessManager.getStartStoppStatus() != StartStoppStatus.Status.RUNNING) {
-			onlineApplikationTimer.clear();
-			updateStatus(Applikation.Status.GESTOPPT, "");
-			return;
-		}
-
-		if (taskType != TaskType.INTERVALLTIMER && onlineApplikationTimer.isIntervallTaskAktiv()) {
-			updateStatus(Applikation.Status.STARTENWARTEN,
-					"Nächster Ausführungszeitpunkt " + DateFormat.getDateTimeInstance().format(
-							new Date(System.currentTimeMillis() + onlineApplikationTimer.getTaskDelay(TimeUnit.MILLISECONDS))));
-			return;
-		}
-
-		Set<String> applikationen = prozessManager.waitForKernsystemStart(this);
-		if (!applikationen.isEmpty()) {
-			onlineApplikationTimer.clear();
-			updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf Kernsystem: " + applikationen);
-			return;
-		}
-
-		if (!isKernsystem()) {
-			String davConnectionMsg = prozessManager.getDavConnectionMsg();
-			if (davConnectionMsg != null) {
-				onlineApplikationTimer.clear();
-				LOGGER.info(applikation.getInkarnation().getInkarnationsName() + ": " + davConnectionMsg);
-				updateStatus(Applikation.Status.STARTENWARTEN, davConnectionMsg);
-				return;
-			}
-		}
-
-		StartBedingung startBedingung = getStartBedingung();
-		if (startBedingung != null) {
-			applikationen = prozessManager.waitForStartBedingung(this);
-			if (!applikationen.isEmpty()) {
-				onlineApplikationTimer.clear();
-				updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf : " + applikationen);
-				return;
-			}
-			if (taskType != TaskType.WARTETIMER) {
-				if (onlineApplikationTimer.isWarteTaskAktiv()) {
-					updateStatus(Applikation.Status.STARTENWARTEN, applikation.getStartMeldung());
-					return;
-				}
-				long warteZeitInMsec;
-				try {
-					warteZeitInMsec = Util.convertToWarteZeitInMsec(startBedingung.getWartezeit());
-				} catch (StartStoppException e) {
-					throw new IllegalStateException(
-							"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
-				}
-				if (warteZeitInMsec > 0) {
-					updateStatus(Applikation.Status.STARTENWARTEN, "Wartezeit bis " + DateFormat.getDateTimeInstance()
-							.format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
-					onlineApplikationTimer.initWarteTask(warteZeitInMsec);
-					return;
-				}
-			}
-		}
-
-		if (onlineApplikationTimer.isWarteTaskAktiv()) {
-			return;
-		}
-
-		starteOSApplikation();
-		applikation.setStartMeldung("");
-	}
-
-	private void handleStoppenWartenState(TaskType timerType) {
-
-		if (timerType != TaskType.STOPPFEHLER) {
-			if (onlineApplikationTimer.isStoppFehlerTaskAktiv()) {
-				return;
-			}
-		}
-
-		Set<String> applikationen = prozessManager.waitForKernsystemStopp(this);
-		if (!applikationen.isEmpty()) {
-			onlineApplikationTimer.clear();
-			updateStatus(Applikation.Status.STOPPENWARTEN, "Kernsystem wartet auf: " + applikationen);
-			return;
-		}
-
-		StoppBedingung stoppBedingung = getStoppBedingung();
-		if (stoppBedingung != null) {
-			applikationen = prozessManager.waitForStoppBedingung(this);
-			if (!applikationen.isEmpty()) {
-				onlineApplikationTimer.clear();
-				updateStatus(Applikation.Status.STOPPENWARTEN, "Warte auf : " + applikationen);
-				return;
-			}
-			if (timerType != TaskType.WARTETIMER) {
-				if (onlineApplikationTimer.isWarteTaskAktiv()) {
-					updateStatus(Applikation.Status.STOPPENWARTEN, applikation.getStartMeldung());
-					return;
-				}
-				long warteZeitInMsec;
-				try {
-					warteZeitInMsec = Util.convertToWarteZeitInMsec(stoppBedingung.getWartezeit());
-				} catch (StartStoppException e) {
-					throw new IllegalStateException(
-							"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
-				}
-				if (warteZeitInMsec > 0) {
-					updateStatus(Applikation.Status.STOPPENWARTEN, "Wartezeit bis " + DateFormat.getDateTimeInstance()
-							.format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
-					onlineApplikationTimer.initWarteTask(warteZeitInMsec);
-					return;
-				}
-			} else {
-				onlineApplikationTimer.clear();
-			}
-		}
-
-		if (onlineApplikationTimer.isWarteTaskAktiv()) {
-			return;
-		}
-
-		try {
-			prozessManager.stoppeApplikation(applikation.getInkarnation().getInkarnationsName());
-			onlineApplikationTimer.initStoppFehlerTask();
-		} catch (StartStoppException e) {
-			throw new IllegalStateException("Sollte hier nicht passieren, weil die Applikation sich selbst beendet!",
-					e);
-		}
-	}
-
 	public boolean isKernsystem() {
 		return inkarnation.isKernSystem();
 	}
@@ -566,10 +373,8 @@ public final class OnlineApplikation {
 		return inkarnation.isTransmitter();
 	}
 
-
 	public void starteOSApplikation() {
 		prozessAusgaben.clear();
-		updateStatus(Applikation.Status.GESTARTET, "Start initialisiert");
 		process = new OSApplikation(getName(), applikation.getInkarnation().getApplikation());
 		process.setProgrammArgumente(getApplikationsArgumente());
 		process.onStatusChange.addHandler(osApplikationStatusHandler);
@@ -584,7 +389,7 @@ public final class OnlineApplikation {
 		case GESTOPPT:
 		case STARTENWARTEN:
 			manuellGestartetOderGestoppt = true;
-			switch(getApplikation().getInkarnation().getStartArt().getOption()) {
+			switch (getApplikation().getInkarnation().getStartArt().getOption()) {
 			case AUTOMATISCH:
 			case INTERVALLABSOLUT:
 			case INTERVALLRELATIV:
@@ -595,7 +400,7 @@ public final class OnlineApplikation {
 				break;
 			default:
 				break;
-			
+
 			}
 			break;
 		case GESTARTET:
@@ -642,18 +447,19 @@ public final class OnlineApplikation {
 		return getName();
 	}
 
-	private void updateStatus(Applikation.Status status, String message) {
+	boolean updateStatus(Applikation.Status status, String message) {
 
 		applikation.setStartMeldung(message);
-
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
 			applikation.setStatus(status);
 			onStatusChanged.send(new ApplikationEvent(onStatusChanged, this.getName(), status));
 			checkState(TaskType.DEFAULT);
+			return true;
 		}
-	}
 
+		return false;
+	}
 
 	public ApplikationLog getLog() {
 		ApplikationLog log = new ApplikationLog().withInkarnation(getName());
@@ -669,8 +475,8 @@ public final class OnlineApplikation {
 		return log;
 	}
 
-	public void reinit(Inkarnation inkarnation) throws StartStoppException {
-		applikation.setInkarnation(inkarnation);
+	public void reinit(Inkarnation newInkarnation) throws StartStoppException {
+		applikation.setInkarnation(newInkarnation);
 		startFehlerCounter = 0;
 		if (prozessManager.getStartStoppStatus() == Status.RUNNING) {
 			prozessManager.restarteApplikation(getName());
@@ -685,5 +491,53 @@ public final class OnlineApplikation {
 		updateStatus(Applikation.Status.INSTALLIERT, message);
 	}
 
-	
+	boolean isManuellGestartetOderGestoppt() {
+		return manuellGestartetOderGestoppt;
+	}
+
+	OnlineApplikationTimer getOnlineApplikationTimer() {
+		return onlineApplikationTimer;
+	}
+
+	public String kernSystemVerfuegbar() {
+		Set<String> applikationen = prozessManager.waitForKernsystemStart(this);
+		if (!applikationen.isEmpty()) {
+			return "Warte auf Kernsystem: " + applikationen.toString();
+		}
+
+		String message = null;
+		if (!isKernsystem()) {
+			message = prozessManager.getDavConnectionMsg();
+		}
+
+		return message;
+	}
+
+	public String kernSystemGestoppt() {
+		Set<String> applikationen = prozessManager.waitForKernsystemStopp(this);
+		if (!applikationen.isEmpty()) {
+			return "Kernsystem wartet auf: " + applikationen;
+		}
+		return null;
+	}
+
+	public String stoppBedingungErfuellt() {
+		Set<String> applikationen = prozessManager.waitForStoppBedingung(this);
+		if (!applikationen.isEmpty()) {
+			return "Warte auf : " + applikationen;
+		}
+		
+		return null;
+
+	}
+
+	public String startbedingungErfuellt() {
+		Set<String> applikationen = prozessManager.waitForStartBedingung(this);
+		if (!applikationen.isEmpty()) {
+			return "Warte auf : " + applikationen;
+		}
+		
+		return null;
+	}
+
 }

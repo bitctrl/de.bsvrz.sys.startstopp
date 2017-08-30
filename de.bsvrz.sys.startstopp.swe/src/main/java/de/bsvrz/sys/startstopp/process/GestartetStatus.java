@@ -1,7 +1,7 @@
 package de.bsvrz.sys.startstopp.process;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.api.jsonschema.Applikation.Status;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 
 public class GestartetStatus extends OnlineApplikationStatus {
@@ -11,9 +11,9 @@ public class GestartetStatus extends OnlineApplikationStatus {
 	}
 
 	@Override
-	public OnlineApplikationStatus wechsleStatus(TaskType task) {
+	public boolean wechsleStatus(TaskType task, StartStoppStatus.Status startStoppStatus) {
 		// TODO Auto-generated method stub
-		return this;
+		return false;
 	}
 
 }
