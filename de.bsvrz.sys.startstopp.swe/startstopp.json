@@ -230,7 +230,7 @@
     }
   }, {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application11", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation06",
     "initialize" : false,
@@ -268,9 +268,9 @@
     }
   } ],
   "metaDaten" : {
-    "aenderungsGrund" : "skldjf sdlkfj sdf",
-    "erstelltAm" : "2017-08-29T13:22:12.675",
+    "aenderungsGrund" : "fhs sdkjfh ",
+    "erstelltAm" : "2017-08-30T08:55:04.973",
     "erstelltDurch" : "Tester",
-    "versionsNummer" : "1504005732675"
+    "versionsNummer" : "1504076104973"
   }
 }

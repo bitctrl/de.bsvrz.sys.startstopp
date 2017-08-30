@@ -84,7 +84,7 @@ public final class ProzessManager {
 		davConnector = new DavConnector(this);
 		this.startStopp = startStopp;
 		startStopp.getSkriptManager().onKonfigurationChanged
-				.addHandler((konfiguration) -> skriptAktualisiert(konfiguration));
+				.addHandler((konfiguration) -> aktualisiereSkript(konfiguration));
 
 		try {
 			StartStoppKonfiguration skript = startStopp.getSkriptManager().getCurrentSkript();
@@ -199,7 +199,7 @@ public final class ProzessManager {
 		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation != null) {
 			try {
-				applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Beenden über Datenverteilernachricht");
+				applikation.requestStopp("Beenden über Datenverteilernachricht");
 				davConnector.stoppApplikation(inkarnationsName);
 			} catch (StartStoppException e) {
 				Debug.getLogger()
@@ -265,7 +265,7 @@ public final class ProzessManager {
 		}
 	}
 
-	private void skriptAktualisiert(StartStoppKonfiguration neueKonfiguration) {
+	private void aktualisiereSkript(StartStoppKonfiguration neueKonfiguration) {
 
 		boolean kernsystemGeandert = false;
 		List<String> entfernt = new ArrayList<>();
@@ -312,7 +312,7 @@ public final class ProzessManager {
 					applikation = new OnlineApplikation(this, inkarnation);
 					applikationen.put(applikation.getName(), applikation);
 					applikation.onStatusChanged.addHandler((status) -> applikationStatusChanged(status));
-					applikation.updateStatus(Applikation.Status.INSTALLIERT, "Applikation angelegt");
+					applikation.requestStart("Applikation angelegt");
 					if (startStoppStatus == Status.RUNNING) {
 						applikation.checkState(TaskType.DEFAULT);
 					}
@@ -585,7 +585,7 @@ public final class ProzessManager {
 				switch (applikation.getStatus()) {
 				case GESTOPPT:
 				case STOPPENWARTEN:
-					applikation.updateStatus(Applikation.Status.INSTALLIERT, "");
+					applikation.requestStart("");
 					break;
 				case GESTARTET:
 				case INITIALISIERT:

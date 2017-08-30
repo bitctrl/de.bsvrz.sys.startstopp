@@ -26,25 +26,19 @@
 
 package de.bsvrz.sys.startstopp.process;
 
-import java.lang.management.ManagementFactory;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt.Option;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
@@ -57,7 +51,6 @@ import de.bsvrz.sys.startstopp.process.dav.DavApplikationStatus;
 import de.bsvrz.sys.startstopp.process.os.OSApplikation;
 import de.bsvrz.sys.startstopp.process.os.OSApplikationStatus;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
-import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 import de.muspellheim.events.Event;
 
 public final class OnlineApplikation {
@@ -75,19 +68,9 @@ public final class OnlineApplikation {
 
 	private OSApplikation process;
 
-	private ScheduledFuture<?> warteTask;
-	private ScheduledExecutorService warteZeitExecutor;
-
-	private ScheduledFuture<?> intervallTask;
-	private ScheduledExecutorService intervallExecutor;
-
-	private ScheduledFuture<?> stoppFehlerTask;
-	private ScheduledExecutorService stoppFehlerExecutor;
-
 	private ProzessManager prozessManager;
-	private long zyklischerStart;
 
-	private OnlineInkarnation inkarnationsHandler;
+	private OnlineInkarnation inkarnation;
 	private Applikation applikation;
 
 	private String inkarnationsPrefix;
@@ -95,7 +78,9 @@ public final class OnlineApplikation {
 
 	private final List<String> prozessAusgaben = new ArrayList<>();
 	private int startFehlerCounter;
-
+	private OnlineApplikationTimer onlineApplikationTimer;
+	private OnlineApplikationStatus onlineApplikationStatus;
+	
 	public OnlineApplikation(ProzessManager processmanager, OnlineInkarnation onlineInkarnation) {
 		this(StartStopp.getInstance(), processmanager, onlineInkarnation);
 	}
@@ -106,17 +91,12 @@ public final class OnlineApplikation {
 		this.applikation = new Applikation();
 		this.inkarnationsPrefix = startStopp.getInkarnationsPrefix();
 		applikation.setInkarnation(onlineInkarnation.getInkarnation());
-		this.inkarnationsHandler = onlineInkarnation;
+		this.inkarnation = onlineInkarnation;
 		applikation.setLetzteStartzeit("noch nie gestartet");
 		applikation.setLetzteStoppzeit("noch nie gestoppt");
 
-		warteZeitExecutor = Executors
-				.newSingleThreadScheduledExecutor(new NamingThreadFactory("Wartezeit: " + getName()));
-		intervallExecutor = Executors
-				.newSingleThreadScheduledExecutor(new NamingThreadFactory("Intervall: " + getName()));
-		stoppFehlerExecutor = Executors
-				.newSingleThreadScheduledExecutor(new NamingThreadFactory("StoppFehler: " + getName()));
-
+		onlineApplikationTimer = new OnlineApplikationTimer(this);
+		
 		this.prozessManager.onStartStoppStatusChanged.addHandler(prozessManagerStatusHandler);
 		this.prozessManager.getDavConnector().onAppStatusChanged.addHandler(davAppStatusChangedHandler);
 
@@ -220,29 +200,7 @@ public final class OnlineApplikation {
 		this.prozessManager.getDavConnector().onAppStatusChanged.removeHandler(davAppStatusChangedHandler);
 		this.prozessManager.onStartStoppStatusChanged.removeHandler(prozessManagerStatusHandler);
 
-		if (warteTask != null) {
-			warteTask.cancel(true);
-		}
-
-		if (warteZeitExecutor != null) {
-			warteZeitExecutor.shutdown();
-		}
-
-		if (intervallTask != null) {
-			intervallTask.cancel(true);
-		}
-
-		if (intervallExecutor != null) {
-			intervallExecutor.shutdown();
-		}
-
-		if (stoppFehlerTask != null) {
-			stoppFehlerTask.cancel(true);
-		}
-
-		if (stoppFehlerExecutor != null) {
-			stoppFehlerExecutor.shutdown();
-		}
+		onlineApplikationTimer.dispose();
 
 		if (process != null) {
 			process.onStatusChange.removeHandler(osApplikationStatusHandler);
@@ -311,10 +269,10 @@ public final class OnlineApplikation {
 		case INTERVALLRELATIV:
 		case INTERVALLABSOLUT:
 			try {
-				setZyklusTimer();
+				onlineApplikationTimer.initZyklusTimer();
 				updateStatus(Applikation.Status.STARTENWARTEN,
 						"Nächster Ausführungszeitpunkt " + DateFormat.getDateTimeInstance().format(
-								new Date(System.currentTimeMillis() + intervallTask.getDelay(TimeUnit.MILLISECONDS))));
+								new Date(System.currentTimeMillis() + onlineApplikationTimer.getTaskDelay(TimeUnit.MILLISECONDS))));
 			} catch (StartStoppException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -356,7 +314,7 @@ public final class OnlineApplikation {
 			}
 			if (warteZeitInMsec > 0) {
 				updateStatus(Applikation.Status.STARTENWARTEN, applikation.getStartMeldung());
-				setWarteTimer(warteZeitInMsec);
+				onlineApplikationTimer.initWarteTask(warteZeitInMsec);
 				return;
 			}
 		}
@@ -390,9 +348,7 @@ public final class OnlineApplikation {
 				applikation.setStartMeldung(prozessAusgaben.get(0));
 			}
 			process.onStatusChange.removeHandler(osApplikationStatusHandler);
-			setWarteTimer(0);
-			deactivateZyklusTimer();
-			deactivateStoppFehlerTask();
+			onlineApplikationTimer.clear();
 			process = null;
 		}
 
@@ -440,9 +396,7 @@ public final class OnlineApplikation {
 
 		if (process != null) {
 			process.onStatusChange.removeHandler(osApplikationStatusHandler);
-			setWarteTimer(0);
-			deactivateZyklusTimer();
-			deactivateStoppFehlerTask();
+			onlineApplikationTimer.clear();
 			process = null;
 		}
 		switch (applikation.getInkarnation().getStartArt().getOption()) {
@@ -479,22 +433,21 @@ public final class OnlineApplikation {
 		}
 
 		if (!manuellGestartetOderGestoppt && prozessManager.getStartStoppStatus() != StartStoppStatus.Status.RUNNING) {
-			setWarteTimer(0);
+			onlineApplikationTimer.clear();
 			updateStatus(Applikation.Status.GESTOPPT, "");
 			return;
 		}
 
-		if (taskType != TaskType.INTERVALLTIMER && intervallTaskIsActive()) {
-			setWarteTimer(0);
+		if (taskType != TaskType.INTERVALLTIMER && onlineApplikationTimer.isIntervallTaskAktiv()) {
 			updateStatus(Applikation.Status.STARTENWARTEN,
 					"Nächster Ausführungszeitpunkt " + DateFormat.getDateTimeInstance().format(
-							new Date(System.currentTimeMillis() + intervallTask.getDelay(TimeUnit.MILLISECONDS))));
+							new Date(System.currentTimeMillis() + onlineApplikationTimer.getTaskDelay(TimeUnit.MILLISECONDS))));
 			return;
 		}
 
 		Set<String> applikationen = prozessManager.waitForKernsystemStart(this);
 		if (!applikationen.isEmpty()) {
-			setWarteTimer(0);
+			onlineApplikationTimer.clear();
 			updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf Kernsystem: " + applikationen);
 			return;
 		}
@@ -502,7 +455,7 @@ public final class OnlineApplikation {
 		if (!isKernsystem()) {
 			String davConnectionMsg = prozessManager.getDavConnectionMsg();
 			if (davConnectionMsg != null) {
-				setWarteTimer(0);
+				onlineApplikationTimer.clear();
 				LOGGER.info(applikation.getInkarnation().getInkarnationsName() + ": " + davConnectionMsg);
 				updateStatus(Applikation.Status.STARTENWARTEN, davConnectionMsg);
 				return;
@@ -513,12 +466,12 @@ public final class OnlineApplikation {
 		if (startBedingung != null) {
 			applikationen = prozessManager.waitForStartBedingung(this);
 			if (!applikationen.isEmpty()) {
-				setWarteTimer(0);
+				onlineApplikationTimer.clear();
 				updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf : " + applikationen);
 				return;
 			}
 			if (taskType != TaskType.WARTETIMER) {
-				if (warteTaskIsActive()) {
+				if (onlineApplikationTimer.isWarteTaskAktiv()) {
 					updateStatus(Applikation.Status.STARTENWARTEN, applikation.getStartMeldung());
 					return;
 				}
@@ -532,13 +485,13 @@ public final class OnlineApplikation {
 				if (warteZeitInMsec > 0) {
 					updateStatus(Applikation.Status.STARTENWARTEN, "Wartezeit bis " + DateFormat.getDateTimeInstance()
 							.format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
-					setWarteTimer(warteZeitInMsec);
+					onlineApplikationTimer.initWarteTask(warteZeitInMsec);
 					return;
 				}
 			}
 		}
 
-		if (warteTaskIsActive()) {
+		if (onlineApplikationTimer.isWarteTaskAktiv()) {
 			return;
 		}
 
@@ -549,14 +502,14 @@ public final class OnlineApplikation {
 	private void handleStoppenWartenState(TaskType timerType) {
 
 		if (timerType != TaskType.STOPPFEHLER) {
-			if (stoppFehlerTaskIsActive()) {
+			if (onlineApplikationTimer.isStoppFehlerTaskAktiv()) {
 				return;
 			}
 		}
 
 		Set<String> applikationen = prozessManager.waitForKernsystemStopp(this);
 		if (!applikationen.isEmpty()) {
-			setWarteTimer(0);
+			onlineApplikationTimer.clear();
 			updateStatus(Applikation.Status.STOPPENWARTEN, "Kernsystem wartet auf: " + applikationen);
 			return;
 		}
@@ -565,12 +518,12 @@ public final class OnlineApplikation {
 		if (stoppBedingung != null) {
 			applikationen = prozessManager.waitForStoppBedingung(this);
 			if (!applikationen.isEmpty()) {
-				setWarteTimer(0);
+				onlineApplikationTimer.clear();
 				updateStatus(Applikation.Status.STOPPENWARTEN, "Warte auf : " + applikationen);
 				return;
 			}
 			if (timerType != TaskType.WARTETIMER) {
-				if (warteTaskIsActive()) {
+				if (onlineApplikationTimer.isWarteTaskAktiv()) {
 					updateStatus(Applikation.Status.STOPPENWARTEN, applikation.getStartMeldung());
 					return;
 				}
@@ -584,100 +537,35 @@ public final class OnlineApplikation {
 				if (warteZeitInMsec > 0) {
 					updateStatus(Applikation.Status.STOPPENWARTEN, "Wartezeit bis " + DateFormat.getDateTimeInstance()
 							.format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
-					setWarteTimer(warteZeitInMsec);
+					onlineApplikationTimer.initWarteTask(warteZeitInMsec);
 					return;
 				}
 			} else {
-				setWarteTimer(0);
+				onlineApplikationTimer.clear();
 			}
 		}
 
-		if (warteTaskIsActive()) {
+		if (onlineApplikationTimer.isWarteTaskAktiv()) {
 			return;
 		}
 
 		try {
 			prozessManager.stoppeApplikation(applikation.getInkarnation().getInkarnationsName());
-			activateStoppFehlerTask();
+			onlineApplikationTimer.initStoppFehlerTask();
 		} catch (StartStoppException e) {
 			throw new IllegalStateException("Sollte hier nicht passieren, weil die Applikation sich selbst beendet!",
 					e);
 		}
 	}
 
-	private void activateStoppFehlerTask() {
-		deactivateStoppFehlerTask();
-		stoppFehlerTask = stoppFehlerExecutor.schedule(() -> checkState(TaskType.STOPPFEHLER), 30, TimeUnit.SECONDS);
-	}
-
-	private void deactivateStoppFehlerTask() {
-		if (stoppFehlerTask != null) {
-			stoppFehlerTask.cancel(true);
-			stoppFehlerTask = null;
-		}
-	}
-
-	private boolean intervallTaskIsActive() {
-		return (intervallTask != null) && intervallTask.getDelay(TimeUnit.MILLISECONDS) > 0;
-	}
-
 	public boolean isKernsystem() {
-		return inkarnationsHandler.isKernSystem();
+		return inkarnation.isKernSystem();
 	}
 
 	public boolean isTransmitter() {
-		return inkarnationsHandler.isTransmitter();
+		return inkarnation.isTransmitter();
 	}
 
-	private void setWarteTimer(long warteZeitInMsec) {
-
-		if (warteTask != null) {
-			warteTask.cancel(true);
-		}
-
-		if (warteZeitInMsec <= 0) {
-			return;
-		}
-
-		warteTask = warteZeitExecutor.schedule(() -> checkState(TaskType.WARTETIMER), warteZeitInMsec,
-				TimeUnit.MILLISECONDS);
-	}
-
-	private void deactivateZyklusTimer() {
-		if (intervallTask != null) {
-			intervallTask.cancel(true);
-			intervallTask = null;
-		}
-	}
-
-	private void setZyklusTimer() throws StartStoppException {
-
-		zyklischerStart = 0;
-
-		StartArt startArt = applikation.getInkarnation().getStartArt();
-		switch (startArt.getOption()) {
-		case INTERVALLABSOLUT:
-			zyklischerStart = new CronDefinition(startArt.getIntervall()).nextScheduledTime(System.currentTimeMillis());
-			break;
-		case INTERVALLRELATIV:
-			zyklischerStart = ManagementFactory.getRuntimeMXBean().getStartTime();
-			long intervalle = (System.currentTimeMillis() - zyklischerStart)
-					/ Util.convertToWarteZeitInMsec(startArt.getIntervall());
-			zyklischerStart += (intervalle + 1) * Util.convertToWarteZeitInMsec(startArt.getIntervall());
-			break;
-		default:
-			return;
-		}
-
-		if (intervallTask != null) {
-			intervallTask.cancel(true);
-		}
-
-		intervallTask = intervallExecutor.schedule(() -> {
-			intervallTask = null;
-			checkState(TaskType.INTERVALLTIMER);
-		}, zyklischerStart - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
-	}
 
 	public void starteOSApplikation() {
 		prozessAusgaben.clear();
@@ -754,7 +642,7 @@ public final class OnlineApplikation {
 		return getName();
 	}
 
-	public void updateStatus(Applikation.Status status, String message) {
+	private void updateStatus(Applikation.Status status, String message) {
 
 		applikation.setStartMeldung(message);
 
@@ -766,13 +654,6 @@ public final class OnlineApplikation {
 		}
 	}
 
-	private boolean stoppFehlerTaskIsActive() {
-		return (stoppFehlerTask != null) && stoppFehlerTask.getDelay(TimeUnit.MILLISECONDS) > 0;
-	}
-
-	private boolean warteTaskIsActive() {
-		return (warteTask != null) && warteTask.getDelay(TimeUnit.MILLISECONDS) > 0;
-	}
 
 	public ApplikationLog getLog() {
 		ApplikationLog log = new ApplikationLog().withInkarnation(getName());
@@ -796,4 +677,13 @@ public final class OnlineApplikation {
 		}
 	}
 
+	public void requestStopp(String message) {
+		updateStatus(Applikation.Status.STOPPENWARTEN, message);
+	}
+
+	public void requestStart(String message) {
+		updateStatus(Applikation.Status.INSTALLIERT, message);
+	}
+
+	
 }

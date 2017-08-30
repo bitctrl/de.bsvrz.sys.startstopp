@@ -81,13 +81,14 @@ public class AppStopper implements Runnable {
 			appStopperExecutor = Executors.newFixedThreadPool(applikations.size(), new NamingThreadFactory("AppStopper"));
 			
 			for (OnlineApplikation applikation : applikations.values()) {
+				// TODO Beenden mit Bedingungen!!
 				appStopperExecutor.submit(() -> {
-							applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Skript wird angehalten");
+							applikation.requestStopp("Skript wird angehalten");
 						});
 			}
 		}
 
-		while (!allAppsStopped()) {
+		while (!allAppsStopped()) { 
 			synchronized (lock) {
 				try {
 					lock.wait(1000);
