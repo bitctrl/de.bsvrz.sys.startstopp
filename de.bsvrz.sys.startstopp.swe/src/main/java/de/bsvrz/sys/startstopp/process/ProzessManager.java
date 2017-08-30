@@ -30,10 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
@@ -41,19 +39,15 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
-import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 import de.bsvrz.sys.startstopp.process.dav.DavConnector;
-import de.bsvrz.sys.startstopp.process.os.OSTools;
 import de.bsvrz.sys.startstopp.process.remote.RechnerClient;
 import de.bsvrz.sys.startstopp.process.remote.RechnerManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
@@ -218,11 +212,15 @@ public final class ProzessManager {
 
 	public void stoppeSkript() {
 
-		switch(startStoppStatus) {
+		switch (startStoppStatus) {
 		case RUNNING_CANCELED:
 		case RUNNING:
 		case STOPPING_CANCELED:
-			setStartStoppStatus(Status.STOPPING);
+			if (checkStoppStatus()) {
+				setStartStoppStatus(Status.STOPPED);
+			} else {
+				setStartStoppStatus(Status.STOPPING);
+			}
 			break;
 		case SHUTDOWN:
 		case STOPPED:
@@ -231,7 +229,7 @@ public final class ProzessManager {
 		case INITIALIZED:
 		default:
 			break;
-		
+
 		}
 	}
 
@@ -332,225 +330,76 @@ public final class ProzessManager {
 		}
 	}
 
+	// Set<String> waitForKernsystemStart(OnlineApplikation applikation) {
+	//
+	// Set<String> result = new LinkedHashSet<>();
+	//
+	// for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
+	// if (ks.getInkarnationsName().equals(applikation.getName())) {
+	// return result;
+	// }
+	// OnlineApplikation app = applikationen.get(ks.getInkarnationsName());
+	// switch (app.getStatus()) {
+	// case GESTARTET:
+	// case INITIALISIERT:
+	// break;
+	// default:
+	// result.add(applikation.getName());
+	// }
+	// }
+	//
+	// return result;
+	// }
 
-	public Set<String> waitForStartBedingung(OnlineApplikation managedApplikation) {
-
-		Set<String> result = new LinkedHashSet<>();
-
-		StartBedingung bedingung = managedApplikation.getStartBedingung();
-		if (bedingung == null) {
-			return result;
-		}
-
-		String rechnerName = bedingung.getRechner();
-		if ((rechnerName != null) && !rechnerName.trim().isEmpty()) {
-			return waitForRemoteStartBedingung(managedApplikation, rechnerName, bedingung);
-		}
-
-		for (String vorgaenger : bedingung.getVorgaenger()) {
-			OnlineApplikation applikation = applikationen.get(vorgaenger);
-			if (applikation == null) {
-				LOGGER.warning("In der Startbedingung referenzierte Inkarnation \"" + bedingung.getVorgaenger()
-						+ "\" existiert nicht!");
-				continue;
-			}
-
-			if (!referenzApplikationGueltigFuerStart(applikation.getApplikation(), bedingung)) {
-				result.add(applikation.getName());
-				LOGGER.info(managedApplikation.getName() + " muss auf " + applikation.getName() + " warten!");
-			}
-		}
-		return result;
-	}
-
-	private boolean referenzApplikationGueltigFuerStart(Applikation applikation, StartBedingung bedingung) {
-		switch (bedingung.getWarteart()) {
-		case BEGINN:
-			if ((applikation.getStatus() != Applikation.Status.GESTARTET)
-					&& (applikation.getStatus() != Applikation.Status.INITIALISIERT)) {
-				return false;
-			}
-			break;
-		case ENDE:
-			if (applikation.getStatus() != Applikation.Status.INITIALISIERT) {
-				return false;
-			}
-			break;
-		default:
-			break;
-		}
-
-		return true;
-	}
-
-	public Set<String> waitForStoppBedingung(OnlineApplikation managedApplikation) {
-
-		Set<String> result = new LinkedHashSet<>();
-
-		StoppBedingung bedingung = managedApplikation.getStoppBedingung();
-		if (bedingung == null) {
-			return result;
-		}
-
-		String rechnerName = bedingung.getRechner();
-		if (rechnerName != null && !rechnerName.trim().isEmpty()) {
-			return waitForRemoteStoppBedingung(managedApplikation, rechnerName, bedingung);
-		}
-
-		for (String nachfolger : bedingung.getNachfolger()) {
-			OnlineApplikation applikation = applikationen.get(nachfolger);
-			if (applikation == null) {
-				LOGGER.warning("In der Stoppbedingung referenzierte Inkarnation \"" + bedingung.getNachfolger()
-						+ "\" existiert nicht!");
-				continue;
-			}
-
-			if (!referenzApplikationGueltigFuerStopp(applikation.getApplikation())) {
-				result.add(nachfolger);
-			}
-		}
-
-		return result;
-	}
-
-	private boolean referenzApplikationGueltigFuerStopp(Applikation applikation) {
-		switch (applikation.getStatus()) {
-		case GESTOPPT:
-		case INSTALLIERT:
-		case STARTENWARTEN:
-			break;
-		case GESTARTET:
-		case INITIALISIERT:
-		case STOPPENWARTEN:
-			return false;
-		default:
-			break;
-		}
-
-		return true;
-	}
-
-	private Set<String> waitForRemoteStoppBedingung(OnlineApplikation managedApplikation, String rechnerName,
-			StoppBedingung bedingung) {
-		Set<String> result = new LinkedHashSet<>();
-		RechnerClient rechnerClient = this.rechnerManager.getClient(rechnerName);
-		if (rechnerClient == null) {
-			throw new IllegalStateException(
-					"Rechner " + rechnerName + " ist in der aktuellen Konfiguration nicht definiert!");
-		}
-
-		for (String nachfolger : bedingung.getNachfolger()) {
-			Applikation applikation = rechnerClient.getApplikation(nachfolger);
-			if (applikation == null) {
-				LOGGER.info(managedApplikation.getName() + " kann den Status von " + nachfolger + " auf Rechner \""
-						+ rechnerName + "\" nicht ermittlen!");
-			} else if (!referenzApplikationGueltigFuerStopp(applikation)) {
-				result.add(nachfolger);
-				LOGGER.info(
-						managedApplikation.getName() + " muss auf " + applikation.getInkarnation().getInkarnationsName()
-								+ " auf Rechner \"" + rechnerName + "\" warten!");
-			}
-		}
-
-		return result;
-	}
-
-	private Set<String> waitForRemoteStartBedingung(OnlineApplikation managedApplikation, String rechnerName,
-			StartBedingung bedingung) {
-
-		Set<String> result = new LinkedHashSet<>();
-		RechnerClient rechnerClient = rechnerManager.getClient(rechnerName);
-		if (rechnerClient == null) {
-			throw new IllegalStateException("Rechner " + rechnerName + " ist in der Konfiguration nicht definiert!");
-		}
-		for (String vorgaenger : bedingung.getVorgaenger()) {
-			Applikation applikation = rechnerClient.getApplikation(vorgaenger);
-			if (applikation == null) {
-				result.add(vorgaenger);
-				LOGGER.info(managedApplikation.getName() + " muss auf " + vorgaenger + " auf Rechner \"" + rechnerName
-						+ "\" warten!");
-			} else if (!referenzApplikationGueltigFuerStart(applikation, bedingung)) {
-				result.add(vorgaenger);
-				LOGGER.info(
-						managedApplikation.getName() + " muss auf " + applikation.getInkarnation().getInkarnationsName()
-								+ " auf Rechner \"" + rechnerName + "\" warten!");
-			}
-		}
-
-		return result;
-	}
-
-	public Set<String> waitForKernsystemStart(OnlineApplikation applikation) {
-
-		Set<String> result = new LinkedHashSet<>();
-
-		for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
-			if (ks.getInkarnationsName().equals(applikation.getName())) {
-				return result;
-			}
-			OnlineApplikation app = applikationen.get(ks.getInkarnationsName());
-			switch (app.getStatus()) {
-			case GESTARTET:
-			case INITIALISIERT:
-				break;
-			default:
-				result.add(applikation.getName());
-			}
-		}
-
-		return result;
-	}
-
-	public Set<String> waitForKernsystemStopp(OnlineApplikation applikation) {
-
-		Set<String> result = new LinkedHashSet<>();
-		OnlineApplikation transmitter = null;
-
-		if (applikation.isKernsystem()) {
-			for (OnlineApplikation onlineApplikation : applikationen.values()) {
-				if (applikation.equals(onlineApplikation)) {
-					continue;
-				}
-				if (onlineApplikation.isKernsystem()) {
-					if (onlineApplikation.isTransmitter()) {
-						transmitter = onlineApplikation;
-					}
-				} else if (onlineApplikation.getStatus() != Applikation.Status.GESTOPPT) {
-					result.add(onlineApplikation.getName());
-				}
-			}
-
-			if (OSTools.isWindows()) {
-				if (transmitter != null) {
-					result.add(transmitter.getName());
-				}
-			} else {
-				boolean found = false;
-				for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
-					if (found) {
-						try {
-							OnlineApplikation ksApplikation = getApplikation(ks.getInkarnationsName());
-							if (ksApplikation.getStatus() != Applikation.Status.GESTOPPT) {
-								result.add(ks.getInkarnationsName());
-							}
-						} catch (StartStoppException e) {
-							throw new IllegalStateException("Applikation sollte hier immer gefunden werden!", e);
-						}
-					} else if (ks.getInkarnationsName().equals(applikation.getName())) {
-						found = true;
-					}
-				}
-			}
-		}
-		return result;
-	}
+	// Set<String> waitForKernsystemStopp(OnlineApplikation applikation) {
+	//
+	// Set<String> result = new LinkedHashSet<>();
+	// OnlineApplikation transmitter = null;
+	//
+	// if (applikation.isKernsystem()) {
+	// for (OnlineApplikation onlineApplikation : applikationen.values()) {
+	// if (applikation.equals(onlineApplikation)) {
+	// continue;
+	// }
+	// if (onlineApplikation.isKernsystem()) {
+	// if (onlineApplikation.isTransmitter()) {
+	// transmitter = onlineApplikation;
+	// }
+	// } else if (onlineApplikation.getStatus() != Applikation.Status.GESTOPPT) {
+	// result.add(onlineApplikation.getName());
+	// }
+	// }
+	//
+	// if (OSTools.isWindows()) {
+	// if (transmitter != null) {
+	// result.add(transmitter.getName());
+	// }
+	// } else {
+	// boolean found = false;
+	// for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
+	// if (found) {
+	// try {
+	// OnlineApplikation ksApplikation = getApplikation(ks.getInkarnationsName());
+	// if (ksApplikation.getStatus() != Applikation.Status.GESTOPPT) {
+	// result.add(ks.getInkarnationsName());
+	// }
+	// } catch (StartStoppException e) {
+	// throw new IllegalStateException("Applikation sollte hier immer gefunden
+	// werden!", e);
+	// }
+	// } else if (ks.getInkarnationsName().equals(applikation.getName())) {
+	// found = true;
+	// }
+	// }
+	// }
+	// }
+	// return result;
+	// }
 
 	public void applikationStatusChanged(ApplikationEvent status) {
-		boolean allStopped = true;
+		boolean allStopped = checkStoppStatus();
+
 		for (OnlineApplikation applikation : applikationen.values()) {
-			if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
-				allStopped = false;
-			}
 			if (!applikation.getName().equals(status.name)) {
 				applikation.checkState(TaskType.DEFAULT);
 			}
@@ -572,6 +421,15 @@ public final class ProzessManager {
 		}
 	}
 
+	private boolean checkStoppStatus() {
+		for (OnlineApplikation applikation : applikationen.values()) {
+			if (applikation.getStatus() != Applikation.Status.GESTOPPT) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public String getDavConnectionMsg() {
 		return davConnector.getConnectionMsg();
 	}
@@ -580,26 +438,26 @@ public final class ProzessManager {
 
 		checkSkriptStart();
 		setStartStoppStatus(Status.RUNNING);
-		for (OnlineApplikation applikation : applikationen.values()) {
-			if (applikation.getStartArtOption() != StartArt.Option.MANUELL) {
-				switch (applikation.getStatus()) {
-				case GESTOPPT:
-				case STOPPENWARTEN:
-					applikation.requestStart("");
-					break;
-				case GESTARTET:
-				case INITIALISIERT:
-				case STARTENWARTEN:
-				case INSTALLIERT:
-				default:
-					break;
-				}
-			}
-		}
+		// for (OnlineApplikation applikation : applikationen.values()) {
+		// if (applikation.getStartArtOption() != StartArt.Option.MANUELL) {
+		// switch (applikation.getStatus()) {
+		// case GESTOPPT:
+		// case STOPPENWARTEN:
+		// applikation.requestStart("");
+		// break;
+		// case GESTARTET:
+		// case INITIALISIERT:
+		// case STARTENWARTEN:
+		// case INSTALLIERT:
+		// default:
+		// break;
+		// }
+		// }
+		// }
 	}
 
 	private void checkManualStartModus() throws StartStoppException {
-		switch(startStoppStatus) {
+		switch (startStoppStatus) {
 		case RUNNING:
 		case RUNNING_CANCELED:
 		case STOPPED:
@@ -614,7 +472,7 @@ public final class ProzessManager {
 					"Eine Applikation kann im Status: " + startStoppStatus + " nicht gestartet werden!");
 		}
 	}
-	
+
 	private void checkSkriptStart() throws StartStoppException {
 		switch (startStoppStatus) {
 		case RUNNING:
@@ -670,6 +528,23 @@ public final class ProzessManager {
 
 	public ApplikationLog getApplikationLog(String inkarnationsName) throws StartStoppException {
 		return getApplikation(inkarnationsName).getLog();
+	}
+
+	public RechnerClient getRechner(String rechnerName) {
+		return rechnerManager.getClient(rechnerName);
+	}
+
+	public List<OnlineApplikation> getKernSystemApplikationen() {
+		List<OnlineApplikation> result = new ArrayList<>();
+		for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
+			OnlineApplikation onlineApplikation = applikationen.get(ks.getInkarnationsName());
+			if (onlineApplikation == null) {
+				LOGGER.warning("Die Kernsystemapplikation \"" + ks.getInkarnationsName() + "\" wurde nicht gefunden!");
+			} else {
+				result.add(onlineApplikation);
+			}
+		}
+		return result;
 	}
 
 }

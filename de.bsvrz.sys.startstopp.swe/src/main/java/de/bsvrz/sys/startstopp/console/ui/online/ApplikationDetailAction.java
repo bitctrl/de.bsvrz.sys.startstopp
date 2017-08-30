@@ -28,7 +28,6 @@ package de.bsvrz.sys.startstopp.console.ui.online;
 
 import java.util.Collections;
 
-import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Window.Hint;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;

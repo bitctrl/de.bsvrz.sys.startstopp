@@ -29,6 +29,7 @@ package de.bsvrz.sys.startstopp.process;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -38,6 +39,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt.Option;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
@@ -48,6 +50,7 @@ import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.dav.DavApplikationStatus;
 import de.bsvrz.sys.startstopp.process.os.OSApplikation;
 import de.bsvrz.sys.startstopp.process.os.OSApplikationStatus;
+import de.bsvrz.sys.startstopp.process.os.OSTools;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.muspellheim.events.Event;
 
@@ -104,12 +107,9 @@ public final class OnlineApplikation {
 		String name = status.name.substring(inkarnationsPrefix.length());
 		if (getName().equals(name)) {
 			if (status.fertig) {
-				if (applikation.getStatus() == Applikation.Status.GESTARTET) {
+				if (applikation.getStatus() == Applikation.Status.GESTARTET || applikation.getStatus() == Applikation.Status.INITIALISIERT) {
 					updateStatus(Applikation.Status.INITIALISIERT, "");
-				} else {
-					LOGGER.warning(
-							"INITIALISIERT kann nicht gesetzt werden, " + getName() + " ist im Status " + getStatus());
-				}
+				} 
 			} else {
 				switch (getApplikation().getInkarnation().getInkarnationsTyp()) {
 				case DAV:
@@ -125,49 +125,38 @@ public final class OnlineApplikation {
 	}
 
 	private void prozessMangerStatusChanged(StartStoppStatus.Status status) {
+
+		Applikation.Status appStatus = getStatus();
+
 		switch (status) {
 		case STOPPING:
-			if (kannStoppenWarten()) {
+			if ((appStatus != Applikation.Status.GESTOPPT) && (appStatus != Applikation.Status.STOPPENWARTEN)) {
+				manuellGestartetOderGestoppt = false;
 				updateStatus(Applikation.Status.STOPPENWARTEN, "Startstopp wird angehalten!");
 			}
 			break;
 		case SHUTDOWN:
-			if (kannStoppenWarten()) {
+			if ((appStatus != Applikation.Status.GESTOPPT) && (appStatus != Applikation.Status.STOPPENWARTEN)) {
+				manuellGestartetOderGestoppt = false;
 				updateStatus(Applikation.Status.STOPPENWARTEN, "Startstopp wird heruntergefahren!");
 			}
 			break;
-		case CONFIGERROR:
-			// TODO Zustand auswerten
-			break;
-		case INITIALIZED:
-			// TODO Zustand auswerten
-			break;
 		case RUNNING:
 			startFehlerCounter = 0;
+			if (getStartArtOption() != StartArt.Option.MANUELL) {
+				if ((appStatus == Applikation.Status.GESTOPPT) || (appStatus == Applikation.Status.STOPPENWARTEN)) {
+					updateStatus(Applikation.Status.INSTALLIERT, "Prozessmanager gestartet");
+				}
+			}
+			break;
+		case CONFIGERROR:
+		case INITIALIZED:
+			LOGGER.warning("Unerwarteter Status des Prozessmanagers: " + status);
 			break;
 		case STOPPED:
-			// TODO Zustand auswerten
-			break;
-		default:
-			// TODO Zustand auswerten
-			break;
-		}
-	}
-
-	private boolean kannStoppenWarten() {
-		switch (getStatus()) {
-		case GESTOPPT:
-		case STOPPENWARTEN:
-			return false;
-		case GESTARTET:
-		case INITIALISIERT:
-		case INSTALLIERT:
-		case STARTENWARTEN:
 		default:
 			break;
-
 		}
-		return true;
 	}
 
 	void checkState(TaskType taskType) {
@@ -434,7 +423,15 @@ public final class OnlineApplikation {
 				break;
 			}
 		} else {
-			process.kill();
+			try {
+				prozessManager.getDavConnector().stoppApplikation(getName());
+			} catch (StartStoppException e) {
+				Debug.getLogger()
+						.warning("Die Applikation \"" + getName()
+								+ "\" konnte nicht über die Dav-Terminierungsschnittstelle beendet werden: "
+								+ e.getLocalizedMessage());
+				process.kill();
+			}
 		}
 	}
 
@@ -500,7 +497,21 @@ public final class OnlineApplikation {
 	}
 
 	public String kernSystemVerfuegbar() {
-		Set<String> applikationen = prozessManager.waitForKernsystemStart(this);
+
+		Set<String> applikationen = new LinkedHashSet<>();
+		for (OnlineApplikation ksApp : prozessManager.getKernSystemApplikationen()) {
+			if (ksApp.getName().equals(getName())) {
+				break;
+			}
+			switch (ksApp.getStatus()) {
+			case GESTARTET:
+			case INITIALISIERT:
+				break;
+			default:
+				applikationen.add(ksApp.getName());
+			}
+		}
+
 		if (!applikationen.isEmpty()) {
 			return "Warte auf Kernsystem: " + applikationen.toString();
 		}
@@ -513,31 +524,58 @@ public final class OnlineApplikation {
 		return message;
 	}
 
-	public String kernSystemGestoppt() {
-		Set<String> applikationen = prozessManager.waitForKernsystemStopp(this);
+	public String kernSystemKannGestopptWerden() {
+
+		Set<String> applikationen = new LinkedHashSet<>();
+		OnlineApplikation transmitter = null;
+
+		if (isKernsystem()) {
+			for (OnlineApplikation onlineApplikation : prozessManager.getApplikationen()) {
+				if (this.equals(onlineApplikation)) {
+					continue;
+				}
+				if (onlineApplikation.isKernsystem()) {
+					if (onlineApplikation.isTransmitter()) {
+						transmitter = onlineApplikation;
+					}
+				} else if (onlineApplikation.getStatus() != Applikation.Status.GESTOPPT) {
+					applikationen.add(onlineApplikation.getName());
+				}
+			}
+
+			if (OSTools.isWindows()) {
+				if (transmitter != null) {
+					applikationen.add(transmitter.getName());
+				}
+			} else {
+				boolean found = false;
+				for (OnlineApplikation onlineApplikation : prozessManager.getKernSystemApplikationen()) {
+					if (found) {
+						if (onlineApplikation.getStatus() != Applikation.Status.GESTOPPT) {
+							applikationen.add(onlineApplikation.getName());
+						}
+					} else if (onlineApplikation.getName().equals(getName())) {
+						found = true;
+					}
+				}
+			}
+		}
 		if (!applikationen.isEmpty()) {
 			return "Kernsystem wartet auf: " + applikationen;
 		}
 		return null;
 	}
 
-	public String stoppBedingungErfuellt() {
-		Set<String> applikationen = prozessManager.waitForStoppBedingung(this);
-		if (!applikationen.isEmpty()) {
-			return "Warte auf : " + applikationen;
-		}
-		
-		return null;
-
+	public StoppBedingungStatus getStoppBedingungStatus() {
+		return new StoppBedingungStatus(this);
 	}
 
-	public String startbedingungErfuellt() {
-		Set<String> applikationen = prozessManager.waitForStartBedingung(this);
-		if (!applikationen.isEmpty()) {
-			return "Warte auf : " + applikationen;
-		}
-		
-		return null;
+	public StartBedingungStatus getStartbedingungStatus() {
+		return new StartBedingungStatus(this);
+	}
+
+	ProzessManager getProzessManager() {
+		return prozessManager;
 	}
 
 }

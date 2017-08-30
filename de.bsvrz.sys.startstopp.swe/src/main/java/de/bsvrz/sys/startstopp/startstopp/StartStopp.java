@@ -59,7 +59,7 @@ public class StartStopp {
 
 	public static void main(String[] args) throws Exception {
 		try {
-			System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "1");
+//			System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "1");
 			instance.init(args);
 			instance.start();
 		} catch (Exception e) {
