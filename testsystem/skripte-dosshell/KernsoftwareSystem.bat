@@ -1,0 +1,64 @@
+@echo off
+call einstellungen.bat
+
+title KernsoftwareSystem
+
+rem Um einzelne Programme in eigenen Console-Fenstern zu starten, kann man
+rem  einfach das "/b" hinter dem jeweiligen "start" Befehl entfernen
+
+rem Datenverteiler im Hintergrund starten
+start /b %java% ^
+ -cp ..\distributionspakete\de.bsvrz.dav.dav\de.bsvrz.dav.dav-runtime.jar ^
+ -Xmx200m ^
+ de.bsvrz.dav.dav.main.Transmitter ^
+ %dav1einstellungen% ^
+ -rechtePruefung=nein ^
+ -benutzer=TestDatenverteilerBenutzer ^
+ -authentifizierung=passwd ^
+ -debugLevelStdErrText=INFO ^
+ -debugLevelFileText=CONFIG
+
+rem Zwei Sekunden warten bis der Datenverteiler Verbindungen akzeptiert
+%java% ^
+ -cp ..\distributionspakete\de.kappich.tools.sleep\de.kappich.tools.sleep-runtime.jar ^
+ de.kappich.tools.sleep.main.Sleep pause=2s
+
+rem Konfiguration im Hintergrund starten
+start /b %java% ^
+ -cp ..\distributionspakete\de.bsvrz.puk.config\de.bsvrz.puk.config-runtime.jar ^
+ -Xmx300m ^
+ de.bsvrz.puk.config.main.ConfigurationApp ^
+ %dav1OhneAuthentifizierung% ^
+ -benutzer=configuration ^
+ -authentifizierung=passwd ^
+ -verwaltung=..\konfiguration\verwaltungsdaten.xml ^
+ -benutzerverwaltung=..\konfiguration\benutzerverwaltung.xml ^
+ -debugLevelStdErrText=INFO ^
+ -debugLevelFileText=CONFIG
+
+rem Verzeichnis für Parameter anlegen, wenn noch nicht vorhanden
+if not exist ..\parameter mkdir ..\parameter
+
+rem Parametrierung im Hintergrund starten
+start /b %java% ^
+ -cp ..\distributionspakete\de.kappich.puk.param\de.kappich.puk.param-runtime.jar ^
+ de.kappich.puk.param.main.ParamApp ^
+ %dav1OhneAuthentifizierung% ^
+ -benutzer=parameter ^
+ -authentifizierung=passwd ^
+ -sleep=200 ^
+ -parameterVerzeichnis=..\parameter ^
+ -debugLevelStdErrText=WARNING ^
+ -debugLevelFileText=CONFIG
+ rem -parametrierung=parametrierung.global
+
+rem Betriebsmeldungsverwaltung im Hintergrund starten
+start /b %java% ^
+ -cp ..\distributionspakete\de.kappich.vew.bmvew\de.kappich.vew.bmvew-runtime.jar ^
+ de.kappich.vew.bmvew.main.SimpleMessageManager ^
+ %dav1% ^
+ -debugLevelStdErrText=WARNING ^
+ -debugLevelFileText=CONFIG
+
+rem Fenster nicht sofort wieder schließen, damit eventuelle Fehler noch lesbar sind.
+pause

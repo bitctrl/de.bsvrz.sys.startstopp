@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<title>Distributionspaket de.bsvrz.kex.tls.osi2osi3</title>
+</head>
+
+<body bgcolor="#ffffff">
+<h1>Distributionspaket de.bsvrz.kex.tls.osi2osi3</h1>
+Dieses Distributionspaket enthält die Komponente "osi2osi3" der SW-Einheit KEx-TLS (de.bsvrz.kex.tls).
+
+<h2>Release Notes</h2>
+
+
+<h3>Stand 26.10.2011</h3>
+
+<ul>
+<li><h4>Änderungen</h4>
+
+	<p>Folgende Änderungen zu vorhergehenden Versionen wurden durchgeführt:</p>
+	<ul>
+		<li>
+			In der KEx-TLS Implementierung gibt es auf OSI-2 und OSI-3-Ebene neue Möglichkeiten zur Unterstützung von älteren
+			TLS-Geräten. Diese können über die Parameter atg.protokollEinstellungenStandard und atg.protokollEinstellungenPrimary an den in der TLS-Versorgung
+			definierten Anschlußpunkten bzw. Anschlußpunkt-Kommunikationspartnern online verändert werden. Dabei sind folgende Werte zu verwenden:
+			<ul>
+				<li>
+					OSI3-Routing unterdrücken.<br />
+					Mit der Einstellung "osi3.reduzierungAufSteuerbyte" auf den Wert "ja" kann der OSI-3-Header beim Versand von
+					Telegrammen auf das Steuerbyte reduziert werden.
+					Defaultwert ist "nein".
+				</li>
+				<li>
+
+					OSI3-Pointer inkrementieren.<br />
+					Mit der Einstellung "osi3.pointerInkrementieren" auf den Wert "nein" besteht die Möglichkeit, festzulegen,
+					dass der OSI-3 Pointer vor dem Versand nicht inkrementiert wird.
+					Defaultwert ist "ja".
+				</li>
+				<li>
+					OSI3-Routing beim Empfang spiegeln.<br />
+					Mit der Einstellung "osi3.adressenSpiegeln" auf den Wert "ja" besteht die Möglichkeit, festzulegen,
+					dass die OSI-3-Adresse eines vom KRI empfangenen Telegramms vor der weiteren Verarbeitung gespiegelt wird.
+					Defaultwert ist "nein".
+				</li>
+				<li>
+					Unterstützung von OSI-2 Adressen außerhalb des Bereichs von 1-199.<br />
+					Mit der Einstellung "secondary.adressen200-254Akzeptieren" auf den Wert "ja" (nur am Anschlusspunkt in der
+					Attributgruppe atg.protokollEinstellungenStandard) kann die (nach TLS vorgesehene) Einschränkung auf
+					Secondary-Adressen im Bereich 1-199 außer Kraft gesetzt werden kann, d.h. dass Secondary-Adressen außerhalb des
+					bisher vorgesehen Bereichs also auch Werte von 200 bis 254 verwendet werden können und dass das OSI-3 Routing
+					entsprechend korrekt aufgelöst und zugeordnet wird.
+					Defaultwert ist "nein".
+				</li>
+			</ul>
+
+		</li>
+	</ul>
+</li>
+<li><h4>Bugfixes</h4>
+
+<p>Folgende Probleme vorhergehender Versionen wurden behoben:</p>
+<ul>
+	<li>
+		Die TC-57 Implementierung im KEx-TLS konnte sich in seltenen Fällen verklemmen, wenn die Modemsteuerungssignale ein unerwartetes Verhalten
+		aufzeigten.
+	</li>
+</ul>
+</li>
+</ul>
+<h3>Stand 07.09.2007</h3>
+
+<ul>
+<li><h4>Änderungen</h4>
+
+	<p>Folgende Änderungen zu vorhergehenden Versionen wurden durchgeführt:</p>
+	<ul>
+		<li>Anpassung der Import-Anweisungen auf neue Packagestruktur der Kernsoftware</li>
+		<li>Anpassung der Packagestruktur entsprechend der Vorgaben des AK-VRZ</li>
+		<li>Erzeugung eines Distributionspaket entsprechend der Vorgaben des AK-VRZ</li>
+	</ul>
+
+
+</li>
+<li><h4>Neue Packagestruktur:</h4>
+
+<table border="1" cellpadding="5" cellspacing="0">
+	<tbody>
+	<tr>
+		<th>Bisheriger Dateipfad</th>
+		<th>Neues Package</th>
+		<th>Neues Distributionspaket</th>
+	</tr>
+	<tr>
+		<td>kex</td>
+		<td>-</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>kex/tls</td>
+		<td>-</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>kex/tls/longtelegram</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.longtelegram</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/longtelegram/LongTelegramType.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.longtelegram</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/longtelegram/Osi7LongTelegramRecombine.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.longtelegram</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/longtelegram/Osi7LongTelegramSegment.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.longtelegram</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2</td>
+		<td>-</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/AbstractDataLinkLayer.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.api</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/DataLinkLayer.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.api</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/DataLinkLayerEvent.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.api</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/DataLinkLayerListener.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.api</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/LinkState.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.api</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/PrintingDataLinkLayerListener.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.api</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57</td>
+		<td>-</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57/AbstractTc57.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.tc57primary</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57/DefaultProperties.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.tc57primary</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57/Primary.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.tc57primary</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57/PrimaryFrame.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.tc57primary</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57/SecondaryFrame.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.tc57primary</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57/SerialPortControl.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.tc57primary</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57/Tc57Frame.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.tc57primary</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/tc57/Wiretapper.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.tc57listen</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/wancom</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.wancom</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/wancom/Client.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.wancom</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/wancom/DefaultProperties.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.wancom</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/wancom/ProtocolState.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.wancom</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi2/wancom/WanCom.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi2.wancom</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi3</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi3</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi3/DestinationUnreachableException.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi3</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi3/NetworkLayer.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi3</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi3/NetworkLayerListener.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi3</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi3/TlsNetworkInitializer.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi3</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>kex/tls/osi3/TlsNetworkLayer.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.osi3</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>sys</td>
+		<td>-</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>sys/funclib</td>
+		<td>-</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>sys/funclib/properties</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.properties</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>sys/funclib/properties/PropertyConsultant.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.properties</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	<tr>
+		<td>sys/funclib/properties/PropertyQueryInterface.java</td>
+		<td>de.bsvrz.kex.tls.osi2osi3.properties</td>
+		<td>de.bsvrz.kex.tls.osi2osi3</td>
+	</tr>
+	</tbody>
+</table>
+</li>
+
+</ul>
+
+
+</body>
+</html>

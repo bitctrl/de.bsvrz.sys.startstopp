@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE konfigurationsBereich PUBLIC "-//K2S//DTD Dokument//DE" "K2S.dtd">
+<konfigurationsBereich pid="kb.testModell" verantwortlich="kv.testKonfiguration">
+    <konfigurationsAenderung stand="08.05.2006" autor="Roland Schmitz, Kappich Systemberatung" grund="Test">
+		Bereich zum Test der Konfiguration erzeugt.</konfigurationsAenderung>
+    <modell>
+        <typDefinition pid="typ.test" name="TestTyp" objektNamenPermanent="ja">
+            <info>
+                <kurzinfo>Typ zum Test der Konfiguration.</kurzinfo>
+            </info>
+            <erweitert pid="typ.konfigurationsObjekt"/>
+            <attributgruppe pid="atg.test"/>
+        </typDefinition>
+        <attributgruppenDefinition pid="atg.test" parametrierend="nein">
+            <info>
+                <kurzinfo>Attributgruppe zum Test der Konfiguration.</kurzinfo>
+            </info>
+            <aspekt pid="asp.eigenschaften" konfigurationsModus="datensatzNotwendig">
+            </aspekt>
+            <attribut pid="att.test" anzahl="1" anzahlIst="fest" name="test">
+                <default wert="42"/>
+            </attribut>
+        </attributgruppenDefinition>
+        <attributDefinition pid="att.test" name="TestAttributtyp">
+            <info>
+                <kurzinfo>Attributtyp zum Test der Konfiguration.</kurzinfo>
+            </info>
+            <ganzzahl bits="8">
+                <bereich skalierung="1" minimum="0" maximum="100" einheit="mm">
+                </bereich>
+            </ganzzahl>
+            <default wert="100"/>
+        </attributDefinition>
+    </modell>
+    <objekte>
+    </objekte>
+</konfigurationsBereich>
+

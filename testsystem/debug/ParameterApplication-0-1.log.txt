@@ -1,0 +1,57 @@
+
+-------30.08.2017 14:49:12,191:+0200(TID:......) ---------------------- STATUS
+Ausgabedatei angelegt.
+
+#000000 30.08.2017 14:49:12,190:+0200 (TID:000001) ---------------------- 
+INFO   : ParameterApplication
+Aktuelle Debugeinstellungen
+----------------------------------------------
+Registrierte DebugLogger: 
+  Name: DEFAULT-DEBUG  Level: ALL
+  Name: ParameterApplication  Level: ALL
+  Name: global  Level: null
+  Name:   Level: INFO
+
+
+#000001 30.08.2017 14:49:12,192:+0200 (TID:000001) ---------------------- 
+INFO   : ParameterApplication
+Aufrufargumente von ParameterApplication: ArgumentList[-datenverteiler=localhost:8083, -debugFilePath=.., -benutzer=parameter, -authentifizierung=passwd, -sleep=200, -parameterVerzeichnis=..\parameter, -debugLevelStdErrText=WARNING, -debugLevelFileText=CONFIG]
+
+#000002 30.08.2017 14:49:12,416:+0200 (TID:000001) ---------------------- 
+INFO   : ParameterApplication.de.bsvrz.dav.daf.main.ClientDavConnection
+Datenverteiler-Applikationsfunktionen 'de.bsvrz.dav.daf', Release: Kernsoftware 3.9.2, Version: 866ec7f8528df5f1c8965c1d289385ec3737472a, Stand: 26.05.2017 11:17:53
+
+#000005 30.08.2017 14:49:12,454:+0200 (TID:000001) ---------------------- 
+INFO   : ParameterApplication.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
+TCP-Verbindung aktiv  aufgebaut, /127.0.0.1:50873 --> localhost/127.0.0.1:8083
+
+#000010 30.08.2017 14:49:12,857:+0200 (TID:000001) ---------------------- 
+INFO   : ParameterApplication.de.bsvrz.dav.daf.communication.protocol.ClientHighLevelCommunication
+Verschlüsselte Verbindung aufgebaut mit: AES_128/GCM/NoPadding
+
+#000015 30.08.2017 14:49:14,510:+0200 (TID:000018) ---------------------- 
+INFO   : ParameterApplication.de.bsvrz.dav.daf.main.impl.SubscriptionManager
+Die Konfiguration ist für Anfragen bereit
+
+#000016 30.08.2017 14:49:15,271:+0200 (TID:000001) ---------------------- 
+INFO   : ParameterApplication.de.bsvrz.dav.daf.main.impl.config.DafDataModel
+Protokollversion für Konfigurationsanfragen: 2
+
+#000064 30.08.2017 14:49:15,619:+0200 (TID:000001) ---------------------- 
+INFO   : ParameterApplication.de.kappich.puk.param.main.ParamApp
+...warte auf zu verarbeitende Parameterdaten...
+
+#000269 30.08.2017 14:56:59,080:+0200 (TID:000027) ###################### 
+FEHLER : ParameterApplication.de.bsvrz.dav.daf.communication.protocol.ClientHighLevelCommunication
+Verbindung zum Datenverteiler wird terminiert. Ursache: Kommunikationsfehler beim Lesen eines Telegramms: java.net.SocketException: Connection reset
+
+#000272 30.08.2017 14:56:59,082:+0200 (TID:000016) ---------------------- 
+INFO   : ParameterApplication.de.bsvrz.dav.daf.communication.lowLevel.LowLevelCommunication
+[ip.uz.wwaa23:8083]: SendingChannel beendet sich jetzt weil die Sende-Queue geschlossen wurde
+
+#000276 30.08.2017 14:56:59,082:+0200 (TID:000027) ---------------------- 
+INFO   : ParameterApplication.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
+TCP-Verbindung wird terminiert,  /127.0.0.1:50873 -|- localhost/127.0.0.1:8083
+
+-------30.08.2017 14:56:59,086:+0200(TID:......) ---------------------- STATUS
+Ausgabedatei korrekt abgeschlossenen.

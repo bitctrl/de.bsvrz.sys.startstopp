@@ -1,0 +1,40 @@
+
+-------30.08.2017 14:49:31,777:+0200(TID:......) ---------------------- STATUS
+Ausgabedatei angelegt.
+
+#000000 30.08.2017 14:49:31,776:+0200 (TID:000001) ---------------------- 
+INFO   : GenericTestMonitor
+Aktuelle Debugeinstellungen
+----------------------------------------------
+Registrierte DebugLogger: 
+  Name: GenericTestMonitor  Level: ALL
+  Name: DEFAULT-DEBUG.de.bsvrz.sys.funclib.application.AbstractGUIApplication  Level: null
+  Name: DEFAULT-DEBUG  Level: ALL
+  Name: DEFAULT-DEBUG.de.bsvrz.pat.sysbed.main.GenericTestMonitor  Level: null
+  Name: global  Level: null
+  Name:   Level: INFO
+
+
+#000001 30.08.2017 14:49:31,777:+0200 (TID:000001) ---------------------- 
+INFO   : GenericTestMonitor
+Aufrufargumente von GenericTestMonitor: ArgumentList[-datenverteiler=localhost:8083, -benutzer=AutostartApplikation, -authentifizierung=passwd, -debugFilePath=.., -debugLevelStdErrText=WARNING, -debugLevelFileText=CONFIG]
+
+#000002 30.08.2017 14:49:43,286:+0200 (TID:000017) ---------------------- 
+INFO   : GenericTestMonitor.de.bsvrz.dav.daf.main.ClientDavConnection
+Datenverteiler-Applikationsfunktionen 'de.bsvrz.dav.daf', Release: Kernsoftware 3.9.2, Version: 866ec7f8528df5f1c8965c1d289385ec3737472a, Stand: 26.05.2017 11:17:53
+
+#000005 30.08.2017 14:49:44,309:+0200 (TID:000017) ###################### 
+FEHLER : GenericTestMonitor.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
+Fehler beim Verbindungsaufbau: Verbindung zum Rechner localhost auf TCP-Port 8082 nicht möglich
+
+#000006 30.08.2017 14:49:44,309:+0200 (TID:000017) ====================== 
+WARNUNG: GenericTestMonitor.de.bsvrz.dav.daf.main.ClientDavConnection
+Es gibt keine Verbindung zum Datenverteiler, die abgebaut werden könnte.
+
+#000008 30.08.2017 14:51:06,681:+0200 (TID:000017) ---------------------- 
+INFO   : GenericTestMonitor.de.bsvrz.dav.daf.main.ClientDavConnection
+Datenverteiler-Applikationsfunktionen 'de.bsvrz.dav.daf', Release: Kernsoftware 3.9.2, Version: 866ec7f8528df5f1c8965c1d289385ec3737472a, Stand: 26.05.2017 11:17:53
+
+#000011 30.08.2017 14:51:06,682:+0200 (TID:000017) ---------------------- 
+INFO   : GenericTestMonitor.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
+TCP-Verbindung aktiv  aufgebaut, /127.0.0.1:50877 --> localhost/127.0.0.1:8082

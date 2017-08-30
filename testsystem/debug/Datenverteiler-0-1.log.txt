@@ -1,0 +1,137 @@
+
+-------30.08.2017 14:49:10,042:+0200(TID:......) ---------------------- STATUS
+Ausgabedatei angelegt.
+
+#000000 30.08.2017 14:49:10,041:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler
+Aktuelle Debugeinstellungen
+----------------------------------------------
+Registrierte DebugLogger: 
+  Name: DEFAULT-DEBUG  Level: ALL
+  Name: global  Level: null
+  Name: Datenverteiler  Level: ALL
+  Name:   Level: INFO
+
+
+#000001 30.08.2017 14:49:10,042:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler
+Aufrufargumente von Datenverteiler: ArgumentList[-davAppPort=8083, -davDavPort=8082, -debugFilePath=.., -rechtePruefung=nein, -benutzer=TestDatenverteilerBenutzer, -authentifizierung=passwd, -debugLevelStdErrText=INFO, -debugLevelFileText=CONFIG]
+
+#000002 30.08.2017 14:49:10,065:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.main.Transmitter
+Datenverteiler wird gestartet
+
+#000005 30.08.2017 14:49:10,149:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.tcpCommunication.TCP_IP_ServerCommunication
+TCP-Server erwartet Verbindungen, 0.0.0.0/0.0.0.0:8083
+
+#000007 30.08.2017 14:49:10,154:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.daf.main.ClientDavConnection
+Datenverteiler-Applikationsfunktionen 'de.bsvrz.dav.daf', Release: Kernsoftware 3.9.2, Version: 866ec7f8528df5f1c8965c1d289385ec3737472a, Stand: 26.05.2017 11:17:53
+
+#000011 30.08.2017 14:49:10,167:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
+TCP-Verbindung aktiv  aufgebaut, /127.0.0.1:50871 --> /127.0.0.1:8083
+
+#000010 30.08.2017 14:49:10,167:+0200 (TID:000016) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.tcpCommunication.TCP_IP_ServerCommunication
+TCP-Verbindung passiv aufgebaut, /127.0.0.1:8083 <-- /127.0.0.1:50871
+
+#000025 30.08.2017 14:49:12,244:+0200 (TID:000016) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.tcpCommunication.TCP_IP_ServerCommunication
+TCP-Verbindung passiv aufgebaut, /127.0.0.1:8083 <-- /127.0.0.1:50872
+
+#000032 30.08.2017 14:49:12,453:+0200 (TID:000016) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.tcpCommunication.TCP_IP_ServerCommunication
+TCP-Verbindung passiv aufgebaut, /127.0.0.1:8083 <-- /127.0.0.1:50873
+
+#000042 30.08.2017 14:49:13,033:+0200 (TID:000016) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.tcpCommunication.TCP_IP_ServerCommunication
+TCP-Verbindung passiv aufgebaut, /127.0.0.1:8083 <-- /127.0.0.1:50874
+
+#000051 30.08.2017 14:49:13,396:+0200 (TID:000041) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.appProtocol.T_A_HighLevelCommunication
+Default-Konfiguration kv.testKonfiguration, Id 1466766103639706182
+
+#000062 30.08.2017 14:49:13,484:+0200 (TID:000028) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.daf.main.impl.SubscriptionManager
+Die Konfiguration ist für Anfragen bereit
+
+#000063 30.08.2017 14:49:14,366:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.daf.main.impl.config.DafDataModel
+Protokollversion für Konfigurationsanfragen: 2
+
+#000102 30.08.2017 14:49:14,446:+0200 (TID:000001) ...................... 
+KONFIG : Datenverteiler.de.bsvrz.sys.funclib.operatingMessage.MessageSender
+Der MessageSender wurde initialisiert und ist bereit zum Senden von Betriebsmeldungen.
+
+#000104 30.08.2017 14:49:14,448:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.main.HighLevelConnectionsManager
+Informationen zum Distributionspaket des Datenverteilers werden publiziert: ResultData{dataIndex=0#0#0, time=30.08.2017 14:49:14,448, object=TestDatenverteiler1 (dav.test1), dataDescription=DataDescription{atg.distributionspaketReleaseInfo, asp.standard, -1}, delayedData=false, errorFlag=0,
+ data=atg.distributionspaketReleaseInfo:{Name:de.bsvrz.dav.dav; Release:Kernsoftware 3.9.2; Version:866ec7f8528df5f1c8965c1d289385ec3737472a; Stand:26.05.2017 11:20:19; Lizenz:GPL; Abhängigkeiten:de.bsvrz.dav.daf, de.bsvrz.sys.funclib.debug, de.bsvrz.sys.funclib.commandLineArgs, de.bsvrz.sys.funclib.concurrent, de.bsvrz.sys.funclib.application, de.bsvrz.sys.funclib.configObjectAcquisition, de.bsvrz.sys.funclib.operatingMessage; QuellcodeAbhängigkeiten:; BibliothekAbhängigkeiten:}}
+
+#000127 30.08.2017 14:49:14,471:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.main.LowLevelConnectionsManager
+Warte auf Applikationsfertigmeldung der Parametrierung mit beliebigem Inkarnationsnamen.
+
+#000195 30.08.2017 14:49:17,583:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.main.LowLevelConnectionsManager
+Parametrierung ist fertig
+
+#000199 30.08.2017 14:49:17,590:+0200 (TID:000001) ...................... 
+KONFIG : Datenverteiler.de.bsvrz.dav.dav.main.LowLevelConnectionsManager
+Verbindungen von und zu anderen Datenverteilern werden in 60000 ms zugelassen
+
+#000200 30.08.2017 14:50:17,591:+0200 (TID:000001) ...................... 
+KONFIG : Datenverteiler.de.bsvrz.dav.dav.main.LowLevelConnectionsManager
+Verbindungen von und zu anderen Datenverteilern werden jetzt zugelassen
+
+#000217 30.08.2017 14:50:17,592:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.tcpCommunication.TCP_IP_ServerCommunication
+TCP-Server erwartet Verbindungen, 0.0.0.0/0.0.0.0:8082
+
+#000218 30.08.2017 14:50:17,594:+0200 (TID:000001) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.main.Transmitter
+Datenverteiler bereit
+
+#000219 30.08.2017 14:51:06,682:+0200 (TID:000051) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.tcpCommunication.TCP_IP_ServerCommunication
+TCP-Verbindung passiv aufgebaut, /127.0.0.1:8082 <-- /127.0.0.1:50877
+
+#000239 30.08.2017 14:51:06,694:+0200 (TID:000015) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.main.DebugTransmitterPublisher
+Verbundene Datenverteiler von dav.test1:
+      Datenverteiler |              Adresse | Zustand                             | Verschlüsselung                     | Meldung                                 
+---------------------|----------------------+-------------------------------------+-------------------------------------+-----------------------------------------
+           dav.test0 |                      | Ersatzverbindung (nicht verbunden)  | Nicht verschlüsselt                 |                                         
+           dav.test2 |                      | Ersatzverbindung (nicht verbunden)  | Nicht verschlüsselt                 |                                         
+           dav.test3 |                      | Ersatzverbindung (nicht verbunden)  | Nicht verschlüsselt                 |                                         
+           dav.test4 |                      | Ersatzverbindung (nicht verbunden)  | Nicht verschlüsselt                 |                                         
+
+#000242 30.08.2017 14:52:31,879:+0200 (TID:000058) ###################### 
+FEHLER : Datenverteiler.de.bsvrz.dav.dav.communication.davProtocol.T_T_HighLevelCommunication
+Verbindung zum Datenverteiler -1 wird terminiert. Ursache: Kommunikationsfehler beim Lesen eines Telegramms: java.net.SocketException: Connection reset
+
+#000244 30.08.2017 14:52:31,879:+0200 (TID:000056) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.daf.communication.lowLevel.LowLevelCommunication
+[ip.uz.wwaa23:50877]: SendingChannel beendet sich jetzt weil die Sende-Queue geschlossen wurde
+
+#000247 30.08.2017 14:52:31,882:+0200 (TID:000058) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
+TCP-Verbindung wird terminiert,  /127.0.0.1:8082 -|- /127.0.0.1:50877
+
+#000249 30.08.2017 14:55:03,250:+0200 (TID:000016) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.dav.communication.tcpCommunication.TCP_IP_ServerCommunication
+TCP-Verbindung passiv aufgebaut, /127.0.0.1:8083 <-- /127.0.0.1:50898
+
+#000256 30.08.2017 14:55:07,306:+0200 (TID:000060) ###################### 
+FEHLER : Datenverteiler.de.bsvrz.dav.dav.communication.appProtocol.T_A_HighLevelCommunication
+Verbindung zur Applikation (id: -1, typ: null, name: null) wird terminiert. Ursache: Verbindung wurde von der Applikation terminiert. Ursache: Verbindung wird applikationsseitig wegen eines Fehlers geschlossen: Authentifizierung fehlgeschlagen
+
+#000259 30.08.2017 14:55:07,306:+0200 (TID:000062) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.daf.communication.lowLevel.LowLevelCommunication
+[ip.uz.wwaa23:50898]: SendingChannel beendet sich jetzt weil die Sende-Queue geschlossen wurde
+
+#000263 30.08.2017 14:55:07,308:+0200 (TID:000060) ---------------------- 
+INFO   : Datenverteiler.de.bsvrz.dav.daf.communication.tcpCommunication.TCP_IP_Communication
+TCP-Verbindung wird terminiert,  /127.0.0.1:8083 -|- /127.0.0.1:50898

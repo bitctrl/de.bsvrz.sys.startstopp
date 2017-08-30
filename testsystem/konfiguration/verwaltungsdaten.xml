@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE verwaltungsdaten PUBLIC "-//K2S//DTD Verwaltung//DE" "verwaltungsdaten.dtd">
+<verwaltungsdaten>
+    <konfigurationsverantwortlicher pid="kv.testKonfiguration"/>
+    <konfigurationsbereich pid="kb.systemModellGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,617"/>
+        <version nr="2" zeitpunkt="08.03.2007 16:24:58,749"/>
+        <version nr="3" zeitpunkt="13.03.2007 11:12:36,532"/>
+        <version nr="4" zeitpunkt="21.03.2007 03:47:28,010"/>
+        <version nr="5" zeitpunkt="24.05.2007 22:05:25,920"/>
+        <version nr="6" zeitpunkt="24.05.2007 22:06:41,834"/>
+        <version nr="7" zeitpunkt="29.05.2007 12:41:32,162"/>
+        <version nr="8" zeitpunkt="01.06.2007 01:07:54,445"/>
+        <version nr="9" zeitpunkt="06.06.2007 13:39:53,838"/>
+        <version nr="10" zeitpunkt="25.06.2007 16:43:19,025"/>
+        <version nr="11" zeitpunkt="27.06.2007 14:38:21,142"/>
+        <version nr="12" zeitpunkt="27.06.2007 14:40:01,273"/>
+        <version nr="13" zeitpunkt="11.10.2007 17:56:39,879"/>
+        <version nr="14" zeitpunkt="17.11.2007 05:03:58,681"/>
+        <version nr="15" zeitpunkt="17.11.2007 17:53:01,344"/>
+        <version nr="16" zeitpunkt="12.03.2008 15:54:55,543"/>
+        <version nr="17" zeitpunkt="05.04.2008 13:12:10,653"/>
+        <version nr="18" zeitpunkt="27.04.2008 16:59:01,174"/>
+        <version nr="19" zeitpunkt="15.05.2008 19:22:15,332"/>
+        <version nr="20" zeitpunkt="02.12.2008 15:00:26,404"/>
+        <version nr="21" zeitpunkt="08.12.2008 21:46:49,289"/>
+        <version nr="22" zeitpunkt="11.09.2009 16:45:05,394"/>
+        <version nr="23" zeitpunkt="23.09.2010 19:16:36,487"/>
+        <version nr="24" zeitpunkt="07.01.2011 01:04:12,927"/>
+        <version nr="25" zeitpunkt="09.01.2011 20:50:57,709"/>
+        <version nr="26" zeitpunkt="27.01.2011 08:59:20,973"/>
+        <version nr="27" zeitpunkt="31.05.2011 23:37:37,351"/>
+        <version nr="28" zeitpunkt="31.10.2011 11:05:30,354"/>
+        <version nr="29" zeitpunkt="04.11.2011 11:54:38,985"/>
+        <version nr="30" zeitpunkt="06.09.2012 15:11:35,582"/>
+        <version nr="31" zeitpunkt="04.10.2012 09:46:00,480"/>
+        <version nr="32" zeitpunkt="26.06.2013 08:36:01,522"/>
+    <version nr="33" zeitpunkt="27.02.2015 11:37:44,441"/>
+<version nr="34" zeitpunkt="07.03.2015 22:25:01,112"/>
+<version nr="35" zeitpunkt="22.11.2015 13:37:18,342"/>
+<version nr="36" zeitpunkt="22.11.2015 13:37:43,132"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.bea" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,617"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.dambach" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,618"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmVewEngstellenGlobal" verzeichnis="">
+        <version nr="2" zeitpunkt="27.04.2008 16:59:01,175"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmRechner" verzeichnis="">
+        <version nr="4" zeitpunkt="27.04.2008 16:59:01,175"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmVewBetriebGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,618"/>
+        <version nr="2" zeitpunkt="21.03.2007 03:47:28,011"/>
+        <version nr="3" zeitpunkt="17.11.2007 17:53:01,345"/>
+        <version nr="4" zeitpunkt="27.04.2008 16:59:01,175"/>
+        <version nr="5" zeitpunkt="21.07.2008 17:54:22,110"/>
+        <version nr="6" zeitpunkt="01.08.2013 12:13:59,938"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.testKonfiguration" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,618"/>
+        <version nr="2" zeitpunkt="30.04.2008 01:12:11,117"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.inovat" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,619"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmKExTlsGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,619"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,011"/>
+        <version nr="4" zeitpunkt="01.07.2007 01:58:14,171"/>
+        <version nr="5" zeitpunkt="27.04.2008 16:55:27,815"/>
+        <version nr="14" zeitpunkt="24.01.2011 08:10:17,425"/>
+        <version nr="17" zeitpunkt="04.05.2012 12:37:23,211"/>
+    <version nr="23" zeitpunkt="23.12.2015 13:29:09,555"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.objekteTestUnterzentraleK2S_100_MessQuerschnitte" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,620"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,012"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmIlseTls" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,620"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,012"/>
+        <version nr="4" zeitpunkt="17.11.2007 17:53:01,346"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.objekteTestSystem" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,620"/>
+        <version nr="2" zeitpunkt="29.05.2007 12:41:32,163"/>
+        <version nr="3" zeitpunkt="30.07.2013 10:55:50,363"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmVewProtokolleGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,621"/>
+        <version nr="2" zeitpunkt="21.03.2007 03:47:28,013"/>
+        <version nr="3" zeitpunkt="09.01.2011 20:50:57,710"/>
+        <version nr="4" zeitpunkt="11.03.2011 09:45:00,585"/>
+    <version nr="5" zeitpunkt="27.02.2015 11:37:44,442"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.ilse" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,621"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,013"/>
+        <version nr="4" zeitpunkt="17.11.2007 17:53:01,347"/>
+        <version nr="5" zeitpunkt="05.04.2008 12:55:02,549"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmSystemKalenderGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,621"/>
+        <version nr="4" zeitpunkt="21.03.2007 03:47:28,014"/>
+        <version nr="5" zeitpunkt="25.06.2007 16:43:19,026"/>
+        <version nr="6" zeitpunkt="27.04.2008 16:55:27,816"/>
+        <version nr="7" zeitpunkt="04.05.2012 12:37:23,212"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmTmcGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,621"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,014"/>
+        <version nr="4" zeitpunkt="01.07.2007 01:58:14,172"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.metaModellGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,621"/>
+        <version nr="2" zeitpunkt="08.03.2007 16:24:58,750"/>
+        <version nr="3" zeitpunkt="13.03.2007 11:12:36,533"/>
+        <version nr="4" zeitpunkt="21.03.2007 03:47:28,014"/>
+        <version nr="5" zeitpunkt="24.05.2007 22:05:25,921"/>
+        <version nr="6" zeitpunkt="24.05.2007 22:06:41,835"/>
+        <version nr="7" zeitpunkt="27.06.2007 14:40:01,274"/>
+        <version nr="8" zeitpunkt="27.07.2007 09:42:05,768"/>
+        <version nr="9" zeitpunkt="11.10.2007 17:56:39,880"/>
+        <version nr="10" zeitpunkt="17.12.2007 08:46:20,260"/>
+        <version nr="11" zeitpunkt="05.04.2008 13:12:10,655"/>
+        <version nr="12" zeitpunkt="15.05.2008 19:22:15,334"/>
+        <version nr="13" zeitpunkt="07.01.2011 01:04:12,928"/>
+        <version nr="14" zeitpunkt="27.01.2011 08:59:20,974"/>
+        <version nr="15" zeitpunkt="31.05.2011 23:37:37,352"/>
+        <version nr="16" zeitpunkt="09.08.2013 16:29:37,553"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.ptv" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,621"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmGeoReferenzierungGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,622"/>
+        <version nr="2" zeitpunkt="21.03.2007 03:47:28,014"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.systemModellAoe" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,622"/>
+        <version nr="2" zeitpunkt="25.06.2007 16:43:19,028"/>
+        <version nr="3" zeitpunkt="27.04.2008 16:59:01,176"/>
+        <version nr="4" zeitpunkt="14.08.2008 12:10:37,264"/>
+        <version nr="5" zeitpunkt="11.09.2009 16:45:05,396"/>
+        <version nr="6" zeitpunkt="31.05.2011 23:37:37,353"/>
+    <version nr="7" zeitpunkt="07.03.2015 22:25:01,115"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.bitctrl" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,622"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.default.testKonfiguration" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,622"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.kappich" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,623"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.logos" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,623"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmVerkehrGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,623"/>
+        <version nr="10" zeitpunkt="21.03.2007 03:47:28,015"/>
+        <version nr="14" zeitpunkt="25.06.2007 16:43:19,028"/>
+        <version nr="16" zeitpunkt="11.10.2007 17:56:39,882"/>
+        <version nr="17" zeitpunkt="16.12.2007 21:10:28,525"/>
+        <version nr="25" zeitpunkt="27.04.2008 16:55:27,818"/>
+        <version nr="29" zeitpunkt="26.05.2008 13:27:25,685"/>
+        <version nr="30" zeitpunkt="02.12.2008 14:54:47,533"/>
+        <version nr="45" zeitpunkt="24.01.2011 08:10:17,427"/>
+        <version nr="48" zeitpunkt="04.05.2012 12:37:23,213"/>
+        <version nr="49" zeitpunkt="06.09.2012 15:14:55,326"/>
+        <version nr="55" zeitpunkt="26.06.2013 08:35:18,519"/>
+    <version nr="58" zeitpunkt="23.12.2015 13:29:09,556"/>
+<version nr="59" zeitpunkt="09.06.2016 11:12:57,897"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.fachModellGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,623"/>
+        <version nr="2" zeitpunkt="13.03.2007 10:10:09,652"/>
+        <version nr="7" zeitpunkt="21.03.2007 03:47:28,015"/>
+    <version nr="8" zeitpunkt="22.11.2015 13:37:43,134"/>
+<version nr="9" zeitpunkt="30.11.2015 17:52:57,874"/>
+<version nr="10" zeitpunkt="09.06.2016 11:14:28,902"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmGanglinienGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,623"/>
+        <version nr="5" zeitpunkt="21.03.2007 03:47:28,015"/>
+        <version nr="7" zeitpunkt="25.06.2007 16:43:19,029"/>
+        <version nr="8" zeitpunkt="11.10.2007 17:56:39,883"/>
+        <version nr="10" zeitpunkt="27.04.2008 16:55:27,818"/>
+        <version nr="11" zeitpunkt="04.05.2012 12:37:23,213"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmUmfeldDatenGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,623"/>
+        <version nr="8" zeitpunkt="21.03.2007 03:47:28,016"/>
+        <version nr="13" zeitpunkt="25.06.2007 16:43:19,029"/>
+        <version nr="15" zeitpunkt="11.10.2007 17:56:39,883"/>
+        <version nr="18" zeitpunkt="27.04.2008 16:55:27,819"/>
+        <version nr="19" zeitpunkt="26.05.2008 13:27:25,686"/>
+        <version nr="21" zeitpunkt="02.12.2008 14:54:47,534"/>
+        <version nr="22" zeitpunkt="04.05.2012 12:37:23,214"/>
+    <version nr="24" zeitpunkt="23.12.2015 13:29:09,556"/>
+<version nr="25" zeitpunkt="09.06.2016 11:12:57,900"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmBuVGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,623"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,016"/>
+        <version nr="4" zeitpunkt="17.11.2007 17:53:01,349"/>
+        <version nr="5" zeitpunkt="14.08.2008 12:10:37,266"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.objekteIntegrationsTestTools" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,623"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmEreignisKalenderGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,624"/>
+        <version nr="5" zeitpunkt="21.03.2007 03:47:28,016"/>
+        <version nr="7" zeitpunkt="25.06.2007 16:43:19,030"/>
+        <version nr="8" zeitpunkt="11.10.2007 17:56:39,883"/>
+        <version nr="10" zeitpunkt="27.04.2008 16:55:27,820"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmLangZeitVerkehrsDaten" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,624"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,016"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmVewSimulationGlobal" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,624"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,017"/>
+        <version nr="4" zeitpunkt="18.06.2007 02:06:48,868"/>
+        <version nr="5" zeitpunkt="17.11.2007 17:53:01,349"/>
+        <version nr="6" zeitpunkt="27.04.2008 16:59:01,178"/>
+        <version nr="7" zeitpunkt="18.09.2008 17:19:33,793"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.objekteTestUnterzentraleK2S_10_MessQuerschnitte" verzeichnis="">
+        <version nr="1" zeitpunkt="02.03.2007 00:31:20,624"/>
+        <version nr="3" zeitpunkt="21.03.2007 03:47:28,017"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.objekteZugriffsrechteBasis" verzeichnis="">
+        <version nr="1" zeitpunkt="02.12.2008 15:00:26,407"/>
+        <version nr="2" zeitpunkt="02.03.2009 00:31:55,250"/>
+        <version nr="3" zeitpunkt="07.01.2011 01:04:12,930"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.modellOsi3Umleitung" verzeichnis="">
+        <version nr="1" zeitpunkt="25.08.2009 22:08:33,079"/>
+        <version nr="2" zeitpunkt="11.09.2009 10:00:02,069"/>
+        <version nr="3" zeitpunkt="11.09.2009 16:45:51,587"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.kv.testKonfigurationB" verzeichnis="">
+        <version nr="1" zeitpunkt="23.09.2010 19:13:36,135"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.default.testKonfigurationB" verzeichnis="">
+        <version nr="1" zeitpunkt="23.09.2010 19:13:36,136"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.modellKExTlsLkwParken" verzeichnis="">
+        <version nr="1" zeitpunkt="04.02.2011 16:31:23,763"/>
+        <version nr="2" zeitpunkt="01.09.2011 15:17:40,468"/>
+        <version nr="3" zeitpunkt="13.01.2012 21:38:47,458"/>
+        <version nr="4" zeitpunkt="28.03.2012 18:57:43,126"/>
+        <version nr="5" zeitpunkt="28.03.2012 18:58:24,570"/>
+    <version nr="6" zeitpunkt="28.07.2016 15:52:42,736"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.modellLkwParken" verzeichnis="">
+        <version nr="1" zeitpunkt="04.02.2011 16:31:23,764"/>
+        <version nr="2" zeitpunkt="31.05.2011 23:33:23,816"/>
+        <version nr="3" zeitpunkt="01.09.2011 15:17:40,468"/>
+        <version nr="4" zeitpunkt="31.10.2011 15:56:32,295"/>
+        <version nr="5" zeitpunkt="28.03.2012 18:57:43,126"/>
+        <version nr="6" zeitpunkt="28.03.2012 18:58:24,570"/>
+        <version nr="7" zeitpunkt="02.08.2012 10:32:50,706"/>
+        <version nr="8" zeitpunkt="03.08.2012 09:09:44,230"/>
+        <version nr="9" zeitpunkt="04.10.2012 09:46:00,484"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.systemModellKExDaV" verzeichnis="">
+        <version nr="1" zeitpunkt="31.05.2011 23:37:37,354"/>
+        <version nr="2" zeitpunkt="06.09.2012 15:11:35,585"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmKExTlsFG9" verzeichnis="">
+        <version nr="2" zeitpunkt="04.05.2012 12:43:58,480"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmDatenAbgabeUeberwachung" verzeichnis="">
+        <version nr="3" zeitpunkt="04.05.2012 12:43:58,480"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmBAStBandExportImport" verzeichnis="">
+        <version nr="3" zeitpunkt="04.05.2012 12:43:58,480"/>
+        <version nr="4" zeitpunkt="06.09.2012 15:14:55,328"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmAggrLzzsDTV" verzeichnis="">
+        <version nr="3" zeitpunkt="04.05.2012 12:43:58,481"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmAggrAxl" verzeichnis="">
+        <version nr="1" zeitpunkt="04.05.2012 12:43:58,481"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmKExTlsDeAbruf" verzeichnis="">
+        <version nr="1" zeitpunkt="06.09.2012 15:14:55,328"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmKExTlsFG9Pro" verzeichnis="">
+        <version nr="6" zeitpunkt="06.09.2012 15:14:55,328"/>
+        <version nr="7" zeitpunkt="26.06.2013 08:35:18,522"/>
+    <version nr="10" zeitpunkt="23.12.2015 13:29:09,557"/>
+</konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmKExTlsZeitSync" verzeichnis="">
+        <version nr="1" zeitpunkt="06.09.2012 15:14:55,328"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmWetterBerichteDWD" verzeichnis="">
+        <version nr="5" zeitpunkt="26.06.2013 08:35:18,522"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmNbaGlobal" verzeichnis="">
+        <version nr="35" zeitpunkt="07.10.2014 18:39:37,220"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmAnzeigenGlobal" verzeichnis="">
+        <version nr="16" zeitpunkt="07.10.2014 18:39:37,220"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmGeraeteEinbauOrte" verzeichnis="">
+        <version nr="2" zeitpunkt="07.10.2014 18:39:37,221"/>
+    </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.modellNbaAnzeige" verzeichnis="">
+        <version nr="1" zeitpunkt="07.10.2014 18:39:37,221"/>
+    <version nr="2" zeitpunkt="27.02.2015 11:37:44,446"/>
+<version nr="3" zeitpunkt="22.11.2015 13:37:43,136"/>
+<version nr="4" zeitpunkt="09.06.2016 11:14:28,904"/>
+</konfigurationsbereich>
+</verwaltungsdaten>
