@@ -9,6 +9,8 @@ $java \
  -authentifizierung=passwd \
  -betriebsMeldungVersenden=nein \
  -startStoppKonfiguration=ststxml \
+ -debugLevelStdErrText=INFO \
+ -debugLevelFileText=CONFIG\
  &
 
 # Auf das Ende von allen im Hintergrund gestarteten Prozessen warten
