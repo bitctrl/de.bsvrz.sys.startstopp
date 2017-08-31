@@ -229,7 +229,7 @@
 					wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
 				<startart option="automatisch" neustart="nein" intervall="" />
 				<startbedingung vorgaenger="Applikation07" warteart="ende"
-					rechner="%rechner2%" wartezeit="20" />
+					rechner="rechner2" wartezeit="20" />
 				<standardAusgabe dateiname="Applikation04.stdout" />
 				<standardFehlerAusgabe dateiname="Applikation04.stderr" />
 				<startFehlerverhalten option="abbruch"
