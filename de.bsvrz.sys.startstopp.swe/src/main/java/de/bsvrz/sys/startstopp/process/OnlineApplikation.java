@@ -339,6 +339,7 @@ public final class OnlineApplikation {
 			onlineApplikationTimer.clear();
 			process = null;
 		}
+		
 		switch (applikation.getInkarnation().getStartArt().getOption()) {
 		case INTERVALLABSOLUT:
 		case INTERVALLRELATIV:
@@ -349,11 +350,10 @@ public final class OnlineApplikation {
 			}
 			break;
 		default:
-			if ((getStatus() == Applikation.Status.STOPPENWARTEN)
-					|| prozessManager.getStartStoppStatus() != StartStoppStatus.Status.RUNNING) {
-				updateStatus(Applikation.Status.GESTOPPT, "");
-			} else if (applikation.getInkarnation().getStartArt().getNeuStart()) {
+			if ((prozessManager.getStartStoppStatus() == StartStoppStatus.Status.RUNNING) && applikation.getInkarnation().getStartArt().getNeuStart()) {
 				updateStatus(Applikation.Status.INSTALLIERT, "");
+			} else {
+				updateStatus(Applikation.Status.GESTOPPT, "");
 			}
 			break;
 		}
