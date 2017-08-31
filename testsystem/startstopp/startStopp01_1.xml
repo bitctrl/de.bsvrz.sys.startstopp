@@ -11,7 +11,7 @@
 			<makrodefinition name="rechner1.ip" wert="192.168.172.1" />
 			<makrodefinition name="rechner2.ip" wert="192.168.172.2" />
 			<makrodefinition name="authentifizierung.benutzer"
-				wert="vrzanwendung" />
+				wert="Tester" />
 			<makrodefinition name="authentifizierung.passwortdatei"
 				wert="%root%/skripte-bash/passwd" />
 			<makrodefinition name="authentifizierung.default"
