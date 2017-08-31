@@ -27,7 +27,6 @@
 package de.bsvrz.sys.startstopp.util;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashSet;
@@ -345,12 +344,24 @@ public class StartStoppXMLParser {
 	}
 
 	public StartStoppSkript getSkriptFromFile(File file) throws StartStoppException {
+		return parseFile(file);
+	}
 
-		try (InputStream stream = new FileInputStream(file)) {
-			return parseStream(stream);
-		} catch (IOException e) {
+	private StartStoppSkript parseFile(File file) throws StartStoppException {
+
+		StartStoppSkript konfiguration = new StartStoppSkript();
+		try {
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			SAXParser saxParser = factory.newSAXParser();
+
+			saxParser.parse(file, new StartStoppParserHandler(konfiguration));
+		} catch (SAXException | IOException | ParserConfigurationException e) {
 			throw new StartStoppException(e);
 		}
+
+		suppressInkarnationName(konfiguration);
+
+		return konfiguration;
 	}
 
 	private StartStoppSkript parseStream(InputStream stream) throws StartStoppException {
@@ -365,6 +376,12 @@ public class StartStoppXMLParser {
 			throw new StartStoppException(e);
 		}
 
+		suppressInkarnationName(konfiguration);
+
+		return konfiguration;
+	}
+
+	private void suppressInkarnationName(StartStoppSkript konfiguration) {
 		for (String item : suppressInkarnationsName) {
 			for (Inkarnation inkarnation : konfiguration.getInkarnationen()) {
 				if (item.equals(inkarnation.getInkarnationsName())) {
@@ -372,8 +389,6 @@ public class StartStoppXMLParser {
 				}
 			}
 		}
-
-		return konfiguration;
 	}
-
+	
 }
