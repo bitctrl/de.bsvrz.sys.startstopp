@@ -16,7 +16,7 @@
       <makrodefinition name="rechner2.ip" wert="192.168.172.2" />
       <!-- Makros für Authentifizierung einer Applikation. -->
       <!-- Benutzername unter dem alle Applikationen ausgeführt werden -->
-      <makrodefinition name="authentifizierung.benutzer" wert="vrzanwendung" />
+      <makrodefinition name="authentifizierung.benutzer" wert="Tester" />
       <makrodefinition name="authentifizierung.passwortdatei" wert="%root%/skripte-bash/passwd" />
       <makrodefinition name="authentifizierung.default" wert="-benutzer=%authentifizierung.benutzer% -authentifizierung=%authentifizierung.passwortdatei%" />
       <!-- Makros für Standardvorgabe des Datenverteilerloggers für die Applikationen. -->
@@ -36,7 +36,7 @@
       <!-- Aufzählung der Applikationen die das Kernsystem bilden.
 		Beim Beenden wird nur die erste Applikation der Liste beendet. -->
       <!-- Zugangsdaten mit denen sich StartStopp selbst am Datenverteiler anmeldet. -->
-      <zugangdav adresse="%dav1.host%" port="%dav1.appPort%" username="SystestStSt" passwort="geheim" />
+      <zugangdav adresse="%dav1.host%" port="%dav1.appPort%" username="Tester" passwort="geheim" />
       <!-- Name und IP-Adresse von anderen Rechnern, auf denen ebenfalls StartStopp läuft (optional).
 		Der Name ist freiwählbar und wird weiter unten für Bedingungen verwendet. Für jeden
 		Rechner muss ein Objekt (typ.rechner) in der Konfiguration vorhanden sein. Der
@@ -66,7 +66,7 @@
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="ja" intervall="" />
-        <startbedingung vorgaenger="Applikation02" rechner="%rechner1%" warteart="ende" wartezeit="5" />
+        <startbedingung vorgaenger="Applikation02" rechner="rechner1" warteart="ende" wartezeit="5" />
         <standardAusgabe dateiname="Applikation04.stdout" />
         <standardFehlerAusgabe dateiname="Applikation04.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="1" />
@@ -82,7 +82,7 @@
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
-        <startbedingung vorgaenger="Applikation02" rechner="%rechner1%" warteart="ende" wartezeit="9" />
+        <startbedingung vorgaenger="Applikation02" rechner="rechner1" warteart="ende" wartezeit="9" />
         <stoppbedingung nachfolger="Applikation07" wartezeit="6" />
         <standardAusgabe dateiname="Applikation05.stdout" />
         <standardFehlerAusgabe dateiname="Applikation05.stderr" />
@@ -99,9 +99,9 @@
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
-        <startbedingung vorgaenger="Applikation01" rechner="%rechner1%" warteart="beginn" wartezeit="25" />
-        <startbedingung vorgaenger="Applikation06" rechner="%rechner1%" warteart="ende" wartezeit="5" />
-        <stoppbedingung nachfolger="Applikation08" rechner="%rechner1%" wartezeit="6" />
+        <startbedingung vorgaenger="Applikation01" rechner="rechner1" warteart="beginn" wartezeit="25" />
+        <startbedingung vorgaenger="Applikation06" rechner="rechner1" warteart="ende" wartezeit="5" />
+        <stoppbedingung nachfolger="Applikation08" rechner="rechner1" wartezeit="6" />
         <standardAusgabe dateiname="Applikation07.stdout" />
         <standardFehlerAusgabe dateiname="Applikation07.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="0" />
@@ -117,7 +117,7 @@
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
-        <startbedingung vorgaenger="Applikation09" rechner="%rechner1%" warteart="ende" wartezeit="12" />
+        <startbedingung vorgaenger="Applikation09" rechner="rechner1" warteart="ende" wartezeit="12" />
         <standardAusgabe dateiname="Applikation10.stdout" />
         <standardFehlerAusgabe dateiname="Applikation10.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="0" />

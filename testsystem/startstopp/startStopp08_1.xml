@@ -16,7 +16,7 @@
       <makrodefinition name="rechner2.ip" wert="192.168.172.2" />
       <!-- Makros für Authentifizierung einer Applikation. -->
       <!-- Benutzername unter dem alle Applikationen ausgeführt werden -->
-      <makrodefinition name="authentifizierung.benutzer" wert="vrzanwendung" />
+      <makrodefinition name="authentifizierung.benutzer" wert="Tester" />
       <makrodefinition name="authentifizierung.passwortdatei" wert="%root%/skripte-bash/passwd" />
       <makrodefinition name="authentifizierung.default" wert="-benutzer=%authentifizierung.benutzer% -authentifizierung=%authentifizierung.passwortdatei%" />
       <!-- Makros für Standardvorgabe des Datenverteilerloggers für die Applikationen. -->
@@ -39,7 +39,7 @@
       <kernsystem inkarnationsname="Konfiguration" />
       <kernsystem inkarnationsname="Parametrierung" mitInkarnationsname="ja" />
       <!-- Zugangsdaten mit denen sich StartStopp selbst am Datenverteiler anmeldet. -->
-      <zugangdav adresse="%dav1.host%" port="%dav1.appPort%" username="SystestStSt" passwort="geheim" />
+      <zugangdav adresse="%dav1.host%" port="%dav1.appPort%" username="Tester" passwort="geheim" />
       <!-- Name und IP-Adresse von anderen Rechnern, auf denen ebenfalls StartStopp läuft (optional).
 		Der Name ist freiwählbar und wird weiter unten für Bedingungen verwendet. Für jeden
 		Rechner muss ein Objekt (typ.rechner) in der Konfiguration vorhanden sein. Der
