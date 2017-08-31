@@ -8,6 +8,7 @@ $java \
  -benutzerKonfiguration=../konfiguration/benutzerverwaltung.xml \
  -authentifizierung=passwd \
  -betriebsMeldungVersenden=nein \
+ -startStoppKonfiguration=ststxml \
  &
 
 # Auf das Ende von allen im Hintergrund gestarteten Prozessen warten
