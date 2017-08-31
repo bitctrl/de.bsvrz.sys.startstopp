@@ -48,7 +48,7 @@
 				mitInkarnationsname="ja" />
 			<!-- Zugangsdaten mit denen sich StartStopp selbst am Datenverteiler anmeldet. -->
 			<zugangdav adresse="%dav1.host%" port="%dav1.appPort%"
-				username="SystestStSt" passwort="systeststst" />
+				username="Tester" passwort="systeststst" />
 			<!-- Name und IP-Adresse von anderen Rechnern, auf denen ebenfalls StartStopp 
 				läuft (optional). Der Name ist freiwählbar und wird weiter unten für Bedingungen 
 				verwendet. Für jeden Rechner muss ein Objekt (typ.rechner) in der Konfiguration 
@@ -104,7 +104,7 @@
 				<aufrufparameter
 					wert="-authentifizierung=%authentifizierung.passwortdatei%" />
 				<!-- Die ID des Systemobjekts dieses Datenverteilers -->
-				<aufrufparameter wert="-datenverteilerId=111111111111111111" />
+				<aufrufparameter wert="-datenverteilerId=10000" />
 				<!-- Steuert ob Benutzerrechte ausgewertet und angewandt werden sollen -->
 				<aufrufparameter wert="-rechtePruefung=neu" />
 				<!-- Verzögerungswert für Verbindung mit anderen Datenverteilern -->

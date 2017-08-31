@@ -81,7 +81,7 @@
         <aufrufparameter wert="-parametrierungsBenutzer=parameter" />
         <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
         <!-- Die ID des Systemobjekts dieses Datenverteilers -->
-        <aufrufparameter wert="-datenverteilerId=111111111111111111" />
+        <aufrufparameter wert="-datenverteilerId=10000" />
         <!-- Steuert ob Benutzerrechte ausgewertet und angewandt werden sollen -->
         <aufrufparameter wert="-rechtePruefung=neu" />
         <!-- Verzögerungswert für Verbindung mit anderen Datenverteilern -->
