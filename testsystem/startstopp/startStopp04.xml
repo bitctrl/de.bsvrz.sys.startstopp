@@ -80,7 +80,7 @@
         <!-- Die ID des Systemobjekts dieses Datenverteilers -->
         <aufrufparameter wert="-datenverteilerId=10000" />
         <!-- Steuert ob Benutzerrechte ausgewertet und angewandt werden sollen -->
-        <aufrufparameter wert="-rechtePruefung=neu" />
+        <aufrufparameter wert="-rechtePruefung=nein" />
         <!-- Verzögerungswert für Verbindung mit anderen Datenverteilern -->
         <aufrufparameter wert="-verzögerungFürAndereDatenverteiler=600s" />
         <startart option="automatisch" neustart="nein" intervall="" />
