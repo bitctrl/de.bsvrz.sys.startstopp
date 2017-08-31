@@ -99,8 +99,8 @@
 				<aufrufparameter wert="%dav1.einstellungen%" />
 				<aufrufparameter wert="%debug.default%" />
 				<aufrufparameter wert="-benutzer=davnutzer" />
-				<aufrufparameter wert="-konfigurationsBenutzer=konfigurationnutzer" />
-				<aufrufparameter wert="-parametrierungsBenutzer=parametrierungnutzer" />
+				<aufrufparameter wert="-konfigurationsBenutzer=configuration" />
+				<aufrufparameter wert="-parametrierungsBenutzer=parameter" />
 				<aufrufparameter
 					wert="-authentifizierung=%authentifizierung.passwortdatei%" />
 				<!-- Die ID des Systemobjekts dieses Datenverteilers -->
@@ -130,7 +130,7 @@
 					/> -->
 				<aufrufparameter wert="%debug.default%" />
 				<!-- Der Benutzer mit dem die Konfiguration gestartet wird -->
-				<aufrufparameter wert="-benutzer=konfigurationnutzer" />
+				<aufrufparameter wert="-benutzer=configuration" />
 				<aufrufparameter
 					wert="-authentifizierung=%authentifizierung.passwortdatei%" />
 				<!-- Pfad zu der Verwaltungsdatendatei der Konfiguration -->
@@ -159,7 +159,7 @@
 				<aufrufparameter wert="%debug.default%" />
 				<!-- <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" 
 					/> -->
-				<aufrufparameter wert="-benutzer=parametrierungnutzer" />
+				<aufrufparameter wert="-benutzer=parameter" />
 				<aufrufparameter
 					wert="-authentifizierung=%authentifizierung.passwortdatei%" />
 				<!-- Die Klasse, die zum Speichern der Parameter verwendet wird. Zur 
