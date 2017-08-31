@@ -6,7 +6,7 @@
 	<startStopp>
 		<global>
 			<!-- (Absoluter) Pfad zum Stammverzeichnis des Projekts. -->
-			<makrodefinition name="root" wert=".." />
+			<makrodefinition name="root" wert="../../.." />
 			<!-- Pfad zu den SWEs -->
 			<makrodefinition name="dist" wert="%root%/distributionspakete" />
 			<!-- Befehl zum Aufruf des Java-Interpreters. -->
@@ -17,7 +17,7 @@
 			<!-- Makros für Authentifizierung einer Applikation. -->
 			<!-- Benutzername unter dem alle Applikationen ausgeführt werden -->
 			<makrodefinition name="authentifizierung.benutzer"
-				wert="vrzanwendung" />
+				wert="TestDatenverteilerBenutzer" />
 			<makrodefinition name="authentifizierung.passwortdatei"
 				wert="%root%/skripte-bash/passwd" />
 			<makrodefinition name="authentifizierung.default"
