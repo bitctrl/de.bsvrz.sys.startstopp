@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE konfigurationsBereich PUBLIC "-//K2S//DTD Dokument//DE" "K2S.dtd">
+<konfigurationsBereich pid="kb.testObjekte" verantwortlich="kv.testKonfiguration">
+	<konfigurationsAenderung stand="08.05.2006" autor="Roland Schmitz, Kappich Systemberatung" grund="Test">
+		Bereich zum Test der Konfiguration erzeugt.</konfigurationsAenderung>
+    <modell>
+    </modell>
+    <objekte>
+        <konfigurationsObjekt pid="test.objekt1" name="TestObjekt1" typ="typ.test">
+            <datensatz attributgruppe="atg.test" aspekt="asp.eigenschaften">
+                <datum name="test" wert="27 mm"/>
+            </datensatz>
+        </konfigurationsObjekt>
+    </objekte>
+</konfigurationsBereich>
