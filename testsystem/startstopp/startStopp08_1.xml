@@ -102,7 +102,7 @@
         <!-- <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" /> -->
         <aufrufparameter wert="%debug.default%" />
         <!-- Der Benutzer mit dem die Konfiguration gestartet wird -->
-        <aufrufparameter wert="-benutzer=konfigurationnutzer" />
+        <aufrufparameter wert="-benutzer=configuration" />
         <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
         <!-- Pfad zu der Verwaltungsdatendatei der Konfiguration -->
         <aufrufparameter wert="-verwaltung=%root%/konfiguration/verwaltungsdaten.xml" />
@@ -123,7 +123,7 @@
         <aufrufparameter wert="%dav1.ohneAuthentifizierung%" />
         <aufrufparameter wert="%debug.default%" />
         <!-- <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" /> -->
-        <aufrufparameter wert="-benutzer=parametrierungnutzer" />
+        <aufrufparameter wert="-benutzer=parameter" />
         <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
         <!-- Die Klasse, die zum Speichern der Parameter verwendet wird.
 				Zur Verfügung stehen:
@@ -200,8 +200,8 @@
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
         <startbedingung vorgaenger="Applikation02" warteart="ende" wartezeit="20" />
-        <stoppbedingung nachfolger="Applikation05" rechner="%rechner2%" wartezeit="2" />
-        <stoppbedingung nachfolger="Applikation04" rechner="%rechner2%" wartezeit="18" />
+        <stoppbedingung nachfolger="Applikation05" rechner="rechner2" wartezeit="2" />
+        <stoppbedingung nachfolger="Applikation04" rechner="rechner2" wartezeit="18" />
         <standardAusgabe dateiname="Applikation03.stdout" />
         <standardFehlerAusgabe dateiname="Applikation03.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="1" />
@@ -218,8 +218,8 @@
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
         <startbedingung vorgaenger="Applikation03" warteart="ende" wartezeit="20" />
-        <startbedingung vorgaenger="Applikation05" warteart="ende" rechner="%rechner2%" wartezeit="15" />
-        <stoppbedingung nachfolger="Applikation07" rechner="%rechner2%" wartezeit="6" />
+        <startbedingung vorgaenger="Applikation05" warteart="ende" rechner="rechner2" wartezeit="15" />
+        <stoppbedingung nachfolger="Applikation07" rechner="rechner2" wartezeit="6" />
         <stoppbedingung nachfolger="Applikation09" wartezeit="11" />
         <standardAusgabe dateiname="Applikation06.stdout" />
         <standardFehlerAusgabe dateiname="Applikation06.stderr" />
@@ -237,7 +237,7 @@
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
         <startbedingung vorgaenger="Applikation06" warteart="ende" wartezeit="12" />
-        <startbedingung vorgaenger="Applikation05" warteart="ende" rechner="%rechner2%" wartezeit="15" />
+        <startbedingung vorgaenger="Applikation05" warteart="ende" rechner="rechner2" wartezeit="15" />
         <standardAusgabe dateiname="Applikation08.stdout" />
         <standardFehlerAusgabe dateiname="Applikation08.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="1" />
@@ -254,8 +254,8 @@
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
         <startbedingung vorgaenger="Applikation08" warteart="ende" wartezeit="8" />
-        <startbedingung vorgaenger="Applikation07" rechner="%rechner2%" wartezeit="5" />
-        <stoppbedingung nachfolger="Applikation10" rechner="%rechner2%" wartezeit="15" />
+        <startbedingung vorgaenger="Applikation07" rechner="rechner2" wartezeit="5" />
+        <stoppbedingung nachfolger="Applikation10" rechner="rechner2" wartezeit="15" />
         <standardAusgabe dateiname="Applikation09.stdout" />
         <standardFehlerAusgabe dateiname="Applikation09.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="1" />

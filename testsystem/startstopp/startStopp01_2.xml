@@ -65,7 +65,7 @@
         <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
-        <startart option="intervallabsolut" neustart="nein" intervall="*/3 * * * *" />
+        <startart option="intervallrelativ" neustart="nein" intervall="*/3 * * * *" />
         <standardAusgabe dateiname="Applikation02.stdout" />
         <standardFehlerAusgabe dateiname="Applikation02.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="1" />
@@ -81,7 +81,7 @@
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
-        <startbedingung vorgaenger="Applikation01" rechner="rechner1" warteart="ende" wartezeit="20" />
+        <startbedingung vorgaenger="Applikation01" rechner="%rechner1%" warteart="ende" wartezeit="20" />
         <standardAusgabe dateiname="Applikation03.stdout" />
         <standardFehlerAusgabe dateiname="Applikation03.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="1" />

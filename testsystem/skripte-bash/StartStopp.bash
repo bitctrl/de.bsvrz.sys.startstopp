@@ -3,9 +3,9 @@
 
 # StartStopp
 $java \
-  -cp ../../../distributionspakete/de.bsvrz.sys.startstopp/de.bsvrz.sys.startstopp-runtime.jar \
+  -cp ../distributionspakete/de.bsvrz.sys.startstopp/de.bsvrz.sys.startstopp-runtime.jar \
  de.bsvrz.sys.startstopp.startstopp.StartStopp \
- -benutzerKonfiguration=../../../konfiguration/benutzerverwaltung.xml \
+ -benutzerKonfiguration=../konfiguration/benutzerverwaltung.xml \
  -authentifizierung=passwd \
  -betriebsMeldungVersenden=nein \
  &
