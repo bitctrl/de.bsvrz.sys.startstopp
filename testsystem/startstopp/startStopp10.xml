@@ -37,7 +37,7 @@
       <kernsystem inkarnationsname="Konfiguration" />
       <kernsystem inkarnationsname="Parametrierung" mitInkarnationsname="ja" />
       <!-- Zugangsdaten mit denen sich StartStopp selbst am Datenverteiler anmeldet. -->
-      <zugangdav adresse="%dav1.host%" port="%dav1.appPort%" username="SystestStSt" passwort="systeststst" />
+      <zugangdav adresse="%dav1.host%" port="%dav1.appPort%" username="SystestStSt" passwort="geheim" />
       <!-- Name und IP-Adresse von anderen Rechnern, auf denen ebenfalls StartStopp läuft (optional).
 		Der Name ist freiwählbar und wird weiter unten für Bedingungen verwendet. Für jeden
 		Rechner muss ein Objekt (typ.rechner) in der Konfiguration vorhanden sein. Der
