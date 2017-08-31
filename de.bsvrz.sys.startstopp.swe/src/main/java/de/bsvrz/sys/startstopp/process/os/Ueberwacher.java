@@ -95,10 +95,6 @@ class Ueberwacher implements Runnable {
 			LOGGER.info("Commandline: '" + Arrays.toString(cmdArray) + "'");
 			ProcessBuilder builder = new ProcessBuilder(cmdArray);
 			builder.redirectErrorStream(true);
-			if (!OSTools.isWindows()) {
-				// TODO prüfen, ob das tatsächlich notwendig ist
-				builder.environment().put("LANG", "de_DE@euro");
-			}
 			process = builder.start();
 		} catch (IOException ioe) {
 			osApplikation.prozessStartFehler(-1, ioe.getLocalizedMessage());
