@@ -1,0 +1,61 @@
+= Prüfprozedur Sys Start/Stopp
+Version: 1.0
+Stand: 31.08.17
+:toc: left
+:doctype: book
+:encoding: utf-8
+:toclevel: 4
+:sectnums:
+
+== Allgemeines
+
+Die Prüfprzedur beschreibt die Durchführung der Prüfungen für die SWE Sys StartStopp gemäß Prüfspezifikation.
+
+== Prüfvoraussetzungen
+
+Zur Prüfung wird ein installiertes Datenverteilersystem auf zwei unabhängigen Rechnern eingesetzt. Verwendet wird die mit der SWE zur Verfügung gestellte Konfiguration und die mitgelieferten SWE basierend auf der Kernsoftware 3.9.2.
+
+Installiert werden neben den Standarddatenverteiler-Paketen die SWE StartStopp in der zu testenden Version und das Paket "de.bsvrz.sys.stst.test", in dem die für die Testkonfiguration zu verwendetenen Applikationen mit den jeweils geforderten Eigenschaften implementiert sind.
+
+Die Applikationen sind wie folgt näher definiert:
+
+* *Application01*
+* *Application02*
+* *Application03*
+* *Application04*
+* *Application05*
+* *Application06*
+* *Application07*
+* *Application08*
+* *Application09*
+* *Application010*
+
+Als StartStopp-Skripte werden die aus den vorgegebenen XML-Dateien konvertierten Skripte eingesetzt. Die Angabe erfolgt im Folgenden daher als Dateiname ohne Dateierweiterung.
+
+== Durchführung der Testfälle gemäß Testspezifikation
+
+=== Normalbetrieb Start/Stopp
+
+
+
+
+=== Normalbetrieb Applikationen
+
+=== Erneute Ausführung der Konfiguration
+
+=== Fehlerbehandlung
+
+=== Fehlerbehandlung Konfiguration 
+
+=== Fehlerbehandlung Applikationen
+
+=== Verhalten bei Fehlern
+
+=== Start- und Stoppbedingungen
+
+=== Bedienoberfläche
+
+=== Beendigung Start/Stopp
+
+=== Code-Review 
+

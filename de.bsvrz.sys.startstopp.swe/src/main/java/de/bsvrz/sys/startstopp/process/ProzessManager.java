@@ -70,6 +70,8 @@ public final class ProzessManager {
 
 	private boolean neuStartGeplant;
 
+	private Object stopLock = new Object();
+
 	public ProzessManager() {
 		this(StartStopp.getInstance());
 	}
@@ -121,6 +123,9 @@ public final class ProzessManager {
 		if (startStoppStatus != status) {
 			startStoppStatus = status;
 			onStartStoppStatusChanged.send(status);
+		}
+		synchronized (stopLock) {
+			stopLock.notifyAll();
 		}
 	}
 
@@ -249,7 +254,9 @@ public final class ProzessManager {
 	public void shutdownSkript() {
 		switch (startStoppStatus) {
 		case RUNNING:
+		case RUNNING_CANCELED:
 		case STOPPING:
+		case STOPPING_CANCELED:
 			setStartStoppStatus(Status.SHUTDOWN);
 			break;
 		case CONFIGERROR:
@@ -258,7 +265,9 @@ public final class ProzessManager {
 			System.exit(0);
 			break;
 		case SHUTDOWN:
+			break;
 		default:
+			LOGGER.warning("Unerwarteter Status: " + startStoppStatus);
 			break;
 		}
 	}
@@ -283,9 +292,23 @@ public final class ProzessManager {
 		}
 
 		if (kernsystemGeandert) {
-			restarteSkript();
+			stoppeSkript();
+			CompletableFuture.runAsync(() -> waitForStopp())
+					.thenRun(() -> aktuellesSkriptAnpassen(neueKonfiguration, entfernt, geandert));
 		} else {
 			aktuellesSkriptAnpassen(neueKonfiguration, entfernt, geandert);
+		}
+	}
+
+	private void waitForStopp() {
+		while (startStoppStatus == Status.STOPPING) {
+			synchronized (stopLock) {
+				try {
+					stopLock.wait(1000);
+				} catch (InterruptedException e) {
+					LOGGER.warning(e.getLocalizedMessage());
+				}
+			}
 		}
 	}
 
@@ -321,7 +344,11 @@ public final class ProzessManager {
 				}
 			}
 
-			starteSkript();
+			if (startStoppStatus == Status.CONFIGERROR) {
+				setStartStoppStatus(Status.RUNNING);
+			} else {
+				starteSkript();
+			}
 
 		} catch (StartStoppException e) {
 			LOGGER.error(e.getLocalizedMessage());

@@ -107,9 +107,10 @@ public final class OnlineApplikation {
 		String name = status.name.substring(inkarnationsPrefix.length());
 		if (getName().equals(name)) {
 			if (status.fertig) {
-				if (applikation.getStatus() == Applikation.Status.GESTARTET || applikation.getStatus() == Applikation.Status.INITIALISIERT) {
+				if (applikation.getStatus() == Applikation.Status.GESTARTET
+						|| applikation.getStatus() == Applikation.Status.INITIALISIERT) {
 					updateStatus(Applikation.Status.INITIALISIERT, "");
-				} 
+				}
 			} else {
 				switch (getApplikation().getInkarnation().getInkarnationsTyp()) {
 				case DAV:
@@ -131,14 +132,22 @@ public final class OnlineApplikation {
 		switch (status) {
 		case STOPPING:
 			if ((appStatus != Applikation.Status.GESTOPPT) && (appStatus != Applikation.Status.STOPPENWARTEN)) {
-				manuellGestartetOderGestoppt = false;
-				updateStatus(Applikation.Status.STOPPENWARTEN, "Startstopp wird angehalten!");
+				if ((appStatus == Applikation.Status.GESTARTET) || (appStatus == Applikation.Status.INITIALISIERT)) {
+					manuellGestartetOderGestoppt = false;
+					updateStatus(Applikation.Status.STOPPENWARTEN, "Startstopp wird angehalten!");
+				} else {
+					updateStatus(Applikation.Status.GESTOPPT, "Startstopp wird angehalten!");
+				}
 			}
 			break;
 		case SHUTDOWN:
 			if ((appStatus != Applikation.Status.GESTOPPT) && (appStatus != Applikation.Status.STOPPENWARTEN)) {
-				manuellGestartetOderGestoppt = false;
-				updateStatus(Applikation.Status.STOPPENWARTEN, "Startstopp wird heruntergefahren!");
+				if ((appStatus == Applikation.Status.GESTARTET) || (appStatus == Applikation.Status.INITIALISIERT)) {
+					manuellGestartetOderGestoppt = false;
+					updateStatus(Applikation.Status.STOPPENWARTEN, "Startstopp wird heruntergefahren!");
+				} else {
+					updateStatus(Applikation.Status.GESTOPPT, "Startstopp wird heruntergefahren!");
+				}
 			}
 			break;
 		case RUNNING:
@@ -146,6 +155,9 @@ public final class OnlineApplikation {
 			if (getStartArtOption() != StartArt.Option.MANUELL) {
 				if ((appStatus == Applikation.Status.GESTOPPT) || (appStatus == Applikation.Status.STOPPENWARTEN)) {
 					updateStatus(Applikation.Status.INSTALLIERT, "Prozessmanager gestartet");
+				}
+				if (appStatus == Applikation.Status.INSTALLIERT) {
+					checkState(TaskType.DEFAULT);
 				}
 			}
 			break;

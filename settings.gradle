@@ -4,3 +4,4 @@ include 'de.bsvrz.sys.stst.test'
 
 include 'documentation:Afo'
 include 'documentation:SwEnt'
+include 'documentation:PrProz'

@@ -38,8 +38,7 @@ public class GestopptStatus extends OnlineApplikationStatus {
 
 	@Override
 	public boolean wechsleStatus(TaskType task, StartStoppStatus.Status startStoppStatus) {
-		// TODO Auto-generated method stub
+		applikation.getOnlineApplikationTimer().clear();
 		return false;
 	}
-
 }

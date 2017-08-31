@@ -28,6 +28,8 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import com.googlecode.lanterna.gui2.Window;
 
+import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
+
 class EditorCloseAction implements Runnable {
 
 	private Window window;
@@ -38,9 +40,13 @@ class EditorCloseAction implements Runnable {
 
 	@Override
 	public void run() {
-		window.close();
+		JaNeinDialog dialog = new JaNeinDialog("Editor verlassen",
+				"Soll der Editor wirklich verlassen werden?\nEventuell wurden Änderungen noch nicht versioniert!");
+		if (dialog.display()) {
+			window.close();
+		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Verlassen";
