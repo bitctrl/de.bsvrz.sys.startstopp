@@ -165,9 +165,13 @@ public class StartStoppXMLParser {
 					currentInkarnation.setStartArt(new StartArt());
 				}
 
-				if (attributes.getValue("option") != null) {
-					currentInkarnation.getStartArt()
-							.setOption(StartArt.Option.fromValue(attributes.getValue("option")));
+				String startArtOptionValue = attributes.getValue("option");
+				if (startArtOptionValue != null) {
+					if ("intervall".equals(startArtOptionValue)) {
+						currentInkarnation.getStartArt().setOption(StartArt.Option.INTERVALLABSOLUT);
+					} else {
+						currentInkarnation.getStartArt().setOption(StartArt.Option.fromValue(startArtOptionValue));
+					}
 				}
 				if (attributes.getValue("neustart") != null) {
 					currentInkarnation.getStartArt().setNeuStart(attributes.getValue("neustart").equals("ja"));
@@ -180,9 +184,11 @@ public class StartStoppXMLParser {
 				if (currentInkarnation.getStartFehlerVerhalten() == null) {
 					currentInkarnation.setStartFehlerVerhalten(new StartFehlerVerhalten());
 				}
-				if (attributes.getValue("option") != null) {
+				
+				String startFehlerOptionValue = attributes.getValue("option");
+				if (startFehlerOptionValue != null) {
 					currentInkarnation.getStartFehlerVerhalten()
-							.setOption(StartFehlerVerhalten.Option.fromValue(attributes.getValue("option")));
+							.setOption(StartFehlerVerhalten.Option.fromValue(startFehlerOptionValue));
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStartFehlerVerhalten()
@@ -203,9 +209,10 @@ public class StartStoppXMLParser {
 					currentInkarnation.setStoppFehlerVerhalten(new StoppFehlerVerhalten());
 				}
 
-				if (attributes.getValue("option") != null) {
+				String stoppFehlerOptionValue = attributes.getValue("option");
+				if (stoppFehlerOptionValue != null) {
 					currentInkarnation.getStoppFehlerVerhalten()
-							.setOption(StoppFehlerVerhalten.Option.fromValue(attributes.getValue("option")));
+							.setOption(StoppFehlerVerhalten.Option.fromValue(stoppFehlerOptionValue));
 				}
 				if (attributes.getValue("wiederholungen") != null) {
 					currentInkarnation.getStoppFehlerVerhalten()
@@ -390,5 +397,5 @@ public class StartStoppXMLParser {
 			}
 		}
 	}
-	
+
 }
