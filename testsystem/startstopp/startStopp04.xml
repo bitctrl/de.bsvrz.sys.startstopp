@@ -99,7 +99,7 @@
         <!-- <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" /> -->
         <aufrufparameter wert="%debug.default%" />
         <!-- Der Benutzer mit dem die Konfiguration gestartet wird -->
-        <aufrufparameter wert="-benutzer=konfigurationnutzer" />
+        <aufrufparameter wert="-benutzer=configuration" />
         <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
         <!-- Pfad zu der Verwaltungsdatendatei der Konfiguration -->
         <aufrufparameter wert="-verwaltung=%root%/konfiguration/verwaltungsdaten.xml" />
@@ -120,7 +120,7 @@
         <aufrufparameter wert="%dav1.ohneAuthentifizierung%" />
         <aufrufparameter wert="%debug.default%" />
         <!-- <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" /> -->
-        <aufrufparameter wert="-benutzer=parametrierungnutzer" />
+        <aufrufparameter wert="-benutzer=parameter" />
         <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
         <!-- Die Klasse, die zum Speichern der Parameter verwendet wird.
 				Zur Verfügung stehen:
