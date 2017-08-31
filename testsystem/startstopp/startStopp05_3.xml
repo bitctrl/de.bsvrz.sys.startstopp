@@ -67,7 +67,7 @@
         <aufrufparameter wert="-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter" />
         <aufrufparameter wert="%dav1.einstellungen%" />
         <aufrufparameter wert="%debug.default%" />
-        <aufrufparameter wert="-benutzer=davnutzer" />
+        <aufrufparameter wert="-benutzer=Tester" />
         <aufrufparameter wert="-konfigurationsBenutzer=configuration" />
         <aufrufparameter wert="-parametrierungsBenutzer=parameter" />
         <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
