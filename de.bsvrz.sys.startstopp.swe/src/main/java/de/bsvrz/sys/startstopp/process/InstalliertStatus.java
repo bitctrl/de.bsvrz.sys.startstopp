@@ -53,8 +53,7 @@ public class InstalliertStatus extends OnlineApplikationStatus {
 			return false;
 		}
 
-		if (!applikation.isManuellGestartetOderGestoppt()
-				&& (startStoppStatus != StartStoppStatus.Status.RUNNING)) {
+		if (!applikation.isManuellGestartetOderGestoppt() && (startStoppStatus != StartStoppStatus.Status.RUNNING)) {
 			return false;
 		}
 
@@ -68,32 +67,36 @@ public class InstalliertStatus extends OnlineApplikationStatus {
 			return false;
 		}
 
-		String kernSystemMessage = applikation.kernSystemVerfuegbar();
-		if (kernSystemMessage != null) {
-			LOGGER.info(applikation.getName() + ": " + kernSystemMessage);
-			return applikation.updateStatus(Applikation.Status.STARTENWARTEN, kernSystemMessage);
-		}
+		if (applikation.isManuellGestartetOderGestoppt()) {
+			applikation.getOnlineApplikationTimer().clear();
+		} else {
+			String kernSystemMessage = applikation.kernSystemVerfuegbar();
+			if (kernSystemMessage != null) {
+				LOGGER.info(applikation.getName() + ": " + kernSystemMessage);
+				return applikation.updateStatus(Applikation.Status.STARTENWARTEN, kernSystemMessage);
+			}
 
-		StartBedingung startBedingung = applikation.getStartBedingung();
-		if (startBedingung != null) {
-			StartBedingungStatus pruefStatus = applikation.getStartbedingungStatus();
-			if (!pruefStatus.isErfuellt()) {
-				return applikation.updateStatus(Applikation.Status.STARTENWARTEN, pruefStatus.getMessage());
-			}
-			long warteZeitInMsec;
-			try {
-				warteZeitInMsec = Util.convertToWarteZeitInMsec(startBedingung.getWartezeit());
-			} catch (StartStoppException e) {
-				throw new IllegalStateException(
-						"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
-			}
-			if (warteZeitInMsec > 0) {
-				applikation.getOnlineApplikationTimer().initWarteTask(warteZeitInMsec);
-				return applikation.updateStatus(Applikation.Status.STARTENWARTEN,
-						applikation.getApplikation().getStartMeldung());
+			StartBedingung startBedingung = applikation.getStartBedingung();
+			if (startBedingung != null) {
+				StartBedingungStatus pruefStatus = applikation.getStartbedingungStatus();
+				if (!pruefStatus.isErfuellt()) {
+					return applikation.updateStatus(Applikation.Status.STARTENWARTEN, pruefStatus.getMessage());
+				}
+				long warteZeitInMsec;
+				try {
+					warteZeitInMsec = Util.convertToWarteZeitInMsec(startBedingung.getWartezeit());
+				} catch (StartStoppException e) {
+					throw new IllegalStateException(
+							"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
+				}
+				if (warteZeitInMsec > 0) {
+					applikation.getOnlineApplikationTimer().initWarteTask(warteZeitInMsec);
+					return applikation.updateStatus(Applikation.Status.STARTENWARTEN,
+							applikation.getApplikation().getStartMeldung());
+				}
 			}
 		}
-
+		
 		switch (applikation.getApplikation().getInkarnation().getStartArt().getOption()) {
 		case INTERVALLRELATIV:
 		case INTERVALLABSOLUT:
