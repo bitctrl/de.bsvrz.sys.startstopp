@@ -29,6 +29,7 @@ package de.bsvrz.sys.startstopp.console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.TooManyListenersException;
 
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.graphics.PropertyTheme;
@@ -41,6 +42,7 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow;
+import de.bsvrz.sys.startstopp.process.os.OSTools;
 
 public class StartStoppConsole {
 
@@ -67,7 +69,8 @@ public class StartStoppConsole {
 		INSTANZ.client = new StartStoppClient(INSTANZ.options.getHost(), INSTANZ.options.getPort());
 
 		DefaultTerminalFactory factory = new DefaultTerminalFactory();
-		factory.setPreferTerminalEmulator(true);
+		factory.setPreferTerminalEmulator(OSTools.isWindows());
+		factory.setForceTextTerminal(!OSTools.isWindows());
 		try (Terminal term = factory.createTerminal()) {
 			try (Screen screen = new TerminalScreen(term)) {
 				INSTANZ.gui = new MultiWindowTextGUI(screen);
