@@ -367,6 +367,7 @@ public class StartStoppXMLParser {
 		}
 
 		suppressInkarnationName(konfiguration);
+		fuelleStandardWerte(konfiguration);
 
 		return konfiguration;
 	}
@@ -384,8 +385,18 @@ public class StartStoppXMLParser {
 		}
 
 		suppressInkarnationName(konfiguration);
+		fuelleStandardWerte(konfiguration);
 
 		return konfiguration;
+	}
+
+	private void fuelleStandardWerte(StartStoppSkript konfiguration) {
+		for( Inkarnation inkarnation : konfiguration.getInkarnationen()) {
+			StartArt startArt = inkarnation.getStartArt();
+			if( startArt == null) {
+				inkarnation.setStartArt(new StartArt());
+			}
+		}
 	}
 
 	private void suppressInkarnationName(StartStoppSkript konfiguration) {
