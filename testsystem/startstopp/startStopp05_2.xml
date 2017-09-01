@@ -172,7 +172,7 @@
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="intervallabsolut" neustart="nein" intervall="*/3 * * * *" />
-        <stoppbedingung vorgaenger="Applikation03" wartezeit="5" />
+        <stoppbedingung nachfolger="Applikation03" wartezeit="5" />
         <standardAusgabe dateiname="Applikation02.stdout" />
         <standardFehlerAusgabe dateiname="Applikation02.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="1" />
@@ -188,7 +188,7 @@
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="automatisch" neustart="nein" intervall="" />
-        <stoppbedingung vorgaenger="Applikation01 Applikation02" wartezeit="7" />
+        <stoppbedingung nachfolger="Applikation01 Applikation02" wartezeit="7" />
         <standardAusgabe dateiname="Applikation03.stdout" />
         <standardFehlerAusgabe dateiname="Applikation03.stderr" />
         <startFehlerverhalten option="abbruch" wiederholungen="1" />
