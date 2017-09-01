@@ -165,9 +165,10 @@
         <!-- Heap Space -->
         <aufrufparameter wert="-Xmx512m" />
         <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
-        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.startstopp/de.bsvrz.sys.startstopp-runtime.jar de.bsvrz.sys.startstopp.skriptvew.StartStoppApp" />
+        <aufrufparameter wert="-jar %dist%de.bsvrz.sys.startstopp/de.bsvrz.sys.startstopp-runtime.jar de.bsvrz.sys.startstopp.startstopp.StartStopp" />
         <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
-        <!-- <aufrufparameter wert="%debug.default%" /> -->
+        <aufrufparameter wert="-benutzerKonfiguration=../konfiguration/benutzerverwaltung.xml" />
+        <aufrufparameter wert="-authentifizierung=passwd"/>
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <startart option="intervallabsolut" neustart="nein" intervall="*/3 * * * *" />
         <standardAusgabe dateiname="Applikation02.stdout" />
