@@ -142,7 +142,7 @@
 			<!-- Restsystem -->
 			<inkarnation name="Betriebsmeldungsverwaltung">
 				<applikation name="%java%" />
-				<aufrufparameter wert="%jvmArgs% -Xmx100m" />
+				<aufrufparameter wert="-Xmx64m" />
 				<aufrufparameter wert="-cp %dist%/de.bsvrz.vew.bmvew/de.bsvrz.vew.bmvew-runtime.jar" />
 				<aufrufparameter wert="de.bsvrz.vew.bmvew.bmvew.BetriebsMeldungApp" />
 				<aufrufparameter wert="%dav1.mitAuthentifizierung%" />
