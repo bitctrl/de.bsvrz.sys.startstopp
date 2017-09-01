@@ -325,6 +325,11 @@
         
     <version nr="1" zeitpunkt="30.08.2017 15:36:50,137"/>
 </konfigurationsbereich>
+    <konfigurationsbereich pid="kb.tmKExEmailFaxGlobal" verzeichnis="">
+<version nr="2" zeitpunkt="01.09.2017 10:46:07,795"/>
+</konfigurationsbereich>
+
+
 
 <konfigurationsbereich pid="kb.testModell" verzeichnis="">
 <version nr="1" zeitpunkt="30.08.2017 15:38:26,738"/>
@@ -334,6 +339,7 @@
 </konfigurationsbereich>
 <konfigurationsbereich pid="kb.testRechner" verzeichnis="">
 <version nr="1" zeitpunkt="30.08.2017 15:38:26,738"/>
+<version nr="2" zeitpunkt="01.09.2017 10:46:25,101"/>
 </konfigurationsbereich>
 <konfigurationsbereich pid="kb.testUsv" verzeichnis="">
 <version nr="1" zeitpunkt="30.08.2017 15:38:26,738"/>

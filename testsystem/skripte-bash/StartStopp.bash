@@ -7,7 +7,6 @@ $java \
  de.bsvrz.sys.startstopp.startstopp.StartStopp \
  -benutzerKonfiguration=../konfiguration/benutzerverwaltung.xml \
  -authentifizierung=passwd \
- -betriebsMeldungVersenden=nein \
  -startStoppKonfiguration=startstopp \
  -debugLevelStdErrText=INFO \
  -debugLevelFileText=CONFIG\
