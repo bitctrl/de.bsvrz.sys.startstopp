@@ -147,7 +147,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 		MenuPanel menuPanel = new MenuPanel();
 		panel.setLayoutManager(new GridLayout(1));
-		Label statusLabel = new MenuLabel("s-System  p-ENTER t-Theme   e-Editieren   i-Info");
+		Label statusLabel = new MenuLabel("s-System  ENTER-Applikation t-Theme   e-Editieren   i-Info");
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
 		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
 

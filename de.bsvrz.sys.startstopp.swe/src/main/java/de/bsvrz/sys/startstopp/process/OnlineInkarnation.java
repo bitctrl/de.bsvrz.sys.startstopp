@@ -57,7 +57,7 @@ public class OnlineInkarnation {
 		inkarnation.setInkarnationsTyp(quelle.getInkarnationsTyp());
 		StartArt startArt = quelle.getStartArt();
 		if (startArt == null) {
-			inkarnation.setStartArt(new StartArt().withOption(StartArt.Option.AUTOMATISCH));
+			inkarnation.setStartArt(new StartArt());
 		} else {
 			inkarnation.setStartArt(startArt);
 		}
