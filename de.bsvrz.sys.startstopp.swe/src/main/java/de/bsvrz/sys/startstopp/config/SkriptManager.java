@@ -116,7 +116,7 @@ public class SkriptManager {
 			}
 			if (skript == null) {
 				LOGGER.warning("Versuche XML-Datei zu konvertieren!");
-				skript = new StartStoppXMLParser().getSkriptFromFile(new File("startstopp.xml"));
+				skript = new StartStoppXMLParser().getSkriptFromFile(new File(startStopp.getOptions().getSkriptDir(), "startstopp.xml"));
 				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
 				try (FileOutputStream fileStream = new FileOutputStream(getStartStoppSkriptFile());
