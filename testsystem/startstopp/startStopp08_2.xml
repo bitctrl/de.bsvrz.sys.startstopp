@@ -61,7 +61,7 @@
         <!-- Heap Space -->
         <aufrufparameter wert="-Xmx512m" />
         <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
-        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04" />
+        <aufrufparameter wert="-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04" />
         <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
@@ -77,7 +77,7 @@
         <!-- Heap Space -->
         <aufrufparameter wert="-Xmx512m" />
         <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
-        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05" />
+        <aufrufparameter wert="-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05" />
         <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
@@ -94,7 +94,7 @@
         <!-- Heap Space -->
         <aufrufparameter wert="-Xmx512m" />
         <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
-        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application02" />
+        <aufrufparameter wert="-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application02" />
         <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
@@ -112,7 +112,7 @@
         <!-- Heap Space -->
         <aufrufparameter wert="-Xmx512m" />
         <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
-        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05" />
+        <aufrufparameter wert="-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05" />
         <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
