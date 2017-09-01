@@ -8,7 +8,7 @@ $java \
  -benutzerKonfiguration=../konfiguration/benutzerverwaltung.xml \
  -authentifizierung=passwd \
  -betriebsMeldungVersenden=nein \
- -startStoppKonfiguration=ststxml \
+ -startStoppKonfiguration=startstopp \
  -debugLevelStdErrText=INFO \
  -debugLevelFileText=CONFIG\
  &
