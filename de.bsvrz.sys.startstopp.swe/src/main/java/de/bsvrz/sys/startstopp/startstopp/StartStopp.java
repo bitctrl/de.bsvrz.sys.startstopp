@@ -63,13 +63,6 @@ public class StartStopp {
 			instance.init(args);
 			instance.start();
 
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				@Override
-				public void run() {
-					instance.processManager.shutdownSkript();
-				}
-			});
-
 		} catch (Exception e) {
 			System.err.println(e.getLocalizedMessage());
 			System.exit(-1);

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
@@ -109,6 +110,22 @@ public final class ProzessManager {
 		
 		rechnerManager.doRechnerManagerAktualisiert.addHandler(()->{
 			applikationen.values().forEach(app->app.checkState(TaskType.DEFAULT));
+		});
+		
+
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				LOGGER.info("Shutdown-Hook aufgerufen");
+				shutdownSkript();
+				while (!checkStoppStatus()) {
+					try {
+						TimeUnit.SECONDS.sleep(2);
+					} catch (InterruptedException e) {
+						LOGGER.warning(e.getLocalizedMessage());
+					}
+				}
+			}
 		});
 	}
 
@@ -360,72 +377,6 @@ public final class ProzessManager {
 					e);
 		}
 	}
-
-	// Set<String> waitForKernsystemStart(OnlineApplikation applikation) {
-	//
-	// Set<String> result = new LinkedHashSet<>();
-	//
-	// for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
-	// if (ks.getInkarnationsName().equals(applikation.getName())) {
-	// return result;
-	// }
-	// OnlineApplikation app = applikationen.get(ks.getInkarnationsName());
-	// switch (app.getStatus()) {
-	// case GESTARTET:
-	// case INITIALISIERT:
-	// break;
-	// default:
-	// result.add(applikation.getName());
-	// }
-	// }
-	//
-	// return result;
-	// }
-
-	// Set<String> waitForKernsystemStopp(OnlineApplikation applikation) {
-	//
-	// Set<String> result = new LinkedHashSet<>();
-	// OnlineApplikation transmitter = null;
-	//
-	// if (applikation.isKernsystem()) {
-	// for (OnlineApplikation onlineApplikation : applikationen.values()) {
-	// if (applikation.equals(onlineApplikation)) {
-	// continue;
-	// }
-	// if (onlineApplikation.isKernsystem()) {
-	// if (onlineApplikation.isTransmitter()) {
-	// transmitter = onlineApplikation;
-	// }
-	// } else if (onlineApplikation.getStatus() != Applikation.Status.GESTOPPT) {
-	// result.add(onlineApplikation.getName());
-	// }
-	// }
-	//
-	// if (OSTools.isWindows()) {
-	// if (transmitter != null) {
-	// result.add(transmitter.getName());
-	// }
-	// } else {
-	// boolean found = false;
-	// for (KernSystem ks : aktuelleKonfiguration.getKernSysteme()) {
-	// if (found) {
-	// try {
-	// OnlineApplikation ksApplikation = getApplikation(ks.getInkarnationsName());
-	// if (ksApplikation.getStatus() != Applikation.Status.GESTOPPT) {
-	// result.add(ks.getInkarnationsName());
-	// }
-	// } catch (StartStoppException e) {
-	// throw new IllegalStateException("Applikation sollte hier immer gefunden
-	// werden!", e);
-	// }
-	// } else if (ks.getInkarnationsName().equals(applikation.getName())) {
-	// found = true;
-	// }
-	// }
-	// }
-	// }
-	// return result;
-	// }
 
 	public void applikationStatusChanged(ApplikationEvent status) {
 		boolean allStopped = checkStoppStatus();
