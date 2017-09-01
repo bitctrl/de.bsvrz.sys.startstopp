@@ -177,7 +177,7 @@
         <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
-        <startart option="intervallrelativ" neustart="nein" intervall="*/3 * * * *" />
+        <startart option="intervallabsolut" neustart="nein" intervall="*/3 * * * *" />
         <startbedingung vorgaenger="Applikation06" warteart="ende" wartezeit="5" />
         <standardAusgabe dateiname="Applikation02.stdout" />
         <standardFehlerAusgabe dateiname="Applikation02.stderr" />
