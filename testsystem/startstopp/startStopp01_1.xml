@@ -66,6 +66,8 @@
 				nameDatei="%root%/logs/Applikation06.stdout.log" groesse="1" />
 			<protokolldatei name="Applikation06.stderr"
 				nameDatei="%root%/logs/Applikation06.stderr.log" groesse="1" />
+			<protokolldatei name="Betriebsmeldungsverwaltung.stderr"
+				nameDatei="%root%/logs/Betriebsmeldungsverwaltung.stderr.log" groesse="1" />
 		</global>
 		<applikationen>
 			<!-- Kernsystem -->
@@ -138,6 +140,25 @@
 					wiederholungen="0" />
 			</inkarnation>
 			<!-- Restsystem -->
+			<inkarnation name="Betriebsmeldungsverwaltung">
+				<applikation name="%java%" />
+				<aufrufparameter wert="%jvmArgs% -Xmx100m" />
+				<aufrufparameter wert="-cp %dist%/de.bsvrz.vew.bmvew/de.bsvrz.vew.bmvew-runtime.jar" />
+				<aufrufparameter wert="de.bsvrz.vew.bmvew.bmvew.BetriebsMeldungApp" />
+				<aufrufparameter wert="%dav1.mitAuthentifizierung%" />
+				<aufrufparameter wert="-debugLevelStdErrText=WARNING" />
+				<aufrufparameter wert="-debugLevelFileText=CONFIG" />
+				<aufrufparameter wert="-betriebsMeldungsVerwaltung=kv.testKonfiguration" />
+				<aufrufparameter wert="-konfigurationsbereich=kb.default.testKonfiguration" />
+				<aufrufparameter wert="-loeschoffset=3t" />
+				<aufrufparameter wert="-groesseinfoanteil=20" />
+				<startart option="automatisch" neustart="ja" intervall="" />
+				<startbedingung vorgaenger="Parametrierung" warteart="ende" rechner="" wartezeit="20" />
+				<standardAusgabe dateiname="Betriebsmeldungsverwaltung.stderr" />
+				<standardFehlerAusgabe dateiname="Betriebsmeldungsverwaltung.stderr" />
+				<startFehlerverhalten option="ignorieren" wiederholungen="5" />
+				<stoppFehlerverhalten option="ignorieren" wiederholungen="5" />
+			</inkarnation>
 			<inkarnation name="Applikation01">
 				<applikation name="%java%" />
 				<!-- Heap Space -->
