@@ -152,6 +152,7 @@
 				<aufrufparameter wert="-konfigurationsbereich=kb.default.testKonfiguration" />
 				<aufrufparameter wert="-loeschoffset=3t" />
 				<aufrufparameter wert="-groesseinfoanteil=20" />
+				<aufrufparameter wert="-versandobjektkex=bmv.kex" />
 				<startart option="automatisch" neustart="ja" intervall="" />
 				<startbedingung vorgaenger="Parametrierung" warteart="ende" rechner="" wartezeit="20" />
 				<standardAusgabe dateiname="Betriebsmeldungsverwaltung.stderr" />
