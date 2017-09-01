@@ -467,8 +467,8 @@ public final class OnlineApplikation {
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
 			LOGGER.info("Statuswechsel " +  getName() + " --> " + getStatus());
-			prozessManager.getDavConnector().sendeStatusBetriebsMeldung(this);
 			applikation.setStatus(status);
+			prozessManager.getDavConnector().sendeStatusBetriebsMeldung(this);
 			onStatusChanged.send(new ApplikationEvent(onStatusChanged, this.getName(), status));
 			checkState(TaskType.DEFAULT);
 			return true;
