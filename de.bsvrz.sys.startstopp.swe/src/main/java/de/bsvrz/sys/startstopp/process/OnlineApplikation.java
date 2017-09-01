@@ -299,7 +299,11 @@ public final class OnlineApplikation {
 				String wiederholungenStr = fehlerVerhalten.getWiederholungen();
 				if (wiederholungenStr != null) {
 					if (startFehlerCounter++ <= Integer.parseInt(wiederholungenStr)) {
-						updateStatus(Applikation.Status.INSTALLIERT, "Wiederholung nach Startfehler");
+						if (prozessManager.getStartStoppStatus() == Status.RUNNING) {
+							updateStatus(Applikation.Status.INSTALLIERT, "Wiederholung nach Startfehler");
+						} else {
+							updateStatus(Applikation.Status.GESTOPPT, "");
+						}
 						return;
 					}
 				}
@@ -466,7 +470,7 @@ public final class OnlineApplikation {
 		applikation.setStartMeldung(message);
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
-			LOGGER.info("Statuswechsel " +  getName() + " --> " + getStatus());
+			LOGGER.info("Statuswechsel " + getName() + " --> " + getStatus());
 			applikation.setStatus(status);
 			prozessManager.getDavConnector().sendeStatusBetriebsMeldung(this);
 			onStatusChanged.send(new ApplikationEvent(onStatusChanged, this.getName(), status));

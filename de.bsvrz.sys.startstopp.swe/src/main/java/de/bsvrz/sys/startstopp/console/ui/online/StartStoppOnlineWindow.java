@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import com.googlecode.lanterna.TextColor;
@@ -151,7 +152,15 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
 		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
 
-		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new Updater(), 0, 2, TimeUnit.SECONDS);
+		Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+			
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread thread = Executors.defaultThreadFactory().newThread(r);
+				thread.setDaemon(true);
+				return thread;
+			}
+		}).scheduleAtFixedRate(new Updater(), 0, 2, TimeUnit.SECONDS);
 
 		setComponent(panel);
 	}

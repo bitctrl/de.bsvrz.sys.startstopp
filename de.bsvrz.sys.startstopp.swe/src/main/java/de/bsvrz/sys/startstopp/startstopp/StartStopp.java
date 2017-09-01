@@ -52,22 +52,29 @@ public class StartStopp {
 	private ApiServer apiServer;
 	private String inkarnationsPrefix;
 
-	
 	public static StartStopp getInstance() {
 		return instance;
 	}
 
 	public static void main(String[] args) throws Exception {
 		try {
-//			System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "1");
+
+
 			instance.init(args);
 			instance.start();
+
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					instance.processManager.shutdownSkript();
+				}
+			});
+
 		} catch (Exception e) {
 			System.err.println(e.getLocalizedMessage());
 			System.exit(-1);
 		}
 	}
-
 
 	public String getInkarnationsPrefix() {
 
@@ -116,7 +123,7 @@ public class StartStopp {
 		return status;
 	}
 
-	private void init(String ... args) throws Exception {
+	private void init(String... args) throws Exception {
 
 		Debug.init("StartStopp", new ArgumentList(args));
 

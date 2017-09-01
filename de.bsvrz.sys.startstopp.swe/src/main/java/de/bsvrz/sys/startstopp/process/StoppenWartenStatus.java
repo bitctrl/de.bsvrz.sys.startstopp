@@ -94,6 +94,7 @@ public class StoppenWartenStatus extends OnlineApplikationStatus {
 		}
 		
 		applikation.getOnlineApplikationTimer().initStoppFehlerTask();
+		applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Warte auf Prozessende");
 		applikation.stoppeApplikation();
 		return true;
 	}
