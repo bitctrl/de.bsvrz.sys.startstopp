@@ -376,12 +376,11 @@ public class SkriptManager {
 
 		try {
 			File versionDir = new File(startStopp.getOptions().getSkriptDir(), "history");
-			File archivFile = new File(versionDir, "startstopp.json" + utcNow);
-			Files.copy(getStartStoppSkriptFile().toPath(), archivFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			
+			File archivFile = new File(versionDir, "startstopp.json." + utcNow);
 			Files.copy(tempSkript.toPath(), getStartStoppSkriptFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
 			Files.copy(tempHistoryFile.toPath(), getStartStoppHistoryFile().toPath(),
 					StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(getStartStoppSkriptFile().toPath(), archivFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			throw new StartStoppException(e);
 		} finally {

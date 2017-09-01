@@ -165,9 +165,7 @@ public class DavConnector {
 		DataModel dataModel = connection.getDataModel();
 		UserAdministration userAdministration = dataModel.getUserAdministration();
 		try {
-			LOGGER.warning("Prüfe Passwort: " + veranlasser + ": " + passwort);
 			boolean result = userAdministration.isUserAdmin(veranlasser, passwort, veranlasser);
-			LOGGER.warning("Geprüft: " + result);
 			return result;
 		} catch (ConfigurationTaskException e) {
 			throw new StartStoppException(e);
