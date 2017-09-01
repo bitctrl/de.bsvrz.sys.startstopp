@@ -54,6 +54,7 @@ import de.bsvrz.sys.startstopp.process.OnlineApplikation;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
+import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 import de.muspellheim.events.Event;
 
@@ -72,13 +73,16 @@ public class DavConnector {
 	private String inkarnationsPrefix;
 	private MessageSender messageSender;
 	private SystemObject lokalerRechner;
+	private StartStoppOptions options;
 
 	public DavConnector(ProzessManager prozessManager) {
 		this(StartStopp.getInstance(), prozessManager);
 	}
 
 	public DavConnector(StartStopp startStopp, ProzessManager prozessManager) {
+		this.options = startStopp.getOptions();
 		this.processManager = prozessManager;
+		
 		this.inkarnationsPrefix = startStopp.getInkarnationsPrefix();
 		appStatusHandler = new ApplikationStatusHandler();
 		appStatusHandler.onStatusChange.addHandler((status) -> appStatusChanged(status));
@@ -227,13 +231,13 @@ public class DavConnector {
 	}
 
 	public void sendeBetriebsmeldung(String meldung) {
-		if (isOnline()) {
+		if (isOnline() && options.isBetriebsMeldungVersenden()) {
 			messageSender.sendMessage(MessageType.SYSTEM_DOMAIN, MessageGrade.INFORMATION, meldung);
 		}
 	}
 
 	public void sendeStatusBetriebsMeldung(OnlineApplikation onlineApplikation) {
-		if (!isOnline()) {
+		if (!isOnline() || !options.isBetriebsMeldungVersenden()) {
 			return;
 		}
 

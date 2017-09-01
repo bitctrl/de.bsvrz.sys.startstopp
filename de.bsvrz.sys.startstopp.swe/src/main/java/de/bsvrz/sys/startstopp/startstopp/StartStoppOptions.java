@@ -144,8 +144,12 @@ public class StartStoppOptions {
 		return null;
 	}
 
-	boolean isBetriebsMeldungVersenden() {
+	public boolean isBetriebsMeldungVersenden() {
 		return betriebsMeldungVersenden;
+	}
+
+	public void setBetriebsMeldungVersenden(boolean betriebsMeldungVersenden) {
+		this.betriebsMeldungVersenden = betriebsMeldungVersenden;
 	}
 
 }
