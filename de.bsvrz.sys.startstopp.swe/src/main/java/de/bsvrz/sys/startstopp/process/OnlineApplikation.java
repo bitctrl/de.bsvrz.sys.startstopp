@@ -238,7 +238,7 @@ public final class OnlineApplikation {
 		return builder.toString();
 	}
 
-	String getName() {
+	public String getName() {
 		return applikation.getInkarnation().getInkarnationsName();
 	}
 
@@ -339,7 +339,7 @@ public final class OnlineApplikation {
 			onlineApplikationTimer.clear();
 			process = null;
 		}
-		
+
 		switch (applikation.getInkarnation().getStartArt().getOption()) {
 		case INTERVALLABSOLUT:
 		case INTERVALLRELATIV:
@@ -350,7 +350,8 @@ public final class OnlineApplikation {
 			}
 			break;
 		default:
-			if ((prozessManager.getStartStoppStatus() == StartStoppStatus.Status.RUNNING) && applikation.getInkarnation().getStartArt().getNeuStart()) {
+			if ((prozessManager.getStartStoppStatus() == StartStoppStatus.Status.RUNNING)
+					&& applikation.getInkarnation().getStartArt().getNeuStart()) {
 				updateStatus(Applikation.Status.INSTALLIERT, "");
 			} else {
 				updateStatus(Applikation.Status.GESTOPPT, "");
@@ -442,7 +443,11 @@ public final class OnlineApplikation {
 						.warning("Die Applikation \"" + getName()
 								+ "\" konnte nicht über die Dav-Terminierungsschnittstelle beendet werden: "
 								+ e.getLocalizedMessage());
-				process.kill();
+				if (process.terminateSupported()) {
+					process.terminate();
+				} else {
+					process.kill();
+				}
 			}
 		}
 	}
@@ -461,6 +466,8 @@ public final class OnlineApplikation {
 		applikation.setStartMeldung(message);
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
+			LOGGER.info("Statuswechsel " +  getName() + " --> " + getStatus());
+			prozessManager.getDavConnector().sendeStatusBetriebsMeldung(this);
 			applikation.setStatus(status);
 			onStatusChanged.send(new ApplikationEvent(onStatusChanged, this.getName(), status));
 			checkState(TaskType.DEFAULT);

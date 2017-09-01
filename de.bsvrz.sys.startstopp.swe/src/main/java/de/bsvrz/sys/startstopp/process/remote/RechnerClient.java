@@ -26,15 +26,19 @@
 
 package de.bsvrz.sys.startstopp.process.remote;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.muspellheim.events.Action;
 
 public class RechnerClient implements Runnable {
 
@@ -42,8 +46,10 @@ public class RechnerClient implements Runnable {
 	private StartStoppClient client;
 	private Map<String, Applikation> applikationen = new LinkedHashMap<>();
 	private boolean listeErmittelt;
-	private boolean fehlerGemeldet;
+	private long fehlerGemeldet;
 	private Rechner rechner;
+
+	final Action onRechnerAktualisiert = new Action();
 
 	RechnerClient(Rechner rechner) {
 		this.rechner = rechner;
@@ -52,26 +58,50 @@ public class RechnerClient implements Runnable {
 
 	@Override
 	public void run() {
+
+		boolean changed = false;
+
 		try {
 			List<Applikation> remoteList = client.getApplikationen();
 			synchronized (applikationen) {
-				applikationen.clear();
+				Set<String> remoteNames = new LinkedHashSet<>();
 				for (Applikation applikation : remoteList) {
-					applikationen.put(applikation.getInkarnation().getInkarnationsName(), applikation);
+					remoteNames.add(applikation.getInkarnation().getInkarnationsName());
+					Applikation oldApplikation = applikationen.put(applikation.getInkarnation().getInkarnationsName(),
+							applikation);
+					if (oldApplikation == null) {
+						changed = true;
+					} else {
+						changed = changed || (oldApplikation.getStatus() != applikation.getStatus());
+					}
 				}
+				
+				Iterator<String> iterator = applikationen.keySet().iterator();
+				while( iterator.hasNext()) {
+					String next = iterator.next();
+					if( !remoteNames.contains(next)) {
+						iterator.remove();
+						changed = true;
+					}
+				}
+				
 				listeErmittelt = true;
-				fehlerGemeldet = false;
 			}
 		} catch (StartStoppException e) {
-			if (!fehlerGemeldet) {
-				LOGGER.fine(rechner.getName() + ": Liste der Applikationen konnte nicht abgerufen werden!",
-						e.getLocalizedMessage());
-				fehlerGemeldet = true;
+			if (System.currentTimeMillis() - fehlerGemeldet > 60000) {
+				LOGGER.warning(rechner.getName() + ": Liste der Applikationen konnte von \"" + rechner.getTcpAdresse() + ":"
+						+ rechner.getPort() + "\" nicht abgerufen werden!", e.getLocalizedMessage());
+				fehlerGemeldet = System.currentTimeMillis();
 			}
 			synchronized (applikationen) {
+				changed = changed || !applikationen.isEmpty();
 				applikationen.clear();
 				listeErmittelt = false;
 			}
+		}
+		
+		if( changed ) {
+			onRechnerAktualisiert.trigger();
 		}
 	}
 

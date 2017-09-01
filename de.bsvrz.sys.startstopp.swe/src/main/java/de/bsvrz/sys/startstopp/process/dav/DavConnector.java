@@ -26,6 +26,8 @@
 
 package de.bsvrz.sys.startstopp.process.dav;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -33,14 +35,22 @@ import de.bsvrz.dav.daf.main.ClientDavConnection;
 import de.bsvrz.dav.daf.main.ClientDavParameters;
 import de.bsvrz.dav.daf.main.CommunicationError;
 import de.bsvrz.dav.daf.main.ConnectionException;
+import de.bsvrz.dav.daf.main.Data;
 import de.bsvrz.dav.daf.main.InconsistentLoginException;
 import de.bsvrz.dav.daf.main.MissingParameterException;
+import de.bsvrz.dav.daf.main.config.AttributeGroup;
 import de.bsvrz.dav.daf.main.config.ConfigurationTaskException;
 import de.bsvrz.dav.daf.main.config.DataModel;
+import de.bsvrz.dav.daf.main.config.SystemObject;
 import de.bsvrz.dav.daf.main.config.management.UserAdministration;
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.funclib.operatingMessage.MessageGrade;
+import de.bsvrz.sys.funclib.operatingMessage.MessageSender;
+import de.bsvrz.sys.funclib.operatingMessage.MessageState;
+import de.bsvrz.sys.funclib.operatingMessage.MessageType;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.process.OnlineApplikation;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppDavException;
@@ -60,6 +70,8 @@ public class DavConnector {
 	private UsvHandler usvHandler;
 
 	private String inkarnationsPrefix;
+	private MessageSender messageSender;
+	private SystemObject lokalerRechner;
 
 	public DavConnector(ProzessManager prozessManager) {
 		this(StartStopp.getInstance(), prozessManager);
@@ -93,9 +105,15 @@ public class DavConnector {
 				}
 
 				if (!connection.isLoggedIn()) {
+					
 					LOGGER.info("Anmelden als \"" + zugangDav.getUserName() + "\" Passwort: \""
 							+ zugangDav.getPassWord() + "\"");
 					connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
+
+					messageSender = MessageSender.getInstance();
+					messageSender.init(connection, "Start/Stopp", inkarnationsPrefix + "_MsgSender");
+					lokalerRechner = ermittleLokalenRechner(connection.getDataModel());
+					
 					appStatusHandler.reconnect(connection);
 					usvHandler.reconnect(connection);
 					processManager.davConnected();
@@ -207,4 +225,75 @@ public class DavConnector {
 			throw new StartStoppException("Es besteht keine Datenverteilerverbindung");
 		}
 	}
+
+	public void sendeBetriebsmeldung(String meldung) {
+		if (isOnline()) {
+			messageSender.sendMessage(MessageType.SYSTEM_DOMAIN, MessageGrade.INFORMATION, meldung);
+		}
+	}
+
+	public void sendeStatusBetriebsMeldung(OnlineApplikation onlineApplikation) {
+		if (!isOnline()) {
+			return;
+		}
+
+		String meldung = null;
+		String meldungsZusatz = null;
+
+		switch (onlineApplikation.getStatus()) {
+		case GESTARTET:
+			meldung = "Applikation " + onlineApplikation.getName() + " gestartet. [Sys-StSt-St01]";
+			meldungsZusatz = "[Sys-StSt-St01]";
+			break;
+		case GESTOPPT:
+			meldung = "Applikation " + onlineApplikation.getName() + " gestopped. [Sys-StSt-St02]";
+			meldungsZusatz = "[Sys-StSt-St02]";
+			break;
+		default:
+			break;
+		}
+
+		if (meldung != null) {
+			messageSender.sendMessage("AOE", MessageType.SYSTEM_DOMAIN, meldungsZusatz, MessageGrade.INFORMATION,
+					getLokalerRechner(), MessageState.NEW_MESSAGE, null, meldung);
+		}
+	}
+
+	private SystemObject getLokalerRechner() {
+		if (isOnline()) {
+			return lokalerRechner;
+		}
+		return null;
+	}
+
+	private SystemObject ermittleLokalenRechner(DataModel dataModel) {
+		
+		String hostName = null;
+		String adresse = null;
+		try {
+			adresse = InetAddress.getLocalHost().getHostAddress();
+			hostName = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
+			return null;
+		}
+
+		AttributeGroup rechnerAtg = dataModel.getAttributeGroup("atg.rechnerInformation");
+		if( rechnerAtg == null) {
+			LOGGER.warning("Die Attributgruppe \" atg.rechnerInformation \" ist in der aktuellen Konfiguration nicht verfügbar");
+			return null;
+		}
+		
+		for( SystemObject object : dataModel.getType("typ.rechner").getElements()) {
+			Data data = object.getConfigurationData(rechnerAtg);
+			if( data != null) {
+				String tcpText = data.getTextValue("TCPIP").getText();
+				if( tcpText.equals(hostName) || tcpText.equals(adresse)) {
+					return object;
+				}
+			}
+		}
+		return null;
+	}
+
 }

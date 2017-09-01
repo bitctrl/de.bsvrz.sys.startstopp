@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
+import de.muspellheim.events.Action;
 
 public class RechnerManager {
 
@@ -48,9 +49,12 @@ public class RechnerManager {
 		private ScheduledFuture<?> future;
 	}
 
+	public final Action doRechnerManagerAktualisiert = new Action();
+
 	private ScheduledThreadPoolExecutor rechnerExecutor = new ScheduledThreadPoolExecutor(5, new NamingThreadFactory("Rechnermanager"));
 	private Map<String, ManagedRechner> managedRechner = new LinkedHashMap<>();
 
+	
 	public RechnerManager() {
 		rechnerExecutor.setRemoveOnCancelPolicy(true);
 	}
@@ -74,6 +78,7 @@ public class RechnerManager {
 		while (iterator.hasNext()) {
 			Entry<String, ManagedRechner> entry = iterator.next();
 			if (!names.contains(entry.getKey())) {
+				entry.getValue().client.onRechnerAktualisiert.removeHandler(this::rechnerAktualisiert);
 				entry.getValue().future.cancel(true);
 				iterator.remove();
 			}
@@ -84,6 +89,7 @@ public class RechnerManager {
 		ManagedRechner managed;
 		managed = new ManagedRechner();
 		managed.client = new RechnerClient(rechnerEintrag);
+		managed.client.onRechnerAktualisiert.addHandler(this::rechnerAktualisiert);
 		managed.future = rechnerExecutor.scheduleAtFixedRate(managed.client, 0, 30, TimeUnit.SECONDS);
 		managedRechner.put(name, managed);
 	}
@@ -95,5 +101,9 @@ public class RechnerManager {
 		}
 
 		return managed.client;
+	}
+	
+	private void rechnerAktualisiert() {
+		doRechnerManagerAktualisiert.trigger();
 	}
 }

@@ -106,7 +106,10 @@ public final class ProzessManager {
 			LOGGER.fine(e.getLocalizedMessage());
 			aktuelleKonfiguration = null;
 		}
-
+		
+		rechnerManager.doRechnerManagerAktualisiert.addHandler(()->{
+			applikationen.values().forEach(app->app.checkState(TaskType.DEFAULT));
+		});
 	}
 
 	void setStartStoppStatus(StartStoppStatus.Status status) {
@@ -221,6 +224,7 @@ public final class ProzessManager {
 		case RUNNING_CANCELED:
 		case RUNNING:
 		case STOPPING_CANCELED:
+			davConnector.sendeBetriebsmeldung("StartStopp-Skript wird angehalten");
 			if (checkStoppStatus()) {
 				setStartStoppStatus(Status.STOPPED);
 			} else {
