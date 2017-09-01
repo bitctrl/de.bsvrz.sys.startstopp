@@ -9,53 +9,110 @@ Stand: 31.08.17
 
 == Allgemeines
 
-Die Prüfprzedur beschreibt die Durchführung der Prüfungen für die SWE Sys StartStopp gemäß Prüfspezifikation.
+Die Prüfprozedur beschreibt die Durchführung der Prüfungen für die SWE Sys StartStopp gemäß Prüfspezifikation.
 
 == Prüfvoraussetzungen
 
-Zur Prüfung wird ein installiertes Datenverteilersystem auf zwei unabhängigen Rechnern eingesetzt. Verwendet wird die mit der SWE zur Verfügung gestellte Konfiguration und die mitgelieferten SWE basierend auf der Kernsoftware 3.9.2.
+Zur Prüfung wird ein installiertes Datenverteilersystem auf zwei unabhängigen Rechnern eingesetzt. 
+Verwendet wird das mit der SWE zur Verfügung gestellte System, dass die erforderlichen SWE basierend auf der Kernsoftware 3.9.2 enthält.
+ 
+Installiert werden neben den Standarddatenverteiler-Paketen die SWE StartStopp in der zu testenden Version und das 
+Paket "de.bsvrz.sys.stst.test", in dem die für die Testkonfiguration zu verwendetenen Applikationen mit den jeweils
+geforderten Eigenschaften implementiert sind.
 
-Installiert werden neben den Standarddatenverteiler-Paketen die SWE StartStopp in der zu testenden Version und das Paket "de.bsvrz.sys.stst.test", in dem die für die Testkonfiguration zu verwendetenen Applikationen mit den jeweils geforderten Eigenschaften implementiert sind.
+Als StartStopp-Skripte werden die aus den vorgegebenen JSON-Dateien eingesetzt. 
+Die Angabe erfolgt im Folgenden daher als Dateiname ohne Dateierweiterung.
 
-Die Applikationen sind wie folgt näher definiert:
+== Allgemeine Hinweise zur Ausführung der Testspezifikation
 
-* *Application01*
-* *Application02*
-* *Application03*
-* *Application04*
-* *Application05*
-* *Application06*
-* *Application07*
-* *Application08*
-* *Application09*
-* *Application010*
+=== Ausführen der StartStopp-Applikation
 
-Als StartStopp-Skripte werden die aus den vorgegebenen XML-Dateien konvertierten Skripte eingesetzt. Die Angabe erfolgt im Folgenden daher als Dateiname ohne Dateierweiterung.
+Die StartStopp-Applikation selbst wird per ShellSkript gestartet. Die entsprechende Skripte "StartStopp.bat" bzw. "StartStopp.bash"
+sind in den Unterverzeichnissen "skripte-dos" bzw. "skripte-bash" zu finden. Gegebenfalls müssen dort vor der Ausführung die in den 
+Prüffälllen geforderten Startparameter angepasst werden.
+
+Die StartStopp-Applikation bindet per Standardkonfiguration den Port 3000 für einen https-Server. Der Port muss deswegen
+auf dem System zur Verwendung frei sein. 
+
+=== Ausführen der StartStopp-Bedienoberfläche
+
+==== Allgemeines
+
+Für die Ausführung der Bedienoberfläche steht ebenfalls ein Shell-Skript in den oben genannten Skriptverzeichnissen zur Verfügung.
+Es handelt sich um die Skripte "StartStoppGui.bat" bzw. "StartStoppGui.bash".
+
+Es gibt zwei grundsätzliche Betriebszustände in der Bedienoberfläche. Das ist zum ersten der auch initial angezeigte Online-Modus.
+
+==== Online-Modus
+
+image::online_window.png[Online-Modus]
+
+Wenn ein gültiges StartStopp-Skript geladen werden konnte, zeigt die Bedienoberfläche hier  die Liste der installierten Inkarnationen
+mit ihrem aktuellen Betriebszustand.
+
+Im Wesentlichen stehen hier die Funktionen zur Steuerung des gesamten Systems und zur Steuerung einzelner Applikationen zur Verfügung.
+
+Mit der Taste "s" wird das Systemmenü angezeigt.
+
+image::online_system_menue.png[System-Menü]
+
+Über die entsprechenden Funktionen kann das aktuelle StartStopp-Skript gestartet und beendet oder die StartStopp-Applikation 
+selbst beendet werden.
+
+Mit der Taste "ENTER" wird das Applikationsmenü für die aktuell ausgewählte Applikation angezeigt.
+
+image::online_applikation_menue.png[Applikations-Menü]
+
+In diesem Menü stehen entsprechende Funktionen für die ausgewählte Applikation zur Verfügung. 
+
+Mit der Taste "e" wird der Editor-Modus erreicht.
+
+==== Editor-Modus
+
+Im Editor-Modus werden die im aktuellen StartStopp-Skript definierten Inkarnationen angezeigt.
+
+image::edit_window.png[Editor-Modus]
+
+Über die Taste "s" wird das System-Menü angezeigt, das unter anderem die Möglichkeit bietet das Skript zu versionieren.
+
+Der Editor-Modus bietet auch die Funktion die anderen Elemente eines Skripts zu bearbeiten:
+
+* Kernsystem (Taste "k")
+* Makros (Taste "m")
+* Rechner (Taste "r")
+* USV (Taste "u")
+* DAV-Zugangsdaten (Taste "z")
+* Liste der Inkarnationen (Taste "i")
+
+Für die Listen (Inkarnatiionen, Makros, Rechner) wird für den jeweils ausgewählten Eintrag ein Editor geöffnet. Mit der 
+Tastenkombinationen ALT+EINFÜGEN wird ein neues Element angelegt, mit ALT+ENTFERNEN wird das aktuelle Element aus der Liste
+entfernt.
+Für die übrigen Elemente wird ein spezieller Dialog zur Bearbeitung geöffnet. 
+
+Nach dem Versionieren wird das aktualisierte Skript übernommen und Inkarnationen neu gestartet bzw. beendet.
+
+NOTE: Eine detaillierte Beschreibung der Bedienoberfläche befindet sich in den Betriebsinformationen.
 
 == Durchführung der Testfälle gemäß Testspezifikation
 
-=== Normalbetrieb Start/Stopp
+include::fall1.adoc[]
 
+include::fall2.adoc[]
 
+include::fall3.adoc[]
 
+include::fall4.adoc[]
 
-=== Normalbetrieb Applikationen
+include::fall5.adoc[]
 
-=== Erneute Ausführung der Konfiguration
+include::fall6.adoc[]
 
-=== Fehlerbehandlung
+include::fall7.adoc[]
 
-=== Fehlerbehandlung Konfiguration 
+include::fall8.adoc[]
 
-=== Fehlerbehandlung Applikationen
+include::fall9.adoc[]
 
-=== Verhalten bei Fehlern
+include::fall10.adoc[]
 
-=== Start- und Stoppbedingungen
-
-=== Bedienoberfläche
-
-=== Beendigung Start/Stopp
-
-=== Code-Review 
-
+include::fall11.adoc[]

@@ -1,0 +1,23 @@
+=== Prüffall 9: Bedienoberfläche
+
+==== Prüfobjekt
+
+Start/Stopp verfügt über eine textbasierte Bedienoberfläche über die es umfassend bedient werden kann.
+
+==== Ausgangssituation
+
+Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=ststxml“ gestartet und der Bedienoberfläche gestartet. Die zu verwendende Konfigurationsdatei befindet sich in [StartStopp9]. Die Datei ist in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen. Es wird eine Applikation benötigt, die eine nennenswerte Zeit benötigt, bevor sie sich fertig meldet.
+
+==== Eingaben
+
+Die Bedienoberfläche wird auf eine farbige Darstellung umgeschaltet. Es werden die Detailinformationen von einzelnen Applikation angezeigt. Eine vorbereitete Anwendung wird manuell gestartet, danach wieder gestoppt.
+
+Es wird eine neue Applikation hinzugefügt. Die zuvor gestoppte Applikation wird aus der Konfiguration entfernt. Es wird eine neue Makrodefinition hinzugefügt. Es wird eine neue Applikation zum Kernsystem hinzugefügt, die die neue Makrodefinition verwendet. Ein vorhandener Aufrufparameter der Applikation und einer der JVM wird geändert. Die Konfiguration wird gespeichert und das Gesamtsystem neu gestartet, so dass alle laufenden Anwendungen beendet werden. Eine Makrodefinition, ein Aufrufparameter einer Applikation und ein Aufrufparameter der JVM werden entfernt.
+
+==== Erwartete Ergebnisse
+
+* Die farbige Darstellung ist möglich und die Statusänderungen der Applikationen werden korrekt visualisiert.
+* Die Detailinformationen zu den Applikationen werden korrekt angezeigt.
+* Das Hinzufügen und Entfernen von Applikationen, Makrodefinitionen und Aufrufparametern im laufenden Betrieb ist möglich.
+* Bei länger dauernden Vorgängen signalisiert die Oberfläche ihre Funktionsfähigkeit
+* Die Oberfläche zeigt an, dass die Konfiguration nicht-versionierte Änderungen enthält.

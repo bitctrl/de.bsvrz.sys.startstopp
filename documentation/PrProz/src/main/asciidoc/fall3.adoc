@@ -1,0 +1,21 @@
+=== Prüffall 3: Erneute Ausführung der Konfiguration
+
+==== Prüfobjekt
+
+Start/Stopp ermöglicht die erneute Ausführung einer Konfiguration in den beiden Varianten mit und ohne Beendigung der laufenden Applikationen.
+
+==== Ausgangssituation
+
+Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration= ststxml“ gestartet und der Bedienoberfläche gestartet. Die zu verwendende Konfigurationsdatei befindet sich in [StartStopp3]. Die Datei ist in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen.
+
+==== Eingaben
+
+Eine Anwendung wird gestoppt. Eine Anwendung, die nicht läuft, wird gestartet. Die Konfiguration wird neu gestartet, hierbei wird die Variante gewählt, zunächst alle laufenden Applikationen zu stoppen.
+
+Eine Anwendung wird gestoppt. Eine Anwendung, die nicht läuft, wird gestartet. Die Konfiguration wird neu gestartet, dieses Mal wird die Variante gewählt, nur die nicht laufenden Applikationen zu starten.
+
+==== Erwartete Ergebnisse
+
+* Beim ersten Neustart werden zunächst alle Applikationen gestoppt. Nach dem Neustart läuft die gestoppte Applikation. Die manuell gestartete Applikation läuft nicht.
+* Beim zweiten Neustart laufen die Applikationen weiter. Nach dem Neustart läuft die gestoppte Applikation wieder. Die manuell gestartete Applikation läuft ebenfalls weiter.
+* Die optionalen Angaben werden korrekt mit den Standartwerten belegt.

@@ -1,0 +1,20 @@
+=== Prüffall 10: Beendigung Start/Stopp
+
+==== Prüfobjekt
+
+Start/Stopp erkennt, wenn es von außen beendet wird.
+
+==== Ausgangssituation
+
+Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=ststxml“ gestartet und der Bedienoberfläche gestartet. Die zu verwendende Konfigurationsdatei befindet sich in [StartStopp10]. Die Datei ist in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen. Es wird eine Applikation benötigt, die eine nennenswerte Zeit benötigt, bevor sie sich beendet.
+
+==== Eingaben
+
+Eine Applikation wird manuell gestartet, danach wird die Bedienoberfläche beendet. Start/Stopp wird über das Betriebssystem beendet. Start/Stopp und die manuelle Applikation werden erneut gestartet.
+
+Es wird ein Telegramm versendet, dass das System zu stoppen ist.
+
+==== Erwartete Ergebnisse
+
+* In beiden Fällen wird das Gesamtsystem sicher und korrekt heruntergefahren und beendet.
+* Start/Stopp signalisiert auch bei länger dauernden Prozessen, dass es noch läuft.

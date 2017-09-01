@@ -1,0 +1,21 @@
+=== Prüffall 6: Fehlerbehandlung Applikationen
+
+==== Prüfobjekt
+
+Start/Stopp überwacht Applikationen und startet sie gegebenenfalls neu, wenn sie beendet wurden. Start/Stopp kann Probleme mit Applikationen, die sich in einem inkonsistenten Zustand befinden, beenden.
+
+==== Ausgangssituation
+
+Auf Rechner 2 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=ststxml“ gestartet und der Bedienoberfläche gestartet. Die zu verwendende Konfigurationsdatei befindet sich in [StartStopp6]. Die Datei ist in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen. Es werden zwei Applikationen benötigt, die sich selbst beenden (beispielsweise durch System.exit(0) oder durch eine provozierte, nicht abgefangene Exception).
+
+Es wird eine weitere Applikation benötigt, die auf Anforderung den Zustand „gestoppt“ publiziert, aber dennoch weiterläuft.
+
+==== Eingaben
+
+Zwei Applikationen werden aus der Applikation heraus beendet. Die dritte Applikation meldet den Zustand „gestoppt“. Diese Applikation meldet den Zustand erneut.
+
+==== Erwartete Ergebnisse
+
+* Start/Stopp wird durch das Verhalten der Applikationen nicht negativ beeinflusst.
+* Eine Applikation wird durch Start/Stopp neu gestartet, die andere nicht.
+* Es ist möglich, die Applikation im inkonsistenten Zustand zu beenden und auch direkt neu zu starten.

@@ -1,0 +1,25 @@
+=== Prüffall 2: Normalbetrieb Applikationen
+
+==== Prüfobjekt
+
+Start/Stopp ermöglicht die die komfortable Steuerung der verwalteten Applikationen.
+
+==== Ausgangssituation
+
+Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=
+ststxml“ gestartet und der Bedienoberfläche gestartet. Die zu verwendende Konfigurationsdatei befindet sich in [StartStopp2]. Die Datei ist in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen.
+
+==== Eingaben
+
+In der Oberfläche wird die farbige Darstellung eingeschaltet. Eine Anwendung wird gestoppt und anschließend wieder neu gestartet. Eine Anwendung wird gestoppt und anschließend die Bedienoberfläche beendet. Die Bedienoberfläche wird wieder gestartet und anschließend die gestoppte Anwendung. Eine Applikation wird neu gestartet, also in einem Schritt gestoppt und wieder gestartet. Die Betriebsmeldungen werden ausgeschaltet.
+
+Bei einer Applikation wird ein Aufrufparameter der Applikation geändert. Bei einer Applikation wird ein Aufrufparameter der JVM geändert. Bei einer Applikation wird der zyklische Aufruf von relativ auf absolut geändert.
+
+Es wird eine Inkarnation der mehrfach vorhandenen Applikation gestoppt. Anschließend wird die Inkarnation neu gestartet.
+
+====Erwartete Ergebnisse
+
+* Die Anwendungen können gestoppt und gestartet werden. Das Beenden und Neustarten der Bedienoberfläche ist ohne weiteren Einfluss möglich. Die Zustände der Applikationen werden über unterschiedliche Farben visualisiert.
+* Die Betriebsmeldungen lassen sich unabhängig vom Aufrufparameter ausschalten.
+* Die Änderung der Aufrufparameter im laufenden Betrieb ist möglich. Nach Abschluss der Änderungen wird die geänderte Konfiguration versioniert.
+* Das Beenden einer Inkarnation beeinflusst die anderen Inkarnationen der Applikation nicht.

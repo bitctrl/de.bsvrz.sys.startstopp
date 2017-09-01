@@ -1,0 +1,19 @@
+=== Prüffall 4: Fehlerbehandlung
+
+==== Prüfobjekt
+
+Start/Stopp kann mit auftretenden Fehlern umgehen, ohne dass Stabilität des Systems beeinträchtigt wird.
+
+==== Ausgangssituation
+
+Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=ststxml“ gestartet und der Bedienoberfläche gestartet. Die zu verwendende Konfigurationsdatei befindet sich in [StartStopp4]. Die Datei ist in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen. Der Benutzer „falscherBenutzer“ darf im System nicht vorhanden sein, ebenso die Anwendung „nichtVorhandeneAnwendung“.
+
+==== Eingaben
+
+Eine Anwendung wird über das Betriebssystem beendet. Danach wird das System beendet.
+
+==== Erwartete Ergebnisse
+
+* Die Applikation mit dem falschen Benutzer wird versucht, drei Mal zu starten. Danach wird eine Fehlermeldung in die Logdatei von Start/Stopp geschrieben.
+* Der fehlgeschlagene Start der Anwendung mit zu wenig Speicher wird in der Logdatei von Start/Stopp vermerkt, ebenso die nicht vorhandene Anwendung.
+* Der fehlgeschlagene Stopp der von außen beendeten Anwendung wird in der Logdatei von Start/Stopp vermerkt.

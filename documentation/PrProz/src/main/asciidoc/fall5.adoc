@@ -1,0 +1,18 @@
+=== Prüffall 5: Fehlerbehandlung Konfiguration
+
+==== Prüfobjekt
+
+Start/Stopp erkennt Zyklen durch Start- und Stopp-Bedingungen. Start/Stopp erkennt, wenn es selbst in einer Konfiguration aufgerufen werden soll und wenn es bereits selbst läuft.
+
+==== Ausgangssituation
+
+Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=ststxml“ gestartet und der Bedienoberfläche gestartet. Zunächst wird die Konfiguration [StartStopp5.1] verwendet. Danach wird der Prüffall mit der Konfiguration [StartStopp5.2] und danach mit der Konfiguration [StartStopp5.3] wiederholt. Die Dateien sind jeweils in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen.
+
+==== Eingaben
+
+Keine.
+
+==== Erwartete Ergebnisse
+* Start/Stopp erkennt die Zyklen in den Konfigurationen und bricht deren Start ab. Es wird eine Fehlermeldung in die Logdatei von Start/Stopp geschrieben.
+* Start/Stopp erkennt, dass es selbst aufgerufen werden soll und bricht den Start ab. Es wird eine Fehlermeldung in die Logdatei von Start/Stopp geschrieben.
+* Start/Stopp erkennt, dass es bereits läuft und startet nicht. Es wird eine Fehlermeldung in die Logdatei von Start/Stopp geschrieben.

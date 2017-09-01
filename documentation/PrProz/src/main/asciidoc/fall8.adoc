@@ -1,0 +1,22 @@
+=== Prüffall 8: Start- und Stoppbedingungen
+
+==== Prüfobjekt
+
+Start/Stopp wertet die in der Konfiguration definierten Start/Stopp-Bedingungen korrekt aus. In der Bedienoberfläche wird der Abhängigkeitsgraph für den Start und den Stopp des Systems angezeigt.
+
+==== Ausgangssituation
+
+Auf Rechner 1 und Rechner 2 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration= ststxml“ gestartet. Die zu verwendenden Konfigurationsdateien befinden sich in [StartStopp8.1] bzw. [StartStopp8.2]. Die Datei [StartStopp8.1] ist auf Rechner 1 in das Unterverzeichnis „ststxml“ zu kopieren, die Datei [StartStopp8.2] ist auf Rechner 2 in das Unterverzeichnis „ststxml“ zu kopieren. Beide Dateien sind zu „startstopp.xml“ umzubenennen.
+
+Auf beiden Rechnern wird beim Start die Bedienoberfläche mitgestartet.
+Es werden mehrere Applikationen benötigt, die eine geraume Zeit verstreichen lassen, bevor sie sich fertig melden.
+
+==== Eingaben
+
+Der Abhängigkeitsgraph für die Startbedingungen und für die Stoppbedingungen wird angezeigt.
+
+==== Erwartete Ergebnisse
+
+* Die definierten Startbedingungen werden korrekt ausgewertet.
+* Die definierten Stoppbedingungen werden korrekt ausgewertet.
+* Die Abhängigkeitsgraphen entsprechen im Prinzip den folgenden Abbildungen:

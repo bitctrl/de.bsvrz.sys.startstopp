@@ -1,0 +1,27 @@
+=== Prüffall 11: Code-Review
+
+==== Prüfobjekt
+* Start/Stopp arbeitet unabhängig von der verwendeten Plattform bzw. Betriebssystem. Es verfügt über eine Schnittstelle, über die es vollständig von außen gesteuert werden kann. 
+Bei länger dauernden Prozessen signalisiert Start/Stopp, dass es noch bestimmungsgemäß läuft.
+
+==== Ausgangssituation
+
+Die Anforderungen, die nur schwerlich im Betrieb getestet werden können, sind in einem Review zu demonstrieren. Im Quellcode sind die Stellen zu benennen, die zeigen, dass
+
+* Pfadangaben in URL-Form plattformunabhängig interpretiert werden.
+* Die Datenablage in einem sicherheitstechnisch unkritischen Bereich erfolgt.
+* Start/Stopp keine Abhängigkeiten vom Betriebssystem besitzt.
+* Start/Stopp die Terminierungsschnittstelle des Datenverteilers nutzt.
+* Start/Stopp regelmäßig signalisiert, dass es noch korrekt arbeitet.
+* Eine API existiert, über die Start/Stopp gesteuert werden kann.
+* Notwendige Werkzeuge oder Protokolle mit Hilfe eigener Bibliotheken realisiert werden.
+
+==== Erwartete Ergebnisse
+
+* Pfadangaben erfolgen ausschließlich in URL-Form. Start/Stopp setzt diese ggf. in plattformspezifische Pfade um.
+* Die Datenablage erfolgt in einem unkritischen Bereich, z. B. dem userspace.
+* Es gibt keine Abhängigkeiten vom Betriebssystem, es werden keine Umgebungsvariablen geändert und alle notwendigen Werkzeuge oder Protokolle sind über eigene Bibliotheken
+implementiert.
+* Die Terminierungsschnittstelle des Datenverteilers wird verwendet, um Applikationen kontrolliert zu beenden.
+* Es erfolgt eine regelmäßige Signalisierung, dass Start/Stopp noch korrekt arbeitet.
+* Es existiert eine API, die von externen Programmen und insbesondere der Bedienoberfläche genutzt werden kann und wird.
