@@ -43,6 +43,7 @@
 		Rechner muss ein Objekt (typ.rechner) in der Konfiguration vorhanden sein. Der
 		Übersichtlichkeit wegen empfielt es sich, in der Konfiguration und hier den selben Namen
 		(Hostname) zu verwenden. -->
+	  <rechner name="rechner2" tcpAdresse="192.168.172.2" />
       <!-- Spezifikation der verschiedenen Logfiles zum Mitschnitt von stdout und stderr. -->
       <protokolldatei name="Datenverteiler.stdout" nameDatei="%root%/logs/Datenverteiler.stdout.log" groesse="1" />
       <protokolldatei name="Datenverteiler.stderr" nameDatei="%root%/logs/Datenverteiler.stderr.log" groesse="1" />
