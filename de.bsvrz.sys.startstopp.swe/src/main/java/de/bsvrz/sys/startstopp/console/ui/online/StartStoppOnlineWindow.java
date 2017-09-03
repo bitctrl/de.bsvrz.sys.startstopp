@@ -191,6 +191,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				builder.addAction(new StartStoppStoppAction());
 				builder.addAction(new StartStoppStartAction());
 				builder.addAction(new StartStoppRestartAction());
+				builder.addAction(new StartStoppBetriebsmeldungenUmschaltenAction());
 				builder.addAction(new StartStoppExitAction());
 				builder.addAction(new TerminalCloseAction());
 				builder.build().showDialog(getTextGUI());
