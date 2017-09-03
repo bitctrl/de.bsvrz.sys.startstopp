@@ -508,17 +508,18 @@ public final class OnlineApplikation {
 		switch (getStatus()) {
 		case GESTARTET:
 		case INITIALISIERT:
+		case STOPPENWARTEN:
+			updateStatus(Applikation.Status.STOPPENWARTEN, message);
 			result = true;
 			break;
 		case GESTOPPT:
 		case INSTALLIERT:
 		case STARTENWARTEN:
-		case STOPPENWARTEN:
+			updateStatus(Applikation.Status.GESTOPPT, message);
+			break;
 		default:
 			break;
-		
 		}
-		updateStatus(Applikation.Status.STOPPENWARTEN, message);
 		return result;
 	}
 
