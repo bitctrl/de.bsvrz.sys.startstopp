@@ -6,6 +6,8 @@
       "inkarnationsName" : "Konfiguration"
     }, {
       "inkarnationsName" : "Parametrierung"
+    }, {
+      "inkarnationsName" : "Betriebsmeldungsverwaltung"
     } ],
     "makrodefinitionen" : [ {
       "name" : "root",
@@ -126,6 +128,26 @@
     "stoppFehlerVerhalten" : {
       "option" : "abbruch",
       "wiederholungen" : "0"
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx64m", "-cp %dist%/de.bsvrz.vew.bmvew/de.bsvrz.vew.bmvew-runtime.jar", "de.bsvrz.vew.bmvew.bmvew.BetriebsMeldungApp", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=WARNING", "-debugLevelFileText=CONFIG", "-betriebsMeldungsVerwaltung=kv.testKonfiguration", "-konfigurationsbereich=kb.default.testKonfiguration", "-loeschoffset=3t", "-groesseinfoanteil=20", "-versandobjektkex=bmv.kex" ],
+    "inkarnationsTyp" : "dav",
+    "inkarnationsName" : "Betriebsmeldungsverwaltung",
+    "initialize" : false,
+    "mitInkarnationsName" : true,
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : true,
+      "intervall" : ""
+    },
+    "startFehlerVerhalten" : {
+      "option" : "ignorieren",
+      "wiederholungen" : "5"
+    },
+    "stoppFehlerVerhalten" : {
+      "option" : "ignorieren",
+      "wiederholungen" : "5"
     }
   }, {
     "applikation" : "%java%",
