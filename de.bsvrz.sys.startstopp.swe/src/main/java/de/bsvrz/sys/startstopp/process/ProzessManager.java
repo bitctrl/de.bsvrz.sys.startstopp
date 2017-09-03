@@ -107,17 +107,16 @@ public final class ProzessManager {
 			LOGGER.fine(e.getLocalizedMessage());
 			aktuelleKonfiguration = null;
 		}
-		
-		rechnerManager.doRechnerManagerAktualisiert.addHandler(()->{
-			applikationen.values().forEach(app->app.checkState(TaskType.DEFAULT));
+
+		rechnerManager.doRechnerManagerAktualisiert.addHandler(() -> {
+			applikationen.values().forEach(app -> app.checkState(TaskType.DEFAULT));
 		});
-		
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
 				LOGGER.info("Shutdown-Hook aufgerufen");
-				if( getStartStoppStatus() != StartStoppStatus.Status.SHUTDOWN) {
+				if (getStartStoppStatus() != StartStoppStatus.Status.SHUTDOWN) {
 					shutdownSkript();
 				}
 				while (!checkStoppStatus()) {
@@ -134,6 +133,10 @@ public final class ProzessManager {
 	}
 
 	void setStartStoppStatus(StartStoppStatus.Status status) {
+		setStartStoppStatus(status, false);
+	}
+
+	void setStartStoppStatus(StartStoppStatus.Status status, boolean force) {
 
 		switch (status) {
 		case STOPPED:
@@ -144,7 +147,7 @@ public final class ProzessManager {
 			break;
 		}
 
-		if (startStoppStatus != status) {
+		if ((startStoppStatus != status) || force) {
 			startStoppStatus = status;
 			onStartStoppStatusChanged.send(status);
 		}
@@ -288,7 +291,7 @@ public final class ProzessManager {
 		case CONFIGERROR:
 		case INITIALIZED:
 		case STOPPED:
-//			System.exit(0);
+			// System.exit(0);
 			break;
 		case SHUTDOWN:
 			break;
@@ -403,9 +406,9 @@ public final class ProzessManager {
 			}
 		}
 
-//		if ((startStoppStatus == Status.SHUTDOWN) && allStopped) {
-//			System.exit(0);
-//		}
+		// if ((startStoppStatus == Status.SHUTDOWN) && allStopped) {
+		// System.exit(0);
+		// }
 	}
 
 	private boolean checkStoppStatus() {
@@ -424,7 +427,7 @@ public final class ProzessManager {
 	public void starteSkript() throws StartStoppException {
 
 		checkSkriptStart();
-		setStartStoppStatus(Status.RUNNING);
+		setStartStoppStatus(Status.RUNNING, true);
 		// for (OnlineApplikation applikation : applikationen.values()) {
 		// if (applikation.getStartArtOption() != StartArt.Option.MANUELL) {
 		// switch (applikation.getStatus()) {
