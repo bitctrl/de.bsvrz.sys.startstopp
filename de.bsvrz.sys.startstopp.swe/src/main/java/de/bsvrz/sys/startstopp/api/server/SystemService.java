@@ -26,6 +26,8 @@
 
 package de.bsvrz.sys.startstopp.api.server;
 
+import java.util.concurrent.CompletableFuture;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -64,7 +66,7 @@ public class SystemService {
 	@Path("exit")
 	public Response responseStartStoppExit() {
 		Response response = Response.accepted().build();
-		System.exit(0);
+		CompletableFuture.runAsync(()->System.exit(0));
 		return response;
 	}
 
