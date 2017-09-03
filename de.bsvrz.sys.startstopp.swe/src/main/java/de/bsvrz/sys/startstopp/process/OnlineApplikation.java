@@ -338,9 +338,9 @@ public final class OnlineApplikation {
 			return;
 		}
 
+		onlineApplikationTimer.clear();
 		if (process != null) {
 			process.onStatusChange.removeHandler(osApplikationStatusHandler);
-			onlineApplikationTimer.clear();
 			process = null;
 		}
 
@@ -354,7 +354,7 @@ public final class OnlineApplikation {
 			}
 			break;
 		default:
-			if ((prozessManager.getStartStoppStatus() == StartStoppStatus.Status.RUNNING)
+			if (!manuellGestartetOderGestoppt && (prozessManager.getStartStoppStatus() == StartStoppStatus.Status.RUNNING)
 					&& applikation.getInkarnation().getStartArt().getNeuStart()) {
 				updateStatus(Applikation.Status.INSTALLIERT, "");
 			} else {
