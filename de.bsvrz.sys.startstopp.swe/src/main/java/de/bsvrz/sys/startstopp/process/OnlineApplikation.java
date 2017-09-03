@@ -154,6 +154,7 @@ public final class OnlineApplikation {
 			startFehlerCounter = 0;
 			if (getStartArtOption() != StartArt.Option.MANUELL) {
 				if ((appStatus == Applikation.Status.GESTOPPT) || (appStatus == Applikation.Status.STOPPENWARTEN)) {
+					manuellGestartetOderGestoppt = false;
 					updateStatus(Applikation.Status.INSTALLIERT, "Prozessmanager gestartet");
 				}
 				if (appStatus == Applikation.Status.INSTALLIERT) {
