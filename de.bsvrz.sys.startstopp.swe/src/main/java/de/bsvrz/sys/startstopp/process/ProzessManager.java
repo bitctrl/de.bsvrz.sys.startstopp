@@ -288,7 +288,7 @@ public final class ProzessManager {
 		case CONFIGERROR:
 		case INITIALIZED:
 		case STOPPED:
-			System.exit(0);
+//			System.exit(0);
 			break;
 		case SHUTDOWN:
 			break;
@@ -403,9 +403,9 @@ public final class ProzessManager {
 			}
 		}
 
-		if ((startStoppStatus == Status.SHUTDOWN) && allStopped) {
-			System.exit(0);
-		}
+//		if ((startStoppStatus == Status.SHUTDOWN) && allStopped) {
+//			System.exit(0);
+//		}
 	}
 
 	private boolean checkStoppStatus() {
