@@ -390,11 +390,20 @@ public class StartStoppXMLParser {
 		return konfiguration;
 	}
 
-	private void fuelleStandardWerte(StartStoppSkript konfiguration) {
+	// TODO Location anpassen
+	public static void fuelleStandardWerte(StartStoppSkript konfiguration) {
 		for( Inkarnation inkarnation : konfiguration.getInkarnationen()) {
 			StartArt startArt = inkarnation.getStartArt();
 			if( startArt == null) {
 				inkarnation.setStartArt(new StartArt());
+			}
+			StartFehlerVerhalten startFehlerVerhalten = inkarnation.getStartFehlerVerhalten();
+			if( startFehlerVerhalten == null) {
+				inkarnation.setStartFehlerVerhalten(new StartFehlerVerhalten());
+			}
+			StoppFehlerVerhalten stoppFehlerVerhalten = inkarnation.getStoppFehlerVerhalten();
+			if( stoppFehlerVerhalten == null) {
+				inkarnation.setStoppFehlerVerhalten(new StoppFehlerVerhalten());
 			}
 		}
 	}

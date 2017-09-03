@@ -46,6 +46,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
@@ -57,6 +58,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.process.OnlineInkarnation;
+import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public final class StartStoppKonfiguration {
 
@@ -67,6 +69,7 @@ public final class StartStoppKonfiguration {
 
 	public StartStoppKonfiguration(StartStoppSkript skript) {
 		this.skript = skript;
+		StartStoppXMLParser.fuelleStandardWerte(skript);
 
 		skriptStatus.getMessages().addAll(pruefeVollstaendigkeit());
 		skriptStatus.getMessages().addAll(pruefeZirkularitaet());
@@ -78,6 +81,8 @@ public final class StartStoppKonfiguration {
 		}
 	}
 
+
+	
 	private Collection<String> pruefeZirkularitaet() {
 
 		Collection<String> result = new ArrayList<>();
