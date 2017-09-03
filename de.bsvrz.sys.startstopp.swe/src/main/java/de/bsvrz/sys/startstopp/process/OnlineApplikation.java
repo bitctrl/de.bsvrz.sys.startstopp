@@ -503,8 +503,23 @@ public final class OnlineApplikation {
 		}
 	}
 
-	public void requestStopp(String message) {
+	public boolean requestStopp(String message) {
+		boolean result = false;
+		switch (getStatus()) {
+		case GESTARTET:
+		case INITIALISIERT:
+			result = true;
+			break;
+		case GESTOPPT:
+		case INSTALLIERT:
+		case STARTENWARTEN:
+		case STOPPENWARTEN:
+		default:
+			break;
+		
+		}
 		updateStatus(Applikation.Status.STOPPENWARTEN, message);
+		return result;
 	}
 
 	public void requestStart(String message) {

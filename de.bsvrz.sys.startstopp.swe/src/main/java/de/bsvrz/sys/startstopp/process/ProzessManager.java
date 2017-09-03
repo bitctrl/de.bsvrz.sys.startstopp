@@ -222,8 +222,9 @@ public final class ProzessManager {
 		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation != null) {
 			try {
-				applikation.requestStopp("Beenden über Datenverteilernachricht");
-				davConnector.stoppApplikation(inkarnationsName);
+				if (applikation.requestStopp("Beenden über Datenverteilernachricht")) {
+					davConnector.stoppApplikation(inkarnationsName);
+				}
 			} catch (StartStoppException e) {
 				Debug.getLogger()
 						.warning("Die Applikation \"" + inkarnationsName
