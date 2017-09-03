@@ -64,7 +64,7 @@ public class SystemService {
 	@Path("exit")
 	public Response responseStartStoppExit() {
 		Response response = Response.accepted().build();
-		startStopp.getProcessManager().shutdownSkript();
+		System.exit(0);
 		return response;
 	}
 

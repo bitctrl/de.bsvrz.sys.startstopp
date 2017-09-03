@@ -128,7 +128,6 @@ public final class ProzessManager {
 						LOGGER.warning(e.getLocalizedMessage());
 					}
 				}
-				Runtime.getRuntime().removeShutdownHook(Thread.currentThread());
 				LOGGER.info("Alle Applikationen beendet");
 				System.exit(0);
 			}
