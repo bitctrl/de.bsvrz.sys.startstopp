@@ -208,6 +208,22 @@ public class StartStoppClient {
 						+ response.getStatus() + ")");
 	}
 
+	public void betriebsmeldungenUmschalten() throws StartStoppException {
+		Response response = null;
+		try {
+			response = createPostResponse("/system/betriebsmeldungen");
+			if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+				return;
+			}
+		} catch (Exception e) {
+			throw new StartStoppException(e);
+		}
+		throw new StartStoppException(
+				"Anforderung zum Neustart der StartStopp-Konfiguration wurde nicht entgegengenommen (Response: "
+						+ response.getStatus() + ")");
+	}
+
+	
 	/* Skript-Funktionen. */
 
 	public StartStoppSkript getCurrentSkript() throws StartStoppException {

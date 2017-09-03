@@ -87,6 +87,15 @@ public class SystemService {
 	}
 
 	@POST
+	@Path("betriebsmeldungen")
+	public Response responseBetriebsmeldungenUmschalten() {
+		Response response = Response.accepted().build();
+		startStopp.getOptions().setBetriebsMeldungVersenden(!startStopp.getOptions().isBetriebsMeldungVersenden());
+		return response;
+	}
+
+	
+	@POST
 	@Path("start")
 	public Response responseStartStoppStart() {
 		try {
