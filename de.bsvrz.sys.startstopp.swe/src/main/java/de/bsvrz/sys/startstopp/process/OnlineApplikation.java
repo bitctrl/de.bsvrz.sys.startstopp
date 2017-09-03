@@ -303,7 +303,9 @@ public final class OnlineApplikation {
 						if (prozessManager.getStartStoppStatus() == Status.RUNNING) {
 							updateStatus(Applikation.Status.INSTALLIERT, "Wiederholung nach Startfehler");
 						} else {
-							updateStatus(Applikation.Status.GESTOPPT, "");
+							LOGGER.warning(getName() + ": Abbruch nach " + wiederholungenStr + " Wiederholungen");
+							updateStatus(Applikation.Status.GESTOPPT, "Abbruch nach " + wiederholungenStr + " Wiederholungen");
+							
 						}
 						return;
 					}
