@@ -119,12 +119,15 @@ public final class ProzessManager {
 				LOGGER.info("Shutdown-Hook aufgerufen");
 				shutdownSkript();
 				while (!checkStoppStatus()) {
+					LOGGER.info("Warte auf Applikationen");
 					try {
 						TimeUnit.SECONDS.sleep(2);
 					} catch (InterruptedException e) {
 						LOGGER.warning(e.getLocalizedMessage());
 					}
 				}
+				LOGGER.info("Alle Applikationen beendet");
+				System.exit(0);
 			}
 		});
 	}
