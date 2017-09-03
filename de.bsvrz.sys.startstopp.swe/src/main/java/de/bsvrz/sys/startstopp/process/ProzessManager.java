@@ -117,7 +117,9 @@ public final class ProzessManager {
 			@Override
 			public void run() {
 				LOGGER.info("Shutdown-Hook aufgerufen");
-				shutdownSkript();
+				if( getStartStoppStatus() != StartStoppStatus.Status.SHUTDOWN) {
+					shutdownSkript();
+				}
 				while (!checkStoppStatus()) {
 					LOGGER.info("Warte auf Applikationen");
 					try {
@@ -126,6 +128,7 @@ public final class ProzessManager {
 						LOGGER.warning(e.getLocalizedMessage());
 					}
 				}
+				Runtime.getRuntime().removeShutdownHook(Thread.currentThread());
 				LOGGER.info("Alle Applikationen beendet");
 				System.exit(0);
 			}
