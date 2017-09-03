@@ -503,7 +503,8 @@ public final class OnlineApplikation {
 		}
 	}
 
-	public boolean requestStopp(String message) {
+	public boolean requestStopp(String message, boolean manuell) {
+		manuellGestartetOderGestoppt = manuell;
 		boolean result = false;
 		switch (getStatus()) {
 		case GESTARTET:

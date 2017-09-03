@@ -83,7 +83,7 @@ public class AppStopper implements Runnable {
 			for (OnlineApplikation applikation : applikations.values()) {
 				// TODO Beenden mit Bedingungen!!
 				appStopperExecutor.submit(() -> {
-							applikation.requestStopp("Skript wird angehalten");
+							applikation.requestStopp("Skript wird angehalten", false);
 						});
 			}
 		}
