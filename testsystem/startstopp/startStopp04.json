@@ -195,7 +195,7 @@
       "intervall" : ""
     },
     "startBedingung" : {
-      "vorgaenger" : [ "Applikation07" ],
+      "vorgaenger" : [ "Applikation01" ],
       "warteart" : "ende",
       "rechner" : "rechner2",
       "wartezeit" : "20"

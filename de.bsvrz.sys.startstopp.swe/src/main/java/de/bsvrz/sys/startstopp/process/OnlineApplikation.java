@@ -299,6 +299,7 @@ public final class OnlineApplikation {
 			if (fehlerVerhalten != null) {
 				String wiederholungenStr = fehlerVerhalten.getWiederholungen();
 				if (wiederholungenStr != null) {
+					LOGGER.warning(getName() + ": Startfehler " + startFehlerCounter + " von " + wiederholungenStr);
 					if (startFehlerCounter++ <= Integer.parseInt(wiederholungenStr)) {
 						if (prozessManager.getStartStoppStatus() == Status.RUNNING) {
 							updateStatus(Applikation.Status.INSTALLIERT, "Wiederholung nach Startfehler");
