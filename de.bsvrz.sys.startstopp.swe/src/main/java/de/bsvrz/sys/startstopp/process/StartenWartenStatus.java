@@ -56,7 +56,7 @@ public class StartenWartenStatus extends OnlineApplikationStatus {
 		if (!applikation.isManuellGestartetOderGestoppt()
 				&& startStoppStatus != StartStoppStatus.Status.RUNNING) {
 			applikation.getOnlineApplikationTimer().clear();
-			return applikation.updateStatus(Applikation.Status.STARTENWARTEN, "");
+			return applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "");
 		}
 
 		String kernSystemMessage = applikation.kernSystemVerfuegbar();
