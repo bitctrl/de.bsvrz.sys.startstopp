@@ -129,7 +129,6 @@ public final class ProzessManager {
 					}
 				}
 				LOGGER.info("Alle Applikationen beendet");
-				System.exit(0);
 			}
 		});
 	}
