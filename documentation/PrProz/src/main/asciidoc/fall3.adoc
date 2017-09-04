@@ -4,18 +4,36 @@
 
 Start/Stopp ermöglicht die erneute Ausführung einer Konfiguration in den beiden Varianten mit und ohne Beendigung der laufenden Applikationen.
 
-==== Ausgangssituation
+Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt5, Sys-StSt7 bis Sys-StSt9, Sys-StSt11 bis Sys-StSt12, Sys-StSt17 bis Sys-StSt21, Sys-StSt23 bis Sys-StSt-35, Sys-StSt-39, Sys-StSt-40, Sys-StSt-43, Sys-StSt-44, Sys-StSt-46, Sys-StSt-55, Sys-StSt-57, Sys-StSt-59, Sys-StSt-60, Sys-StSt-61, Sys-StSt-65 bis Sys-StSt-66 teilweise oder vollständig ab.
 
-Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration= ststxml“ gestartet und der Bedienoberfläche gestartet. Die zu verwendende Konfigurationsdatei befindet sich in [StartStopp3]. Die Datei ist in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen.
+==== Prüfvoraussetzungen
 
-==== Eingaben
+Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
 
-Eine Anwendung wird gestoppt. Eine Anwendung, die nicht läuft, wird gestartet. Die Konfiguration wird neu gestartet, hierbei wird die Variante gewählt, zunächst alle laufenden Applikationen zu stoppen.
+Für den Testfall wird auf Rechner1 die Skriptdateien [StartStopp3] verwendet. 
+Die Datei [StartStopp3] wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt. 
 
-Eine Anwendung wird gestoppt. Eine Anwendung, die nicht läuft, wird gestartet. Die Konfiguration wird neu gestartet, dieses Mal wird die Variante gewählt, nur die nicht laufenden Applikationen zu starten.
+Auf Rechner 1 werden die SWE StartStopp sowie die Bedienoberfläche per Shell-Skript gestartet.
+
+==== Durchführung
+
+Nach dem Start der SWE wird das StartStopp-Skript geladen und muss zunächst noch versioniert werden (siehe Prüffall 1).
+
+Nach der Versionierung werden die Inkarnationen gestartet. 
+
+Wenn die Inkarnationen gestartet sind muss zunächst noch die Applikation05, für die die Startart "manuell" konfiguriert ist, gestartet werden. Das erfolgt über das Applikations-Menü der Bedienoberfläche.
+
+Nachfolgend wedren folgende Operationen ausgeführt:
+
+* Eine Anwendung wird gestoppt (nicht Applikation05)
+* Die Konfiguration wird neu gestartet, hierbei wird die Variante gewählt, zunächst alle laufenden Applikationen zu stoppen. Dazu wird im System-Menü die Aktion "System neu starten" ausgeführt.
+
+Nachdem die Konfiguration neu gestartet ist, werden wieder die Applikation05 händisch nachgestartet und folgende Operationen ausgeführt:
+
+* Eine Anwendung wird gestoppt (nicht Applikation05)
+* Die Konfiguration wird neu gestartet, hierbei wird die Variante gewählt, zunächst alle laufenden Applikationen zu stoppen. Dazu wird im System-Menü die Aktion "System starten" ausgeführt.
 
 ==== Erwartete Ergebnisse
 
 * Beim ersten Neustart werden zunächst alle Applikationen gestoppt. Nach dem Neustart läuft die gestoppte Applikation. Die manuell gestartete Applikation läuft nicht.
 * Beim zweiten Neustart laufen die Applikationen weiter. Nach dem Neustart läuft die gestoppte Applikation wieder. Die manuell gestartete Applikation läuft ebenfalls weiter.
-* Die optionalen Angaben werden korrekt mit den Standartwerten belegt.

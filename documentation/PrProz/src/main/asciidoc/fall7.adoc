@@ -4,21 +4,34 @@
 
 Für das Verhalten beim Auftreten von Fehlern beim Starten oder Stoppen von Applikationen sind verschiedene Optionen möglich.
 
-==== Ausgangssituation
+Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt5, Sys-StSt7 bis Sys-StSt9, Sys-StSt-11, Sys-StSt-12, Sys-StSt-14, Sys-StSt-15, Sys-StSt17 bis Sys-StSt21, Sys-StSt23 bis Sys-StSt-27, Sys-StSt-29, Sys-StSt-31 bis Sys-StSt-35, Sys-StSt-39, Sys-StSt-40, Sys-StSt-51, Sys-StSt-52, Sys-StSt-55, Sys-StSt-57, Sys-StSt-60, Sys-StSt-66 und Sys-StSt-67 teilweise oder vollständig ab.
 
-Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=ststxml“ gestartet und der Bedienoberfläche gestartet. Der Benutzer „falscherBenutzer“ darf im System nicht vorhanden sein. Es wird eine Applikation benötigt, die intern mit mehreren Threads arbeitet. Dann wird die Applikation beendet, so dass ein interner Thread weiterläuft (Zombiethread). Die zu verwendende Konfigurationsdateien befinden sich in [StartStopp7.1], [StartStopp7.2], [StartStopp7.3], [StartStopp7.4], [StartStopp7.5], [StartStopp7.6] und [StartStopp7.7]. 
-Die Dateien sind nacheinander in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen.
+==== Prüfvoraussetzungen
 
-==== Eingaben
+Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
 
-Das System wird mehrfach gestartet, anschließend wird es mehrfach gestartet und gestoppt.
+Für den Testfall werden auf Rechner1 nacheinander die Skriptdateien [StartStopp7.1] bis [StartStopp7.7] verwendet. 
+
+==== Durchführung
+
+Für alle Skriptdateien werden die folgenden Operationen ausgeführt:
+
+* Die Datei wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt.
+* Auf Rechner 1 werden die SWE StartStopp sowie die Bedienoberfläche per Shell-Skript gestartet.
+* Nach dem Start der SWE wird das StartStopp-Skript versioniert (siehe Prüffall 1).
+* Das Startverhalten wird beobachtet.
+* Die StartStopp-Konfiguration wird mit dem System-Menü-Kommando "System anhalten" gestoppt.
+* Das Stoppverhalten wird beobachtet.
+* StartStopp wird beendet.
 
 ==== Erwartete Ergebnisse
 
-* Der Startvorgang wird abgebrochen, bereits gestartete Applikationen und Start/Stopp selbst werden beendet.
-* Der Startvorgang wird abgebrochen, bereits gestartete Applikationen laufen weiter.
-* Der Startvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften laufen.
-* Der Startvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften laufen.
-* Der Stoppvorgang wird abgebrochen. Die noch nicht gestoppten Applikationen laufen weiter.
-* Der Stoppvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften wurden beendet.
-* Der Stoppvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften wurden beendet.
+Fpr die einzelnen Fälle
+
+* 7.1: Der Startvorgang wird abgebrochen, bereits gestartete Applikationen und Start/Stopp selbst werden beendet.
+* 7.2: Der Startvorgang wird abgebrochen, bereits gestartete Applikationen laufen weiter.
+* 7.3: Der Startvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften laufen.
+* 7.4: Der Startvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften laufen.
+* 7.5: Der Stoppvorgang wird abgebrochen. Die noch nicht gestoppten Applikationen laufen weiter.
+* 7.6: Der Stoppvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften wurden beendet.
+* 7.7: Der Stoppvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften wurden beendet.

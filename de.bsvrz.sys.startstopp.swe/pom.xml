@@ -73,14 +73,6 @@
 					<name>bintray-plugins</name>
 					<url>http://dl.bintray.com/datenverteiler/maven</url>
 				</pluginRepository>
-				<pluginRepository>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-					<id>mulesoft-maven</id>
-					<name>Mulesoft</name>
-					<url>http://repository.mulesoft.org/releases/</url>
-				</pluginRepository>
 			</pluginRepositories>
 			<repositories>
 				<repository>
@@ -146,14 +138,6 @@
 					<id>bintray-datenverteiler-maven</id>
 					<name>bintray-plugins</name>
 					<url>http://dl.bintray.com/datenverteiler/maven</url>
-				</pluginRepository>
-				<pluginRepository>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-					<id>mulesoft-maven</id>
-					<name>Mulesoft</name>
-					<url>http://repository.mulesoft.org/releases/</url>
 				</pluginRepository>
 			</pluginRepositories>
 			<distributionManagement>

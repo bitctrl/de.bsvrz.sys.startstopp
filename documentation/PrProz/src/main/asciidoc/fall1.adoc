@@ -4,29 +4,57 @@
 
 Start/Stopp wertet die Konfigurationsdateien korrekt aus und läuft im Normalbetrieb stabil.
 
-==== Ausgangssituation
+Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt12, Sys-StSt17 bis Sys-StSt36, Sys-StSt-39, Sys-StSt-40, Sys-StSt-42, Sys-StSt-46, Sys-StSt-55, Sys-StSt-56, Sys-StSt-57, Sys-StSt-60, Sys-StSt-61 und Sys-StSt-66 teilweise oder vollständig ab.
+
+==== Prüfvoraussetzungen
+
+Auf zwei Testrechnern wird das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
 
 Für den Testfall werden die Skriptdateien [StartStopp1.1] und [StartStopp1.2] verwendet. 
-Die Datei [StartStopp1.1] wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert 
-und in "startstopp.json" umbenannt. Auf dem Rechner 2 wird mit der Datei [StartStopp1.2] entsprechend verfahren, wobei hier 
+Die Datei [StartStopp1.1] wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt. Auf dem Rechner 2 wird mit der Datei [StartStopp1.2] entsprechend verfahren, wobei hier 
 kein Unterverzeichnis verwendet wird.
 
-Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=startstopp“ gestartet, 
-auf Rechner 2 wird Start/Stopp mit dem Aufrufparameter „-betriebsMeldungVersenden=nein“ gestartet. 
+Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=startstopp“ gestartet, auf Rechner 2 wird Start/Stopp mit dem Aufrufparameter „-betriebsMeldungVersenden=nein“ gestartet. Dazu muss gegebenenfalls das StartSkript "StartStopp.bash" bzw. "StartStopp.bat" entsprechend angepasst werden.
 
 Auf beiden Rechnern wird beim Start die Bedienoberfläche mitgestartet.
 
-==== Eingaben
+==== Durchführung
 
-* Die Skripte auf beiden Rechnern werden versioniert. Das erfolgt über das System-Menü der Bedienoberfläche im Editor-Modus.
-  Eine Änderung der Skripte sollte nicht erforderlich sein. Als Nutzer für die Versionierung kann der Standard-Datenverteiler-
-  Nutzer "Tester" mit dem bekannten geheimen Passwort verwendet werden.  
+Nach dem Start der StartStopp-SWE wurden die Skripte geladen. Es werden jedoch keine Inkarnationen von SWE ausgeführt, da die Skripte nicht versioniert wurden.
+
+Die Versionierung der Skripte auf beiden Rechnern erfolgt über die Bedienoberfläche, gegebenfalls müssen noch die IP-Adressen der verwendeten Rechner angepasst werden, da die StartStopp-Instanzen miteinander kommunizieren sollen.
+
+* Umschaltung der Bedienoberfläche in den Editor-Modus (Taste "E")
+* Anzeige der Makros zum Bearbeiten der IP-Adressen der Rechner mit der Taste "M" 
+
+image::makroliste.png[Liste der Makros]
+
+Die Makros "rechner.ip1" und "rechner.ip2" müssen entsprechend Testumgebung angepasst werden. Dazu wird der jeweilige Eintrag ausgewählt und mit der ENTER-Taste der Editor zum Bearbeiten des Makros geöffnet.
+
+image::makroeditor.png[Makro-Editor]
+
+Abschließend wird mit der Taste "S" das Systemmenü geöffnet und das Skript versioniert. Im Urlasserdialog werden ein Grund und die erforderlichen Anmeldeinformationen "Tester/geheim" angegeben.
+
+Auf dem zweiten Rechner wird entsprechend vorgegangen.
+
+Nach der Ausführung der Versionierung werden die Inkarnationen der jeweiligen Konfiguration auf beiden Rechnern gestartet. Dabie kann in der Bedienoberfläche beobachtet werden, wie die Abhängigkeiten und Verzögerungszeiten umgesetzt werden.
+
+Mit Hilfe des im Testsystem enthaltenen "Generischen Testmonitors (GTM)" kann die Versendung von Betriebsinformationen gerpüft werden.
+Der GTM wird über das Skript "GenericicTestMonitor.bat" bzw. "GenericTestMonitor.bash" ausgeführt.
+
+image::gtm_betriebsmeldungen.png[Betriebsmeldungen im GTM]
+
+Die Betriebsmeldungen können über die Onlinetabelle der Datenspezifikation "Testkonfiguration (kv.testKonfiguration)", Attributgruppe "BetriebsMeldung (atg.betriebsMeldung)" und Aspekt "Information (asp.information)" beobachtet werden.
+
+Zum Test wird über das Applikations-Menü der Bedienoberfläche auf beiden Rechnern jeweils eine der Appplikationen (ausgenommen das Kernsystem!) beendet und wieder gestartet. 
+
+Die folgenden Schritte werden zur Prüfung des Verhaltens beim Neustart und beim Beenden von StartStopp selbst und der Bedeienoberfläche durchgeführt:
+
 * Nach einer gewissen Zeit wird Start/Stopp auf Rechner 2 beendet. Das erfolgt über das Systemmenü der Bedienoberfläche im Online-Modus. 
 * Wiederum nach einer kurzen Zeit wird Start/Stopp auf Rechner 2 per Shell-Skript neu gestartet.
 * Die Bedienoberfläche auf Rechner 1 wird beendet und wieder gestartet. 
 * Auf Rechner 2 wird Start/Stopp beendet, auf Rechner 1 der Datenverteiler und erst danach Start/Stopp. Zum Beenden das Datenverteilers
-  kann optional per Systemmenü der Bedienoberfläche das Skript oder per Applikations-Menp die Inkarnation des Datenverteilers
-  angehalten  werden.
+  kann optional per Systemmenü der Bedienoberfläche das Skript oder per Applikations-Menü die Inkarnation des Datenverteilers angehalten  werden.
 
 ==== Erwartete Ergebnisse
 
@@ -41,7 +69,7 @@ Auf beiden Rechnern wird beim Start die Bedienoberfläche mitgestartet.
 * Die Applikationen Datenverteiler, Konfiguration, Parametrierung und Betriebsmeldungverwaltung werden direkt während
   des Startvorgangs gestartet. 
 * Applikation02 wird zyklisch aller drei Minuten ausgeführt, wenn das Kernsystem bereit ist.
-* Der Start und Stopp von Applikationen auf Rechner 1 werden über eine Betriebsmeldung publiziert (Zu Beobachten per GTM).
+* Der Start und Stopp von Applikationen auf Rechner 1 werden über eine Betriebsmeldung publiziert.
 * Auf dem Rechner 2 werden für die Applikationszustände keine Betriebsmeldungen versendet.
 * Start/Stopp kann ohne spezielle Berechtigungen gestartet werden und stellt keine Anforderungen an Betriebssystemvoraussetzungen. 
   Die Daten zur Versionierung werden in einem Verzeichnis unterhalb der verwendeten Konfiguration abgelegt. Die Betriebssystemumgebung 

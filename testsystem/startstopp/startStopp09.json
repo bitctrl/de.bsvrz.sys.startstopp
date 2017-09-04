@@ -200,7 +200,7 @@
     "initialize" : false,
     "mitInkarnationsName" : true,
     "startArt" : {
-      "option" : "automatisch",
+      "option" : "manuell",
       "neuStart" : false,
       "intervall" : ""
     },

@@ -4,15 +4,40 @@
 
 Start/Stopp verfügt über eine textbasierte Bedienoberfläche über die es umfassend bedient werden kann.
 
-==== Ausgangssituation
+Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt5, Sys-StSt-7 bis Sys-StSt-12, Sys-StSt17 bis Sys-StSt-35, Sys-StSt-39, Sys-StSt-40, Sys-StSt-43, Sys-StSt-47 bis Sys-StSt-49,  Sys-StSt-55, Sys-StSt-57 bis Sys-StSt-66 und Sys-StSt-69 teilweise oder vollständig ab.
 
-Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfiguration=ststxml“ gestartet und der Bedienoberfläche gestartet. Die zu verwendende Konfigurationsdatei befindet sich in [StartStopp9]. Die Datei ist in das Unterverzeichnis „ststxml“ zu kopieren und zu „startstopp.xml“ umzubenennen. Es wird eine Applikation benötigt, die eine nennenswerte Zeit benötigt, bevor sie sich fertig meldet.
+==== Prüfvoraussetzungen
 
-==== Eingaben
+Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
 
-Die Bedienoberfläche wird auf eine farbige Darstellung umgeschaltet. Es werden die Detailinformationen von einzelnen Applikation angezeigt. Eine vorbereitete Anwendung wird manuell gestartet, danach wieder gestoppt.
+Für den Testfall wird auf Rechner1 die Skriptdateien [StartStopp9] verwendet. 
+Die Datei [StartStopp9] wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt. 
 
-Es wird eine neue Applikation hinzugefügt. Die zuvor gestoppte Applikation wird aus der Konfiguration entfernt. Es wird eine neue Makrodefinition hinzugefügt. Es wird eine neue Applikation zum Kernsystem hinzugefügt, die die neue Makrodefinition verwendet. Ein vorhandener Aufrufparameter der Applikation und einer der JVM wird geändert. Die Konfiguration wird gespeichert und das Gesamtsystem neu gestartet, so dass alle laufenden Anwendungen beendet werden. Eine Makrodefinition, ein Aufrufparameter einer Applikation und ein Aufrufparameter der JVM werden entfernt.
+Auf Rechner 1 werden die SWE StartStopp sowie die Bedienoberfläche per Shell-Skript gestartet.
+
+==== Durchführung
+
+===== Allgemeine Funktionen
+
+Nach dem Start der SWE wird das StartStopp-Skript geladen und muss zunächst noch versioniert werden (siehe Prüffall 1).
+
+Nach der Versionierung werden die Inkarnationen gestartet. 
+
+* Die Bedienoberfläche wird auf eine farbige Darstellung umgeschaltet. 
+* Es werden die Detailinformationen von einzelnen Applikation angezeigt. 
+* Eine vorbereitete Anwendung (Applikation05) wird manuell gestartet, danach wieder gestoppt.
+
+===== Bearbeiten von Inkarnationen
+
+Folgende Operationen werden vorgenommen. Nach jedem Schritt wird die Konfiguration versioniert.
+
+* Es wird eine neue Applikation hinzugefügt. 
+* Die zuvor gestoppte Applikation wird aus der Konfiguration entfernt. 
+* Es wird eine neue Makrodefinition hinzugefügt. 
+* Es wird eine neue Applikation zum Kernsystem hinzugefügt, die die neue Makrodefinition verwendet. 
+* Ein vorhandener Aufrufparameter der Applikation und einer der JVM wird geändert. 
+* Die Konfiguration wird gespeichert und das Gesamtsystem neu gestartet, so dass alle laufenden Anwendungen beendet werden. 
+* Eine Makrodefinition, ein Aufrufparameter einer Applikation und ein Aufrufparameter der JVM werden entfernt.
 
 ==== Erwartete Ergebnisse
 

@@ -11,16 +11,15 @@ Stand: 31.08.17
 
 Die Prüfprozedur beschreibt die Durchführung der Prüfungen für die SWE Sys StartStopp gemäß Prüfspezifikation.
 
-== Prüfvoraussetzungen
+== Allgemeine Voraussetzungen
 
 Zur Prüfung wird ein installiertes Datenverteilersystem auf zwei unabhängigen Rechnern eingesetzt. 
 Verwendet wird das mit der SWE zur Verfügung gestellte System, dass die erforderlichen SWE basierend auf der Kernsoftware 3.9.2 enthält.
  
-Installiert werden neben den Standarddatenverteiler-Paketen die SWE StartStopp in der zu testenden Version und das 
-Paket "de.bsvrz.sys.stst.test", in dem die für die Testkonfiguration zu verwendetenen Applikationen mit den jeweils
-geforderten Eigenschaften implementiert sind.
+Installiert werden neben den Standarddatenverteiler-Paketen die SWE StartStopp in der zu testenden Version und das Paket "de.bsvrz.sys.stst.test", in dem die für die Testkonfiguration zu verwendetenen Applikationen mit den jeweils geforderten Eigenschaften implementiert sind.
 
-Als StartStopp-Skripte werden die aus den vorgegebenen JSON-Dateien eingesetzt. 
+Als StartStopp-Skripte werden die aus den vorgegebenen XML-Dateien konvertierten und korrigierten JSON-Dateien eingesetzt. 
+
 Die Angabe erfolgt im Folgenden daher als Dateiname ohne Dateierweiterung.
 
 == Allgemeine Hinweise zur Ausführung der Testspezifikation
