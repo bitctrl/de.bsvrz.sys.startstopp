@@ -360,16 +360,18 @@ Alle bei StartStopp definierten Rechner
 + stoppFehlerVerhalten (StoppFehlerVerhalten)
 
 
+## ZugangDav
++ adresse: localhost (string, required, default)
++ passWord: passwort (string, required, default)
++ port: 3000 (string, required, default)
++ userName: Tester (string, required, default)
+
 ## StartStoppSkript
 
 + global (object, required)
   + kernsysteme (array [KernSystem], fixed-type)
   + makrodefinitionen (array [MakroDefinition], fixed-type)
-  + zugangDav (object)
-      + adresse (string, required)
-      + passWord (string, required)
-      + port (string, required)
-      + userName (string, required)
+  + zugangDav (ZugangDav, required)
   + usv (object)
       + pid (string, required)
   + rechner (array[Rechner], fixed-type)
@@ -393,8 +395,8 @@ Alle bei StartStopp definierten Rechner
 
 + inkarnation (Inkarnation, required) - die verwendete Inkarnation
 + rechner: localhost (string)
-+ letzteStartzeit: `24.12.2016 12:01" (string) - die letzte Startzeit der Inkarnation
-+ letzteStoppzeit: `06.12.2016 11:11" (string) - die letzte Stoppzeit der Inkarnation
++ letzteStartzeit: `24.12.2016 12:01` (string) - die letzte Startzeit der Inkarnation
++ letzteStoppzeit: `06.12.2016 11:11` (string) - die letzte Stoppzeit der Inkarnation
 + status: installiert (enum, required) - der Status der Inkarnation in StartStopp
   + installiert (string)
   + startenwarten (string)

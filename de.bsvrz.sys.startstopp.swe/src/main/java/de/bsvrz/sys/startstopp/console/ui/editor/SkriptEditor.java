@@ -49,8 +49,10 @@ import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Global;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
@@ -67,6 +69,18 @@ public final class SkriptEditor extends BasicWindow {
 		super("StartStopp - Editor");
 		this.skript = (StartStoppSkript) Util.cloneObject(skript);
 		init();
+		
+		skriptVervollstaendigen();
+		
+	}
+
+	private void skriptVervollstaendigen() {
+		if( skript.getGlobal() == null) {
+			skript.setGlobal(new Global());
+		}
+		if( skript.getGlobal().getZugangDav() == null) {
+			skript.getGlobal().setZugangDav(new ZugangDav());
+		}
 	}
 
 	private void init() {

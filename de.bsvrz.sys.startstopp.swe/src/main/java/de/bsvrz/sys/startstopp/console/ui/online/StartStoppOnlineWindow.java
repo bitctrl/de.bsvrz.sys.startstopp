@@ -50,10 +50,13 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
+import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
 import de.bsvrz.sys.startstopp.console.ui.TerminalCloseAction;
@@ -67,22 +70,17 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		public void run() {
 
 			try {
-				List<Applikation> aktuelleApplikationen = StartStoppConsole.getClient().getApplikationen();
-
-				if (aktuelleApplikationen.isEmpty()) {
-					StartStoppSkriptStatus skriptStatus = StartStoppConsole.getClient().getCurrentSkriptStatus();
-					if (skriptStatus.getStatus() == StartStoppSkriptStatus.Status.FAILURE) {
-						onlineDisplay.setStatus(OnlineDisplay.Status.SKRIPT_FEHLER);
-					}
-				} else {
-					onlineDisplay.setStatus(OnlineDisplay.Status.ONLINE);
-				}
-
-				table.updateApplikationen(aktuelleApplikationen);
+				table.updateApplikationen(StartStoppConsole.getClient().getApplikationen());
 			} catch (StartStoppException e) {
 				LOGGER.fine(e.getLocalizedMessage());
 				table.updateApplikationen(Collections.emptyList());
-				onlineDisplay.setStatus(OnlineDisplay.Status.VERBINDUNG_FEHLER);
+			}
+
+			try {
+				onlineDisplay.setStatus(StartStoppConsole.getClient().getStartStoppStatus());
+			} catch (StartStoppException e) {
+				LOGGER.fine(e.getLocalizedMessage());
+				onlineDisplay.setStatus(null);
 			}
 		}
 	}
@@ -91,21 +89,6 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 		private OnlineStatusLabel verbindungsStatus;
 		private Label letzteAbfrage;
-
-		enum Status {
-			UNKNOWN("-", TextColor.ANSI.WHITE),
-			SKRIPT_FEHLER("S", TextColor.ANSI.BLUE),
-			VERBINDUNG_FEHLER("X", TextColor.ANSI.RED),
-			ONLINE("O", TextColor.ANSI.GREEN);
-
-			private String text;
-			private TextColor color;
-
-			Status(String text, TextColor color) {
-				this.text = text;
-				this.color = color;
-			}
-		}
 
 		public OnlineDisplay() {
 			setLayoutManager(new GridLayout(3));
@@ -116,10 +99,87 @@ public class StartStoppOnlineWindow extends BasicWindow {
 			addComponent(verbindungsStatus);
 		}
 
-		public void setStatus(Status status) {
+		public void setStatus(StartStoppStatus startStoppStatus) {
 			letzteAbfrage.setText(DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis())));
-			verbindungsStatus.setBackgroundColor(status.color);
-			verbindungsStatus.setText(status.text);
+			if (startStoppStatus == null) {
+				verbindungsStatus.setForegroundColor(TextColor.ANSI.WHITE);
+				verbindungsStatus.setBackgroundColor(TextColor.ANSI.RED);
+				verbindungsStatus.setText("XXXXX");
+			} else {
+				verbindungsStatus.setForegroundColor(getForegroundColor(startStoppStatus));
+				verbindungsStatus.setBackgroundColor(getBackgroundColor(startStoppStatus));
+				verbindungsStatus.setText(startStoppStatus.getStatus().name());
+			}
+		}
+
+		private TextColor getForegroundColor(StartStoppStatus startStoppStatus) {
+
+			TextColor result = TextColor.ANSI.RED;
+
+			switch (startStoppStatus.getStatus()) {
+			case CONFIGERROR:
+				result = TextColor.ANSI.WHITE;
+				break;
+			case INITIALIZED:
+				result = TextColor.ANSI.WHITE;
+				break;
+			case RUNNING:
+				result = TextColor.ANSI.WHITE;
+				break;
+			case RUNNING_CANCELED:
+				result = TextColor.ANSI.WHITE;
+				break;
+			case SHUTDOWN:
+				result = TextColor.ANSI.WHITE;
+				break;
+			case STOPPED:
+				result = TextColor.ANSI.WHITE;
+				break;
+			case STOPPING:
+				result = TextColor.ANSI.WHITE;
+				break;
+			case STOPPING_CANCELED:
+				result = TextColor.ANSI.WHITE;
+				break;
+			default:
+				break;
+			}
+			return result;
+		}
+
+		private TextColor getBackgroundColor(StartStoppStatus startStoppStatus) {
+
+			TextColor result = TextColor.ANSI.RED;
+
+			switch (startStoppStatus.getStatus()) {
+			case CONFIGERROR:
+				result = TextColor.ANSI.BLUE;
+				break;
+			case INITIALIZED:
+				result = TextColor.ANSI.BLUE;
+				break;
+			case RUNNING:
+				result = TextColor.ANSI.GREEN;
+				break;
+			case RUNNING_CANCELED:
+				result = TextColor.ANSI.RED;
+				break;
+			case SHUTDOWN:
+				result = TextColor.ANSI.RED;
+				break;
+			case STOPPED:
+				result = TextColor.ANSI.RED;
+				break;
+			case STOPPING:
+				result = TextColor.ANSI.RED;
+				break;
+			case STOPPING_CANCELED:
+				result = TextColor.ANSI.RED;
+				break;
+			default:
+				break;
+			}
+			return result;
 		}
 	}
 
@@ -130,6 +190,8 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 	public StartStoppOnlineWindow() {
 		super("StartStopp - Online");
+
+		// setCloseWindowWithEscape(false);
 
 		this.table = new OnlineInkarnationTable(applikationen);
 		table.setEditierbar(false);
@@ -153,7 +215,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-			
+
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread thread = Executors.defaultThreadFactory().newThread(r);
@@ -201,7 +263,10 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				try {
 					getTextGUI().addWindow(new SkriptEditor(StartStoppConsole.getClient().getCurrentSkript()));
 				} catch (StartStoppException e) {
-					new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
+					if (new JaNeinDialog("FEHLER",
+							e.getLocalizedMessage() + "\nSoll eine leere Konfiguration angelegt werden?").display()) {
+						getTextGUI().addWindow(new SkriptEditor(new StartStoppSkript()));
+					}
 				}
 
 				return true;
@@ -212,7 +277,9 @@ public class StartStoppOnlineWindow extends BasicWindow {
 			break;
 
 		case Escape:
-			close();
+			if (new JaNeinDialog("INFO", "Benutzeroberfläche schließen").display()) {
+				close();
+			}
 			break;
 
 		default:

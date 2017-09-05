@@ -63,6 +63,7 @@ import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.MetaDaten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppVersion;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.api.jsonschema.VersionierungsRequest;
@@ -116,21 +117,18 @@ public class SkriptManager {
 			}
 			if (skript == null) {
 				LOGGER.warning("Versuche XML-Datei zu konvertieren!");
-				skript = new StartStoppXMLParser().getSkriptFromFile(new File(startStopp.getOptions().getSkriptDir(), "startstopp.xml"));
-				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
+				File localXmlFile = new File(startStopp.getOptions().getSkriptDir(), "startstopp.xml");
+				skript = new StartStoppXMLParser().getSkriptFromFile(localXmlFile);
+				
+				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 				try (FileOutputStream fileStream = new FileOutputStream(getStartStoppSkriptFile());
 						Writer writer = new OutputStreamWriter(fileStream, "UTF-8")) {
 					mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 					mapper.writeValue(writer, skript);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.warning("Skript konnte nicht geladen werden: " + e.getLocalizedMessage());
 				}
-
 			}
 
 			aktuelleKonfiguration = new StartStoppKonfiguration(skript);
@@ -149,7 +147,8 @@ public class SkriptManager {
 			}
 
 		} catch (Exception e) {
-			LOGGER.warning("Fehler beim Einlesen des XML-StartStopp-Skripts!", e);
+			startStopp.setStatus(Status.CONFIGERROR);
+			LOGGER.warning("Fehler beim Einlesen des XML-StartStopp-Skripts: " + e.getLocalizedMessage());
 		}
 	}
 	
@@ -297,6 +296,10 @@ public class SkriptManager {
 	private void initSkriptHistory() {
 
 		File historyFile = getStartStoppHistoryFile();
+		if( !historyFile.exists()) {
+			return;
+		}
+		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			List<StartStoppVersion> versionsListe = mapper.readValue(historyFile,
@@ -309,9 +312,6 @@ public class SkriptManager {
 		} catch (Exception e) {
 			LOGGER.warning("Fehler beim Einlesen der StartStopp-Historie!", e);
 		}
-
-		// TODO Auto-generated method stub
-
 	}
 
 	private File saveTempSkript(long utcNow, StartStoppKonfiguration skript, VersionierungsRequest request,

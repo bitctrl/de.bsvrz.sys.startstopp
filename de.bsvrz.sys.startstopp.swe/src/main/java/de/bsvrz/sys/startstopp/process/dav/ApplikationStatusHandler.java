@@ -201,10 +201,7 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 			DavApplikationStatus status = new DavApplikationStatus(name, appObj, fertig);
 			DavApplikationStatus lastStatus = applikationStatus.put(name, status);
 			if (!status.equals(lastStatus)) {
-//				String processMgrInkarnation = name.substring(inkarnationsPrefix.length());
 				onStatusChange.send(status);
-//				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
-//				processManager.updateFromDav(processMgrInkarnation, status.fertig);
 			}
 		}
 	}

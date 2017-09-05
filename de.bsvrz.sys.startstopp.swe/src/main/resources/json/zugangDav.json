@@ -3,22 +3,26 @@
 	"type": "object",
 	"properties": {
 		"adresse": {
-			"type": "string"
+			"type": "string",
+			"default": "localhost"
 		},
 		"passWord": {
-			"type": "string"
+			"type": "string",
+			"default": "passwort"
 		},
 		"port": {
-			"type": "string"
+			"type": "string",
+			"default": "3000"
 		},
 		"userName": {
-			"type": "string"
+			"type": "string",
+			"default": "Tester"
 		}
 	},
 	"required": [
-		"userName",
-		"passWord",
 		"adresse",
-		"port"
+		"passWord",
+		"port",
+		"userName"
 	]
 }

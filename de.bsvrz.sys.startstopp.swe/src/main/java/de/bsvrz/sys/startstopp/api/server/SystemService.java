@@ -35,6 +35,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
@@ -58,7 +59,7 @@ public class SystemService {
 
 		Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 				"application/json");
-		responseBuilder.entity(startStopp.getStatus());
+		responseBuilder.entity(new StartStoppStatus(startStopp.getStatus()));
 		return responseBuilder.build();
 	}
 

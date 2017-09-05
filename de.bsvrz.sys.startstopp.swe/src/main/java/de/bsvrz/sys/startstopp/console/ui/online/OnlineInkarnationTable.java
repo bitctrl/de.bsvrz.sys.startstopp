@@ -37,7 +37,7 @@ import de.bsvrz.sys.startstopp.console.ui.EditableTable;
 class OnlineInkarnationTable extends EditableTable<Applikation> {
 
 	OnlineInkarnationTable(List<Applikation> applikationen) {
-		super(applikationen, "Inkarnation", "Status", "Meldung");
+		super(applikationen, "Inkarnation", "Art", "Status", "Meldung");
 		setTableCellRenderer(new OnlineTableCellRenderer());
 	}
 
@@ -72,8 +72,34 @@ class OnlineInkarnationTable extends EditableTable<Applikation> {
 	protected List<String> getStringsFor(Applikation applikation) {
 		List<String> result = new ArrayList<>();
 		result.add(applikation.getInkarnation().getInkarnationsName());
+		result.add(getStartArtKurzname(applikation));
 		result.add(applikation.getStatus().toString());
 		result.add(applikation.getStartMeldung());
+		return result;
+	}
+
+	private String getStartArtKurzname(Applikation applikation) {
+
+		String result;
+		
+		switch(applikation.getInkarnation().getStartArt().getOption()) {
+		case AUTOMATISCH:
+			result = "AUT";
+			break;
+		case INTERVALLABSOLUT:
+			result = "ABS";
+			break;
+		case INTERVALLRELATIV:
+			result = "REL";
+			break;
+		case MANUELL:
+			result = "MAN";
+			break;
+		default:
+			result = "???";
+			break;
+		}
+
 		return result;
 	}
 }

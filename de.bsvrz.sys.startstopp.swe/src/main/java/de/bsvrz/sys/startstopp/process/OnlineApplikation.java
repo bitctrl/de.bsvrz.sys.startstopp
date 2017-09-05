@@ -80,6 +80,7 @@ public final class OnlineApplikation {
 	private final List<String> prozessAusgaben = new ArrayList<>();
 	private int startFehlerCounter;
 	private OnlineApplikationTimer onlineApplikationTimer;
+	private StartStopp startStopp;
 
 	public OnlineApplikation(ProzessManager processmanager, OnlineInkarnation onlineInkarnation) {
 		this(StartStopp.getInstance(), processmanager, onlineInkarnation);
@@ -87,6 +88,7 @@ public final class OnlineApplikation {
 
 	public OnlineApplikation(StartStopp startStopp, ProzessManager processmanager,
 			OnlineInkarnation onlineInkarnation) {
+		this.startStopp = startStopp;
 		this.prozessManager = processmanager;
 		this.applikation = new Applikation();
 		this.inkarnationsPrefix = startStopp.getInkarnationsPrefix();
@@ -97,7 +99,7 @@ public final class OnlineApplikation {
 
 		onlineApplikationTimer = new OnlineApplikationTimer(this);
 
-		this.prozessManager.onStartStoppStatusChanged.addHandler(prozessManagerStatusHandler);
+		this.startStopp.onStartStoppStatusChanged.addHandler(prozessManagerStatusHandler);
 		this.prozessManager.getDavConnector().onAppStatusChanged.addHandler(davAppStatusChangedHandler);
 
 		updateStatus(Applikation.Status.INSTALLIERT, "");
@@ -173,7 +175,7 @@ public final class OnlineApplikation {
 	}
 
 	void checkState(TaskType taskType) {
-		getStatusHandler().wechsleStatus(taskType, prozessManager.getStartStoppStatus());
+		getStatusHandler().wechsleStatus(taskType, startStopp.getStatus());
 	}
 
 	private OnlineApplikationStatus getStatusHandler() {
@@ -207,8 +209,8 @@ public final class OnlineApplikation {
 	}
 
 	public void dispose() {
-		this.prozessManager.getDavConnector().onAppStatusChanged.removeHandler(davAppStatusChangedHandler);
-		this.prozessManager.onStartStoppStatusChanged.removeHandler(prozessManagerStatusHandler);
+		prozessManager.getDavConnector().onAppStatusChanged.removeHandler(davAppStatusChangedHandler);
+		startStopp.onStartStoppStatusChanged.removeHandler(prozessManagerStatusHandler);
 
 		onlineApplikationTimer.dispose();
 
@@ -301,7 +303,7 @@ public final class OnlineApplikation {
 				if (wiederholungenStr != null) {
 					LOGGER.warning(getName() + ": Startfehler " + startFehlerCounter + " von " + wiederholungenStr);
 					if (startFehlerCounter++ <= Integer.parseInt(wiederholungenStr)) {
-						if (prozessManager.getStartStoppStatus() == Status.RUNNING) {
+						if (startStopp.getStatus() == Status.RUNNING) {
 							updateStatus(Applikation.Status.INSTALLIERT, "Wiederholung nach Startfehler");
 						} else {
 							LOGGER.warning(getName() + ": Abbruch nach " + wiederholungenStr + " Wiederholungen");
@@ -314,7 +316,7 @@ public final class OnlineApplikation {
 				switch (fehlerVerhalten.getOption()) {
 				case ABBRUCH:
 					CompletableFuture.runAsync(
-							() -> prozessManager.setStartStoppStatus(StartStoppStatus.Status.RUNNING_CANCELED));
+							() -> startStopp.setStatus(StartStoppStatus.Status.RUNNING_CANCELED));
 					break;
 				case BEENDEN:
 					CompletableFuture.runAsync(() -> prozessManager.stoppeSkript());
@@ -358,7 +360,7 @@ public final class OnlineApplikation {
 			}
 			break;
 		default:
-			if (!manuellGestartetOderGestoppt && (prozessManager.getStartStoppStatus() == StartStoppStatus.Status.RUNNING)
+			if (!manuellGestartetOderGestoppt && (startStopp.getStatus() == StartStoppStatus.Status.RUNNING)
 					&& applikation.getInkarnation().getStartArt().getNeuStart()) {
 				updateStatus(Applikation.Status.INSTALLIERT, "");
 			} else {
@@ -430,7 +432,7 @@ public final class OnlineApplikation {
 			switch (applikation.getInkarnation().getStartArt().getOption()) {
 			case INTERVALLABSOLUT:
 			case INTERVALLRELATIV:
-				if (starteNaechstenZyklus(prozessManager.getStartStoppStatus())) {
+				if (starteNaechstenZyklus(startStopp.getStatus())) {
 					updateStatus(Applikation.Status.STARTENWARTEN, "Warte auf nächsten Start");
 				} else {
 					updateStatus(Applikation.Status.GESTOPPT, "Zyklische Ausführung angehalten");
@@ -502,7 +504,7 @@ public final class OnlineApplikation {
 	public void reinit(Inkarnation newInkarnation) throws StartStoppException {
 		applikation.setInkarnation(newInkarnation);
 		startFehlerCounter = 0;
-		if (prozessManager.getStartStoppStatus() == Status.RUNNING) {
+		if (startStopp.getStatus() == Status.RUNNING) {
 			prozessManager.restarteApplikation(getName());
 		}
 	}
@@ -520,7 +522,7 @@ public final class OnlineApplikation {
 		case GESTOPPT:
 		case INSTALLIERT:
 		case STARTENWARTEN:
-			updateStatus(Applikation.Status.GESTOPPT, message);
+			updateStatus(Applikation.Status.GESTOPPT, "");
 			break;
 		default:
 			break;

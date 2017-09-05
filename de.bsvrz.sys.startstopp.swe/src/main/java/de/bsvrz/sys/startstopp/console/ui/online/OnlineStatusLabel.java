@@ -38,7 +38,7 @@ public class OnlineStatusLabel extends Label {
 	private final class OnlineStatusLabelRenderer implements ComponentRenderer<Label> {
 		@Override
 		public TerminalSize getPreferredSize(Label component) {
-			return TerminalSize.ONE;
+			return new TerminalSize(getText().length(), 1);
 		}
 
 		@Override
@@ -47,17 +47,18 @@ public class OnlineStatusLabel extends Label {
 
 			graphics.applyThemeStyle(themeDefinition.getNormal());
 			if (themeDefinition.getBooleanProperty("COLOR_STATUS", false)) {
+				graphics.setForegroundColor(getForegroundColor());
 				graphics.setBackgroundColor(getBackgroundColor());
-				graphics.putString(0, 0, " ");
 			} else {
+				graphics.setForegroundColor(TextColor.ANSI.DEFAULT);
 				graphics.setBackgroundColor(TextColor.ANSI.DEFAULT);
-				graphics.putString(0, 0, getText());
 			}
+			graphics.putString(0, 0, getText());
 		}
 	}
 
 	public OnlineStatusLabel() {
-		super(" ");
+		super("     ");
 	}
 
 	@Override

@@ -53,48 +53,54 @@ public class StartenWartenStatus extends OnlineApplikationStatus {
 			return false;
 		}
 
-		if (!applikation.isManuellGestartetOderGestoppt()
-				&& startStoppStatus != StartStoppStatus.Status.RUNNING && startStoppStatus != StartStoppStatus.Status.INITIALIZED) {
+		if (!applikation.isManuellGestartetOderGestoppt() && startStoppStatus != StartStoppStatus.Status.RUNNING
+				&& startStoppStatus != StartStoppStatus.Status.INITIALIZED) {
 			applikation.getOnlineApplikationTimer().clear();
 			return applikation.updateStatus(Applikation.Status.STARTENWARTEN, "");
 		}
 
-		String kernSystemMessage = applikation.kernSystemVerfuegbar();
-		if (kernSystemMessage != null) {
-			LOGGER.info(applikation.getName() + ": " + kernSystemMessage);
-			return applikation.updateStatus(Applikation.Status.STARTENWARTEN, kernSystemMessage);
-		}
-		
-		StartBedingung startBedingung = applikation.getStartBedingung();
-		if (startBedingung != null) {
-			StartBedingungStatus pruefer = applikation.getStartbedingungStatus();
-			if (!pruefer.isErfuellt()) {
+		if (applikation.isManuellGestartetOderGestoppt()) {
+			if (!applikation.getOnlineApplikationTimer().isIntervallTaskAktiv()) {
 				applikation.getOnlineApplikationTimer().clear();
-				return applikation.updateStatus(Applikation.Status.STARTENWARTEN, pruefer.getMessage());
+			}
+		} else {
+			String kernSystemMessage = applikation.kernSystemVerfuegbar();
+			if (kernSystemMessage != null) {
+				LOGGER.info(applikation.getName() + ": " + kernSystemMessage);
+				return applikation.updateStatus(Applikation.Status.STARTENWARTEN, kernSystemMessage);
 			}
 
-			if (task != TaskType.WARTETIMER) {
-				if (applikation.getOnlineApplikationTimer().isWarteTaskAktiv()) {
-					return applikation.updateStatus(Applikation.Status.STARTENWARTEN,
-							applikation.getApplikation().getStartMeldung());
+			StartBedingung startBedingung = applikation.getStartBedingung();
+			if (startBedingung != null) {
+				StartBedingungStatus pruefer = applikation.getStartbedingungStatus();
+				if (!pruefer.isErfuellt()) {
+					applikation.getOnlineApplikationTimer().clear();
+					return applikation.updateStatus(Applikation.Status.STARTENWARTEN, pruefer.getMessage());
 				}
-				long warteZeitInMsec;
-				try {
-					warteZeitInMsec = Util.convertToWarteZeitInMsec(startBedingung.getWartezeit());
-				} catch (StartStoppException e) {
-					throw new IllegalStateException(
-							"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
-				}
-				if (warteZeitInMsec > 0) {
-					applikation.getOnlineApplikationTimer().initWarteTask(warteZeitInMsec);
-					return applikation.updateStatus(Applikation.Status.STARTENWARTEN, "Wartezeit bis " + DateFormat
-							.getDateTimeInstance().format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
+
+				if (task != TaskType.WARTETIMER) {
+					if (applikation.getOnlineApplikationTimer().isWarteTaskAktiv()) {
+						return applikation.updateStatus(Applikation.Status.STARTENWARTEN,
+								applikation.getApplikation().getStartMeldung());
+					}
+					long warteZeitInMsec;
+					try {
+						warteZeitInMsec = Util.convertToWarteZeitInMsec(startBedingung.getWartezeit());
+					} catch (StartStoppException e) {
+						throw new IllegalStateException(
+								"Sollte hier nicht passieren, weil nur geprüfte Skripte ausgeführt werden!", e);
+					}
+					if (warteZeitInMsec > 0) {
+						applikation.getOnlineApplikationTimer().initWarteTask(warteZeitInMsec);
+						return applikation.updateStatus(Applikation.Status.STARTENWARTEN, "Wartezeit bis " + DateFormat
+								.getDateTimeInstance().format(new Date(System.currentTimeMillis() + warteZeitInMsec)));
+					}
 				}
 			}
-		}
 
-		if (applikation.getOnlineApplikationTimer().isWarteTaskAktiv()) {
-			return false;
+			if (applikation.getOnlineApplikationTimer().isWarteTaskAktiv()) {
+				return false;
+			}
 		}
 
 		if (applikation.getOnlineApplikationTimer().isIntervallTaskAktiv()) {

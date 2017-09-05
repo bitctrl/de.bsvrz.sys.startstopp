@@ -32,16 +32,20 @@ import java.net.UnknownHostException;
 import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
+import de.muspellheim.events.Event;
 
 public class StartStopp {
 
 	private static final Debug LOGGER = Debug.getLogger();
-
 	private static StartStopp instance = new StartStopp();
+
+	public final Event<StartStoppStatus.Status> onStartStoppStatusChanged = new Event<>();
+
+	private Object stopLock = new Object();
 
 	private StartStoppOptions options;
 
@@ -49,6 +53,8 @@ public class StartStopp {
 
 	private ProzessManager processManager;
 
+	private StartStoppStatus.Status status = Status.INITIALIZED;
+	
 	private ApiServer apiServer;
 	private String inkarnationsPrefix;
 
@@ -102,20 +108,6 @@ public class StartStopp {
 		return skriptManager;
 	}
 
-	public StartStoppStatus getStatus() {
-		StartStoppStatus status = new StartStoppStatus();
-		try {
-			skriptManager.getCurrentSkript();
-		} catch (StartStoppException e) {
-			LOGGER.fine(e.getLocalizedMessage());
-			status.setStatus(StartStoppStatus.Status.CONFIGERROR);
-			return status;
-		}
-
-		status.setStatus(processManager.getStartStoppStatus());
-		return status;
-	}
-
 	private void init(String... args) throws Exception {
 
 		Debug.init("StartStopp", new ArgumentList(args));
@@ -128,5 +120,37 @@ public class StartStopp {
 
 	private void start() throws Exception {
 		apiServer.start();
+	}
+
+	public StartStoppStatus.Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(StartStoppStatus.Status status) {
+		setStatus(status, false);
+	}
+
+
+	public void setStatus(StartStoppStatus.Status newStatus, boolean force) {
+		
+		if ((this.status != newStatus) || force) {
+			this.status = newStatus;
+			onStartStoppStatusChanged.send(newStatus);
+		}
+		synchronized (stopLock) {
+			stopLock.notifyAll();
+		}
+	}
+
+	public void waitForStopp() {
+		while (status == Status.STOPPING) {
+			synchronized (stopLock) {
+				try {
+					stopLock.wait(1000);
+				} catch (InterruptedException e) {
+					LOGGER.warning(e.getLocalizedMessage());
+				}
+			}
+		}
 	}
 }
