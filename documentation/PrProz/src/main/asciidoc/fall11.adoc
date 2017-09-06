@@ -23,7 +23,7 @@ Die Anforderungen, die nur schwerlich im Betrieb getestet werden können, sind i
 
 ==== Erwartete Ergebnisse
 
-* Die Datenablage erfolgt in einem unkritischen Bereich, z. B. dem userspace.
+* Die Datenablage erfolgt in einem unkritischen Bereich, z. B. dem Userspace.
 * Es gibt keine Abhängigkeiten vom Betriebssystem, es werden keine Umgebungsvariablen geändert und alle notwendigen Werkzeuge oder Protokolle sind über eigene Bibliotheken implementiert.
 * Die Terminierungsschnittstelle des Datenverteilers wird verwendet, um Applikationen kontrolliert zu beenden.
 * Es existiert eine API, die von externen Programmen und insbesondere der Bedienoberfläche genutzt werden kann und wird.

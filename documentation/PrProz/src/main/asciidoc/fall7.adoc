@@ -10,7 +10,7 @@ Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt5, Sys-StSt7 bis Sys
 
 Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
 
-Für den Testfall werden auf Rechner1 nacheinander die Skriptdateien [StartStopp7.1] bis [StartStopp7.7] verwendet. 
+Für den Testfall werden auf Rechner1 nacheinander die Skriptdateien "startStopp07_1.json" bis "startStopp07_7.json" verwendet. 
 
 ==== Durchführung
 

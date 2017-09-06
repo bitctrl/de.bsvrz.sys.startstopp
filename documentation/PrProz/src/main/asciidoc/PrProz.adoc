@@ -16,9 +16,9 @@ Die Prüfprozedur beschreibt die Durchführung der Prüfungen für die SWE Sys S
 Zur Prüfung wird ein installiertes Datenverteilersystem auf zwei unabhängigen Rechnern eingesetzt. 
 Verwendet wird das mit der SWE zur Verfügung gestellte System, dass die erforderlichen SWE basierend auf der Kernsoftware 3.9.2 enthält.
  
-Installiert werden neben den Standarddatenverteiler-Paketen die SWE StartStopp in der zu testenden Version und das Paket "de.bsvrz.sys.stst.test", in dem die für die Testkonfiguration zu verwendetenen Applikationen mit den jeweils geforderten Eigenschaften implementiert sind.
+Installiert werden neben den Standarddatenverteiler-Paketen die SWE StartStopp in der zu testenden Version und das Paket "de.bsvrz.sys.stst.test", in dem die für die Testkonfiguration zu verwendenden Applikationen mit den jeweils geforderten Eigenschaften implementiert sind.
 
-Als StartStopp-Skripte werden die aus den vorgegebenen XML-Dateien konvertierten und korrigierten JSON-Dateien eingesetzt. 
+Als StartStopp-Skripte werden die aus den vorgegebenen XML-Dateien konvertierten und korrigierten JSON-Dateien eingesetzt, die im Testsystem im Verzeichnis "startstopp" abgelegt sind.
 
 Die Angabe erfolgt im Folgenden daher als Dateiname ohne Dateierweiterung.
 
@@ -27,8 +27,8 @@ Die Angabe erfolgt im Folgenden daher als Dateiname ohne Dateierweiterung.
 === Ausführen der StartStopp-Applikation
 
 Die StartStopp-Applikation selbst wird per ShellSkript gestartet. Die entsprechende Skripte "StartStopp.bat" bzw. "StartStopp.bash"
-sind in den Unterverzeichnissen "skripte-dos" bzw. "skripte-bash" zu finden. Gegebenfalls müssen dort vor der Ausführung die in den 
-Prüffälllen geforderten Startparameter angepasst werden.
+sind in den Unterverzeichnissen "skripte-dos" bzw. "skripte-bash" zu finden. Gegebenenfalls müssen dort vor der Ausführung die in den 
+Prüffällen geforderten Startparameter angepasst werden.
 
 Die StartStopp-Applikation bindet per Standardkonfiguration den Port 3000 für einen https-Server. Der Port muss deswegen
 auf dem System zur Verwendung frei sein. 
@@ -83,7 +83,7 @@ Der Editor-Modus bietet auch die Funktion die anderen Elemente eines Skripts zu 
 * DAV-Zugangsdaten (Taste "z")
 * Liste der Inkarnationen (Taste "i")
 
-Für die Listen (Inkarnatiionen, Makros, Rechner) wird für den jeweils ausgewählten Eintrag ein Editor geöffnet. Mit der 
+Für die Listen (Inkarnationen, Makros, Rechner) wird für den jeweils ausgewählten Eintrag ein Editor geöffnet. Mit der 
 Tastenkombinationen ALT+EINFÜGEN wird ein neues Element angelegt, mit ALT+ENTFERNEN wird das aktuelle Element aus der Liste
 entfernt.
 Für die übrigen Elemente wird ein spezieller Dialog zur Bearbeitung geöffnet. 

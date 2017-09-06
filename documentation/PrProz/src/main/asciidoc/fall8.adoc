@@ -10,12 +10,12 @@ Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt9, Sys-StSt-12, Sys-
 
 Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
 
-Für den Testfall wird auf Rechner1 die Skriptdateien [StartStopp8] verwendet. 
-Die Datei [StartStopp8] wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt. 
+Für den Testfall wird auf Rechner1 die Skriptdateien "startStopp08.json" verwendet. 
+Die Datei "startStopp08.json" wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt. 
 
 Auf Rechner 1 werden die SWE StartStopp sowie die Bedienoberfläche per Shell-Skript gestartet.
 
-Es wird ein installiertes Rahmenwerk verfügbar sein, in dem das StartStopp-Plugin installiert sein, mit dem der Abhängigkeitsgraph visualisiert werden kann.
+Es ist ein installiertes Rahmenwerk verfügbar, in dem das StartStopp-Plugin installiert wurde, mit dem der Abhängigkeitsgraph visualisiert werden kann.
 
 ==== Durchführung
 
