@@ -31,11 +31,11 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 
 public class InstalliertStatus extends OnlineApplikationStatus {

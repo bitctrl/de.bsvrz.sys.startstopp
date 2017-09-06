@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.api.client;
+package de.bsvrz.sys.startstopp.api;
 
 import java.util.List;
 
@@ -42,6 +42,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.client.ClientConfig;
 
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.client.StartStoppStatusException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
@@ -49,9 +50,6 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 import de.bsvrz.sys.startstopp.api.jsonschema.VersionierungsRequest;
-import de.bsvrz.sys.startstopp.api.server.ApiServer;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 
 public class StartStoppClient {
 
@@ -87,7 +85,7 @@ public class StartStoppClient {
 	private Client getConnector() throws StartStoppException {
 		if (connector == null) {
 			SslContextFactory sslContextFactory = new SslContextFactory();
-			sslContextFactory.setKeyStorePath(ApiServer.class.getResource("keystore.jks").toExternalForm());
+			sslContextFactory.setKeyStorePath(StartStoppClient.class.getResource("keystore.jks").toExternalForm());
 			sslContextFactory.setKeyStorePassword("startstopp");
 			sslContextFactory.setKeyManagerPassword("startstopp");
 			try {

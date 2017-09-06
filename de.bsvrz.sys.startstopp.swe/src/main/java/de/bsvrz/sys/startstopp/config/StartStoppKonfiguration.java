@@ -42,11 +42,11 @@ import org.eclipse.jetty.util.ConcurrentArrayQueue;
 
 import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;

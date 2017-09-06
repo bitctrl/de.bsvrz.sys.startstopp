@@ -28,13 +28,13 @@ package de.bsvrz.sys.startstopp;
 
 import java.util.List;
 
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
+import de.bsvrz.sys.startstopp.api.client.StartStoppStatusException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
-import de.bsvrz.sys.startstopp.config.StartStoppStatusException;
 
 public final class AppTest {
 

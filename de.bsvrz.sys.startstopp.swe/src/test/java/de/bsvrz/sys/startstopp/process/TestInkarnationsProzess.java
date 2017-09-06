@@ -28,7 +28,6 @@ package de.bsvrz.sys.startstopp.process;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -194,7 +193,7 @@ public class TestInkarnationsProzess {
 
 		Assert.assertEquals("Status", OSApplikationStatus.GESTARTET, process.getStatus());
 
-		TimeUnit.SECONDS.sleep(OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC);
+		TimeUnit.SECONDS.sleep(OSApplikation.STARTFEHLER_LAUFZEIT_ERKENNUNG_IN_SEC + 2);
 		process.kill();
 		waitForLock();
 

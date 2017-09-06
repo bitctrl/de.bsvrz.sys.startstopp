@@ -26,10 +26,10 @@
 
 package de.bsvrz.sys.startstopp.process;
 
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 
 public class OnlineInkarnation {

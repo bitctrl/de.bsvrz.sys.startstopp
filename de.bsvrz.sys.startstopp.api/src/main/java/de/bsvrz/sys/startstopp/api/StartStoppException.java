@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.config;
+package de.bsvrz.sys.startstopp.api;
 
 import java.util.ArrayList;
 import java.util.List;

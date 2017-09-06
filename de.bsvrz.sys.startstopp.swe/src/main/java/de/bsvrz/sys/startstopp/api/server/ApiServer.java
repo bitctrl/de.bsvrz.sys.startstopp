@@ -35,6 +35,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import de.bsvrz.sys.startstopp.api.StartStoppClient;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 
@@ -56,7 +57,7 @@ public class ApiServer {
 				ApplikationenService.class, RechnerService.class);
 
 		SslContextFactory sslContextFactory = new SslContextFactory();
-		sslContextFactory.setKeyStorePath(ApiServer.class.getResource("keystore.jks").toExternalForm());
+		sslContextFactory.setKeyStorePath(StartStoppClient.class.getResource("keystore.jks").toExternalForm());
 		sslContextFactory.setKeyStorePassword("startstopp");
 		sslContextFactory.setKeyManagerPassword("startstopp");
 		Server httpsServer = JettyHttpContainerFactory.createServer(baseUri, sslContextFactory, config);

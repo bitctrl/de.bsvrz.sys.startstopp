@@ -49,13 +49,11 @@ import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
-import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;

@@ -34,10 +34,10 @@ import java.util.Map;
 import java.util.Set;
 
 import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.muspellheim.events.Action;
 
 public class RechnerClient implements Runnable {

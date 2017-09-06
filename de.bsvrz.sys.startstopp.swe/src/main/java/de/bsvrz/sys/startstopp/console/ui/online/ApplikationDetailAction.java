@@ -30,8 +30,8 @@ import java.util.Collections;
 
 import com.googlecode.lanterna.gui2.Window.Hint;
 
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 

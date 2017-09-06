@@ -69,6 +69,7 @@
 
 
 	<modules>
+        <module>de.bsvrz.sys.startstopp.api</module>
 		<module>de.bsvrz.sys.startstopp.swe</module>
 		<module>de.bsvrz.sys.stst.test</module>
 		<module>documentation</module>

@@ -30,9 +30,9 @@ import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.UrlasserDialog;

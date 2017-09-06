@@ -33,6 +33,7 @@ import de.bsvrz.dav.daf.main.ClientDavConnection;
 import de.bsvrz.dav.daf.main.ClientReceiverInterface;
 import de.bsvrz.dav.daf.main.ClientSenderInterface;
 import de.bsvrz.dav.daf.main.Data;
+import de.bsvrz.dav.daf.main.Data.Array;
 import de.bsvrz.dav.daf.main.DataDescription;
 import de.bsvrz.dav.daf.main.DataNotSubscribedException;
 import de.bsvrz.dav.daf.main.OneSubscriptionPerSendData;
@@ -41,13 +42,12 @@ import de.bsvrz.dav.daf.main.ReceiverRole;
 import de.bsvrz.dav.daf.main.ResultData;
 import de.bsvrz.dav.daf.main.SendSubscriptionNotConfirmed;
 import de.bsvrz.dav.daf.main.SenderRole;
-import de.bsvrz.dav.daf.main.Data.Array;
 import de.bsvrz.dav.daf.main.config.Aspect;
 import de.bsvrz.dav.daf.main.config.AttributeGroup;
 import de.bsvrz.dav.daf.main.config.DataModel;
 import de.bsvrz.dav.daf.main.config.SystemObject;
 import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 
 class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 

@@ -24,8 +24,9 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.config;
+package de.bsvrz.sys.startstopp.api.client;
 
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
 
 public class StartStoppStatusException extends StartStoppException {

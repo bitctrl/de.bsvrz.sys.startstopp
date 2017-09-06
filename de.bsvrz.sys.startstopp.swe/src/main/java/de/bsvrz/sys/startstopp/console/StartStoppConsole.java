@@ -29,7 +29,6 @@ package de.bsvrz.sys.startstopp.console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.TooManyListenersException;
 
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.graphics.PropertyTheme;
@@ -40,7 +39,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import de.bsvrz.sys.startstopp.api.client.StartStoppClient;
+import de.bsvrz.sys.startstopp.api.StartStoppClient;
 import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow;
 import de.bsvrz.sys.startstopp.process.os.OSTools;
 

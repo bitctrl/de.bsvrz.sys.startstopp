@@ -33,9 +33,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import de.bsvrz.dav.daf.util.cron.CronDefinition;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 

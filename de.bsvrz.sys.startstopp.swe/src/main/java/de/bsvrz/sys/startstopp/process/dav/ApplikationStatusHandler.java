@@ -51,7 +51,7 @@ import de.bsvrz.dav.daf.main.config.InvalidationListener;
 import de.bsvrz.dav.daf.main.config.SystemObject;
 import de.bsvrz.dav.daf.main.config.SystemObjectType;
 import de.bsvrz.sys.funclib.debug.Debug;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.muspellheim.events.Event;
 

@@ -29,11 +29,11 @@ package de.bsvrz.sys.startstopp.process;
 import java.text.DateFormat;
 import java.util.Date;
 
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 
 public class StoppenWartenStatus extends OnlineApplikationStatus {

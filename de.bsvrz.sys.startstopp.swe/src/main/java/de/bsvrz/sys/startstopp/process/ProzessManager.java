@@ -37,6 +37,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
@@ -45,7 +46,6 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 import de.bsvrz.sys.startstopp.process.dav.DavConnector;
@@ -54,7 +54,6 @@ import de.bsvrz.sys.startstopp.process.remote.RechnerManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.bsvrz.sys.startstopp.startstopp.StartStoppOptions;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
-import de.muspellheim.events.Event;
 
 public final class ProzessManager {
 
@@ -147,10 +146,6 @@ public final class ProzessManager {
 	}
 
 	public OnlineApplikation starteApplikation(String inkarnationsName) throws StartStoppException {
-		return starteApplikation(inkarnationsName, false);
-	}
-	
-	public OnlineApplikation starteApplikation(String inkarnationsName, boolean manuell) throws StartStoppException {
 		checkManualStartModus();
 		OnlineApplikation applikation = applikationen.get(inkarnationsName);
 		if (applikation == null) {

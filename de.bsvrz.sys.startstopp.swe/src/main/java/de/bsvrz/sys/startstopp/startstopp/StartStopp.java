@@ -70,7 +70,8 @@ public class StartStopp {
 			instance.start();
 
 		} catch (Exception e) {
-			System.err.println(e.getLocalizedMessage());
+			System.err.println("StartStopp abgebrochen: " +  e.getLocalizedMessage());
+			e.printStackTrace();
 			System.exit(-1);
 		}
 	}

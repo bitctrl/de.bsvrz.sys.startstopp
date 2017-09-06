@@ -37,10 +37,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.StatusResponse;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
@@ -116,7 +116,7 @@ public class ApplikationenService {
 	public Response responseApplikationStart(@PathParam("inkarnationsname") String inkarnationsName) {
 
 		try {
-			OnlineApplikation applikation = processManager.starteApplikation(inkarnationsName, true);
+			OnlineApplikation applikation = processManager.starteApplikation(inkarnationsName);
 			Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 					"application/json");
 			responseBuilder.entity(applikation.getApplikation());

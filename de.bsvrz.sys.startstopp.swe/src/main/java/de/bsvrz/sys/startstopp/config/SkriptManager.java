@@ -28,7 +28,6 @@ package de.bsvrz.sys.startstopp.config;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,6 +59,8 @@ import de.bsvrz.dav.daf.main.authentication.ClientCredentials;
 import de.bsvrz.dav.daf.main.config.ConfigurationTaskException;
 import de.bsvrz.dav.daf.userManagement.UserManagementFileOffline;
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
+import de.bsvrz.sys.startstopp.api.client.StartStoppStatusException;
 import de.bsvrz.sys.startstopp.api.jsonschema.MetaDaten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;

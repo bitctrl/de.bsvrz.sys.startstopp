@@ -26,7 +26,7 @@
 
 package de.bsvrz.sys.startstopp.startstopp;
 
-import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 
 public class StartStoppDavException extends StartStoppException {
 

@@ -34,7 +34,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
-import de.bsvrz.sys.startstopp.config.StartStoppException;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 
 public final class Util {
 

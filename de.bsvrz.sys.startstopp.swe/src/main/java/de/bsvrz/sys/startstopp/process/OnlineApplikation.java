@@ -36,6 +36,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import de.bsvrz.sys.funclib.debug.Debug;
+import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
@@ -46,7 +47,6 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
-import de.bsvrz.sys.startstopp.config.StartStoppException;
 import de.bsvrz.sys.startstopp.process.dav.DavApplikationStatus;
 import de.bsvrz.sys.startstopp.process.os.OSApplikation;
 import de.bsvrz.sys.startstopp.process.os.OSApplikationStatus;

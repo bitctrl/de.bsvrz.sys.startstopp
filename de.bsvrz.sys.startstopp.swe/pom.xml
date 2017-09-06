@@ -150,7 +150,6 @@
 		</profile>
 	</profiles>
 
-
 	<dependencies>
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -183,11 +182,16 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>de.bsvrz.dav</groupId>
-			<artifactId>de.bsvrz.dav.daf</artifactId>
-			<version>${kernsoftware.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>de.bsvrz.sys</groupId>
+            <artifactId>de.bsvrz.sys.startstopp.api</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>srp6a</artifactId>
+            <version>2.0.0</version>
+        </dependency>
 		<dependency>
 			<groupId>de.bsvrz.sys</groupId>
 			<artifactId>de.bsvrz.sys.funclib.application</artifactId>
@@ -199,47 +203,11 @@
 			<version>${kernsoftware.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>2.24</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.containers</groupId>
-			<artifactId>jersey-container-jetty-http</artifactId>
-			<version>2.24</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jsonSchema</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-base</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-json-provider</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
+ 		<dependency>
 			<groupId>com.profesorfalken</groupId>
 			<artifactId>WMI4Java</artifactId>
 			<version>1.6</version>
@@ -254,37 +222,10 @@
 			<artifactId>events</artifactId>
 			<version>1.1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>srp6a</artifactId>
-			<version>2.0.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.jsonschema2pojo</groupId>
-				<artifactId>jsonschema2pojo-maven-plugin</artifactId>
-				<version>0.4.37</version>
-				<configuration>
-					<sourceDirectory>${basedir}/src/main/resources/json</sourceDirectory>
-					<includeHashcodeAndEquals>true</includeHashcodeAndEquals>
-					<includeToString>true</includeToString>
-					<includeAdditionalProperties>true</includeAdditionalProperties>
-					<generateBuilders>true</generateBuilders>
-					<includeConstructors>true</includeConstructors>
-					<serializable>true</serializable>
-					<targetPackage>de.bsvrz.sys.startstopp.api.jsonschema</targetPackage>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
@@ -429,13 +370,13 @@
 						</goals>
 						<phase>prepare-package</phase>
 						<configuration>
-							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
+ 							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
 								de.kappich, com.google.guava, com.nimbusds
 							</excludeGroupIds>
-						</configuration>
+                        </configuration>
 					</execution>
 					<execution>
 						<id>build-non-bsvrz-classpath</id>
@@ -446,7 +387,7 @@
 							<outputProperty>nonBsvrzClasspath</outputProperty>
 							<prefix>lib</prefix>
 							<includeScope>runtime</includeScope>
-							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
+ 							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
@@ -464,8 +405,7 @@
 							<prefix>lib</prefix>
 							<fileSeparator>/</fileSeparator>
 							<pathSeparator xml:space="preserve">@_@</pathSeparator>
-							<includeScope>runtime</includeScope>
-							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
+- 							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
@@ -473,6 +413,7 @@
 							</excludeGroupIds>
 						</configuration>
 					</execution>
+					
 				</executions>
 			</plugin>
 			<plugin>
