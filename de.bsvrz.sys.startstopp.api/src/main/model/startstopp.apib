@@ -1,0 +1,419 @@
+FORMAT: 1A
+
+# StartStopp API
+Die StartStopp-API
+
+# Group StartStopp
+Gruppe aller StartStopp-bezogenenen Ressourcen.
+
+## Status von StartStopp [/ststapi/v1/system]
+Liefert den Status der StartStopp-Applikation.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes (StartStoppStatus)
+
+## StartStopp Applikation beenden [/ststapi/v1/system/exit]
+Beendet die StartStopp-Applikation.
+
+### POST
+
++ Response 202
+
+## StartStopp-Konfiguration beenden [/ststapi/v1/system/stopp]
+Startet die StartStopp-Konfiguration neu.
+
+### POST
+
++ Response 202
+
+## StartStopp-Konfiguration neu starten [/ststapi/v1/system/restart]
+Startet die StartStopp-Konfiguration neu.
+
+### POST
+
++ Response 202
+
+## StartStopp-Konfiguration starten [/ststapi/v1/system/start]
+Startet die nicht laufenden Prozesse der StartStopp-Konfiguration neu.
+
+### POST
+
++ Response 202
+
+## StartStopp - Betriebsmeldungen [/ststapi/v1/system/betriebsmeldungen]
+Schaltet den Zustand der Betriebsmeldungen um
+
+### POST
+
++ Response 202
+
+
+## Alle Applikationen der bekannten Rechner abrufen [/ststapi/v1/system/applikationen]
+
+Liefert die Applikationen aller definierten Rechner, soweit diese verfügbar sind.
+
+### GET
+
++ Response 200
+
+    + Attributes(array[Applikation], fixed-type)
+
+
+# Group Skripte
+
+Gruppe aller skriptbezogenenen Ressourcen.
+
+## Aktuelles Skript [/ststapi/v1/skripte/current]
+
+Liefert oder schreibt das aktuell von StartStopp geladene Skript.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(StartStoppSkript)
+
++ Response 503 (application/json)
+
+    + Attributes(StatusResponse)
+
+### PUT
+
+Das gesendete Skript wird geprüft, versioniert und aktiviert.
+
++ Request (application/json)
+
+    + Attributes(VersionierungsRequest)
+
++ Response 200 (application/json)
+
+  + Attributes(StartStoppSkript)
+ 
++ Response 400 (application/json)
+
+  + Attributes(StatusResponse)
+
+## Aktueller Skript-Status [/ststapi/v1/skripte/current/status]
+
+Liefert den Status des aktuell von StartStopp geladenen Skripts.
+
+### GET
+
++ Response 200 (application/json)
+
+   + Attributes(StartStoppSkriptStatus)
+
+## Versionierte Skripte [/ststapi/v1/skripte/versionen]
+
+Liefert eine Liste der Informationen versionierten Skripten
+
+### GET
+
++ Response 200 (application/json)
+
+   + Attributes(array[StartStoppVersion], fixed-type)
+
+
+# Group Applikation
+
+
+## Alle Applikationen [/ststapi/v1/applikationen]
+
+Alle von StartStopp verwalteten Applikationen
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(array[Applikation], fixed-type)
+
+
+## Status einer Applikation [/ststapi/v1/applikationen/{inkarnationsname}]
+Liefert den Status der referenzierten Applikation.
+
++ Parameters
+
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes (Applikation)
+
+## Startmeldungen einer Applikation [/ststapi/v1/applikationen/{inkarnationsname}/log]
+Liefert die Startmeldungen der referenzierten Applikation.
+
++ Parameters
+
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
+
+### GET
+
++ Response 200 (application/json)
+    
+    + Attributes (ApplikationLog)
+
+## Applikation starten [/ststapi/v1/applikationen/{inkarnationsname}/start]
+Startet die referenzierte Applikation.
+
++ Parameters
+
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
+
+### POST
+
++ Response 200 (application/json)
+
+    + Attributes (Applikation)
+
++ Response 409 (application/json)
+
+    + Attribute (StatusResponse)
+
+## Applikation neu starten [/ststapi/v1/applikationen/{inkarnationsname}/restart]
+Startet die referenzierte Applikation neu.
+
++ Parameters
+
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
+
+### POST
+
++ Response 200 (application/json)
+
+    + Attributes (Applikation)
+    
++ Response 409 (application/json)
+
+    + Attribute (StatusResponse)
+
+## Applikation beenden [/ststapi/v1/applikationen/{inkarnationsname}/stopp]
+Beendet die referenzierte Applikation.
+
++ Parameters
+
+    + inkarnationsname: Datenverteiler (string, required) - der Inkarnationsname der Applikation.
+
+### POST
+
++ Response 200 (application/json)
+
+    + Attributes (Applikation)
+    
++ Response 409 (application/json)
+
+    + Attribute (StatusResponse)
+
+
+# Group Rechner
+
+## Rechner abrufen [/ststapi/v1/rechner]
+
+Alle bei StartStopp definierten Rechner
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(array[Rechner], fixed-type)
+
+## Skript des Rechners abrufen [/ststapi/v1/rechner/{rechnername}/skript]
+
++ Parameters
+
+    + rechnername: rechner2 (string, required) - der Name des Rechners.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(StartStoppSkript)
+
+## Applikationen des Rechners abrufen [/ststapi/v1/rechner/{rechnername}/applikationen]
+
++ Parameters
+
+    + rechnername: rechner2 (string, required) - der Name des Rechners.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(array[Applikation], fixed-type)
+
+## Applikation eines Rechners abrufen [/ststapi/v1/rechner/{rechnername}/applikationen/{inkarnationsname}]
+
++ Parameters
+
+    + rechnername: rechner2 (string, required) - der Name des Rechners.
+    + inkarnationsname: Parametrierung (string, required) - der Name der Inkarnation.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes(array[Applikation], fixed-type)
+
+
+
+# Data Structures
+
+## StatusResponse
+
++ code: `-1` (number, required)
++ messages (array[string])
+
+## StartStoppStatus
+
++ status: initialized (enum, required, default) - der Status der StartStoppApplikation
+  + initialized (string)
+  + running (string)
+  + running_canceled (string)
+  + stopping (string)
+  + stopping_canceled (string)
+  + stopped (string)
+  + shutdown (string)
+  + configerror (string)
+
+## StartStoppSkriptStatus
+
++ status: initialized (enum, required, default) - der Status der StartStoppApplikation
+  + initialized (string)
+  + failure (string)
++ messages (array [string], fixed-type)
+
+## KernSystem
+
++ inkarnationsName: Parametrierung (string, required)
+
+## Rechner
+
++ name: Hauptserver (string, required)
++ tcpAdresse: 127.0.0.1 (string, required)
++ port: 3000 (string, required, default)
+
+## MakroDefinition
+
++ name: kbliste (string, required)
++ wert: `kb.tlsObjekte,kb.verkehrsObjekte` (string, required)
+
+## StartArt
+
++ option: automatisch (enum, required)
+    + automatisch (string)
+    + manuell (string)
+    + intervallrelativ (string)
+    + intervallabsolut (string)
++ neuStart: true (boolean)
++ intervall (string)
+
+## StartBedingung
+
++ vorgaenger (array[string], required, fixed-type)
++ warteart (enum)
+    + beginn (string)
+    + ende (string)
++ rechner (string)
++ wartezeit (string)
+
+## StartFehlerVerhalten
+
++ option (enum)
+    + beenden (string)
+    + abbruch (string)
+    + ignorieren (string)
++ wiederholungen: 0 (string)
+
+## StoppBedingung
+
++ nachfolger (array[string], required, fixed-type)
++ rechner (string)
++ wartezeit (string)
+
+## StoppFehlerVerhalten
+
++ option (enum, required)
+    + stopp (string)
+    + abbruch (string)
+    + ignorieren (string)
++ wiederholungen: 0 (string)
+
+## Inkarnation
+
++ inkarnationsName (string, required)
++ inkarnationsTyp: dav (enum, required, default)
+    + dav (string)
+    + wrapped (string)
+    + extern (string)
++ initialize: false (boolean, default)
++ mitInkarnationsName: true (boolean, default)
++ applikation (string, required)
++ aufrufParameter (array[string], fixed-type)
++ startArt (StartArt, required)
++ startBedingung (StartBedingung)
++ startFehlerVerhalten (StartFehlerVerhalten)
++ stoppBedingung (StoppBedingung)
++ stoppFehlerVerhalten (StoppFehlerVerhalten)
+
+
+## ZugangDav
++ adresse: localhost (string, required, default)
++ passWord: passwort (string, required, default)
++ port: 3000 (string, required, default)
++ userName: Tester (string, required, default)
+
+## StartStoppSkript
+
++ global (object, required)
+  + kernsysteme (array [KernSystem], fixed-type)
+  + makrodefinitionen (array [MakroDefinition], fixed-type)
+  + zugangDav (ZugangDav, required)
+  + usv (object)
+      + pid (string, required)
+  + rechner (array[Rechner], fixed-type)
++ inkarnationen (array[Inkarnation], fixed-type, required)
++ metaDaten (object)
+  + aenderungsGrund (string)
+  + erstelltAm (string)
+  + erstelltDurch (string)
+  + versionsNummer (string)
+  + name (string)
+
+## VersionierungsRequest
+
++ name (string)
++ aenderungsgrund (string, required)
++ skript (StartStoppSkript, required)
++ veranlasser (string, required)
++ passwort (string, required)
+
+## Applikation (object)
+
++ inkarnation (Inkarnation, required) - die verwendete Inkarnation
++ rechner: localhost (string)
++ letzteStartzeit: `24.12.2016 12:01` (string) - die letzte Startzeit der Inkarnation
++ letzteStoppzeit: `06.12.2016 11:11` (string) - die letzte Stoppzeit der Inkarnation
++ status: installiert (enum, required) - der Status der Inkarnation in StartStopp
+  + installiert (string)
+  + startenwarten (string)
+  + gestartet (string)
+  + initialisiert (string)
+  + stoppenwarten (string)
+  + gestoppt (string)
++ startMeldung `undefiniert' (string, required)
+
+## ApplikationLog (object)  
++ inkarnation (string, required) - der Name der Inkarnation
++ messages (array[string], fixed-type)
+  
+## StartStoppVersion (object)
+
++ name (string)
++ version (string, required)
++ erstelltDurch (string, required)
++ aenderungsGrund (string, required)
++ pruefsumme( string, required)

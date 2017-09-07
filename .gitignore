@@ -8,3 +8,12 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 /bin/
+.checkstyle
+src/main/resources/startstopp.html
+/.gradle/
+build
+.settings/org.eclipse.m2e.core.prefs
+history/
+effective.pom
+.DS_Store
+

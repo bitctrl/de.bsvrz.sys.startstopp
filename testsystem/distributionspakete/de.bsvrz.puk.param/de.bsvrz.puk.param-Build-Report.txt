@@ -1,0 +1,220 @@
+********************************************************************************
+*  Segment 8 Parametrierung und Konfiguration (PuK),                           *
+*  SWE 8.2 Parametrierung                                                      *
+********************************************************************************
+
+Version: 1.11.3
+
+Übersicht
+=========
+
+Die Parametrierung ein Modul innerhalb des Datenverteilersystems
+zur Verfügung, mit dem die Parametrierbaren Attributgruppen der
+konfigurtoerten Systemobjekte zur Verfügung gestellt werden.
+
+Das Modul wird mit den üblichen Startparametern für Datenverteilerapplikationen
+gestartet.
+
+Die Klasse zum Starten des Moduls ist:
+	de.bsvrz.puk.param.param.ParamApp
+
+Zusätzliche optionale Parameter:
+	-persistenz <name>			das Verzeichnis, in dem die Parameterdaten persistent
+								gespeichert werden.
+								Der Standardwert ist:
+	-persistenzModul <name>		das Modul zur Realisierung der Persistenz.
+								Das Modul muss die Schnittstelle "de.bsvrz.puk.param.param.Persistenz"
+								implementieren.
+								Die Standardeinstellung ist: "de.bsvrz.puk.param.param.FilePersistenz"
+	-parametrierung	<pid>		die PID des Systemobjekts, welches die Parametrierung innerhalb des
+								Datenverteiler repräsentiert.
+								Standard ist der lokale Konfigurationsverantwortliche.
+
+    -oldDefault	 				wenn der Parameter gesetzt ist, werden die Standardparameter, die unter dem
+    							Aspekt "asp.parameterDefault" konfiguriert sind mit einbezogen.
+    							
+    -waitForSettingsManager		bestimmt, ob die Fertigmeldung der Parametrierung erst erfolgt, 
+                                wenn der SettingsManager die erste Auswertung des Paramtrierungsdatensatzes 
+                                geliefert hat (Standard: true)
+    
+Zur Ausführung der Softwareeinheit sind neben den Kernsoftware-Bibliotheken folgende zusätzliche
+Bibliotheken bzw. Softwareeinheiten erforderlich:
+	de.bsvrz.sys.funclib.bitctrl
+				Allgemeine Funktionen
+
+
+Änderungen Version 1.11.3
+=========================
+- Fehler im Klassenpfad korrigiert, der das starten der Derby-Datenbank verhindetr hat.
+
+Änderungen Version 1.11.2
+=========================
+- der Parameterdatensatz der Parametrierung wird jetzt auch über die Methodenbibliothek
+  ausgeliefert und kann über diese geschrieben werden
+
+Änderungen Version 1.11.1
+=========================
+- Fehlerhafte Logausgabe, wenn es keine Änderungen im Settingsmanager gibt. Diese wurde
+  verursacht, weil dann keine "update"-Methode aufgerufen wurde und der Beginn der
+  Änderungen damit nicht bestimmbar war.
+
+Änderungen Version 1.11.0
+=========================
+- Quellen auf UTF-8 umgestellt
+- erforderliche Java-Version 8
+- Korrekturen bei den Logausgaben
+- Optimierung beim Ermitteln der konfigurierten Standardparameter
+
+Änderungen Version 1.10.5
+=========================
+- Beim Initialisieren der Parametrierung konnten unvollständige Parameterdatensätze entstehen wenn
+  in Konfigurationsbereichen die Historie nicht mehr vorhanden war oder Konfigurationsbereiche
+  komplett entfenrt wurden.
+  Der Versuch einen solchen unvollständigen Datensatz zu versenden hat dann zum Beenden der 
+  Parametrierung geführt.
+
+Änderungen Version 1.10.4
+=========================
+- Bei Antworten über die Parameterschnittstelle muss die Parametrierung sich selbst als Absender eintragen.
+  Bisher wurde die anfragende Applikation eingesetzt, was ab Kernsoftware 3.6.5 nicht mehr akzeptiert wird.
+
+Änderungen Version 1.10.3
+=========================
+- In seltenen Fällen konnten Parameter nicht mehr gespeichert werden, die zuvor gelöscht wurden.
+  (SQL-Index-Fehler)
+
+Änderungen Version 1.10.2
+=========================
+- Derby-Persizenz konnte unter Umständen nicht initialisiert werden,
+  wenn zuvor ein lokaler Parameter gelöscht wurde.
+
+Änderungen Version 1.10.1
+=========================
+- neue Parameter-Bibliothek eingebunden, 
+  potentielle NPE beim Serialisieren der Datnsätze
+
+Änderungen Version 1.10.0
+=========================
+- Umstellung auf Maven-Build.
+- Parameter werden mit Zeitstempel der letzten Änderung veröffentlicht
+- Ungültige Objektreferenzen werden nach Möglichkeit repariert
+
+Änderungen Version 1.9.5
+========================
+- erweiterte Logausgaben mit Systemobjekten.
+
+Änderungen Version 1.9.4
+========================
+- die Optimierung in Version 1.9.0 hat dazu geführt, dass nur noch bestehende Parameter aktualisiert werden
+  aber keine neuen angelegt (gespeichert) werden konnten.
+  
+Änderungen Version 1.9.3
+========================
+- unter bestimmten Umständen konnte eine Datenabfrage in Verbindung mit dem aktualisierten Parameterbibliothek
+  zu einer NPE in der Parametrierung führen
+
+Änderungen Version 1.9.2
+========================
+- potentielles Problem bei der Parametrierung von Simulationen (ConcurrentModificationException)
+- Synchronisationskorrekturen des Caches innerhalb der Derby-Persitenz
+
+Änderungen Version 1.9.1
+========================
+- Korrekturen bei der Synchronisation des Parameter-Senders
+- wiederholte Anforderungen zum Parametrieren werden ignoriert, wenn die Speicherung noch nicht erfolgt ist
+ 
+Änderungen Version 1.9.0
+========================
+Die Parametrierung liefert einen speziellen Quelltyp, wenn der Abruf der Parameter ohne Daten erfolgt 
+
+Änderungen Version 1.8.2
+========================
+Die Parametrierung wurde unter Umständen beendet, wenn die Antwort auf eine Anfrage über die Methodenbibliothek
+nicht mehr versendet werden konnte, weil der Anfrager nicht mehr als Empfänger für die Antwort registriert war.
+Das Setzen von Parametern über Hierarchie-Objekte war mit der unter 1.8.1 vorgenommenen Optiomierung
+unter Umständen nicht mehr möglich.
+
+Änderungen Version 1.8.1
+========================
+Parameterdaten können nur geschrieben werden, wenn die Parameter auch gemäß der Definition des 
+Parameterdatensatzes der Parametrierung veröffentlicht werden.
+
+
+Änderungen Version 1.8.0
+========================
+Die Parametrierung versteht Anforderungen zur Steuerung, insbesondere zum Esrtellen eines Backups.
+
+
+Änderungen Version 1.7.11
+========================
+Die Anfrage nach konfigurierbaren Objekten beinhaltet das Objekt selbst, wenn bei der Anfrage kein Typ oder Hierarchieobjekt
+übergeben wurde.
+
+Änderungen Version 1.7.10
+========================
+IllegalStateException beim Empfang von Datensätzen wird abgefangen. Diese tritt auf, wenn von einem gekoppelten Datenverteiler 
+Parameterdatensätze empfangen werden, die unbekannte Objekte referenzieren.
+
+Änderungen Version 1.7.5
+========================
+- Synchronisation der Listenerliste beim SimulationsStatusObserver verhindert Exceptions beim Starten/Beenden von Simulationen
+
+Änderungen Version 1.7.2
+========================
+- Bereinigung der Datenbank synchronisiert.
+  
+Änderungen Version 1.7.1
+========================
+- Zusätzlicher Parametrierung, um die Verzögerung der Fertigmeldung der Applikation
+  durch den SettingsManager zu erlauben
+
+Änderungen Version 1.6.0
+========================
+- Die Parametrierung funktioniert jetzt auch, wenn die Rechteprüfung des
+  Datenverteilers eingeschalten ist.
+  (Kommandozeilenargument von Transmitter: -rechtePruefung=ja)
+
+Änderungen Version 1.2.0
+========================
+- Die Methodenbibliothek wurde in ein einzelnes Paket ausgelagert.
+- Die Paketnamen wurden an die Kernsoftwareversion angepasst.
+
+Änderungen Version 1.1.0
+========================
+- Anpassungen bei der Speicherung von Hierarchieobjekten.
+
+Änderungen Version 1.0.2
+========================
+- Die Parameter des AOE-Objekts selbst konnten bisher nicht parametriert werden.
+  Das wurde korrigiert.
+
+
+Disclaimer
+==========
+
+Segment 8 Parametrierung und Konfiguration, SWE 8.2 Parametrierung
+Copyright (C) 2007 BitCtrl Systems GmbH
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+
+Kontakt
+=======
+
+BitCtrl Systems GmbH
+Weißenfelser Straße 67
+04229 Leipzig
+Phone: +49 341-490670
+mailto: info@bitctrl.de

@@ -1,0 +1,32 @@
+buildscript {
+
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.3'
+    classpath 'com.github.jruby-gradle:jruby-gradle-plugin:1.4.0'
+    classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
+    classpath 'org.asciidoctor:asciidoctorj-diagram:1.5.4'
+  }
+}
+
+plugins {
+  id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+apply plugin: "base"
+apply plugin: 'org.asciidoctor.convert'
+
+version = '1.0.0-SNAPSHOT'
+
+ext {
+	themesDir = projectDir.path + '/themes'
+}
+
+asciidoctorj {
+    version = '1.5.5'
+}
+

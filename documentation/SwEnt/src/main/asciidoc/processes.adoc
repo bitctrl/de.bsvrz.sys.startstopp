@@ -1,0 +1,157 @@
+== Prozessverwaltung
+
+=== Grundfunktionalität
+
+Die Prozessverwaltung liest das von der Skriptverwaltung bereitgestellte
+StartStopp-Skript. Wenn ein gültiges Skript zur Verfügung steht, werden für die
+definierten Inkarnationen Applikationen erzeugt und entsprechend den
+Abhängigkeiten und den Regeln ausgeführt.
+
+Die Applikationen werden als individuelle Instanzen ausgeführt und passen ihren
+Status entsprechend den Bedingungen und den Rückmeldungen aus dem Betriebssystem
+an.
+
+Folgende Statuswerte sind für eine Applikation vorgesehen:
+
+* _INSTALLIERT_: ist der initiale Status des Applikationsobjekts
+* _STARTENWARTEN_: die Applikation soll gestartet werden, die  Ausführung wird 
+      aber durch mindestens einen der folgenden Punkte verhindert:
+** die Startbedingung ist nicht erfüllt
+** die Startbedingung für die Applikation ist erfüllt, es
+      ist aber eine Wartezeit bis zum Start definiert
+** eine zyklisch auszuführende Applikation wartet auf den nächsten Startzeitpunkt      
+* _GESTARTET_: die Applikation wurde gestartet, es wurde jedoch noch keine 
+   Initialisierungsmeldung über den Datenverteiler geliefert.
+* _INITIALISIERT_: die Applikation ist aktiv und hat über den Datenverteiler eine
+  Initialisierungsmeldung geliefert
+* _STOPPENWARTEN_: die Applikation soll gestoppt werden, die Ausführung wird
+     aber durch eine der folgenden Bedingungen verhindert:
+** die Stopbedingung ist nicht erfüllt
+** die Stoppbedingung für die Applikation ist erfüllt, es ist aber eine Wartezeit 
+    bis zum Stopp definiert
+** der zugehörige Betriebssystemprozess wurde noch nicht beendet
+* _GESTOPPT_: die Applikation wurde beendet
+
+[plantuml, "applikations_status"]
+----
+
+skinparam componentstyle uml2
+skinparam monochrome true
+
+title Zustandsdiagramm für Applikationen in StartStopp \n
+
+[*] --> INSTALLIERT
+INSTALLIERT ---> STARTENWARTEN: Manueller oder automatischer Start
+STARTENWARTEN ---> GESTARTET: Startbedingungen erfüllt
+GESTARTET ---> GESTOPPT: Fehler beim Starten
+GESTARTET ---> STOPPENWARTEN: Stopp angefordert
+GESTARTET --> INITIALISIERT: Rückmeldung vom DAV
+STOPPENWARTEN  ---> GESTOPPT: Stoppbedingungen erfüllt, Systemprozeß beendet
+STOPPENWARTEN  ---> STARTENWARTEN: Stoppbedingungen erfüllt,\nzyklischer Prozeß wartet auf nächste Ausführung
+STARTENWARTEN ---> GESTOPPT: Stopp angefordert
+INITIALISIERT --> STOPPENWARTEN: Stopp angefordert
+
+note left of STOPPENWARTEN
+    Kann per Request übersprungen werden
+end note
+
+note right of STARTENWARTEN
+    Kann per Request übersprungen werden
+end note
+
+----
+
+=== Initialisierung
+
+Die Prozessverwaltung greift auf die von der Skrtipverwaltung übergebene Liste der definierten Inkarnationen
+zurück und legt für jede Inkarnation eine Instanz an. Der initiale Zustand einer Instanz ist INSTALLIERT.
+
+In Abhängigkeit von der Startart wird die Inkarnation ausgeführt, d. h. ein entsprechender Betriebssystemprozeß gestartet.
+Automatisch ausgeführt werden alle Inkarnationen, die die Startart *automatisch* haben, potentiell nachgestartet
+werden *zyklische* Inkarnationen.
+
+=== Starten einer Applikation
+
+Der Start einer Applikation versetzt diese in den Zustand *STARTENWARTEN*. In diesem Zustand werden die 
+folgenden Startbedingungen geprüft:
+
+* die Inkarnation gehört nicht zum Kernsystem: Der Start ist erst möglich wenn alle Komponenten
+  des Kernsystems den Zustand *INITALISIERT* erreicht haben und die StartStopp-Applikation eine 
+  Verbindung zum zugeordneten Datenverteilersystem hergestellt hat.
+* die Inkarnation gehört zum Kernsystem: Der Start ist erst möglich wenn alle Komponenten
+  die innerhalb des Kernsystems vor der Inkarnation definiert sind den Zustand *INITALISIERT* erreicht haben.
+* die Inkarnation hat eine zugeordnete Startbedingung: Der Start der Inkarnation ist erst möglich, wenn
+  die Startbedingung erfüllt ist und die potentiell festgelegt Verzögerungszeit abgelaufen ist.  
+
+Wenn alle Startbedingungen erfüllt sind, wird die Inkarnation in den Zustand "GESTARTET" versetzt und ein
+entsprechender Betriebssystemprozeß initiiert.
+
+=== Stoppen einer Applikation
+
+Der Stoppvorgang einer Inkarnation hängt von ihrem aktuellen Status ab.
+
+Wurde die Inkarnation noch nicht gestartet und befindet sich noch im Zustand *STARTENWARTEN* wird der Zugangswechsel
+auf den Zustand *GESTOPPT* unmittelbar ausgeführt und jeder weitere Startversuch unterbunden.
+
+Befindet sich die Inkarnation im Zustand *GESTARTET* oder *INITIALISIERT* wird sie in den Zustand *STOPPENWARTEN*
+überführt. Innerhalb dieses Zustands werden die Stoppbedingungen überprüft:
+
+* die Inkarnation hat eine zugeordnete Stoppbedingung: Der Stopp der Inkarnation ist erst möglich, wenn
+  die Stoppbedingung erfüllt ist und die potentiell festgelegt Verzögerungszeit abgelaufen ist.  
+* die Inkarnation gehört zum Kernsystem: Der Stopp ist erst möglich wenn alle Komponenten
+  die nicht zum Kernsystem gehören, sowie alle Kernsoftware-Inkarnationen, die nach der Inkarnation
+  als Bestandteil des Kernsystems definiert wurden beendet wurden.
+
+Sind alle Bedingungen erfüllt, wird die zugehörige Applikation über die Datenverteilerschnittstelle beendet.
+Inkarnationen vom Typ *extern* werden mit Betriebssystemmitteln terminiert. 
+
+=== Aktualisierung eines Skripts
+
+Die aktuelle StartStopp-Konfiguration kann aktualisiert werden, indem eine neue Konfiguration über die 
+StartStopp-API zur Versionierung übergeben wird.
+
+War die Versionierung erfolgreich, wird ermittelt, welche aktuellen Inkarnationen von der neuen Konfiguration
+beeinflusst wurden. Folgende Fälle können entstehen:
+
+* eine Inkarnation ist nicht mehr in der neuen Konfiguration enthalten: +
+  Die betroffene Inkarnation wird gestoppt und aus der Liste der verwalteten Inkarnationen entfernt. *Beim
+  Beenden der Applikation werden keine Stoppregeln berücksichtigt.* 
+* die Aufrufargumente oder die Applikation einer Inkarnation wurden geändert: +
+  Die betroffene Inkarnation wird beendet und neu gestartet, falls sie sich nicht im Zustand *GESTOPPT*
+  befunden hat. Beim Stoppen werden alle Bedingungen ignoriert. Beim Start werden die Startbedingungen
+  ausgewertet und finden ihre Anwendung wie oben definiert.
+* Eigenschaften der Inkarnation außer Applikation und Aufrufargumente wurden geändert: +
+  Die betroffene Inkarnation wird als Inkarnation nicht weiter beeinflusst, es werden lediglich die neuen
+  Attribute (z. B. Stoppbedingungen) übernommen. 
+* eine Inkarnation ist in der aktuellen Konfiguration nicht enthalten: +
+  Die Inkarnation wird in die Verwaltung aufgenommen und wie beim initialen Start ausgeführt, d. h. alle 
+  Regeln und Bedingungen behalten ihre Gültigkeit.
+
+=== Beenden der Konfiguration
+
+Die StartStopp-Konfiguration kann komplett beendet werden. Das kann erfolgen:
+
+* durch das Beenden der Konfiguration über die StartStopp-API
+* das Beenden der StartStopp-Applikation selbst über die StartStopp-API
+* das Beenden der StartStopp-Applikation und der Konfiguration durch einen über ein zugeordnetes
+  USV-Objekt geliefertes Stromversorgungsereignis.
+* das Beenden der StartStopp-Applikation über das Betriebssystem per Shutdown-Hook
+
+Anmerkung: Das Beenden der StartStopp-Applikation auf Betriebssystemebene kann nicht in jedem Fall sicher
+      abgefangen werden und sollte im normalen Betrieb nicht zur Anwendung kommen!
+
+=== Manuelles Starten und Stoppen von Inkarnationen
+
+Die einzelnen Inkarnationen der StartStopp-Konfiguration können per StartStopp-API von außen
+gestartet und gestoppt werden.
+
+Beim manuellen Starten und Stoppen von Applikationen werden die Start- bzw. Stoppbedingungen nicht 
+ausgewertet, d. h. der Zustand *STARTENWARTEN* kann bedingungslos in den Zustand *GESTARTET* überführt
+werden. Das gleiche gilt für den Übergang von *STOPPENWARTEN* nach *GESTOPPT*.
+
+Anmerkung: Beim Stoppen wird der Betriebssystemprozess gegebenenfalls per KILL-Signal angehalten. 
+
+Wird eine Inkarnation aus dem Zustand *STARTENWARTEN* manuell gestoppt, wird sie aus der Verwaltung
+der Inkarnationen als zu startender Prozeß entfernt, d. h. ein zyklisch auszuführender Prozeß wird nicht
+mehr ausgeführt und muss erst wieder manuell gestartet werden.
+ 

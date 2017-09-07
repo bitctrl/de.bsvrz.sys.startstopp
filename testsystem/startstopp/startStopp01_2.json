@@ -1,0 +1,172 @@
+{
+  "global" : {
+    "kernsysteme" : [ ],
+    "makrodefinitionen" : [ {
+      "name" : "root",
+      "wert" : ".."
+    }, {
+      "name" : "dist",
+      "wert" : "%root%/distributionspakete"
+    }, {
+      "name" : "java",
+      "wert" : "java"
+    }, {
+      "name" : "rechner1.ip",
+      "wert" : "192.168.172.1"
+    }, {
+      "name" : "rechner2.ip",
+      "wert" : "192.168.172.2"
+    }, {
+      "name" : "authentifizierung.benutzer",
+      "wert" : "Tester"
+    }, {
+      "name" : "authentifizierung.passwortdatei",
+      "wert" : "%root%/skripte-bash/passwd"
+    }, {
+      "name" : "authentifizierung.default",
+      "wert" : "-benutzer=%authentifizierung.benutzer% -authentifizierung=%authentifizierung.passwortdatei%"
+    }, {
+      "name" : "debug.stderr",
+      "wert" : "NONE"
+    }, {
+      "name" : "debug.file",
+      "wert" : "CONFIG"
+    }, {
+      "name" : "debug.filePath",
+      "wert" : "-debugFilePath=%root%"
+    }, {
+      "name" : "debug.default",
+      "wert" : "-debugLevelStdErrText=%debug.stderr% -debugLevelFileText=%debug.file%"
+    }, {
+      "name" : "dav1.host",
+      "wert" : "%rechner1.ip%"
+    }, {
+      "name" : "dav1.appPort",
+      "wert" : "8083"
+    }, {
+      "name" : "dav1.davPort",
+      "wert" : "8082"
+    }, {
+      "name" : "dav1.einstellungen",
+      "wert" : "-davAppPort=%dav1.appPort% -davDavPort=%dav1.davPort% %debug.filePath%"
+    }, {
+      "name" : "dav1.mitAuthentifizierung",
+      "wert" : "-datenverteiler=%dav1.host%:%dav1.appPort% %authentifizierung.default% %debug.filePath%"
+    }, {
+      "name" : "dav1.ohneAuthentifizierung",
+      "wert" : "-datenverteiler=%dav1.host%:%dav1.appPort% %debug.filePath%"
+    }, {
+      "name" : "aoe.pid",
+      "wert" : "kv.aoe.test"
+    } ],
+    "zugangDav" : {
+      "adresse" : "%dav1.host%",
+      "passWord" : "geheim",
+      "port" : "%dav1.appPort%",
+      "userName" : "Tester"
+    },
+    "rechner" : [ {
+      "name" : "rechner1",
+      "tcpAdresse" : "%rechner1.ip%",
+      "port" : "3000"
+    } ]
+  },
+  "inkarnationen" : [ {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application02", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsTyp" : "dav",
+    "inkarnationsName" : "Applikation02",
+    "initialize" : false,
+    "mitInkarnationsName" : true,
+    "startArt" : {
+      "option" : "intervallabsolut",
+      "neuStart" : false,
+      "intervall" : "*/3 * * * *"
+    },
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : "1"
+    },
+    "stoppFehlerVerhalten" : {
+      "option" : "stopp",
+      "wiederholungen" : "2"
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application03", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsTyp" : "dav",
+    "inkarnationsName" : "Applikation03",
+    "initialize" : false,
+    "mitInkarnationsName" : true,
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingung" : {
+      "vorgaenger" : [ "Applikation01" ],
+      "warteart" : "ende",
+      "rechner" : "rechner1",
+      "wartezeit" : "20"
+    },
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : "1"
+    },
+    "stoppFehlerVerhalten" : {
+      "option" : "stopp",
+      "wiederholungen" : "1"
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application07", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsTyp" : "dav",
+    "inkarnationsName" : "Applikation07",
+    "initialize" : false,
+    "mitInkarnationsName" : true,
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startBedingung" : {
+      "vorgaenger" : [ "Applikation03" ],
+      "warteart" : "ende",
+      "wartezeit" : "5"
+    },
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : "0"
+    },
+    "stoppFehlerVerhalten" : {
+      "option" : "stopp",
+      "wiederholungen" : "0"
+    }
+  }, {
+    "applikation" : "%java%",
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "inkarnationsTyp" : "dav",
+    "inkarnationsName" : "Applikation08",
+    "initialize" : false,
+    "mitInkarnationsName" : true,
+    "startArt" : {
+      "option" : "automatisch",
+      "neuStart" : false,
+      "intervall" : ""
+    },
+    "startFehlerVerhalten" : {
+      "option" : "abbruch",
+      "wiederholungen" : "0"
+    },
+    "stoppFehlerVerhalten" : {
+      "option" : "stopp",
+      "wiederholungen" : "0"
+    }
+  } ],
+  "metaDaten" : {
+    "aenderungsGrund" : "1",
+    "erstelltAm" : "2017-08-31T16:33:14.432",
+    "erstelltDurch" : "Tester",
+    "versionsNummer" : "1504189994432"
+  }
+}

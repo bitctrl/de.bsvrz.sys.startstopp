@@ -1,0 +1,27 @@
+= SWE StartStopp 2.0: Softwareentwurf
+Uwe Peuker <uwe.peuker@bitctrl.de>
+v1.0, 2017-07-17
+:toc: left
+:imagesdir: images
+:homepage: http://bitctrl.de
+:encoding: utf-8
+:toclevel: 4
+:sectnums:
+:source-highlighter: coderay
+:chapter-label:
+:toc-title: Inhaltsverzeichnis
+:sweResources: ../../../../../../../de.bsvrz.sys.startstopp.api/src/main/resources
+
+include::overview.adoc[]
+
+include::startstopp.adoc[]
+
+include::skripts.adoc[]
+
+include::processes.adoc[]
+
+include::davinterface.adoc[]
+
+include::api.adoc[]
+
+include::terminalui.adoc[]

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE konfigurationsBereich PUBLIC "-//K2S//DTD Dokument//DE" "K2S.dtd">
+<konfigurationsBereich pid="kb.testRechner"
+	verantwortlich="kv.testKonfiguration">
+	<konfigurationsAenderung stand="08.05.2006"
+		autor="Roland Schmitz, Kappich Systemberatung" grund="Test">
+		Bereich zum Test
+		der Konfiguration erzeugt.</konfigurationsAenderung>
+	<modell>
+	</modell>
+	<objekte>
+		<konfigurationsObjekt pid="rechner.1" name="Rechner 1"
+			typ="typ.rechner">
+			<datensatz attributgruppe="atg.rechnerInformation" aspekt="asp.eigenschaften">
+				<datum name="Name" wert="rechner1" />
+				<datum name="TCPIP" wert="ip.rechner1" />
+			</datensatz>
+		</konfigurationsObjekt>
+
+		<konfigurationsObjekt pid="rechner.2" name="Rechner 2"
+			typ="typ.rechner">
+			<datensatz attributgruppe="atg.rechnerInformation" aspekt="asp.eigenschaften">
+				<datum name="Name" wert="rechner2" />
+				<datum name="TCPIP" wert="ip.rechner2" />
+			</datensatz>
+		</konfigurationsObjekt>
+
+		<konfigurationsObjekt pid="bmv.kex"
+			name="Betriebsmeldungsverwaltung Versandmodul" typ="typ.versandModulExterneMeldungen">
+			<info>
+				<kurzinfo>Versandmodul für Betriebsmeldung via EMail, Fax, usw. .
+				</kurzinfo>
+			</info>
+		</konfigurationsObjekt>
+	</objekte>
+</konfigurationsBereich>
+
