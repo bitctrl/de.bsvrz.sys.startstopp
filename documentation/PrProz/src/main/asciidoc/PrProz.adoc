@@ -90,7 +90,7 @@ Für die übrigen Elemente wird ein spezieller Dialog zur Bearbeitung geöffnet.
 
 Nach dem Versionieren wird das aktualisierte Skript übernommen und Inkarnationen neu gestartet bzw. beendet.
 
-NOTE: Eine detaillierte Beschreibung der Bedienoberfläche befindet sich in den Betriebsinformationen.
+Anmerkung: Eine detaillierte Beschreibung der Bedienoberfläche befindet sich in den Betriebsinformationen.
 
 == Durchführung der Testfälle gemäß Testspezifikation
 
