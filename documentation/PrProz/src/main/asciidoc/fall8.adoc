@@ -1,0 +1,33 @@
+=== Prüffall 8: Start- und Stoppbedingungen
+
+==== Prüfobjekt
+
+Start/Stopp wertet die in der Konfiguration definierten Start/Stopp-Bedingungen korrekt aus. In der Bedienoberfläche wird der Abhängigkeitsgraph für den Start und den Stopp des Systems angezeigt.
+
+Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt9, Sys-StSt-12, Sys-StSt-13, Sys-StSt17 bis Sys-StSt21, Sys-StSt23 bis Sys-StSt-30, Sys-StSt-35, Sys-StSt-36, Sys-StSt-39, Sys-StSt-40, Sys-StSt-55, Sys-StSt-66 und Sys-StSt-70 teilweise oder vollständig ab.
+
+==== Prüfvoraussetzungen
+
+Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
+
+Für den Testfall wird auf Rechner1 die Skriptdateien "startStopp08.json" verwendet. 
+Die Datei "startStopp08.json" wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt. 
+
+Auf Rechner 1 werden die SWE StartStopp sowie die Bedienoberfläche per Shell-Skript gestartet.
+
+Es ist ein installiertes Rahmenwerk verfügbar, in dem das StartStopp-Plugin installiert wurde, mit dem der Abhängigkeitsgraph visualisiert werden kann.
+
+==== Durchführung
+
+Nach dem Start der SWE wird das StartStopp-Skript geladen und muss zunächst noch versioniert werden (siehe Prüffall 1).
+
+Nach der Versionierung werden die Inkarnationen gestartet. 
+
+Der Abhängigkeitsgraph für die Startbedingungen und für die Stoppbedingungen wird innerhalb des Rahmenwerks angezeigt.
+
+Über die StartStopp-Bedienoberfläche wird die StartStopp beliebig oft angehalten und neu gestartet, um das StartStopp-Verhalten im Vergleich mit dem Abhängigkeitsgraph zu bewerten.
+
+==== Erwartete Ergebnisse
+
+* Die definierten Startbedingungen werden korrekt ausgewertet.
+* Die definierten Stoppbedingungen werden korrekt ausgewertet.

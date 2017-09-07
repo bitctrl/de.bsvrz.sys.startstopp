@@ -1,0 +1,133 @@
+@echo off
+
+rem #########################################################################
+rem #                                                                       #
+rem #         Startskript für die SWE8.2 - Parametrierung                   #
+rem #                                                                       #
+rem #  Das Skript ist als Beispiel zu betrachten und muss eventuell an die  #
+rem #  Gegebenheiten des lokalen Projektes angepasst werden.                #
+rem #                                                                       #
+rem #  Es wird angenommen, dass die Kernsoftware gem�� der allgmeinen       #
+rem #  installiert wurde, insbesondere die Installation der SWE in einzel-  #
+rem #  Unterverzeichnissen unter dem Verzeichnis "distributionspakete"      #
+rem #  und die Existenz einer allgemeinen Einstellungsdatei                 #
+rem #  "einstellungen.bat" im Verzeichnis "..\..\skripte-dosshell" relativ  #
+rem #  zum Verzeichnis in dem dieses Skript residiert, in dem die allge-    #
+rem #  meinen Parameter für die Datenverteilerkopplung festgelegt sind.     #
+rem #                                                                       #
+rem #########################################################################
+rem #  Folgende Parameter die aus der Datei einstellungen.bat ermittelt     #
+rem #  werden m�ssen überpr�ft und evtl. angepasst werden.                  #
+rem #########################################################################
+rem #  Parameter für den Java-Interpreter                                   #
+rem #  jvmArgs="-Dfile.encoding=ISO-8859-1"                                 #
+rem #                                                                       #
+rem #  Parameter für den Datenverteiler                                     #
+rem #  dav1="-datenverteiler=localhost:8083 -benutzer=Tester \              # 
+rem #           -authentifizierung=passwd -debugFilePath=.."                #
+rem #########################################################################
+
+call ..\..\skripte-dosshell\einstellungen.bat
+
+rem Titel des Shell-Fensters, in dem die Parametrierung ausgeführt wird.
+title Parametrierung
+
+rem #########################################################################
+rem #                                                                       #
+rem #          Parameter für die Ausf�hrung der Parametrierung              #
+rem #                                                                       #
+rem #########################################################################
+
+rem #########################################################################
+rem #                                                                       #
+rem #  Das Persistenzmodul                                                  #
+rem #                                                                       #
+rem #  Standardm�ssig wird eine eingebette Datenbank verwendet, es stehen   #
+rem #  jedoch auch andere alternative Persistenzmodule zur Verfügung        #
+rem #  (siehe Betriebsinformationen), ausserdem kann das Persistenzmodul    #
+rem #  auch ein von Anwender selbst erstelltes sein, das lediglich die      # 
+rem #  erforderlichen Schnittstellen implementieren muss.                   #
+rem #                                                                       #
+rem #########################################################################
+
+set PERSISTENZMODUL=de.bsvrz.puk.param.param.DerbyPersistenz
+
+rem #########################################################################
+rem #                                                                       #
+rem #  Das Wurzelverzeichnis, in dem das Persistenzmodul, die Parameter-    #
+rem #  datensätze ablegt.                                                   #
+rem #                                                                       #
+rem #########################################################################
+
+set PERSISTENZ=../../parameter
+
+rem #########################################################################
+rem #                                                                       #
+rem #  Die PID des Systemobjekts innerhalb der Datenverteilerkonfiguration, #
+rem #  das für die Speicherung der Parameter verwendet wird. Es muss vom    #
+rem #  Typ "Parametrierung" sein. Wenn keine PID angegeben wird, wird die   #
+rem #  AOE des Projekts verwendet, die den Typ "Parametrierung" erweitert.  #
+rem #                                                                       #
+rem #########################################################################
+
+set PARAMETRIERUNG=
+
+rem #########################################################################
+rem #                                                                       #
+rem #  Die Anzahl der Einträge, für die das Persitenzmodul die Daten für    #
+rem #  einen effektiveren Zugriff im RAM vorh�lt. Der Parameter wird momen- #
+rem #  tan nur von der Derby-Persistenz verwendet.                          #
+rem #                                                                       #
+rem #########################################################################
+
+set CACHE=200000
+
+rem #########################################################################
+rem #                                                                       #
+rem #  Der Zyklus zur Durchf�hrung von Bereinigungsarbeiten innerhalb des   #
+rem #  jeweiligen Persistenzmoduls.                                         #
+rem #                                                                       #
+rem #########################################################################
+
+set BEREINIGUNG=60
+
+rem #########################################################################
+rem #                                                                       #
+rem #  Verwendung von Standardparametern die unter dem Aspekt               #
+rem #  "asp.parameterDefault" konfiguriert sind.                            #
+rem #  Die Variante ist aus Kompatibilit�tsgr�nden zu tempor�ren Vorgänger- #
+rem #  versionen möglich, wird aber normalerweise nicht verwendet.          #
+rem #                                                                       #
+rem #########################################################################
+
+set OLDDEFAULT=nein
+
+rem #########################################################################
+rem #                                                                       #
+rem #  Zus�tzliche Parameter für den Start der Java-VM                      #
+rem #                                                                       #
+rem #########################################################################
+
+set jvmargs=%jvmargs% -Xmx1500m
+
+rem #########################################################################
+rem #                                                                       #
+rem #                  Ausf�hrung der Softwareeinheit                       #
+rem #                                                                       #
+rem #  Ab hier darf in dem Skript keine �nderung mehr vorgenommen werden.   #
+rem #                                                                       #
+rem #########################################################################
+
+java %jvmargs% -jar de.bsvrz.puk.param-runtime.jar %dav1% ^
+	-persistenzModul=%PERSISTENZMODUL% ^
+	-persistenz=%PERSISTENZ% ^
+	-parametrierung=%PARAMETRIERUNG% ^
+	-cacheGroesse=%CACHE% ^
+	-bereinigungsZyklus=%BEREINIGUNG% ^
+	-oldDefault=%OLDDEFAULT% ^
+	-debugLevelStdErrText=OFF ^
+	-debugLevelFileText=CONFIG ^
+	-debugSetLoggerAndLevel=:CONFIG 
+
+rem Nach dem Beenden warten, damit Meldungen gelesen werden k�nnen
+pause
