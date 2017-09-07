@@ -1,0 +1,6 @@
+-sources: true
+
+Bundle-Name: StartStopp-Plugin
+Import-Package: *
+Bundle-Vendor: BitCtrl Systems GmbH
+Bundle-Version: 1.0.0.qualifier

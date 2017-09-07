@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Api
+Bundle-SymbolicName: de.bsvrz.sys.startstopp.api
+Bundle-Version: 1.0.0.qualifier
+Export-Package: de.bsvrz.sys.startstopp.api,
+ de.bsvrz.sys.startstopp.api.client,
+ de.bsvrz.sys.startstopp.api.jsonschema

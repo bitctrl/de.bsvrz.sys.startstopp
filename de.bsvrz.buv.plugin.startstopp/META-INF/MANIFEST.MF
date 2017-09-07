@@ -5,3 +5,4 @@ Bundle-SymbolicName: de.bsvrz.buv.plugin.startstopp
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: BitCtrl Systems GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.bsvrz.sys.startstopp.api;bundle-version="1.0.0"
