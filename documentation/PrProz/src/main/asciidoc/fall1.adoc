@@ -36,7 +36,7 @@ Die Makros "rechner.ip1" und "rechner.ip2" müssen entsprechend Testumgebung ang
 
 image::makroeditor.png[Makro-Editor]
 
-Abschließend wird mit der Taste "S" das Systemmenü geöffnet und das Skript versioniert. Im Urlasserdialog werden ein Grund und die erforderlichen Anmeldeinformationen "Tester/geheim" angegeben.
+Abschließend wird mit der Taste "S" das Systemmenü geöffnet und das Skript versioniert. Im Urlasserdialog werden ein Grund und die erforderlichen Anmeldeinformationen für den Benutzer "Tester" angegeben.
 
 Auf dem zweiten Rechner wird entsprechend vorgegangen.
 
@@ -64,7 +64,7 @@ Die folgenden Schritte werden zur Prüfung des Verhaltens beim Neustart und beim
   und StartStopp eine Datenverteilerverbindung hergestellt hat. Abhängige Inkarnationen werden mit den angegebenen Wartezeiten 
   gestartet. 
 * Die Applikationen Datenverteiler, Konfiguration, Parametrierung und Betriebsmeldungsverwaltung werden direkt während des Startvorgangs gestartet. 
-* Applikation02 wird zyklisch aller drei Minuten ausgeführt, wenn das Kernsystem bereit ist.
+* Applikation02 wird zyklisch alle drei Minuten ausgeführt, wenn das Kernsystem bereit ist.
 * Der Start und Stopp von Applikationen auf Rechner 1 werden über eine Betriebsmeldung publiziert.
 * Auf dem Rechner 2 werden für die Applikationszustände keine Betriebsmeldungen versendet.
 * Start/Stopp kann ohne spezielle Berechtigungen gestartet werden und stellt keine Anforderungen an Betriebssystemvoraussetzungen. 
