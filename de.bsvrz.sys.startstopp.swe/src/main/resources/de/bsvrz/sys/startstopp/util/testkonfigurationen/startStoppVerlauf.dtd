@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Wurzelelement -->
+<!ELEMENT verlauf (startStopVersion*)>
+
+<!-- Definiert jeweils eine versionierte StartStopp-Konfiguration -->
+<!ELEMENT startStopVersion EMPTY>
+<!ATTLIST startStopVersion
+	Versionsnummer CDATA #REQUIRED
+	ErstelltAm CDATA #REQUIRED
+	ErstelltDurch CDATA #REQUIRED
+	Aenderungsgrund CDATA #REQUIRED
+	Pruefsumme CDATA #REQUIRED
+>

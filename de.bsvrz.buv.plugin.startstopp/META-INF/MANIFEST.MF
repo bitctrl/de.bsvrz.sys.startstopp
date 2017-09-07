@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Startstopp - Plugin
+Bundle-SymbolicName: de.bsvrz.buv.plugin.startstopp
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: BitCtrl Systems GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

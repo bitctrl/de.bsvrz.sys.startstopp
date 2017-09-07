@@ -1,0 +1,436 @@
+== Skriptverwaltung
+
+=== Aufbau und Grundfunktion
+
+Das Modul Skriptverwaltung hält das aktuell von der StartStopp-Applikation
+verwendete Skript.
+
+Das Skript ist im Betriebssystem im angegeben Verzeichnis als Datei
+__startstopp.json__ hinterlegt.
+
+Anmerkung: Aus Kompatibilitätsgründen wird die Datei __startstopp.xml__ eingelesen,
+      wenn kein JSON-File verfügbar ist. Die XML-Datei wird konvertiert und
+      im gleichen Verzeichnis abgelegt.
+
+Nach dem Einlesen der Skriptdatei wird deren Inhalt ausgewertet. Es wird geprüft,
+
+* ob alle Informationen vollständig sind,
+* ob zyklische Abhängigkeiten bei der Definition der Makros enthalten sind,
+* ob zyklische Abhängigkeiten bei den Start-Stopp-Regeln existieren
+* ob die Skriptpdatei versioniert wurde.
+
+Wenn alle Bedingungen erfüllt sind wird das geladene Skript als gültig markiert
+und kann von der Prozessverwaltung zur Ausführung der beschriebenen SWE (Inkarnationen)
+verwendet werden.
+
+[plantuml, "skript_verwaltung"]
+----
+
+skinparam componentstyle uml2
+skinparam monochrome true
+
+title Initialisierung eines StartStopp-Skripts \n
+
+start
+
+:Laden der Skriptdatei;
+
+repeat
+if (Skript gültig) then(JA)
+    if (Skript versioniert) then(JA)
+        :Skript für Prozessverwaltung bereitstellen;
+    else(NEIN)
+    endif
+else(NEIN)
+endif
+
+:Warte auf neues Skript;
+
+repeat while (Neues Skript empfangen?)
+
+stop
+----
+
+Um ein neues oder geändertes Skript zu aktivieren, muss dieses über die
+StartStopp-API an StartStopp gesendet werden. Dort werden die oben genannten
+Prüfungen ausgeführt. Im Erfolgsfall wird das Skript versioniert und die
+Änderungen an die Prozessverwaltung weitergereicht.
+
+=== Versionierung
+
+Eine von StartStopp zu verwendende Konfigurationsdatei muss versioniert
+werden. Versionieren bedeutet hier, der Inhalt der Konfigurationsdatei wurde
+geprüft, enthält die erfoderlichen Metadaten.
+Die Sicherstellung der Versionierung erfolgt über den Eintrag der Versionsnummer
+des Skriptes in der Skriptdatei selbst in Kombination mit einer Checksumme 
+der Konfigurationsdatei.
+
+Es sind hier zwei Fälle zu unterscheiden:
+
+* Die Konfigurationsdatei wurde über die Schnittstelle der aktiven StartStopp-Applikation
+  an die SWE versendet und dort geprüft und aktiviert. Damit sollte eine konsistente
+  Konfiguration entstehen, die auch nach einem System-Neustart verwendbar ist.
+* die Konfigurationsdatei wurde händisch manipuliert. Im laufenden Betrieb hat das keine
+  Auswirkungen auf das System. Nach einem Neustart wird die neue Konfiguration aufgrund 
+  der geänderten Checksumme als ungültig erkannt, was eine abschließende Versionierung 
+  und Aktivierung über die Nutzerschnittstelle erforderlich macht.
+
+Die Checksumme sowie die zugehörigen Versionen und Versionsinformationen werden in
+einer speziellen Verwaltungsdatei hinterlegt. Verwendet wird eine JSON-Datei mit folgendem Schema:
+
+[source,json]
+.Definition einer Version der StartStoppKonfiguration
+----
+include::${sweResources}/json/startStoppVersion.json[]
+----
+
+Enthalten sind die Attribute
+* *Version:* die Versionsnummer des Skripts. Als Versionsnummer wird der Zeitpunkt 
+   der erfolgreichen Versionierung verwendet, da keine weitergehende Bedeutung 
+   und Semantik für diese Angabe erfoderlich ist.
+* *Name des Erstellers:* zur Nachvollziehbarkeit des Veranlassers einer Änderung.
+* *Grund der Änderung:* für die Dokumentation der Notwendigkeit der Änderung.
+* *Prüfsumme:* die von StartStopp gebildete Prüfsumme zur Sicherung der Dateien
+   gegen Manipulation von außen.
+* *Name:* ein optionaler Name für die Konfiguration.
+
+Bei der Versionierung über die StartStopp-API werden die Informationen zu Name,
+Ersteller und Änderungsgrund mit übertragen und mit den übrigen Informationen
+in der Konfigurationsdatei und der Versionsdatei aktualisiert.
+
+Anmerkung: Die bisher verwendeten historischen StartStopp-Konfigurationen werden nicht 
+      übernommen und konvertiert.
+
+=== Inhalt der Konfiguration
+
+==== Grundstruktur einer Konfiguration
+
+Eine StartStopp-Konfiguration wird ein einem JSON-File definiert. Das Schema ist im folgenden
+dargestellt.
+
+[source,json]
+.Schema zur Definition eines StartStoppSkripts
+----
+include::${sweResources}/json/startStoppSkript.json[]
+----
+
+Die einzelnen Bestandteile sind:
+
+* *Metadaten* mit der Beschreibung der Versionierungsinformationen. Die Versionierungsinformationen sind 
+   optional, da die Struktur auch zum Versand über die StartStopp-API versehen wird. In einem versionierten
+   Skript sind die Metadaten wie oben bereits beschrieben befüllt. Die Befüllung der Daten und die
+   Prüfung übernimmt die StartStopp-Applikation selbst.
+* *Global* der Abschnitt enthält Informationen, die für das gesamte Skript gültig sind
+* *Inkarnationen* ist die Liste der von der StartStopp-SWE zu verwaltenden Applikations-Inkarnationen.
+
+==== Globale Daten
+
+===== Allgemeines
+
+Die Definition der globalen Daten umfasst Einträge, die das Verhalten der SWE als ganzes bestimmen und
+Einträge mit  Definitionen die für die Beschreibung der einzelnen Inkarnationen wiederverwendet werden
+sollen.
+
+===== Kernsystem 
+
+Der Abschnitt enthält eine Liste der Inkarnationen, die logisch das Kernsystem auf dem lokalen Rechner bilden.
+
+[source,json]
+.Definition eines Elements des Kernsystems
+----
+include::${sweResources}/json/kernSystem.json[]
+----
+
+Die zum Kernsystem gehörenden Inkarnationen werden beim Start und beim Beenden gesondert behandelt und
+bilden implizit eine Start- bzw. Stoppbedingung für alle anderen Inkarnationen der Konfiguration.
+
+Ein Eintrag im Kernsystem wird durch den Inkarnationsnamen, der einem der Inkarnationsnamen in der in Kap. 3.3.7
+beschriebenen Liste der Inkarnationen entsprechen muss beschrieben.
+
+==== Makrodefinitionen
+
+Dieser Teil der globalen Daten enthält eine Liste mit Schlüssel-Wert-Paaren, die als Makro an anderen
+Stellen der Konfiguration oder zur Bildung komplexerer Makrodefinitionen eingesetzt werden können.
+
+[source,json]
+.Definition eines Makros
+----
+include::${sweResources}/json/makroDefinition.json[]
+----
+
+Die Makros werden von StartStopp expandiert und in dieser Form an die Prozessverwaltung weitergereicht.
+Potentielle zyklische Makrodefinitionen werden vor der Versionierung eines StartStopp-Skripts geprüft
+und verhindern gegebenenfalls die Versionierung.
+
+==== Zugang zum Datenverteiler
+
+Die StartStopp-Applikation läuft zwar unabhängig von einem Datenverteiler-System, da dieser ja erst von der 
+SWE selbst gestartet wird. Zur Laufzeit werden jedoch Informationen aus der StartStopp-Applikation über einen
+zugeordneten Datenverteiler publiziert. Der Abschnitt beschreibt die für die Herstellung der Datenverteilerverbindung
+notwendigen Zugangsdaten.
+
+[source,json]
+.Zugangsdaten zum Zieldatenverteiler
+----
+include::${sweResources}/json/zugangDav.json[]
+----
+
+Die Herstellung der Verbindung wird implizit auch als zusätzliche Bedingung für ein gestartetes Kernsystem gewertet.
+Das bedeutet, dass erst nach der Herstellung der Datenverteilerverbindung Applikationen gestartet werden, die
+nicht Bestandteil des oben definierten Kernsystems sind.
+
+==== Rechner
+
+Der Abschnitt Rechner enthält die Definition von anderen Datenverteilersystemen, die innerhalb von Start- und Stoppbedingungen
+von Inkarnationen der Konfiguration referenziert werden können.
+
+[source,json]
+.Definition eines Rechners
+----
+include::${sweResources}/json/rechner.json[]
+----
+
+Die StartStopp-SWE startet nur lokale Prozesse. Die hier getroffenen Angaben sind nur dazu erforderlich, um der
+StartStopp-SWE den Zugriff auf einen entfernten Rechner zu ermöglichen, weil eigene Inkarnationen von Inkarnationen
+auf dem entfernten Rechner abhängig sind.
+
+==== USV
+
+Die optinale Definition einer USV kann von der StartStopp-SWE genutzt werden, um das System im Falle eines
+Stromausfalles definiert beenden zu können.
+
+[source,json]
+.Definition der USV
+----
+include::${sweResources}/json/usv.json[]
+----
+
+Angegeben wird hier die PID eines USV-Objekts innerhalb des zugeordneten Datenverteilersystems, dass die notwendigen
+Informationen für den Zustand der Stromversorgung bereitstellt.
+
+==== Liste der Inkarnationen
+
+===== Grundlegende Eigenschaften einer Inkarnationsdefinition
+
+Dieser Abschnitt enthält die Liste der Inkarnationen die von der StartStopp-Applikation verwaltet werden sollen.
+Die Reihenfolge der Einträge spielt hier keine Rolle, lediglich die in der oben genannten Liste der Kernsoftware-Systems
+beschriebenen Inkarnationen werden in der dort angegebenen Reihenfolge gestartet oder beendet.
+
+Eine Inkarnation wird mit folgender Struktur beschrieben:
+
+[source,json]
+.Definition einer Inkarnation
+----
+include::${sweResources}/json/inkarnation.json[]
+----
+
+Grundsätzlich werden folgende Inkarnationstypen unterschieden:
+
+* *dav* eine Standard-Datenverteilerapplikation, d. h. eine Applikation, die sich mit dem Datenverteiler verbindet und dort
+   als Instanz eine Objekts vom Typ _typ.applikation_ verwaltet wird.
+* *wrapped* ein Programm, das kein "normales" Datenverteilerprogramm ist, aber durch einen Wrapper ausgeführt wird, 
+   der die Datenverteilerfunktion als Applikation übernimmt
+* *extern* jedes andere Programm ohne Verbindung zum Datenverteilersystem
+
+Eine Identifikation der Inkarnation erfolgt innerhalb des lokalen Systems über den *Inkarnationsnamen*. Innerhalb des 
+Gesamtsystems wird eine Inkarnation durch die Kombination von Rechnername und Inkarnationsname identifiziert.
+
+Die *Applikation* definiert das für die Inkarnation auszuführende Programm, das Array *Aufrufparameter* enthält
+die Kommandozeilenargumente, die an das Programm übergeben werden. Als zusätzlicher Parameter wird der Inkarnationsname
+übergeben d. h. die Angabe muss hier nicht erfolgen. Der Inkarnationsname wird nicht übergeben, wenn die Inkarnation ein
+Teil des Kernsystems ist und die Übergabe dort abgeschaltet wurde oder wenn es sich um ein externes Programm handelt.
+
+Über das Attribut *initialize* kann definiert werden, ob eine Applikation als "Initialisiert" verwaltet wird, 
+obwohl die Applikation selbst keine entsprechende Rückmeldung über den Datenverteiler liefert.
+
+Anmerkung: Dieses Attribut sollte für Datenverteiler-Applikationen unnötig sein. Die entsprechenden Applikationen
+      (insbesondere Datenverteiler und Konfiguration) sollten so angepasst werden, dass sie wie alle anderen
+      Datenverteiler-Applikationen ein SystemObjekt mit dem Typ "typ.applikation" erzeugen und eine
+      Initialisierungsmeldung über den Datenverteiler publizieren.
+
+Allen von StartStopp ausgeführten Applikationen wird standardmäßig als Startparameter der Inkarnationsname aus
+der StartStopp-Konfiguration mit übergeben. 
+Über den Parameter *mitInkarnationsName* kann die Übergabe desselben unterdrückt werden. Insbesondere für die Komponenten 
+des Kernsystems ist das von Bedeutung, weil einige Datenverteiler-Komponenten, insbesondere der Datenverteiler 
+selbst und die Konfiguration diesen Parameter nicht unterstützen.  
+      
+Die Inkarnation wird weiterhin durch folgende Attribute näher definiert:
+
+* Startart
+* Startbedingung
+* Startfehlerverhalten
+* Stoppbedingung
+* Stoppfehlerverhalten
+
+==== Definition der Startart
+
+Die Startart definiert, in welcher Art und Weise eine Inkarnation von der StartStopp-Applikation ausgeführt
+werden soll. Es gibt folgende Grundtypen:
+
+[source,json]
+.Definition der Startart einer Inkarnation
+----
+include::${sweResources}/json/startArt.json[]
+----
+
+* *manuell:* die Inkarnation wird explizit vom Nutzer gestartet, die StartStopp-Applikation legt lediglich
+  die Instanz der Inkarnation zur Verwaltung derselben an.
+* *automatisch:* die Inkarnation wird automatisch beim der Ausführung der StartStopp-Konfiguration gestartet.
+* *intervallrelativ:* die Inkarnation wird zyklisch mit einem angegebenen Intervall ausgeführt. Die 
+  Intervallangabe erfolgt relativ im Attribut *intervall* und bezieht sich auf den Startzeitpunkt der 
+  StartStopp-Applikation.
+* *intervallabsolut:* die Inkarnation wird zeitplangesteuert ausgeführt. Die Angabe des Zeitplans erfolgt
+  im Attribut *intervall* in CRON-Syntax.
+
+Über das Attribut *neustart* kann festgelegt werden, dass die Inkarnation neu gestartet wird, wenn sie 
+ohne Auftrag von StartStopp selbst beendet wurde.
+
+==== Definition einer Startbedingung
+
+Die optionale Startbedingung beschreibt, wann eine Applikation gestartet werden darf.
+
+[source,json]
+.Definition einer Startbedingung
+----
+include::${sweResources}/json/startBedingung.json[]
+----
+
+Die Startbedingung bezieht sich immer auf eine andere Inkarnation der lokalen StartStopp-Konfiguration
+oder auf eine Inkarnation auf einem anderen Rechner. Diese Inkarnation, die als Vorbedingung für den Start der
+definierenden Inkarnation gewertet wird, ist durch den *Inkarnationsnamen* referenziert, wenn sich
+die Inkarnation auf einem anderen Rechner befindet, wird zusätzlich der *Rechnername* angegeben.
+
+Das Attribut "Warteart" definiert, wann die Bedingung als erfüllt gewertet wird:
+
+* *start:* die referenzierte Inkarnation hat den Zustand "GESTARTET" eingenommen
+* *ende:* die referenzierte Inkarnation hat den Zustand "INITIALISIERT" eingenommen
+
+Mit dem Attribut kann optional eine Verzögerungszeit definiert werden, die noch gewartet wird, nachdem die
+Regel gültig geworden ist, bevor die Inkarnation dann tatsächlich gestartet wird. Nach Ablauf der Wartezeit
+wird die Regel zuvor erneut geprüft.  
+
+==== Definition des Startfehlerverhaltens
+
+Ein Startfehler wird diagnostiziert, wenn eine Inkarnation nach dem Start den Zustand "GESTOPPT" einnimmt, 
+ohne dass das Kommando von StartStopp selbst initiiert wurde, bevor die Inkarnation den Zustand "INITIALISIERT"
+erreicht hat.
+
+Anmerkung: Das Startfehlerverhalten ist nur relevant, wenn die gesamte StartStopp-Konfiguration gestartet
+      wird. Das erfolgt beim initialen Ausführen der StartStopp-Konfiguration oder nachdem explizit
+      über die StartStopp-API ein kompletter Neustart des Systems angefordert wurde.
+
+[source,json]
+.Definition des Startfehlerverhaltens
+----
+include::${sweResources}/json/startFehlerVerhalten.json[]
+----
+ 
+Beim Auftreten eines Startfehlers gibt es folgende Handlungsmöglichkeiten, die im Attribut *option*
+vorgegeben werden:
+
+* *beenden:* bei einem Startfehler werden alle von der lokalen StartStopp-Applikation bereits gestarten 
+      Inkarnationen beendet und die Ausführung der Prozessverwaltung ausgesetzt.
+* *abbrechen:* bei einem Startfehler werden keine weiteren Applikationen der Startstopp-Konfiguration 
+      ausgeführt.
+* *ignorieren* es wird keine weitere Fehlerbehandlung durchgeführt
+
+Mit dem Attribut *Wiederholungen* kann eine Anzahl von Startwiederholungen angegeben werden, mit denen
+ein erneuter Start versucht wird, bevor die definierte Fehlerbehandlung wirksam wird.
+
+==== Definition einer Stoppbedingung
+
+Die optionale Stoppbedingung beschreibt, wann eine Applikation gestartet werden darf.
+
+[source,json]
+.Definition einer Stoppbedingung
+----
+include::${sweResources}/json/stoppBedingung.json[]
+----
+
+Die Stoppbedingung bezieht sich immer auf eine andere Inkarnation der lokalen StartStopp-Konfiguration
+oder einer Inkarnation auf einem anderen Rechner. Diese Inkarnation, die als Vorbedingung für den Start der
+definierenden Inkarnation gewertet wird, ist durch den *Inkarnationsnamen* referenziert, wenn sich
+die Inkarnation auf einem anderen Rechner befindet, wird zusätzlich der *Rechnername* angegeben.
+
+Mit dem Attribut kann optional eine Verzögerungszeit definiert werden, die noch gewartet wird, nachdem die
+Regel gültig geworden ist, bevor die Inkarnation dann tatsächlich gestoppt wird. Nach Ablauf der Wartezeit
+wird die Regel zuvor erneut geprüft.  
+
+==== Definition einer Stoppfehlerverhaltens
+
+Anmerkung: Das Stoppfehlerverhalten ist nur relevant, wenn die gesamte StartStopp-Konfiguration beendet
+      wird. Das erfolgt ausschließlich nur beim Beenden von StartStopp selbst (was potenziell damit 
+      verhindert werden kann) oder nachdem explizit über die StartStopp-API ein kompletter Stopp
+      des Systems angefordert wurde.
+
+Als Stoppfehler wertet die StartStopp-Applikation, wenn eine Inkarnation gestoppt werden soll und den
+Zustand GESTOPPT nicht innerhalb von 30 Sekunden erreicht hat.
+
+[source,json]
+.Definition des Stoppfehlerverhaltens
+----
+include::${sweResources}/json/stoppFehlerVerhalten.json[] 
+----
+
+Beim Auftreten eines Stoppfehlers gibt es folgende Handlungsmöglichkeiten, die im Attribut *option*
+vorgegeben werden:
+
+* *stopp:* bei einem Stoppfehler wird der Stopp-Vorgang beendet. Alle noch laufenden Inkarnationen werden 
+      nicht gestoppt.
+* *abbruch:* bei einem Stoppfehler wird die betroffene Inkarnation auf Betriebssystemebene gestoppt.
+      Der Stoppvorgang wird fortgesetzt.
+* *ignorieren* es wird keine weitere Fehlerbehandlung durchgeführt
+
+Mit dem Attribut *Wiederholungen* kann eine Anzahl von Stoppwiederholungen angegeben werden, mit denen
+ein erneuter Stopp versucht wird, bevor die definierte Fehlerbehandlung wirksam wird.
+
+=== Bereitstellung der Konfiguration
+
+Die Skriptverwaltung liefert das geladene Skript als geprüftes und korrekt
+versioniertes Skript an die Prozessverwaltung aus, um die definierten Inkarnationen
+für Software-Einheiten zu instantiieren und die entsprechenden Operationen
+zum Start der Betriebssystemprozesse auszuführen.
+
+Wenn keine gültige Konfigurationsdatei geladen werden konnte, wird die Prozessverwaltung
+nicht versorgt, d. h. es werden keine Prozesse gestartet. Das Skript ist über die 
+StartStopp-API abrufbar und kann mit Hilfe eines geeigneten Clients geladen, 
+möglicherweise korrigiert und abschließend zur Versionierung und Aktivierung an 
+StartStopp übergeben werden.
+
+=== Prüfung der Konfiguration
+
+==== Prüfung der Versionierung
+
+Die Versionierung wird nur für das initial geladene Skript ausgeführt, dazu werden
+die oben genannten Informationen ausgewertet. Eine Änderung der Konfigurationsdatei
+im laufenden Betrieb hat keine Auswirkungen.
+
+==== Prüfung auf zirkuläre Abhängigkeiten
+
+Innerhalb der Konfigurationsdatei werden folgende potentiellen zirkulären
+Abhängigkeiten geprüft:
+
+* zirkuläre Verwendung von Makrodefinitionen in anderen Makrodefinitionen
+* zirkuläre Abhängigkeiten von Start- und Stopp-Bedingungen 
+
+Anmerkung: Bei der Auswertung der Zirkularität von Start- oder Stopp werden nur lokale
+      Regeln betrachtet, da die Konfigurationen von StartStopp-Instanzen auf 
+      entfernten Rechnern zum Zeitpunkt der Prüfung für die lokale StartStopp-Applikation 
+      nicht zur Verfügung stehen. Im realen Betrieb würde lokal eine Blockierung
+      der jeweils betroffenen Inkarnationen bestehen bleiben, die durch den 
+      Anwender durch die Anpassung einer der beiden Konfigurationen aufgelöst werden
+      muss.
+
+==== Prüfung auf Vollständigkeit
+
+Die StartStopp-Konfiguration wird inhaltlich weitestgehend auf Vollständigkeit geprüft. Das umfasst im Wesentlichen
+die Punkte:
+
+* Angabe aller per JSON-Schema erforderlichen Attribute der Konfigurationsdatei
+* Vollständige Definition des Datenverteilerzugangs
+* Vollständige Auflösbarkeit aller Makros
+* Korrekte Angabe aller Daten für die Ausführung der Inkarnationen, z. B. Zeitangaben bei Intervallstart
+* Verfügbarkeit aller Rechnerdefinitionen von Rechnern, die in Start- oder Stoppbedingungen referenziert werden
+
+
+

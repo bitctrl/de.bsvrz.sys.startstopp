@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+"-//Puppy Crawl//DTD Suppressions 1.1//EN"
+"http://checkstyle.sourceforge.net/dtds/suppressions_1_1.dtd">
+
+<suppressions>
+	<suppress files="[/\\]target[/\\]" checks=".*" />
+	<suppress files="[/\\]build[/\\]" checks=".*" />
+	<suppress checks="ClassDataAbstractionCoupling" files="StartStoppConsole.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="StartBedingungEditor.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="StoppBedingungEditor.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="StartStoppOnlineWindow.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="SkriptEditor.java" />
+    <suppress checks="ClassDataAbstractionCoupling" files="InkarnationEditor.java" />
+</suppressions>

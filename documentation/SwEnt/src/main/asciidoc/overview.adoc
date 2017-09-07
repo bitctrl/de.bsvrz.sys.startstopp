@@ -1,0 +1,100 @@
+== Übersicht
+
+=== Aufgaben der SWE
+
+Die SWE StartStopp dient dazu, die Komponenten eines Datenverteiler-Systems
+auf einem Rechnerknoten zu verwalten, diese nach vorgegebenen Regeln auszuführen
+bzw. zu beenden.
+
+Die SWE läuft unabhängig vom Datenverteilersystem selbst, verbindet 
+sich aber mit einem vordefinierten System, um den Status des verwalteten
+Systems über den Datenverteiler zu publizieren.
+
+Die Konfiguration des zu verwaltenden Systems erfolgt in einer zentralen
+Konfigurationsdatei pro verwendetem Rechnerknoten.
+
+Die StartStopp-Applikation arbeitet als Serverprozess im Hintergrund und kann 
+über eine API-Schnittstelle von außen bedient werden, um einzelne
+Bestandteile des Systems zu starten oder anzuhalten oder die gesamte 
+Konfiguration zu ändern.
+
+=== Anforderungen
+
+Die folgende Tabelle zeigt die von der SWE zu erfüllenden
+Anforderungen.
+
+[cols="2*", options="header,autowidth"]
+|===
+| Anforderung | Beschreibung                                       |
+| Sys-5       | Start- und Stopp von Applikationen                 |
+| Sys-StSt-1  | Zentrale Konfigurationsdatei                       |
+| Sys-StSt-2  | Aufrufparameter                                    |
+| Sys-StSt-3  | Aufbau und Inhalt der xml-Datei                    |
+| Sys-StSt-4  | Definition Kernsystem                              |
+| Sys-StSt-5  | Makros Aufrufparameter                             |
+| Sys-StSt-6  | Liste Rechner                                      |
+| Sys-StSt-7  | Definition Protokolldateien                        |
+| Sys-StSt-8  | Inkarnationsname                                   |
+| Sys-StSt-9  | Name. Pfad der Klasse                              |
+| Sys-StSt-10 | Aufrufparameter der Inkarnation                    |
+| Sys-StSt-11 | Startart                                           |
+| Sys-StSt-12 | Startbedingungen                                   |
+| Sys-StSt-13 | Stoppbedingungen                                   |
+| Sys-StSt-14 | Startverhalten bei Fehlern                         |
+| Sys-StSt-15 | Stoppverhalten bei Fehlern                         |
+| Sys-StSt-16 | Mehrere Inkarnationen                              |
+| Sys-StSt-17 | Pfadangaben in URL-Form                            |
+| Sys-StSt-18 | Keine speziellen Berechtigungen                    |
+| Sys-StSt-19 | Datenablage                                        |
+| Sys-StSt-20 | Betriebssystemunabhängigkeit                       |
+| Sys-StSt-21 | Umlenkung von Ausgaben                             |
+| Sys-StSt-22 | Versionierung der Konfiguration                    |
+| Sys-StSt-23 | Zwei Arten der Konfigurationsänderung              |
+| Sys-StSt-24 | Startvorgang                                       |
+| Sys-StSt-25 | Starten der Applikation                            |
+| Sys-StSt-26 | Überprüfung                                        |
+| Sys-StSt-27 | Starten Kernsystem                                 |
+| Sys-StSt-28 | Abgleich mit anderen Rechnern                      |
+| Sys-StSt-29 | Starten restliche Applikationen                    |
+| Sys-StSt-30 | Abschließender Informationsaustausch               |
+| Sys-StSt-31 | Stoppvorgang                                       |
+| Sys-StSt-32 | Einleitung Stoppvorgang                            |
+| Sys-StSt-33 | Stoppen Applikationen                              |
+| Sys-StSt-34 | Stoppen Kernsystem                                 |
+| Sys-StSt-35 | Start-/Stopp-Reihenfolge                           |
+| Sys-StSt-36 | Start/Stopp auf verschiedenen Rechnern             |
+| Sys-StSt-37 | Erkennung von Zyklen                               |
+| Sys-StSt-38 | Kein Aufruf von Start/Stopp selbst                 |
+| Sys-StSt-39 | Betriebsmeldung beim Starten oder Stoppen          |
+| Sys-StSt-40 | Statusinformationen                                |
+| Sys-StSt-41 | Fehlermeldungen beim Starten und Stoppen           |
+| Sys-StSt-42 | Zyklische Ausführung von Applikationen             |
+| Sys-StSt-43 | Erneute Ausführung einer Konfiguration             |
+| Sys-StSt-44 | Manueller Start/Stopp                              |
+| Sys-StSt-45 | Steuerung über Telegramme                          |
+| Sys-StSt-46 | Verwendung der Terminierungsschnittstelle          |
+| Sys-StSt-47 | Keep-alive-Signalisierung                          |
+| Sys-StSt-48 | Bearbeitung der Konfiguration im laufenden Betrieb |
+| Sys-StSt-49 | Änderung von Aufrufparametern im laufenden Betrieb |
+| Sys-StSt-50 | Steuerung über externe Schnittstelle               |
+| Sys-StSt-51 | Robustheit                                         |
+| Sys-StSt-52 | Auflösung von inkonsistenten Zuständen             |
+| Sys-StSt-53 | Sicherheitsvorkehrung beim Beenden                 |
+| Sys-StSt-54 | Keine Voraussetzungen an das Betriebssystem        |
+| Sys-StSt-55 | Textbasierte Oberfläche mit Fenstertechnologie     |
+| Sys-StSt-56 | Oberfläche unabhängig von Applikation              |
+| Sys-StSt-57 | Anzeige der Applikationszustände                   |
+| Sys-StSt-58 | Anzeige der Applikationsdetails                    |
+| Sys-StSt-59 | Starten, Stoppen der Applikationen                 |
+| Sys-StSt-60 | Verwendung der Funktionstasten                     |
+| Sys-StSt-61 | Farbige Darstellung                                |
+| Sys-StSt-62 | Hinzufügen, Entfernen von Applikationen            |
+| Sys-StSt-63 | Bearbeitung der Konfiguration                      |
+| Sys-StSt-64 | Bearbeitung der Aufrufparameter                    |
+| Sys-StSt-65 | Signatur für Änderungen                            |
+| Sys-StSt-66 | Versionierung                                      |
+| Sys-StSt-67 | Anzeige von Fehlern                                |
+| Sys-StSt-68 | Schalter für Betriebsmeldungen                     |
+| Sys-StSt-69 | Keep-alive-Signalisierung                          |
+| Sys-StSt-70 | Abhängigkeitsgraph                                 |
+|===
