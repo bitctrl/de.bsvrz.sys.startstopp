@@ -26,7 +26,7 @@ Für alle Skriptdateien werden die folgenden Operationen ausgeführt:
 
 ==== Erwartete Ergebnisse
 
-Fpr die einzelnen Fälle
+Für die einzelnen Fälle
 
 * 7.1: Der Startvorgang wird abgebrochen, bereits gestartete Applikationen und Start/Stopp selbst werden beendet.
 * 7.2: Der Startvorgang wird abgebrochen, bereits gestartete Applikationen laufen weiter.
