@@ -1,5 +1,5 @@
 /*
- * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Segment 10 System (Sys), SWE 10.1 StartStopp API
  * Copyright (C) 2007-2017 BitCtrl Systems GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
