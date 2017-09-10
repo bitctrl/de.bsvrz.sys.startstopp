@@ -11,6 +11,7 @@ buildscript {
 }
 
 
+
 apply plugin: 'java'
 apply plugin: 'jsonschema2pojo'
 
@@ -57,6 +58,8 @@ repositories {
         url 'http://dl.bintray.com/bitctrl/maven'
     }
 }
+
+
 
 dependencies {
 
