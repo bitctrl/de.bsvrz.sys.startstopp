@@ -12,7 +12,6 @@ buildscript {
 
 
 apply plugin: 'java'
-apply plugin: 'application'
 apply plugin: 'jsonschema2pojo'
 
 compileJava.options.encoding = 'UTF-8'

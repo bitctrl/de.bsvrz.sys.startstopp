@@ -4,53 +4,16 @@ buildscript {
     mavenCentral()
     jcenter()
   }
-
-  dependencies {
-    classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:0.4.37'
-  }
 }
 
+dependencies {
+	compile project(':de.bsvrz.sys.startstopp.api')
+}
 
 apply plugin: 'java'
 apply plugin: 'application'
-apply plugin: 'jsonschema2pojo'
 
 compileJava.options.encoding = 'UTF-8'
-
-jsonSchema2Pojo {
-  generateBuilders = true
-  usePrimitives = false
-  source = files("${sourceSets.main.output.resourcesDir}/json")
-  targetDirectory = file("${project.buildDir}/generated-sources/js2p")
-  targetPackage = 'de.bsvrz.sys.startstopp.api.jsonschema'
-  propertyWordDelimiters = [] as char[]
-  useLongIntegers = false
-  useBigIntegers = false
-  useDoubleNumbers = true
-  useBigDecimals = false
-  includeHashcodeAndEquals = true
-  annotationStyle = 'jackson'
-  customAnnotator = 'org.jsonschema2pojo.NoopAnnotator'
-  includeJsr303Annotations = false
-  sourceType = 'jsonschema'
-  removeOldOutput = false
-  outputEncoding = 'UTF-8'
-  useJodaDates = false
-  formatDateTimes = true
-  formatDates = true
-  formatTimes = true
-  useCommonsLang3 = false
-  initializeCollections = true
-  classNamePrefix = ""
-  classNameSuffix = ""
-  fileExtensions = [] as String[]
-  includeConstructors = true
-   parcelable = false
-  serializable = true
-  includeAccessors = true
-  dateType = "java.time.LocalDate"
-  dateTimeType = "java.time.LocalDateTime"
-}
 
 repositories {
     mavenCentral() 

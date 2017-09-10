@@ -1,3 +1,4 @@
+include 'de.bsvrz.sys.startstopp.api'
 include 'de.bsvrz.sys.startstopp.swe'
 include 'de.bsvrz.sys.stst.test'
 
