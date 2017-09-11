@@ -85,16 +85,18 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 	public static class OnlineDisplay extends Panel {
 
+		private Label betriebsMeldungsStatusLabel = new Label("BM: OFF");
 		private OnlineStatusLabel verbindungsStatus;
 		private Label letzteAbfrage;
 
 		public OnlineDisplay() {
-			setLayoutManager(new GridLayout(3));
+			setLayoutManager(new GridLayout(4));
 			addComponent(new Label("Startstopp - Online"), GridLayout.createHorizontallyFilledLayoutData(1));
 			letzteAbfrage = new Label("00.00.0000 00:00:00");
 			addComponent(letzteAbfrage);
 			verbindungsStatus = new OnlineStatusLabel();
 			addComponent(verbindungsStatus);
+			addComponent(betriebsMeldungsStatusLabel);
 		}
 
 		public void setStatus(StartStoppStatus startStoppStatus) {
@@ -103,10 +105,16 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				verbindungsStatus.setForegroundColor(TextColor.ANSI.WHITE);
 				verbindungsStatus.setBackgroundColor(TextColor.ANSI.RED);
 				verbindungsStatus.setText("XXXXX");
+				betriebsMeldungsStatusLabel.setText("BM: ???");
 			} else {
 				verbindungsStatus.setForegroundColor(getForegroundColor(startStoppStatus));
 				verbindungsStatus.setBackgroundColor(getBackgroundColor(startStoppStatus));
 				verbindungsStatus.setText(startStoppStatus.getStatus().name());
+				if( startStoppStatus.getBetriebsmeldungen()) {
+					betriebsMeldungsStatusLabel.setText("BM: EIN");
+				} else {
+					betriebsMeldungsStatusLabel.setText("BM: AUS");
+				}
 			}
 		}
 

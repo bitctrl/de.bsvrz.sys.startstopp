@@ -59,7 +59,7 @@ public class SystemService {
 
 		Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 				"application/json");
-		responseBuilder.entity(new StartStoppStatus(startStopp.getStatus()));
+		responseBuilder.entity(new StartStoppStatus(startStopp.getStatus(), startStopp.getOptions().isBetriebsMeldungVersenden()));
 		return responseBuilder.build();
 	}
 

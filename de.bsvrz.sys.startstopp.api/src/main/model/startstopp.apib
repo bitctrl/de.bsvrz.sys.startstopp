@@ -50,7 +50,6 @@ Schaltet den Zustand der Betriebsmeldungen um
 
 + Response 202
 
-
 ## Alle Applikationen der bekannten Rechner abrufen [/ststapi/v1/system/applikationen]
 
 Liefert die Applikationen aller definierten Rechner, soweit diese verfügbar sind.
@@ -278,6 +277,7 @@ Alle bei StartStopp definierten Rechner
   + stopped (string)
   + shutdown (string)
   + configerror (string)
++ betriebsmeldungen: true (boolean, required, default)
 
 ## StartStoppSkriptStatus
 
