@@ -29,6 +29,7 @@ package de.bsvrz.sys.startstopp.process;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,8 @@ public final class ProzessManager {
 	private StartStopp startStopp;
 
 	private boolean neuStartGeplant;
+
+	private Date startTime = new Date();
 
 	public ProzessManager() {
 		this(StartStopp.getInstance());
@@ -477,4 +480,11 @@ public final class ProzessManager {
 		return result;
 	}
 
+	public Status getStatus() {
+		return startStopp.getStatus();
+	}
+
+	public Date getStartzeit() {
+		return startTime;
+	}
 }

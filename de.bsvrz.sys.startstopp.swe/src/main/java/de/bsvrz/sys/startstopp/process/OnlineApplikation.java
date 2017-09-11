@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import de.bsvrz.sys.funclib.debug.Debug;
@@ -307,16 +308,16 @@ public final class OnlineApplikation {
 							updateStatus(Applikation.Status.INSTALLIERT, "Wiederholung nach Startfehler");
 						} else {
 							LOGGER.warning(getName() + ": Abbruch nach " + wiederholungenStr + " Wiederholungen");
-							updateStatus(Applikation.Status.GESTOPPT, "Abbruch nach " + wiederholungenStr + " Wiederholungen");
-							
+							updateStatus(Applikation.Status.GESTOPPT,
+									"Abbruch nach " + wiederholungenStr + " Wiederholungen");
+
 						}
 						return;
 					}
 				}
 				switch (fehlerVerhalten.getOption()) {
 				case ABBRUCH:
-					CompletableFuture.runAsync(
-							() -> startStopp.setStatus(StartStoppStatus.Status.RUNNING_CANCELED));
+					CompletableFuture.runAsync(() -> startStopp.setStatus(StartStoppStatus.Status.RUNNING_CANCELED));
 					break;
 				case BEENDEN:
 					CompletableFuture.runAsync(() -> prozessManager.stoppeSkript());
@@ -477,7 +478,7 @@ public final class OnlineApplikation {
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
 			applikation.setStatus(status);
-			LOGGER.info("Statuswechsel " + getName() + ": " + oldStatus  + " --> " + getStatus());
+			LOGGER.info("Statuswechsel " + getName() + ": " + oldStatus + " --> " + getStatus());
 			prozessManager.getDavConnector().sendeStatusBetriebsMeldung(this);
 			onStatusChanged.send(new ApplikationEvent(onStatusChanged, this.getName(), status));
 			checkState(TaskType.DEFAULT);
@@ -622,6 +623,22 @@ public final class OnlineApplikation {
 
 	ProzessManager getProzessManager() {
 		return prozessManager;
+	}
+
+	public long getPid() {
+		if (process == null || process.getPid() == null) {
+			return 0;
+		}
+
+		return process.getPid();
+	}
+
+	public String getNextStart() {
+		if (onlineApplikationTimer.isIntervallTaskAktiv()) {
+			return DateFormat.getDateTimeInstance().format(
+					new Date(System.currentTimeMillis() + onlineApplikationTimer.getTaskDelay(TimeUnit.MILLISECONDS)));
+		}
+		return "";
 	}
 
 }

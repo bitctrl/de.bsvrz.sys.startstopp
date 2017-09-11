@@ -89,18 +89,22 @@ public final class Util {
 		return textBuffer.toString();
 	}
 	
-	public static String nonEmptyString(String string) {
-		if( string == null) {
-			return "";
-		}
-		return string;
-	}
-
 	public static long convertToWarteZeitInMsec(String warteZeitStr) throws StartStoppException {
 		try {
 			return TimeUnit.SECONDS.toMillis(Integer.parseInt(warteZeitStr));
 		} catch (NumberFormatException e) {
 			throw new StartStoppException(e.getLocalizedMessage());
 		}
+	}
+
+	public static String nonEmptyString(String string) {
+		return nonEmptyString(string, "");
+	}
+
+	public static String nonEmptyString(String string, String defaultValue) {
+		if( string == null) {
+			return defaultValue;
+		}
+		return string;
 	}
 }
