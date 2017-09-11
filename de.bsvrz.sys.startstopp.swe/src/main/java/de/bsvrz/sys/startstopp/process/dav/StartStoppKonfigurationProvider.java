@@ -303,7 +303,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 			item.getItem("StartVerhaltenFehler").getUnscaledValue("StartVerhaltenFehlerOption")
 					.setText(getStartFehlerOptionText(startFehlerVerhalten.getOption()));
 			item.getItem("StartVerhaltenFehler").getUnscaledValue("Wiederholrate")
-					.set(Integer.valueOf(Util.nonEmptyString(startFehlerVerhalten.getWiederholungen(), "0")));
+					.set(Integer.parseInt(Util.nonEmptyString(startFehlerVerhalten.getWiederholungen(), "0")));
 		}
 	}
 
@@ -316,7 +316,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 			item.getItem("StoppVerhaltenFehler").getUnscaledValue("StoppVerhaltenFehlerOption")
 					.setText(getStoppFehlerOptionText(stoppFehlerVerhalten.getOption()));
 			item.getItem("StoppVerhaltenFehler").getUnscaledValue("Wiederholrate")
-					.set(Integer.valueOf(Util.nonEmptyString(stoppFehlerVerhalten.getWiederholungen(), "0")));
+					.set(Integer.parseInt(Util.nonEmptyString(stoppFehlerVerhalten.getWiederholungen(), "0")));
 		}
 	}
 
