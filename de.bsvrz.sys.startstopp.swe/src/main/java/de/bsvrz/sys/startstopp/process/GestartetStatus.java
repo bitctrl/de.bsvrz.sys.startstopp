@@ -38,8 +38,6 @@ public class GestartetStatus extends OnlineApplikationStatus {
 
 	@Override
 	public boolean wechsleStatus(TaskType task, StartStoppStatus.Status startStoppStatus) {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

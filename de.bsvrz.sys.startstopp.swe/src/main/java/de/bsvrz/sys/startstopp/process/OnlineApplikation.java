@@ -80,6 +80,7 @@ public final class OnlineApplikation {
 
 	private final List<String> prozessAusgaben = new ArrayList<>();
 	private int startFehlerCounter;
+	private boolean stopInProgress;
 	private OnlineApplikationTimer onlineApplikationTimer;
 	private StartStopp startStopp;
 
@@ -168,6 +169,11 @@ public final class OnlineApplikation {
 		case CONFIGERROR:
 		case INITIALIZED:
 			LOGGER.warning("Unerwarteter Status des Prozessmanagers: " + status);
+			break;
+		case STOPPING_CANCELED:
+			if (appStatus == Applikation.Status.STOPPENWARTEN) {
+				checkState(TaskType.DEFAULT);
+			}
 			break;
 		case STOPPED:
 		default:
@@ -272,7 +278,6 @@ public final class OnlineApplikation {
 		case GESTOPPT:
 			handleOsApplikationStopped();
 			break;
-
 		case GESTARTET:
 			handleOsApplikationStarted();
 			break;
@@ -460,6 +465,7 @@ public final class OnlineApplikation {
 					process.kill();
 				}
 			}
+			stopInProgress = true;
 		}
 	}
 
@@ -477,6 +483,9 @@ public final class OnlineApplikation {
 		applikation.setStartMeldung(message);
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
+			if( status != Applikation.Status.STOPPENWARTEN) {
+				stopInProgress = false;
+			}
 			applikation.setStatus(status);
 			LOGGER.info("Statuswechsel " + getName() + ": " + oldStatus + " --> " + getStatus());
 			prozessManager.getDavConnector().sendeStatusBetriebsMeldung(this);
@@ -639,6 +648,14 @@ public final class OnlineApplikation {
 					new Date(System.currentTimeMillis() + onlineApplikationTimer.getTaskDelay(TimeUnit.MILLISECONDS)));
 		}
 		return "";
+	}
+
+	StartStopp getStartStopp() {
+		return startStopp;
+	}
+
+	boolean isStopInProgress() {
+		return stopInProgress;
 	}
 
 }

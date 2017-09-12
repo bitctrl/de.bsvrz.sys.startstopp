@@ -308,4 +308,8 @@ public class DavConnector {
 		}
 		return null;
 	}
+
+	public boolean getAppStatus(OnlineApplikation applikation) {
+		return appStatusHandler.getAppStatus(applikation);
+	}
 }

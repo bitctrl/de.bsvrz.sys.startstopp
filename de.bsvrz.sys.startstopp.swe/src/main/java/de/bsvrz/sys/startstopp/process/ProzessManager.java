@@ -265,7 +265,6 @@ public final class ProzessManager {
 		case CONFIGERROR:
 		case INITIALIZED:
 		case STOPPED:
-			// System.exit(0);
 			break;
 		case SHUTDOWN:
 			break;

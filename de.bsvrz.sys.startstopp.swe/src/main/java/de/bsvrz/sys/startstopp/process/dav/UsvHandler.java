@@ -94,7 +94,8 @@ public class UsvHandler implements ClientReceiverInterface {
 			if( result.hasData()) {
 				int zustand = result.getData().getUnscaledValue("KritischerZustand").intValue();
 				if( zustand == 1) {
-					prozessManager.shutdownSkript();
+					LOGGER.info("System wird wegen kritischem Zustand der USV heruntergefahren!");
+					System.exit(0);
 					break;
 				}
 			}
