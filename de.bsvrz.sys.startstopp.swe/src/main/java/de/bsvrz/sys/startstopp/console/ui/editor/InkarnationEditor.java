@@ -28,6 +28,7 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.List;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Button.Listener;
 import com.googlecode.lanterna.gui2.CheckBox;
@@ -101,6 +102,8 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 	}
 
 	private void initAufrufParameter(Panel mainPanel) {
+		Label parameterLabel = new Label("");
+		parameterLabel.setPreferredSize(new TerminalSize(20, 1));
 		Button parameterButton = new StartStoppButton("&Parameter:");
 		parameterButton.addListener(new Listener() {
 			@Override
@@ -109,16 +112,15 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.getAufrufParameter().clear();
 					inkarnation.getAufrufParameter().addAll(editor.getElement());
+					String parameterStr = String.join(",", inkarnation.getAufrufParameter());
+					parameterLabel.setText(Util.shorterString(parameterStr, 20));
 				}
 			}
 		});
 		mainPanel.addComponent(parameterButton, GridLayout.createHorizontallyFilledLayoutData(1));
-		List<String> aufrufParameter = inkarnation.getAufrufParameter();
-		String parameterStr = "";
-		if (!aufrufParameter.isEmpty()) {
-			parameterStr = aufrufParameter.get(0) + ", ...";
-		}
-		mainPanel.addComponent(new Label(parameterStr));
+		String parameterStr = String.join(",", inkarnation.getAufrufParameter());
+		parameterLabel.setText(Util.shorterString(parameterStr, 20));
+		mainPanel.addComponent(parameterLabel);
 	}
 
 	private void initInkarnationsTyp(Panel mainPanel) {
@@ -139,6 +141,7 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 	}
 
 	private void initStartArt(Panel mainPanel) {
+		Label startArtLabel = new Label("");
 		Button startArtButton = new StartStoppButton("&Startart:");
 		startArtButton.addListener(new Listener() {
 			@Override
@@ -146,11 +149,14 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 				StartArtEditor editor = new StartArtEditor(getSkript(), inkarnation.getStartArt());
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.setStartArt(editor.getElement());
+					startArtLabel.setText(inkarnation.getStartArt().getOption().toString());
 				}
 			}
 		});
+		
+		startArtLabel.setText(inkarnation.getStartArt().getOption().toString());
 		mainPanel.addComponent(startArtButton, GridLayout.createHorizontallyFilledLayoutData(1));
-		mainPanel.addComponent(new Label(inkarnation.getStartArt().getOption().toString()));
+		mainPanel.addComponent(startArtLabel);
 	}
 
 	private void initInitialisieren(Panel mainPanel) {
@@ -178,6 +184,7 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 	}
 
 	private void initStartBedingung(Panel mainPanel) {
+		Label bedingungLabel = new Label("");
 		Button startBedingungButton = new StartStoppButton("S&tartbedingung:");
 		startBedingungButton.addListener(new Listener() {
 			@Override
@@ -185,21 +192,27 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 				StartBedingungEditor editor = new StartBedingungEditor(skript, inkarnation);
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.setStartBedingung(editor.getElement());
+					StartBedingung startBedingung = inkarnation.getStartBedingung();
+					if ((startBedingung == null) || startBedingung.getVorgaenger().isEmpty()) {
+						bedingungLabel.setText("Keine");
+					} else {
+						bedingungLabel.setText(startBedingung.getVorgaenger().get(0));
+					}
 				}
 			}
 		});
 		mainPanel.addComponent(startBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
 		StartBedingung startBedingung = inkarnation.getStartBedingung();
-		String bedingungStr;
 		if ((startBedingung == null) || startBedingung.getVorgaenger().isEmpty()) {
-			bedingungStr = "Keine";
+			bedingungLabel.setText("Keine");
 		} else {
-			bedingungStr = startBedingung.getVorgaenger().get(0);
+			bedingungLabel.setText(startBedingung.getVorgaenger().get(0));
 		}
-		mainPanel.addComponent(new Label(bedingungStr));
+		mainPanel.addComponent(bedingungLabel);
 	}
 
 	private void initStartFehlerverhalten(Panel mainPanel) {
+		Label fehlerLabel = new Label("");
 		Button startFehlerVerhaltenButton = new StartStoppButton("Sta&rtfehlerverhalten:");
 		startFehlerVerhaltenButton.addListener(new Listener() {
 			@Override
@@ -207,14 +220,17 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 				StartFehlerVerhaltenEditor editor = new StartFehlerVerhaltenEditor(getSkript(), inkarnation);
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.setStartFehlerVerhalten(editor.getElement());
+					fehlerLabel.setText(inkarnation.getStartFehlerVerhalten().getOption().toString());
 				}
 			}
 		});
+		fehlerLabel.setText(inkarnation.getStartFehlerVerhalten().getOption().toString());
 		mainPanel.addComponent(startFehlerVerhaltenButton, GridLayout.createHorizontallyFilledLayoutData(1));
-		mainPanel.addComponent(new Label(inkarnation.getStartFehlerVerhalten().getOption().toString()));
+		mainPanel.addComponent(fehlerLabel);
 	}
 
 	private void initStoppBedingung(Panel mainPanel) {
+		Label bedingungLabel = new Label("");
 		Button stoppBedingungButton = new StartStoppButton("Stopp&bedingung:");
 		stoppBedingungButton.addListener(new Listener() {
 			@Override
@@ -222,21 +238,27 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 				StoppBedingungEditor editor = new StoppBedingungEditor(skript, inkarnation);
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.setStoppBedingung(editor.getElement());
+					StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
+					if ((stoppBedingung == null) || stoppBedingung.getNachfolger().isEmpty()) {
+						bedingungLabel.setText("Keine");
+					} else {
+						bedingungLabel.setText(stoppBedingung.getNachfolger().get(0));
+					}
 				}
 			}
 		});
 		mainPanel.addComponent(stoppBedingungButton, GridLayout.createHorizontallyFilledLayoutData(1));
 		StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
-		String bedingungStr;
 		if ((stoppBedingung == null) || stoppBedingung.getNachfolger().isEmpty()) {
-			bedingungStr = "Keine";
+			bedingungLabel.setText("Keine");
 		} else {
-			bedingungStr = stoppBedingung.getNachfolger().get(0);
+			bedingungLabel.setText(stoppBedingung.getNachfolger().get(0));
 		}
-		mainPanel.addComponent(new Label(bedingungStr));
+		mainPanel.addComponent(bedingungLabel);
 	}
 
 	private void initStoppFehlerverhalten(Panel mainPanel) {
+		Label fehlerLabel = new Label("");
 		Button stoppFehlerVerhaltenButton = new StartStoppButton("Stoppfehler&verhalten:");
 		stoppFehlerVerhaltenButton.addListener(new Listener() {
 			@Override
@@ -244,11 +266,13 @@ class InkarnationEditor extends StartStoppElementEditor<Inkarnation> {
 				StoppFehlerVerhaltenEditor editor = new StoppFehlerVerhaltenEditor(getSkript(), inkarnation);
 				if (editor.showDialog(getTextGUI())) {
 					inkarnation.setStoppFehlerVerhalten(editor.getElement());
+					fehlerLabel.setText(inkarnation.getStoppFehlerVerhalten().getOption().toString());
 				}
 			}
 		});
+		fehlerLabel.setText(inkarnation.getStoppFehlerVerhalten().getOption().toString());
 		mainPanel.addComponent(stoppFehlerVerhaltenButton, GridLayout.createHorizontallyFilledLayoutData(1));
-		mainPanel.addComponent(new Label(inkarnation.getStoppFehlerVerhalten().getOption().toString()));
+		mainPanel.addComponent(fehlerLabel);
 	}
 
 	@Override

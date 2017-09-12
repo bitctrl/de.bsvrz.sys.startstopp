@@ -42,7 +42,7 @@ import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 class OnlineApplikationTimer {
 
-	private static final int STOP_FEHLER_TIMEOUT_SEC = 5;
+	private static final int STOP_FEHLER_TIMEOUT_SEC = 30;
 	private ScheduledFuture<?> currentTask;
 	private ScheduledExecutorService taskExecutor;
 

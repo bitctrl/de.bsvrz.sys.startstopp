@@ -47,6 +47,7 @@ public class StartStopp {
 
 	private Object stopLock = new Object();
 
+
 	private StartStoppOptions options;
 
 	private SkriptManager skriptManager;
@@ -142,9 +143,9 @@ public class StartStopp {
 			stopLock.notifyAll();
 		}
 	}
-
+	
 	public void waitForStopp() {
-		while (status == Status.STOPPING) {
+		while (getStatus() == Status.STOPPING) {
 			synchronized (stopLock) {
 				try {
 					stopLock.wait(1000);

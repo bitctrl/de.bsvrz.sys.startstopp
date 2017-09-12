@@ -33,11 +33,10 @@ import java.util.Set;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 
-
 public class InkarnationsAenderung {
 
 	enum Typ {
-		APP, ARGUMENTLIST, STARTART, STARTBEDINGUNG, STOPPBEDINGUNG;
+		APP, ARGUMENTLIST, STARTART, STARTBEDINGUNG, STOPPBEDINGUNG, STARTFEHLERVERHALTEN, STOPPFEHLERVERHALTEN;
 	}
 
 	private Set<Typ> aenderungen = new LinkedHashSet<>();
@@ -49,22 +48,42 @@ public class InkarnationsAenderung {
 
 		List<String> letzteArgumente = letzteInkarnation.getAufrufParameter();
 		List<String> neueArgumente = inkarnation.getAufrufParameter();
-		if(!(letzteArgumente.containsAll(neueArgumente) && neueArgumente.containsAll(letzteArgumente))) {
+		if (!(letzteArgumente.containsAll(neueArgumente) && neueArgumente.containsAll(letzteArgumente))) {
 			aenderungen.add(Typ.APP);
 		}
-		
-		if( !Objects.deepEquals(inkarnation.getStartArt(), letzteInkarnation.getStartArt())) {
+
+		if (!Objects.equals(inkarnation.getInkarnationsTyp(), letzteInkarnation.getInkarnationsTyp())) {
+			aenderungen.add(Typ.APP);
+		}
+
+		if (!Objects.equals(inkarnation.getMitInkarnationsName(), letzteInkarnation.getMitInkarnationsName())) {
+			aenderungen.add(Typ.APP);
+		}
+
+		if (!Objects.equals(inkarnation.getInitialize(), letzteInkarnation.getInitialize())) {
+			aenderungen.add(Typ.APP);
+		}
+
+		if (!Objects.deepEquals(inkarnation.getStartArt(), letzteInkarnation.getStartArt())) {
 			aenderungen.add(Typ.STARTART);
 		}
 
-		if( !Objects.deepEquals(inkarnation.getStartBedingung(), letzteInkarnation.getStartBedingung())) {
+		if (!Objects.deepEquals(inkarnation.getStartBedingung(), letzteInkarnation.getStartBedingung())) {
 			aenderungen.add(Typ.STARTBEDINGUNG);
 		}
 
-		if( !Objects.deepEquals(inkarnation.getStoppBedingung(), letzteInkarnation.getStoppBedingung())) {
+		if (!Objects.deepEquals(inkarnation.getStoppBedingung(), letzteInkarnation.getStoppBedingung())) {
 			aenderungen.add(Typ.STOPPBEDINGUNG);
 		}
-		
+
+		if (!Objects.deepEquals(inkarnation.getStartFehlerVerhalten(), letzteInkarnation.getStartFehlerVerhalten())) {
+			aenderungen.add(Typ.STARTFEHLERVERHALTEN);
+		}
+
+		if (!Objects.deepEquals(inkarnation.getStoppFehlerVerhalten(), letzteInkarnation.getStoppFehlerVerhalten())) {
+			aenderungen.add(Typ.STOPPFEHLERVERHALTEN);
+		}
+
 	}
 
 	public Set<Typ> getAenderungen() {

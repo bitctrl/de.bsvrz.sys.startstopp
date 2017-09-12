@@ -35,12 +35,12 @@ import com.googlecode.lanterna.gui2.TextBox;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.console.ui.editor.StartStoppElementEditor;
 
-public class MakroTextInputDialog extends StartStoppElementEditor<String> {
+public class ParameterInputDialog extends StartStoppElementEditor<String> {
 
 	private String content;
 	private String description;
 
-	public MakroTextInputDialog(StartStoppSkript skript, String title, String description, String content) {
+	public ParameterInputDialog(StartStoppSkript skript, String title, String description, String content) {
 		super(skript, title);
 		this.content = content;
 		this.description = description;

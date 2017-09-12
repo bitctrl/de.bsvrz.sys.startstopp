@@ -107,4 +107,14 @@ public final class Util {
 		}
 		return string;
 	}
+
+
+	public static String shorterString(String parameterStr, int len) {
+		int strLen = parameterStr.length();
+		if( strLen <= len) {
+			return parameterStr;
+		}
+		
+		return parameterStr.substring(0, len - 4) + " ...";
+	}
 }

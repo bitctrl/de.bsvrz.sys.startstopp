@@ -368,10 +368,6 @@ public final class ProzessManager {
 				}
 			}
 		}
-
-		// if ((startStoppStatus == Status.SHUTDOWN) && allStopped) {
-		// System.exit(0);
-		// }
 	}
 
 	private boolean checkStoppStatus() {
@@ -486,4 +482,5 @@ public final class ProzessManager {
 	public Date getStartzeit() {
 		return startTime;
 	}
+	
 }
