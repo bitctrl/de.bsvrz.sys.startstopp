@@ -131,7 +131,7 @@ public abstract class EditableTable<T> extends Table<T> {
 	void insertElementBefore(int selectedRow) {
 		T newParameter = requestNewElement();
 		if (newParameter != null) {
-			addElement(newParameter);
+			addElement(selectedRow, newParameter);
 		}
 	}
 

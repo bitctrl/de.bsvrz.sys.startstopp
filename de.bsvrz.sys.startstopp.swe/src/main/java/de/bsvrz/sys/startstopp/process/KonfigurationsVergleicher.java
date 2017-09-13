@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.bsvrz.sys.startstopp.api.StartStoppException;
-import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 
 public class KonfigurationsVergleicher {

@@ -26,8 +26,6 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.util.List;
-
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Button.Listener;
