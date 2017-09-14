@@ -4,4 +4,4 @@
 Bundle-Name: StartStopp-API
 Import-Package: *
 Bundle-Vendor: BitCtrl Systems GmbH
-Bundle-Version: 2.0.0.qualifier
+Bundle-Version: 2.0.0.201709141200

@@ -41,6 +41,8 @@ import javax.ws.rs.core.Response;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.client.ClientConfig;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.client.StartStoppStatusException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
@@ -96,7 +98,7 @@ public class StartStoppClient {
 
 			SSLContext sslContext = sslContextFactory.getSslContext();
 			connector = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-					.withConfig(new ClientConfig().register(Applikation.class)).build();
+					.withConfig(new ClientConfig().register(JacksonJsonProvider.class)).build();
 		}
 		return connector;
 	}
