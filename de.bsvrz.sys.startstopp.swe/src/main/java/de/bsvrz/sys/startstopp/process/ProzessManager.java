@@ -70,6 +70,8 @@ public final class ProzessManager {
 
 	private Date startTime = new Date();
 
+	private boolean rekonfigurationAktiv;
+
 	public ProzessManager() {
 		this(StartStopp.getInstance());
 	}
@@ -293,6 +295,7 @@ public final class ProzessManager {
 			}
 		}
 
+		rekonfigurationAktiv = true;
 		if (kernsystemGeandert) {
 			stoppeSkript();
 			CompletableFuture.runAsync(() -> startStopp.waitForStopp())
@@ -345,6 +348,8 @@ public final class ProzessManager {
 			LOGGER.error(e.getLocalizedMessage());
 			throw new IllegalStateException("Sollte hier nicht auftreten, da nur geprüfte Skripte verwendet werden!",
 					e);
+		} finally {
+			rekonfigurationAktiv = false;
 		}
 	}
 
@@ -481,6 +486,10 @@ public final class ProzessManager {
 
 	public Date getStartzeit() {
 		return startTime;
+	}
+
+	boolean isRekonfigurationAktiv() {
+		return rekonfigurationAktiv;
 	}
 	
 }

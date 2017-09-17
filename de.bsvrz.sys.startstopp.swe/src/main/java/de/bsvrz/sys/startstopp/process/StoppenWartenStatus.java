@@ -58,6 +58,11 @@ public class StoppenWartenStatus extends OnlineApplikationStatus {
 				applikation.stoppeApplikation();
 				return applikation.updateStatus(Applikation.Status.GESTOPPT, "Stoppfehler ignoriert");
 			}
+
+			if( applikation.getProzessManager().isRekonfigurationAktiv()) {
+				applikation.stoppeApplikation();
+				return applikation.updateStatus(Applikation.Status.GESTOPPT, "Rekonfiguration: Stoppfehler ignoriert");
+			}
 			
 			StoppFehlerVerhalten fehlerVerhalten = applikation.getApplikation().getInkarnation()
 					.getStoppFehlerVerhalten();
