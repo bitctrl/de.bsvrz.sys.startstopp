@@ -182,16 +182,16 @@
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>de.bsvrz.sys</groupId>
-            <artifactId>de.bsvrz.sys.startstopp.api</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>srp6a</artifactId>
-            <version>2.0.0</version>
-        </dependency>
+		<dependency>
+			<groupId>de.bsvrz.sys</groupId>
+			<artifactId>de.bsvrz.sys.startstopp.api</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>srp6a</artifactId>
+			<version>2.0.0</version>
+		</dependency>
 		<dependency>
 			<groupId>de.bsvrz.sys</groupId>
 			<artifactId>de.bsvrz.sys.funclib.application</artifactId>
@@ -207,7 +207,7 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>com.profesorfalken</groupId>
 			<artifactId>WMI4Java</artifactId>
 			<version>1.6</version>
@@ -225,6 +225,12 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -370,13 +376,13 @@
 						</goals>
 						<phase>prepare-package</phase>
 						<configuration>
- 							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
+							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
 								de.kappich, com.google.guava, com.nimbusds
 							</excludeGroupIds>
-                        </configuration>
+						</configuration>
 					</execution>
 					<execution>
 						<id>build-non-bsvrz-classpath</id>
@@ -387,7 +393,7 @@
 							<outputProperty>nonBsvrzClasspath</outputProperty>
 							<prefix>lib</prefix>
 							<includeScope>runtime</includeScope>
- 							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
+							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
@@ -405,7 +411,8 @@
 							<prefix>lib</prefix>
 							<fileSeparator>/</fileSeparator>
 							<pathSeparator xml:space="preserve">@_@</pathSeparator>
-- 							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
+							-
+							<excludeGroupIds>de.bsvrz.dav, de.bsvrz.kex, de.bsvrz.ars,
 								de.bsvrz.dua, de.bsvrz.iav, de.bsvrz.ibv, de.bsvrz.ste,
 								de.bsvrz.puk, de.bsvrz.pua, de.bsvrz.sys, de.bsvrz.vew,
 								de.bsvrz.pat, com.bitctrl, commons-codec, junit, org.hamcrest,
@@ -413,7 +420,7 @@
 							</excludeGroupIds>
 						</configuration>
 					</execution>
-					
+
 				</executions>
 			</plugin>
 			<plugin>

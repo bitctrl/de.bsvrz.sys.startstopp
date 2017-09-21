@@ -58,6 +58,19 @@ public final class Util {
 
 	public static String wrapText(int width, String text) {
 
+		StringBuilder textBuffer = new StringBuilder();
+		String[] parts = text.split("\\n");
+		for( String part : parts ) {
+			if( textBuffer.length() > 0) {
+				textBuffer.append('\n');
+			}
+			textBuffer.append(wrapLine(width, part));
+		}
+		return textBuffer.toString();
+	}
+	
+	private static String wrapLine(int width, String text) {
+
 		int useableWidth = width - 6;
 		String[] parts = text.split("\\s");
 		StringBuilder lineBuffer = new StringBuilder(200);

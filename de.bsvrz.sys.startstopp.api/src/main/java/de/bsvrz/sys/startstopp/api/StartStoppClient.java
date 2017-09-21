@@ -401,4 +401,12 @@ public class StartStoppClient {
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
 				+ "\"konnte nicht gestoppt werden (Response: " + response.getStatus() + ")");
 	}
+
+	public String getStartStoppHostName() {
+		return startStoppHostName;
+	}
+
+	public int getPort() {
+		return port;
+	}
 }

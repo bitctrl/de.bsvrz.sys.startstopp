@@ -42,6 +42,8 @@ import com.googlecode.lanterna.terminal.Terminal;
 import de.bsvrz.sys.startstopp.api.StartStoppClient;
 import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow;
 import de.bsvrz.sys.startstopp.process.os.OSTools;
+import de.bsvrz.sys.startstopp.startstopp.StartStopp;
+import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public class StartStoppConsole {
 
@@ -97,5 +99,23 @@ public class StartStoppConsole {
 
 	public static StartStoppClient getClient() {
 		return INSTANZ.client;
+	}
+
+	public static String getVersionInfo() {
+
+		String result = "StartStopp-Console\n";
+		
+		Properties properties = new Properties();
+		try {
+			properties.load(StartStopp.class.getResourceAsStream("version.properties"));
+			String version = properties.getProperty("version");
+			if( version != null) {
+				result = result + "Version: " + version;
+			}
+		} catch (IOException e) {
+			// ignore
+		}
+
+		return result;
 	}
 }

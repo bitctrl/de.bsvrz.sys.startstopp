@@ -48,7 +48,6 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
-import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.funclib.debug.Debug;
@@ -60,6 +59,7 @@ import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppInfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.TerminalCloseAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
@@ -276,6 +276,11 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				builder.build().showDialog(getTextGUI());
 				return true;
 
+			case 'i':
+				new StartStoppInfoDialog().display();
+				return true;
+
+				
 			case 'e':
 				try {
 					getTextGUI().addWindow(new SkriptEditor(StartStoppConsole.getClient().getCurrentSkript()));
