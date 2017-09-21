@@ -26,30 +26,45 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-class EditorCloseAction implements Runnable {
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
+
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.console.StartStoppConsole;
+import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
+
+class EditorLadenAction implements Runnable {
 
 	private SkriptEditor editor;
 
-	EditorCloseAction(SkriptEditor editor) {
+	EditorLadenAction(SkriptEditor editor) {
 		this.editor = editor;
 	}
 
 	@Override
 	public void run() {
-		if (editor.checkForChanges()) {
-			JaNeinDialog dialog = new JaNeinDialog("Editor verlassen",
-					"Soll der Editor wirklich verlassen werden?\nEventuell wurden Änderungen noch nicht versioniert!");
-			if (!dialog.display()) {
-				return;
+		FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
+		fileDialogBuilder.setTitle("StartStopp-Konfiguration auswählen");
+		fileDialogBuilder.setActionLabel("Laden");
+		File selectedFile = fileDialogBuilder.build().showDialog(StartStoppConsole.getGui());
+		if ((selectedFile != null) && selectedFile.exists()) {
+			try (InputStream stream = new FileInputStream(selectedFile)) {
+				ObjectMapper mapper = new ObjectMapper();
+				StartStoppSkript skript = mapper.readValue(stream, StartStoppSkript.class);
+				editor.updateSkript(skript);
+			} catch (IOException e) {
+				new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
 			}
-		} 
-		editor.close();
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "Verlassen";
+		return "Datei laden";
 	}
 }
