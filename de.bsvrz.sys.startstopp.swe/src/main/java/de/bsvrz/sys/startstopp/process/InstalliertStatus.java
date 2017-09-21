@@ -115,8 +115,12 @@ public class InstalliertStatus extends OnlineApplikationStatus {
 			break;
 		}
 
-		applikation.starteOSApplikation();
-		return applikation.updateStatus(Applikation.Status.GESTARTET, "Start initialisiert");
+		try {
+			applikation.starteOSApplikation();
+			return applikation.updateStatus(Applikation.Status.GESTARTET, "Start initialisiert");
+		} catch (StartStoppException e) {
+			return applikation.updateStatus(Applikation.Status.GESTOPPT, e.getLocalizedMessage());
+		}
 	}
 
 }

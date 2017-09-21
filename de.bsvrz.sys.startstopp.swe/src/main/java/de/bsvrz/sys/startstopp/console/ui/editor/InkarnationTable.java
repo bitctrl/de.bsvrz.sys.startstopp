@@ -50,8 +50,8 @@ class InkarnationTable extends EditableTable<Inkarnation> {
 	protected List<String> getStringsFor(Inkarnation inkarnation) {
 		List<String> result = new ArrayList<>();
 		result.add(inkarnation.getInkarnationsName());
-		result.add(inkarnation.getInkarnationsTyp().toString());
-		result.add(inkarnation.getStartArt().getOption().toString());
+		result.add(inkarnation.getInkarnationsTyp().name());
+		result.add(inkarnation.getStartArt().getOption().name());
 		return result;
 	}
 

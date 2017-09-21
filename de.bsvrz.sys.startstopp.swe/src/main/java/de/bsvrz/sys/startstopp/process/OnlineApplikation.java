@@ -41,6 +41,7 @@ import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation.InkarnationsTyp;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt.Option;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
@@ -391,10 +392,22 @@ public final class OnlineApplikation {
 		return inkarnation.isTransmitter();
 	}
 
-	public void starteOSApplikation() {
+	public void starteOSApplikation() throws StartStoppException {
+
 		prozessAusgaben.clear();
-		process = new OSApplikation(getName(), applikation.getInkarnation().getApplikation());
-		process.setProgrammArgumente(getApplikationsArgumente());
+		
+		if( applikation.getInkarnation().getInkarnationsTyp() == InkarnationsTyp.WRAPPED) {
+			process = new OSApplikation(getName(), "java");
+			try {
+				process.setProgrammArgumente(DavWrapper.getWrapperArguments(prozessManager, applikation.getInkarnation().getApplikation(), getApplikationsArgumente()));
+			} catch (StartStoppException e) {
+				process = null;
+				throw new StartStoppException("Wrapper-Applikationen konnte nicht initialisiert werden!", e);
+			}
+		} else {
+			process = new OSApplikation(getName(), applikation.getInkarnation().getApplikation());
+			process.setProgrammArgumente(getApplikationsArgumente());
+		}
 		process.onStatusChange.addHandler(osApplikationStatusHandler);
 		process.start();
 		applikation.setLetzteStartzeit(DateFormat.getDateTimeInstance().format(new Date()));

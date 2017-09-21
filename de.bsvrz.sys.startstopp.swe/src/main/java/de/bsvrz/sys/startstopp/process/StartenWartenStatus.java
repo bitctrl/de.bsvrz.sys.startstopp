@@ -129,8 +129,12 @@ public class StartenWartenStatus extends OnlineApplikationStatus {
 			}
 		}
 
-		applikation.starteOSApplikation();
-		return applikation.updateStatus(Applikation.Status.GESTARTET, "");
+		try {
+			applikation.starteOSApplikation();
+			return applikation.updateStatus(Applikation.Status.GESTARTET, "");
+		} catch (StartStoppException e) {
+			return applikation.updateStatus(Applikation.Status.GESTOPPT, e.getLocalizedMessage());
+		}
 	}
 
 }
