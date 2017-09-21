@@ -32,7 +32,6 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
-import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 
 public class StartStoppInfoDialog {
 

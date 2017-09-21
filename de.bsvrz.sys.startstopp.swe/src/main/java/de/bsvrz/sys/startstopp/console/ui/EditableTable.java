@@ -53,7 +53,7 @@ public abstract class EditableTable<T> extends Table<T> {
 
 	private Collection<T> getElementArray(T element) {
 		List<T> list = new ArrayList<>();
-		for( int idx = 0; idx < getTableModel().getColumnCount(); idx++) {
+		for (int idx = 0; idx < getTableModel().getColumnCount(); idx++) {
 			list.add(element);
 		}
 		return list;
@@ -64,7 +64,7 @@ public abstract class EditableTable<T> extends Table<T> {
 		dataList.add(row, element);
 		getTableModel().insertRow(row, getElementArray(element));
 	}
-	
+
 	protected void addElement(int row, T element) {
 		dataList.add(row, element);
 		getTableModel().insertRow(row, getElementArray(element));
@@ -81,15 +81,15 @@ public abstract class EditableTable<T> extends Table<T> {
 
 	protected void clearTable() {
 		dataList.clear();
-		while( getTableModel().getRowCount() > 0) {
+		while (getTableModel().getRowCount() > 0) {
 			getTableModel().removeRow(0);
 		}
 	}
-	
+
 	@Override
 	public Result handleKeyStroke(KeyStroke key) {
 
-		if (editierbar ) {
+		if (editierbar) {
 			int selectedRow = getSelectedRow();
 
 			if (SkriptEditor.isDeleteKey(key)) {
@@ -115,8 +115,10 @@ public abstract class EditableTable<T> extends Table<T> {
 
 	void deleteElementAt(int selectedRow) {
 		if ((selectedRow >= 0) && (selectedRow < dataList.size())) {
-			removeElementAt(selectedRow);
-			setSelectedRow(Math.max(0, selectedRow - 1));
+			if (checkDelete(dataList.get(selectedRow))) {
+				removeElementAt(selectedRow);
+				setSelectedRow(Math.max(0, selectedRow - 1));
+			}
 		}
 	}
 
@@ -180,16 +182,18 @@ public abstract class EditableTable<T> extends Table<T> {
 
 	protected abstract T editElement(T oldElement);
 
+	protected abstract boolean checkDelete(T element);
+
 	protected abstract List<String> getStringsFor(T element);
 
 	public final String getStringForColumn(int columnIndex, T element) {
 		List<String> strings = getStringsFor(element);
-		if( columnIndex < 0 || columnIndex >= strings.size()) {
+		if (columnIndex < 0 || columnIndex >= strings.size()) {
 			return "?";
 		}
 		return strings.get(columnIndex);
 	}
-	
+
 	public void setEditierbar(boolean editierbar) {
 		this.editierbar = editierbar;
 	}

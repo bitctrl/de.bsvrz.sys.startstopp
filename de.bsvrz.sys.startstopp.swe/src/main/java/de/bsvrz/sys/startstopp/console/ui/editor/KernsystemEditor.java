@@ -37,6 +37,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.console.ui.EditableTable;
+import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> {
 
@@ -63,6 +64,14 @@ class KernsystemEditor extends StartStoppElementEditor<List<KernSystem>> {
 		@Override
 		protected List<String> getStringsFor(KernSystem element) {
 			return Collections.singletonList(element.getInkarnationsName());
+		}
+
+		@Override
+		protected boolean checkDelete(KernSystem element) {
+			JaNeinDialog dialog = new JaNeinDialog("Löschen",
+					"Soll die Inkarnation \"" + element.getInkarnationsName() + "\" wirklich aus dem Kernsystem entfernt werden?");
+			return dialog.display();
+
 		}
 	}
 

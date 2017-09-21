@@ -208,13 +208,6 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 	}
 
 	public void disconnect() {
-		for( String name : applikationStatus.keySet()) {
-			if (name.startsWith(inkarnationsPrefix)) {
-				String processMgrInkarnation = name.substring(inkarnationsPrefix.length());
-				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
-// TODO				processManager.updateFromDav(processMgrInkarnation, false);
-			}
-		}
 		reconnect(null);
 	}
 

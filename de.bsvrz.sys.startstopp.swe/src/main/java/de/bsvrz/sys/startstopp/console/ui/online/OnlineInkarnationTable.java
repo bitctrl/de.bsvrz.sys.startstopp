@@ -106,4 +106,9 @@ class OnlineInkarnationTable extends EditableTable<Applikation> {
 
 		return result;
 	}
+
+	@Override
+	protected boolean checkDelete(Applikation element) {
+		return false;
+	}
 }

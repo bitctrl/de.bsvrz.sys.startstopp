@@ -58,6 +58,7 @@ class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 	private Set<SystemObject> applikationen = new LinkedHashSet<>();
 	private DataDescription terminierungsDesc;
 	private boolean subscription;
+	private boolean terminierungReady;
 
 	DatenVerteiler(ClientDavConnection dav, SystemObject dvObj) {
 
@@ -104,6 +105,12 @@ class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 	}
 
 	public boolean sendeTerminierung(SystemObject appObj) throws StartStoppException {
+
+		if (terminierungsDesc == null || !terminierungReady) {
+			throw new StartStoppException("Datenverteiler " + datenVerteilerObj
+					+ " ist noch nicht bereit zum Empfang von Terminierungsmeldungen");
+		}
+
 		for (SystemObject applikation : applikationen) {
 			if (applikation.equals(appObj)) {
 				Data data = dav.createData(terminierungsDesc.getAttributeGroup());
@@ -122,7 +129,12 @@ class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 
 	@Override
 	public void dataRequest(SystemObject object, DataDescription dataDescription, byte state) {
-		// TODO Status auswerten
+		if (object.equals(datenVerteilerObj)) {
+			if ((terminierungsDesc != null)
+					&& terminierungsDesc.getAttributeGroup().equals(dataDescription.getAttributeGroup())) {
+				terminierungReady = state == START_SENDING;
+			}
+		}
 	}
 
 	@Override

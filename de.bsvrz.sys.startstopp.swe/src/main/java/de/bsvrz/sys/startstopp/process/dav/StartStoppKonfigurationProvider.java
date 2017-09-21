@@ -43,14 +43,17 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 	private SystemObject rechner;
 
 	private DataDescription procInfoDesc;
+	private boolean sendProcInfo;
+
 	private DataDescription startStoppInfoDesc;
+	private boolean sendStartStoppInfo;
 
 	private String prefix = "";
 
 	public void reconnect(ProzessManager prozessManager, ClientDavConnection connection, SystemObject rechner) {
 
 		disconnect();
-		
+
 		prefix = StartStopp.getInstance().getInkarnationsPrefix();
 		prefix = prefix.substring(0, prefix.length() - 1);
 
@@ -112,11 +115,6 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 	}
 
 	public void update(Collection<OnlineApplikation> applikationen) {
-
-		if (procInfoDesc == null) {
-			return;
-		}
-
 		CompletableFuture.runAsync(() -> sendInfo(new ArrayList<>(applikationen)));
 	}
 
@@ -129,6 +127,11 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 	}
 
 	private void sendProzessInfo(Collection<OnlineApplikation> applikationen) {
+
+		if ((procInfoDesc == null) || !sendProcInfo) {
+			return;
+		}
+
 		Data infoData = connection.createData(procInfoDesc.getAttributeGroup());
 		Array prozessArray = infoData.getArray("Prozesse");
 		prozessArray.setLength(applikationen.size());
@@ -151,22 +154,27 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 
 	private void sendStartStoppInfo(Collection<OnlineApplikation> applikationen) {
 
+		if ((startStoppInfoDesc == null) || !sendStartStoppInfo) {
+			return;
+		}
+
 		Data infoData = connection.createData(startStoppInfoDesc.getAttributeGroup());
 		Array bloecke = infoData.getArray("StartStoppBloecke");
 		bloecke.setLength(1);
 
 		Data block = bloecke.getItem(0);
-		
+
 		String prefix = StartStopp.getInstance().getInkarnationsPrefix();
 		prefix = prefix.substring(0, prefix.length() - 1);
-		
+
 		block.getTextValue("StartStoppID").setText(prefix);
 		block.getUnscaledValue("Zustand").setText(getProzessManagerStatusText());
-		block.getTextValue("StartZeitpunkt").setText(DateFormat.getDateTimeInstance().format(prozessManager.getStartzeit())) ;
+		block.getTextValue("StartZeitpunkt")
+				.setText(DateFormat.getDateTimeInstance().format(prozessManager.getStartzeit()));
 
 		Array inkarnationenArray = block.getArray("Inkarnationen");
 		inkarnationenArray.setLength(applikationen.size());
-		
+
 		int idx = 0;
 		for (OnlineApplikation applikation : applikationen) {
 			inkarnationenArray.getItem(idx++).getTextValue("ProzessID").setText(prefix + "_" + applikation.getName());
@@ -266,7 +274,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 			try {
 				warteZeit = Util.convertToWarteZeitInMsec(Util.nonEmptyString(startBedingung.getWartezeit(), "0"));
 				bedingung.getTimeValue("WarteZeit").setMillis(warteZeit);
-			} catch (StartStoppException e) {
+			} catch (@SuppressWarnings("unused") StartStoppException e) {
 				bedingung.getTimeValue("WarteZeit").setMillis(0);
 			}
 		}
@@ -288,7 +296,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 			try {
 				warteZeit = Util.convertToWarteZeitInMsec(Util.nonEmptyString(stoppBedingung.getWartezeit(), "0"));
 				bedingung.getTimeValue("WarteZeit").setMillis(warteZeit);
-			} catch (StartStoppException e) {
+			} catch (@SuppressWarnings("unused") StartStoppException e) {
 				bedingung.getTimeValue("WarteZeit").setMillis(0);
 			}
 		}
@@ -420,7 +428,15 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 
 	@Override
 	public void dataRequest(SystemObject object, DataDescription dataDescription, byte state) {
-		// TODO Rückmeldungen auswerten
+		if (object.equals(rechner)) {
+			if (procInfoDesc != null && procInfoDesc.getAttributeGroup().equals(dataDescription.getAttributeGroup())) {
+				sendProcInfo = state == START_SENDING;
+			}
+			if (startStoppInfoDesc != null
+					&& startStoppInfoDesc.getAttributeGroup().equals(dataDescription.getAttributeGroup())) {
+				sendStartStoppInfo = state == START_SENDING;
+			}
+		}
 
 	}
 

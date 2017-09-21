@@ -72,6 +72,11 @@ class StartBedingungEditor extends StartStoppElementEditor<StartBedingung> {
 		protected List<String> getStringsFor(String element) {
 			return Collections.singletonList(element);
 		}
+
+		@Override
+		protected boolean checkDelete(String element) {
+			return true;
+		}
 	}
 
 	private static final String KEIN_RECHNER = "<kein Rechner>";

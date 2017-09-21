@@ -34,7 +34,6 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 
@@ -67,12 +66,6 @@ class ApplikationLogWindow extends BasicWindow {
 		setComponent(panel);
 	}
 
-	@Override
-	public boolean handleInput(KeyStroke key) {
-		// TODO Auto-generated method stub
-		return super.handleInput(key);
-	}
-	
 	public void setLog(ApplikationLog applikationLog) {
 		for (String message : applikationLog.getMessages()) {
 			messagesTable.getTableModel().addRow(message);

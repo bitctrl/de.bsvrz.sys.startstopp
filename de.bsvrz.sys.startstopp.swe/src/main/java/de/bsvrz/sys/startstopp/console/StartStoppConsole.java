@@ -43,7 +43,6 @@ import de.bsvrz.sys.startstopp.api.StartStoppClient;
 import de.bsvrz.sys.startstopp.console.ui.online.StartStoppOnlineWindow;
 import de.bsvrz.sys.startstopp.process.os.OSTools;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
-import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public class StartStoppConsole {
 
@@ -75,11 +74,15 @@ public class StartStoppConsole {
 		try (Terminal term = factory.createTerminal()) {
 			try (Screen screen = new TerminalScreen(term)) {
 				INSTANZ.gui = new MultiWindowTextGUI(screen);
-				if (INSTANZ.options.isMonochrome()) {
-					INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Mono"));
-				} else {
-					INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme("NERZ-Color"));
+				String themeName = INSTANZ.options.getThemeFileName();
+				if (themeName == null) {
+					if (INSTANZ.options.isMonochrome()) {
+						themeName = "NERZ-Mono";
+					} else {
+						themeName = "NERZ-Color";
+					}
 				}
+				INSTANZ.gui.setTheme(LanternaThemes.getRegisteredTheme(themeName));
 				screen.startScreen();
 
 				INSTANZ.gui.getScreen().startScreen();
@@ -104,15 +107,15 @@ public class StartStoppConsole {
 	public static String getVersionInfo() {
 
 		String result = "StartStopp-Console\n";
-		
+
 		Properties properties = new Properties();
 		try {
 			properties.load(StartStopp.class.getResourceAsStream("version.properties"));
 			String version = properties.getProperty("version");
-			if( version != null) {
+			if (version != null) {
 				result = result + "Version: " + version;
 			}
-		} catch (IOException e) {
+		} catch (@SuppressWarnings("unused") IOException e) {
 			// ignore
 		}
 
