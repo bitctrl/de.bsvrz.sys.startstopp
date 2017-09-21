@@ -47,6 +47,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -251,30 +252,10 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		case Character:
 			switch (keyStroke.getCharacter()) {
 			case 't':
-				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("Theme")
-						.setDescription("Theme auswählen");
-				for (String theme : LanternaThemes.getRegisteredThemes()) {
-					builder.addAction(theme, new Runnable() {
-						@Override
-						public void run() {
-							getTextGUI().setTheme(LanternaThemes.getRegisteredTheme(theme));
-						}
-					});
-				}
-
-				builder.build().showDialog(getTextGUI());
-				return true;
+				return handleThemeSelection();
 
 			case 's':
-				builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addAction(new StartStoppStoppAction());
-				builder.addAction(new StartStoppStartAction());
-				builder.addAction(new StartStoppRestartAction());
-				builder.addAction(new StartStoppBetriebsmeldungenUmschaltenAction());
-				builder.addAction(new StartStoppExitAction());
-				builder.addAction(new TerminalCloseAction());
-				builder.build().showDialog(getTextGUI());
-				return true;
+				return handleSystemFunktion();
 
 			case 'i':
 				new StartStoppInfoDialog().display();
@@ -309,5 +290,40 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		}
 
 		return super.handleInput(keyStroke);
+	}
+
+	private boolean handleSystemFunktion() {
+		ActionListDialogBuilder builder;
+		builder = new ActionListDialogBuilder().setTitle("System-Funktionen").setCanCancel(false);
+		builder.addAction(new StartStoppStoppAction());
+		builder.addAction(new StartStoppStartAction());
+		builder.addAction(new StartStoppRestartAction());
+		builder.addAction(new StartStoppBetriebsmeldungenUmschaltenAction());
+		builder.addAction(new StartStoppExitAction());
+		builder.addAction(new TerminalCloseAction());
+		builder.setDescription("ESC - Abbrechen");
+		ActionListDialog dialog = builder.build();
+		dialog.setCloseWindowWithEscape(true);
+		dialog.showDialog(getTextGUI());
+		return true;
+	}
+
+	private boolean handleThemeSelection() {
+		ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("Theme").setCanCancel(false)
+				.setDescription("Theme auswählen");
+		for (String theme : LanternaThemes.getRegisteredThemes()) {
+			builder.addAction(theme, new Runnable() {
+				@Override
+				public void run() {
+					getTextGUI().setTheme(LanternaThemes.getRegisteredTheme(theme));
+				}
+			});
+		}
+
+		builder.setDescription("ESC - Abbrechen");
+		ActionListDialog dialog = builder.build();
+		dialog.setCloseWindowWithEscape(true);
+		dialog.showDialog(getTextGUI());
+		return true;
 	}
 }

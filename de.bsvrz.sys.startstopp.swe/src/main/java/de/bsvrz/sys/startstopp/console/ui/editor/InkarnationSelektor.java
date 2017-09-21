@@ -30,6 +30,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
@@ -55,12 +56,14 @@ public class InkarnationSelektor {
 	public Inkarnation getInkarnation(WindowBasedTextGUI gui) {
 
 		builder = new ActionListDialogBuilder();
-		builder.setTitle("Inkarnation");
+		builder.setTitle("Inkarnation").setCanCancel(false);
 		for( Inkarnation inkarnation : inkarnationen.values()) {
 			builder.addAction(inkarnation.getInkarnationsName(), () -> { selected = inkarnation;});
 		}
-
-		builder.build().showDialog(gui);
+		builder.setDescription("ESC - Abbrechen");
+		ActionListDialog dialog = builder.build();
+		dialog.setCloseWindowWithEscape(true);
+		dialog.showDialog(gui);
 		return selected;
 	}
 }

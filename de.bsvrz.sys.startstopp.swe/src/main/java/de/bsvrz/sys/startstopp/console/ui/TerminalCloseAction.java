@@ -34,11 +34,13 @@ public class TerminalCloseAction implements Runnable {
 
 	@Override
 	public void run() {
-		for( Window window : StartStoppConsole.getGui().getWindows()) {
-			window.close();
+		if (new JaNeinDialog("INFO", "Benutzeroberfläche schließen").display()) {
+			for (Window window : StartStoppConsole.getGui().getWindows()) {
+				window.close();
+			}
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Schließen";

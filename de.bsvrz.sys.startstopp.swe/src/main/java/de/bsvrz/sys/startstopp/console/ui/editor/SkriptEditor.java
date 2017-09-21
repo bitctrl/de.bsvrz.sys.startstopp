@@ -43,6 +43,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.gui2.table.Table;
@@ -236,10 +237,13 @@ public final class SkriptEditor extends BasicWindow {
 	}
 
 	private void showSystemActionMenu() {
-		ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
+		ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System").setCanCancel(false);
 		builder.addActions(new EditorVersionierenAction(this, skript), new EditorSichernAction(skript),
 				new EditorCloseAction(this));
-		builder.build().showDialog(getTextGUI());
+		builder.setDescription("ESC - Abbrechen");
+		ActionListDialog dialog = builder.build();
+		dialog.setCloseWindowWithEscape(true);
+		dialog.showDialog(getTextGUI());
 	}
 
 	private void loadSkriptFromFile() {
