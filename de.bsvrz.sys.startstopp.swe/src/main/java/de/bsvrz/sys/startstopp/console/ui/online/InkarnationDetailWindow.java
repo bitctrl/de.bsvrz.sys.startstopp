@@ -39,44 +39,18 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung.Warteart;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten.Option;
 import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.StartStoppButton;
 
 class InkarnationDetailWindow extends BasicWindow {
 
-	public class StartFehlerVerhaltenDetails extends Panel {
-
-		public StartFehlerVerhaltenDetails(StartFehlerVerhalten verhalten) {
-			// TODO Auto-generated constructor stub
-		}
-
-	}
-
-	public class StartBedingungDetails extends Panel {
-
-		public StartBedingungDetails(StartBedingung bedingung) {
-			// TODO Auto-generated constructor stub
-		}
-	}
-
-	public class StoppFehlerVerhaltenDetails extends Panel {
-
-		public StoppFehlerVerhaltenDetails(StoppFehlerVerhalten verhalten) {
-			// TODO Auto-generated constructor stub
-		}
-
-	}
-
-	public class StoppBedingungDetails extends Panel {
-
-		public StoppBedingungDetails(StoppBedingung bedingung) {
-			// TODO Auto-generated constructor stub
-		}
-	}
+	
 
 	private Applikation applikation;
 
@@ -96,7 +70,9 @@ class InkarnationDetailWindow extends BasicWindow {
 		panel.setLayoutData(GridLayout.createHorizontallyEndAlignedLayoutData(1));
 
 		panel.addComponent(new Label("Inkarnationstyp: "));
-		panel.addComponent(new Label(inkarnation.getInkarnationsTyp().name()));
+		Label typLabel = new Label(inkarnation.getInkarnationsTyp().name());
+		typLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
+		panel.addComponent(typLabel);
 
 		panel.addComponent(new Label("StartArt: "));
 		panel.addComponent(new Label(getStartArtStr(inkarnation)));
@@ -104,37 +80,124 @@ class InkarnationDetailWindow extends BasicWindow {
 		panel.addComponent(new Label("Initialisierung: "));
 		panel.addComponent(new Label(getInitialisierungStr(inkarnation)));
 
-		if (inkarnation.getStartBedingung() != null) {
-			StartBedingungDetails details = new StartBedingungDetails(inkarnation.getStartBedingung());
-			panel.addComponent(details);
-			details.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
+		StartBedingung startBedingung = inkarnation.getStartBedingung();
+		if( startBedingung == null) {
+			startBedingung = new StartBedingung(Collections.singletonList("Applikation1"), Warteart.BEGINN, "HeinzRudolf", "345");
 		}
+		showStartBedingungen(panel, startBedingung);
 
-		if (inkarnation.getStartFehlerVerhalten() != null) {
-			StartFehlerVerhaltenDetails details = new StartFehlerVerhaltenDetails(
-					inkarnation.getStartFehlerVerhalten());
-			panel.addComponent(details);
-			details.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
+		StartFehlerVerhalten startFehlerVerhalten = inkarnation.getStartFehlerVerhalten();
+		if( startFehlerVerhalten == null) {
+			startFehlerVerhalten = new StartFehlerVerhalten(StartFehlerVerhalten.Option.IGNORIEREN, "56");
 		}
+		showStartFehlerVerhalten(panel, startFehlerVerhalten);
 
-		if (inkarnation.getStoppBedingung() != null) {
-			StoppBedingungDetails details = new StoppBedingungDetails(inkarnation.getStoppBedingung());
-			panel.addComponent(details);
-			details.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
+		StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
+		if( stoppBedingung == null) {
+			stoppBedingung = new StoppBedingung(Collections.singletonList("Parametrierung"),"WILLI", "23" );
 		}
+		showStoppBedingung(panel, stoppBedingung);
 
-		if (inkarnation.getStoppFehlerVerhalten() != null) {
-			StoppFehlerVerhaltenDetails details = new StoppFehlerVerhaltenDetails(
-					inkarnation.getStoppFehlerVerhalten());
-			panel.addComponent(details);
-			details.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
+		StoppFehlerVerhalten stoppFehlerVerhalten = inkarnation.getStoppFehlerVerhalten();
+		if( stoppFehlerVerhalten == null) {
+			stoppFehlerVerhalten = new StoppFehlerVerhalten(Option.IGNORIEREN, "45");
 		}
+		showStoppFehlerVerhalten(panel, stoppFehlerVerhalten);
 
 		Button applikationButton = new StartStoppButton("Applikation", () -> showApplikationPanel());
 		panel.addComponent(applikationButton.withBorder(Borders.singleLine()));
-		applikationButton.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
+		applikationButton.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.CENTER, false, false, 2, 1));
 
 		setComponent(panel);
+	}
+
+	private void showStoppFehlerVerhalten(Panel panel, StoppFehlerVerhalten verhalten) {
+		
+		if( verhalten == null) {
+			return;
+		}
+
+		Label label = new Label("");
+		panel.addComponent(label);
+		label.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.CENTER, false, false, 2, 1));
+
+		panel.addComponent(new Label("StoppFehlerverhalten: "));
+		String verhaltenStr = verhalten.getOption().name();
+		int wiederholungen = Integer.parseInt(Util.nonEmptyString(verhalten.getWiederholungen(), "0"));
+		if (wiederholungen > 0) {
+			verhaltenStr += ", " + wiederholungen + " Wiederholungen";
+		}
+		panel.addComponent(new Label(verhaltenStr));
+	}
+
+	private void showStoppBedingung(Panel panel, StoppBedingung bedingung) {
+		
+		if( bedingung == null) {
+			return;
+		}
+
+		Label label = new Label("");
+		panel.addComponent(label);
+		label.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.CENTER, false, false, 2, 1));
+
+		panel.addComponent(new Label("StoppBedingung: "));
+		String referenzStr = String.join(",", bedingung.getNachfolger());
+		String rechner = bedingung.getRechner();
+		if (rechner != null && !rechner.isEmpty()) {
+			referenzStr = rechner + ": " + referenzStr;
+		}
+		panel.addComponent(new Label(referenzStr));
+
+		int warteZeit = Integer.parseInt(Util.nonEmptyString(bedingung.getWartezeit(), "0"));
+		if( warteZeit > 0) {
+			panel.addComponent(new Label("Wartezeit: "));
+			panel.addComponent(new Label(warteZeit + " Sekunden"));
+		}
+	}
+
+	private void showStartFehlerVerhalten(Panel panel, StartFehlerVerhalten verhalten) {
+		if( verhalten == null) {
+			return;
+		}
+		
+		Label label = new Label("");
+		panel.addComponent(label);
+		label.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.CENTER, false, false, 2, 1));
+		
+		panel.addComponent(new Label("StartFehlerverhalten: "));
+		String verhaltenStr = verhalten.getOption().name();
+		int wiederholungen = Integer.parseInt(Util.nonEmptyString(verhalten.getWiederholungen(), "0"));
+		if (wiederholungen > 0) {
+			verhaltenStr += ", " + wiederholungen + " Wiederholungen";
+		}
+		panel.addComponent(new Label(verhaltenStr));
+	}
+
+	private void showStartBedingungen(Panel panel, StartBedingung bedingung) {
+		
+		if( bedingung == null) {
+			return;
+		}
+
+		Label label = new Label("");
+		label.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.CENTER, false, false, 2, 1));
+		panel.addComponent(label);
+
+		panel.addComponent(new Label("StartBedingung: "));
+		String vorgaengerStr = String.join(",", bedingung.getVorgaenger());
+		String rechner = bedingung.getRechner();
+		if (rechner != null && !rechner.isEmpty()) {
+			vorgaengerStr = rechner + ": " + vorgaengerStr;
+		}
+		panel.addComponent(new Label(vorgaengerStr));
+
+		panel.addComponent(new Label("WarteArt: "));
+		String warteStr = bedingung.getWarteart().name();
+		int warteZeit = Integer.parseInt(Util.nonEmptyString(bedingung.getWartezeit(), "0"));
+		if( warteZeit > 0) {
+			warteStr += ", Wartezeit: " + warteZeit + " Sekunden";
+		}
+		panel.addComponent(new Label(warteStr));
 	}
 
 	private void showApplikationPanel() {

@@ -32,6 +32,7 @@ import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.GridLayout.Alignment;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
@@ -60,11 +61,13 @@ class ApplikationDetailWindow extends BasicWindow {
 		panel.setLayoutData(GridLayout.createHorizontallyEndAlignedLayoutData(1));
 
 		panel.addComponent(new Label("Applikation: "));
-		panel.addComponent(new Label(applikation.getInkarnation().getApplikation()));
+		Label appLabel = new Label(applikation.getInkarnation().getApplikation());
+		appLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
+		panel.addComponent(appLabel);
 
 		Table<String> parameterTable = new Table<>("Parameter");
 		parameterTable.setVisibleRows(5);
-		parameterTable.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
+		parameterTable.setLayoutData(GridLayout.createLayoutData(Alignment.FILL, Alignment.CENTER, false, false, 2, 1));
 		panel.addComponent(parameterTable.withBorder(Borders.singleLine()));
 		for (String parameter : applikation.getInkarnation().getAufrufParameter()) {
 			parameterTable.getTableModel().addRow(parameter);
@@ -85,11 +88,11 @@ class ApplikationDetailWindow extends BasicWindow {
 		TextBox messageLabel = new TextBox(Util.nonEmptyString(applikation.getStartMeldung()));
 		messageLabel.setEnabled(false);
 		panel.addComponent(messageLabel);
-		messageLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
+		messageLabel.setLayoutData(GridLayout.createLayoutData(Alignment.FILL, Alignment.CENTER, false, false, 2, 1));
 
 		Button inkarnationButton = new StartStoppButton("Inkarnation", () -> showInkarnationPanel());
 		panel.addComponent(inkarnationButton.withBorder(Borders.singleLine()));
-		inkarnationButton.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(2));
+		inkarnationButton.setLayoutData(GridLayout.createLayoutData(Alignment.FILL, Alignment.CENTER, false, false, 2, 1));
 
 		setComponent(panel);
 	}
