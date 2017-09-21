@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.BasicWindow;
@@ -45,7 +46,9 @@ import com.googlecode.lanterna.gui2.GridLayout.Alignment;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.WindowListenerAdapter;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
+import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 
 import de.bsvrz.sys.funclib.debug.Debug;
@@ -202,6 +205,14 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		this.table = new OnlineInkarnationTable(applikationen);
 		table.setEditierbar(false);
 
+		addWindowListener(new WindowListenerAdapter() {
+			@Override
+			public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
+				table.setVisibleRows(newSize.getRows() - 7);
+			}
+		});
+
+		
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.NO_DECORATIONS));
 
 		Panel panel = new Panel();
