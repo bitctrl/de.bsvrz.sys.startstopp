@@ -38,8 +38,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jetty.util.ConcurrentArrayQueue;
-
 import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.StartStoppException;
@@ -143,7 +141,7 @@ public final class StartStoppKonfiguration {
 	private void checkStartRules(Inkarnation inkarnation) throws StartStoppException {
 
 		Set<String> usedInkarnations = new LinkedHashSet<>();
-		Queue<Inkarnation> mustBeChecked = new ConcurrentArrayQueue<>();
+		Queue<Inkarnation> mustBeChecked = new ConcurrentLinkedQueue<>();
 		mustBeChecked.add(inkarnation);
 
 		while (!mustBeChecked.isEmpty()) {

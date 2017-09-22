@@ -43,10 +43,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 	private SystemObject rechner;
 
 	private DataDescription procInfoDesc;
-	private boolean sendProcInfo;
-
 	private DataDescription startStoppInfoDesc;
-	private boolean sendStartStoppInfo;
 
 	private String prefix = "";
 
@@ -128,7 +125,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 
 	private void sendProzessInfo(Collection<OnlineApplikation> applikationen) {
 
-		if ((procInfoDesc == null) || !sendProcInfo) {
+		if (procInfoDesc == null) {
 			return;
 		}
 
@@ -154,7 +151,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 
 	private void sendStartStoppInfo(Collection<OnlineApplikation> applikationen) {
 
-		if ((startStoppInfoDesc == null) || !sendStartStoppInfo) {
+		if (startStoppInfoDesc == null) {
 			return;
 		}
 
@@ -428,20 +425,11 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 
 	@Override
 	public void dataRequest(SystemObject object, DataDescription dataDescription, byte state) {
-		if (object.equals(rechner)) {
-			if (procInfoDesc != null && procInfoDesc.getAttributeGroup().equals(dataDescription.getAttributeGroup())) {
-				sendProcInfo = state == START_SENDING;
-			}
-			if (startStoppInfoDesc != null
-					&& startStoppInfoDesc.getAttributeGroup().equals(dataDescription.getAttributeGroup())) {
-				sendStartStoppInfo = state == START_SENDING;
-			}
-		}
-
+		// wird nicht ausgewertet
 	}
 
 	@Override
 	public boolean isRequestSupported(SystemObject object, DataDescription dataDescription) {
-		return true;
+		return false;
 	}
 }

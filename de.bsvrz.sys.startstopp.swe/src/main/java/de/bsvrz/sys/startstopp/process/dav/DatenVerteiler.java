@@ -58,7 +58,6 @@ class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 	private Set<SystemObject> applikationen = new LinkedHashSet<>();
 	private DataDescription terminierungsDesc;
 	private boolean subscription;
-	private boolean terminierungReady;
 
 	DatenVerteiler(ClientDavConnection dav, SystemObject dvObj) {
 
@@ -106,7 +105,7 @@ class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 
 	public boolean sendeTerminierung(SystemObject appObj) throws StartStoppException {
 
-		if (terminierungsDesc == null || !terminierungReady) {
+		if (terminierungsDesc == null) {
 			throw new StartStoppException("Datenverteiler " + datenVerteilerObj
 					+ " ist noch nicht bereit zum Empfang von Terminierungsmeldungen");
 		}
@@ -129,16 +128,11 @@ class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 
 	@Override
 	public void dataRequest(SystemObject object, DataDescription dataDescription, byte state) {
-		if (object.equals(datenVerteilerObj)) {
-			if ((terminierungsDesc != null)
-					&& terminierungsDesc.getAttributeGroup().equals(dataDescription.getAttributeGroup())) {
-				terminierungReady = state == START_SENDING;
-			}
-		}
+		// wird nicht ausgewertet
 	}
 
 	@Override
 	public boolean isRequestSupported(SystemObject object, DataDescription dataDescription) {
-		return true;
+		return false;
 	}
 }

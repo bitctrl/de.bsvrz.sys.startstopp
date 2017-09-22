@@ -67,7 +67,7 @@ public class StartStoppConsoleOptions {
 					try (InputStream stream = new FileInputStream(themeFile)) {
 						themeProperties.load(stream);
 						LanternaThemes.registerTheme(themeFileName, new PropertyTheme(themeProperties));
-					} catch (IOException e) {
+					} catch (@SuppressWarnings("unused") IOException e) {
 						themeFileName = null;
 					}
 				}

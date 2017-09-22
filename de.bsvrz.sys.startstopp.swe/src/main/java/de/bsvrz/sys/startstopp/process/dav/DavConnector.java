@@ -109,8 +109,6 @@ public class DavConnector {
 
 				if (!connection.isLoggedIn()) {
 					
-					LOGGER.info("Anmelden als \"" + zugangDav.getUserName() + "\" Passwort: \""
-							+ zugangDav.getPassWord() + "\"");
 					connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
 
 					messageSender = MessageSender.getInstance();
