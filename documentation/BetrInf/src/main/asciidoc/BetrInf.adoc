@@ -4,8 +4,13 @@ Stand: 31.08.17
 :toc: left
 :doctype: book
 :encoding: utf-8
-:toclevel: 4
+:toclevels: 4
 :sectnums:
 
-== Allgemeines
+include::overview.adoc[]
 
+include::betriebshandbuch.adoc[]
+
+include::anwenderhandbuch.adoc[]
+
+include::diagnosehandbuch.adoc[]

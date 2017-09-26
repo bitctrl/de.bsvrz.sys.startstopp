@@ -1,0 +1,23 @@
+== Überblick
+
+=== Inhalt des Dokuments
+
+In diesem Dokument sind die drei Bestandteile der Betriebsinformation zu finden.
+
+* Betriebshandbuch
+* Anwendungshandbuch
+* Diagnosehandbuch
+
+Die drei Dokumente wurden aus Gründen der Übersichtlichkeit in einem Dokument zusammengefasst.
+
+Folgende Konventionen werden festgelegt: 
+
+* *$PROJEKT_HOME* : Das Verzeichnis in dem das Projekt installiert ist
+
+=== Kurzbeschreibung der Funktionalität
+
+Die SWE StartStopp verwaltet in einer Konfiguration eine Liste von Datenverteilerapplikationen und sorgt dafür, dass diese in der vorgegebenen Art und Weise und Reiehenfolge gestartet und beendet werden.
+
+Über eine Terminal-Bedienoberfläche kann die Konfiguration angepasst und erweitert werden, sowie Teile des System händisch beendet und gestartet werden.
+
+Die Bedienoberfläche dient darüber hinaus zur Beobachtung des aktuellen Systemzustands.
