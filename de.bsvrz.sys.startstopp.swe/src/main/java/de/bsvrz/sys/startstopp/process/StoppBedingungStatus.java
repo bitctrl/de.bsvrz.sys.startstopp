@@ -97,7 +97,7 @@ public final class StoppBedingungStatus {
 			Applikation nachFolgerApplikation = rechnerClient.getApplikation(nachfolger);
 			if (nachFolgerApplikation == null) {
 				LOGGER.info(applikation.getName() + " kann den Status von " + nachfolger + " auf Rechner \""
-						+ rechnerName + "\" nicht ermittlen!");
+						+ rechnerName + "\" nicht ermitteln!");
 			} else if (!referenzApplikationGueltigFuerStopp(nachFolgerApplikation)) {
 				result.add(nachfolger);
 				LOGGER.info(applikation.getName() + " muss auf " + nachfolger + " auf Rechner \"" + rechnerName

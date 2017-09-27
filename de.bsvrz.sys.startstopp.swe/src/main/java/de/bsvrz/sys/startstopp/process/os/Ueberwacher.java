@@ -92,7 +92,7 @@ class Ueberwacher implements Runnable {
 
 			String cmdLine = cmdLineBuilder.toString();
 			String[] cmdArray = cmdLine.split("\\s");
-			LOGGER.info("Commandline: '" + Arrays.toString(cmdArray) + "'");
+			LOGGER.info("Kommandozeile: '" + Arrays.toString(cmdArray) + "'");
 			ProcessBuilder builder = new ProcessBuilder(cmdArray);
 			builder.redirectErrorStream(true);
 			process = builder.start();
@@ -114,7 +114,7 @@ class Ueberwacher implements Runnable {
 					.submit(ausgabeUmlenkung);
 			ProcessInfo processInfo = OSTools.findProcess(cmdLineBuilder.toString());
 			if (processInfo == null) {
-				LOGGER.error("Prozessinfo kann nicht bestimmt werden!");
+				LOGGER.fine("Prozessinfo kann nicht bestimmt werden!");
 			} else {
 				osApplikation.setPid(processInfo.getPid());
 			}

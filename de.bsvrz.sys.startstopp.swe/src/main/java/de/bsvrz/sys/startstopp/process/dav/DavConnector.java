@@ -122,11 +122,9 @@ public class DavConnector {
 					prozessManager.davConnected();
 				}
 
-			} catch (CommunicationError | ConnectionException | RuntimeException e) {
-				LOGGER.warning(e.getLocalizedMessage());
-			} catch (InconsistentLoginException e1) {
-				LOGGER.warning(e1.getLocalizedMessage());
-			}
+			} catch (CommunicationError | ConnectionException | InconsistentLoginException | RuntimeException e) {
+				LOGGER.warning("Datenverteilerverbindung kann nicht hergestellt werden!", e);
+			} 
 		}
 	}
 
@@ -285,7 +283,7 @@ public class DavConnector {
 			adresse = InetAddress.getLocalHost().getHostAddress();
 			hostName = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
-			LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
+			LOGGER.warning("Hostname des lokalen Rechners kann nicht bestimmt werden: " + e.getLocalizedMessage());
 			return null;
 		}
 

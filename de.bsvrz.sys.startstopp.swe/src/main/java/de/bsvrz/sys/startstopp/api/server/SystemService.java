@@ -102,7 +102,7 @@ public class SystemService {
 		try {
 			startStopp.getProcessManager().starteSkript();
 		} catch (StartStoppException e) {
-			LOGGER.warning(e.getLocalizedMessage());
+			LOGGER.warning("Fehler beim Verarbeiten einer StartStopp-Startanforderung: " + e.getLocalizedMessage());
 		}
 		return Response.accepted().build();
 	}

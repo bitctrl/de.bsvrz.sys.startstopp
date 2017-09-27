@@ -71,6 +71,7 @@ public class StartStopp {
 			instance.start();
 
 		} catch (Exception e) {
+			LOGGER.error("StartStopp abgebrochen: " +  e.getLocalizedMessage());
 			System.err.println("StartStopp abgebrochen: " +  e.getLocalizedMessage());
 			e.printStackTrace();
 			System.exit(-1);
@@ -88,7 +89,7 @@ public class StartStopp {
 				hostName = InetAddress.getLocalHost().getHostName();
 				builder.append(hostName);
 			} catch (UnknownHostException e) {
-				LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
+				LOGGER.warning("Lokaler Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
 				builder.append("unknown_host");
 			}
 			builder.append('_');
@@ -150,7 +151,7 @@ public class StartStopp {
 				try {
 					stopLock.wait(1000);
 				} catch (InterruptedException e) {
-					LOGGER.warning(e.getLocalizedMessage());
+					LOGGER.fine(e.getLocalizedMessage());
 				}
 			}
 		}

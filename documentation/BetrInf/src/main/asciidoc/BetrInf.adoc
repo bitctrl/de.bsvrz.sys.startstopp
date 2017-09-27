@@ -6,6 +6,7 @@ Stand: 31.08.17
 :encoding: utf-8
 :toclevels: 4
 :sectnums:
+:sweResources: ../../../../../../../de.bsvrz.sys.startstopp.api/src/main/resources
 
 include::overview.adoc[]
 

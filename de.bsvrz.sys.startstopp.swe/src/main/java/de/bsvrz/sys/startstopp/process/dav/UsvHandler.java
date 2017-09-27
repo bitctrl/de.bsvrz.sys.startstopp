@@ -75,7 +75,7 @@ public class UsvHandler implements ClientReceiverInterface {
 					usvDesc = new DataDescription(atg, asp);
 					connection.subscribeReceiver(this, usvObject, usvDesc, ReceiveOptions.normal(), ReceiverRole.receiver());
 				} else {
-					LOGGER.error("Das Objekt mit der PID: " + usv.getPid() + " ist nicht vom Typ \"typ.usv\"");
+					LOGGER.warning("Das Objekt mit der PID: " + usv.getPid() + " ist nicht vom Typ \"typ.usv\"");
 					usvObject = null;
 				}
 			}

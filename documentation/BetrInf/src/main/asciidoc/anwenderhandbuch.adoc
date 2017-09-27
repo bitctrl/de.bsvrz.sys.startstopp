@@ -1,2 +1,571 @@
 == Anwenderhandbuch
 
+Die  SWE  ist  ein  Serverprozess.  Der  Anwender  nutzt  die  SWE  nur  indirekt  über  andere  SWE und deren Benutzerschnittstelle.
+
+In der SWE integriert ist eine Terminal-Bedienoberfläche, mit der die wesentlichen Funktionen der StartStopp-Server-SWE bereitgestellt werden.
+
+Der Start der Bedienoberfläche erfolgt per Shell-Kommando (Skript) wie im Betriebshandbuch beschrieben.
+
+Die Konfiguration der StartStopp-SWE wird in einer JSON-Datei abgelegt.
+Eine bestehende XML-Konfigurationen der Vorversion der StartStopp-SWE werden beim Start eingelesen und konvertiert, wenn keine _startstopp.json_-Datei vorliegt.
+
+Optional können bestehende XML-Dateien mit dem Tool "de.bsvrz.sys.startstopp.console.StartStoppKonverter", welches im Paket der SWE enthalten ist umgewandelt werden. Die Eingangsparameter sind _-input=<xml-Datei>: und _-output=<startstopp-JSON-Datei>_.
+
+Eine StartStopp-Konfiguration kann ersetzt werden, indem Sie händisch bearbeitet wird und vor dem Start der StartStopp-SWE in das Konfigurationsverzeichnis abgelegt wird.
+Die geladene StartStop-Konfiguration muss dann in der Regel noch über die Bedienoberfläche versioniert werden.
+
+Alternativ bietet die Bedienoberfläche die Möglichkeit eine externe Datei zu laden und zur Versionierung an die StartStopp-SWE zu übergeben. 
+
+
+=== Aufbau der StartStopp-Konfiguration
+
+Die StartStopp-Konfiguration wird als JSON-Datei gespeichert. Dabei wird folgendes Schema verwendet:
+=== Inhalt der Konfiguration
+
+==== Grundstruktur einer Konfiguration
+
+Eine StartStopp-Konfiguration wird ein einem JSON-File definiert. Das Schema ist im folgenden
+dargestellt.
+
+[source,json]
+.Schema zur Definition eines StartStoppSkripts
+----
+include::${sweResources}/json/startStoppSkript.json[]
+----
+
+Die einzelnen Bestandteile sind:
+
+* *Metadaten* mit der Beschreibung der Versionierungsinformationen. Die Versionierungsinformationen sind 
+   optional, da die Struktur auch zum Versand über die StartStopp-API versehen wird. In einem versionierten
+   Skript sind die Metadaten wie oben bereits beschrieben befüllt. Die Befüllung der Daten und die
+   Prüfung übernimmt die StartStopp-Applikation selbst.
+* *Global* der Abschnitt enthält Informationen, die für das gesamte Skript gültig sind
+* *Inkarnationen* ist die Liste der von der StartStopp-SWE zu verwaltenden Applikations-Inkarnationen.
+
+==== Globale Daten
+
+===== Allgemeines
+
+Die Definition der globalen Daten umfasst Einträge, die das Verhalten der SWE als ganzes bestimmen und
+Einträge mit  Definitionen die für die Beschreibung der einzelnen Inkarnationen wiederverwendet werden
+sollen.
+
+===== Kernsystem 
+
+Der Abschnitt enthält eine Liste der Inkarnationen, die logisch das Kernsystem auf dem lokalen Rechner bilden.
+
+[source,json]
+.Definition eines Elements des Kernsystems
+----
+include::${sweResources}/json/kernSystem.json[]
+----
+
+Die zum Kernsystem gehörenden Inkarnationen werden beim Start und beim Beenden gesondert behandelt und
+bilden implizit eine Start- bzw. Stoppbedingung für alle anderen Inkarnationen der Konfiguration.
+
+Ein Eintrag im Kernsystem wird durch den Inkarnationsnamen, der einem der Inkarnationsnamen in der in Kap. 3.3.7
+beschriebenen Liste der Inkarnationen entsprechen muss beschrieben.
+
+==== Makrodefinitionen
+
+Dieser Teil der globalen Daten enthält eine Liste mit Schlüssel-Wert-Paaren, die als Makro an anderen
+Stellen der Konfiguration oder zur Bildung komplexerer Makrodefinitionen eingesetzt werden können.
+
+[source,json]
+.Definition eines Makros
+----
+include::${sweResources}/json/makroDefinition.json[]
+----
+
+Die Makros werden von StartStopp expandiert und in dieser Form an die Prozessverwaltung weitergereicht.
+Potentielle zyklische Makrodefinitionen werden vor der Versionierung eines StartStopp-Skripts geprüft
+und verhindern gegebenenfalls die Versionierung.
+
+==== Zugang zum Datenverteiler
+
+Die StartStopp-Applikation läuft zwar unabhängig von einem Datenverteiler-System, da dieser ja erst von der 
+SWE selbst gestartet wird. Zur Laufzeit werden jedoch Informationen aus der StartStopp-Applikation über einen
+zugeordneten Datenverteiler publiziert. Der Abschnitt beschreibt die für die Herstellung der Datenverteilerverbindung
+notwendigen Zugangsdaten.
+
+[source,json]
+.Zugangsdaten zum Zieldatenverteiler
+----
+include::${sweResources}/json/zugangDav.json[]
+----
+
+Die Herstellung der Verbindung wird implizit auch als zusätzliche Bedingung für ein gestartetes Kernsystem gewertet.
+Das bedeutet, dass erst nach der Herstellung der Datenverteilerverbindung Applikationen gestartet werden, die
+nicht Bestandteil des oben definierten Kernsystems sind.
+
+==== Rechner
+
+Der Abschnitt Rechner enthält die Definition von anderen Datenverteilersystemen, die innerhalb von Start- und Stoppbedingungen
+von Inkarnationen der Konfiguration referenziert werden können.
+
+[source,json]
+.Definition eines Rechners
+----
+include::${sweResources}/json/rechner.json[]
+----
+
+Die StartStopp-SWE startet nur lokale Prozesse. Die hier getroffenen Angaben sind nur dazu erforderlich, um der
+StartStopp-SWE den Zugriff auf einen entfernten Rechner zu ermöglichen, weil eigene Inkarnationen von Inkarnationen
+auf dem entfernten Rechner abhängig sind.
+
+==== USV
+
+Die optinale Definition einer USV kann von der StartStopp-SWE genutzt werden, um das System im Falle eines
+Stromausfalles definiert beenden zu können.
+
+[source,json]
+.Definition der USV
+----
+include::${sweResources}/json/usv.json[]
+----
+
+Angegeben wird hier die PID eines USV-Objekts innerhalb des zugeordneten Datenverteilersystems, dass die notwendigen
+Informationen für den Zustand der Stromversorgung bereitstellt.
+
+==== Liste der Inkarnationen
+
+===== Grundlegende Eigenschaften einer Inkarnationsdefinition
+
+Dieser Abschnitt enthält die Liste der Inkarnationen die von der StartStopp-Applikation verwaltet werden sollen.
+Die Reihenfolge der Einträge spielt hier keine Rolle, lediglich die in der oben genannten Liste der Kernsoftware-Systems
+beschriebenen Inkarnationen werden in der dort angegebenen Reihenfolge gestartet oder beendet.
+
+Eine Inkarnation wird mit folgender Struktur beschrieben:
+
+[source,json]
+.Definition einer Inkarnation
+----
+include::${sweResources}/json/inkarnation.json[]
+----
+
+Grundsätzlich werden folgende Inkarnationstypen unterschieden:
+
+* *dav* eine Standard-Datenverteilerapplikation, d. h. eine Applikation, die sich mit dem Datenverteiler verbindet und dort
+   als Instanz eine Objekts vom Typ _typ.applikation_ verwaltet wird.
+* *wrapped* ein Programm, das kein "normales" Datenverteilerprogramm ist, aber durch einen Wrapper ausgeführt wird, 
+   der die Datenverteilerfunktion als Applikation übernimmt
+* *extern* jedes andere Programm ohne Verbindung zum Datenverteilersystem
+
+Eine Identifikation der Inkarnation erfolgt innerhalb des lokalen Systems über den *Inkarnationsnamen*. Innerhalb des 
+Gesamtsystems wird eine Inkarnation durch die Kombination von Rechnername und Inkarnationsname identifiziert.
+
+Die *Applikation* definiert das für die Inkarnation auszuführende Programm, das Array *Aufrufparameter* enthält
+die Kommandozeilenargumente, die an das Programm übergeben werden. Als zusätzlicher Parameter wird der Inkarnationsname
+übergeben d. h. die Angabe muss hier nicht erfolgen. Der Inkarnationsname wird nicht übergeben, wenn die Inkarnation ein
+Teil des Kernsystems ist und die Übergabe dort abgeschaltet wurde oder wenn es sich um ein externes Programm handelt.
+
+Über das Attribut *initialize* kann definiert werden, ob eine Applikation als "Initialisiert" verwaltet wird, 
+obwohl die Applikation selbst keine entsprechende Rückmeldung über den Datenverteiler liefert.
+
+Anmerkung: Dieses Attribut sollte für Datenverteiler-Applikationen unnötig sein. Die entsprechenden Applikationen
+      (insbesondere Datenverteiler und Konfiguration) sollten so angepasst werden, dass sie wie alle anderen
+      Datenverteiler-Applikationen ein SystemObjekt mit dem Typ "typ.applikation" erzeugen und eine
+      Initialisierungsmeldung über den Datenverteiler publizieren.
+
+Allen von StartStopp ausgeführten Applikationen wird standardmäßig als Startparameter der Inkarnationsname aus
+der StartStopp-Konfiguration mit übergeben. 
+Über den Parameter *mitInkarnationsName* kann die Übergabe desselben unterdrückt werden. Insbesondere für die Komponenten 
+des Kernsystems ist das von Bedeutung, weil einige Datenverteiler-Komponenten, insbesondere der Datenverteiler 
+selbst und die Konfiguration diesen Parameter nicht unterstützen.  
+      
+Die Inkarnation wird weiterhin durch folgende Attribute näher definiert:
+
+* Startart
+* Startbedingung
+* Startfehlerverhalten
+* Stoppbedingung
+* Stoppfehlerverhalten
+
+==== Definition der Startart
+
+Die Startart definiert, in welcher Art und Weise eine Inkarnation von der StartStopp-Applikation ausgeführt
+werden soll. Es gibt folgende Grundtypen:
+
+[source,json]
+.Definition der Startart einer Inkarnation
+----
+include::${sweResources}/json/startArt.json[]
+----
+
+* *manuell:* die Inkarnation wird explizit vom Nutzer gestartet, die StartStopp-Applikation legt lediglich
+  die Instanz der Inkarnation zur Verwaltung derselben an.
+* *automatisch:* die Inkarnation wird automatisch beim der Ausführung der StartStopp-Konfiguration gestartet.
+* *intervallrelativ:* die Inkarnation wird zyklisch mit einem angegebenen Intervall ausgeführt. Die 
+  Intervallangabe erfolgt relativ im Attribut *intervall* und bezieht sich auf den Startzeitpunkt der 
+  StartStopp-Applikation.
+* *intervallabsolut:* die Inkarnation wird zeitplangesteuert ausgeführt. Die Angabe des Zeitplans erfolgt
+  im Attribut *intervall* in CRON-Syntax.
+
+Über das Attribut *neustart* kann festgelegt werden, dass die Inkarnation neu gestartet wird, wenn sie 
+ohne Auftrag von StartStopp selbst beendet wurde.
+
+==== Definition einer Startbedingung
+
+Die optionale Startbedingung beschreibt, wann eine Applikation gestartet werden darf.
+
+[source,json]
+.Definition einer Startbedingung
+----
+include::${sweResources}/json/startBedingung.json[]
+----
+
+Die Startbedingung bezieht sich immer auf eine andere Inkarnation der lokalen StartStopp-Konfiguration
+oder auf eine Inkarnation auf einem anderen Rechner. Diese Inkarnation, die als Vorbedingung für den Start der
+definierenden Inkarnation gewertet wird, ist durch den *Inkarnationsnamen* referenziert, wenn sich
+die Inkarnation auf einem anderen Rechner befindet, wird zusätzlich der *Rechnername* angegeben.
+
+Das Attribut "Warteart" definiert, wann die Bedingung als erfüllt gewertet wird:
+
+* *start:* die referenzierte Inkarnation hat den Zustand "GESTARTET" eingenommen
+* *ende:* die referenzierte Inkarnation hat den Zustand "INITIALISIERT" eingenommen
+
+Mit dem Attribut kann optional eine Verzögerungszeit definiert werden, die noch gewartet wird, nachdem die
+Regel gültig geworden ist, bevor die Inkarnation dann tatsächlich gestartet wird. Nach Ablauf der Wartezeit
+wird die Regel zuvor erneut geprüft.  
+
+==== Definition des Startfehlerverhaltens
+
+Ein Startfehler wird diagnostiziert, wenn eine Inkarnation nach dem Start den Zustand "GESTOPPT" einnimmt, 
+ohne dass das Kommando von StartStopp selbst initiiert wurde, bevor die Inkarnation den Zustand "INITIALISIERT"
+erreicht hat.
+
+Anmerkung: Das Startfehlerverhalten ist nur relevant, wenn die gesamte StartStopp-Konfiguration gestartet
+      wird. Das erfolgt beim initialen Ausführen der StartStopp-Konfiguration oder nachdem explizit
+      über die StartStopp-API ein kompletter Neustart des Systems angefordert wurde.
+
+[source,json]
+.Definition des Startfehlerverhaltens
+----
+include::${sweResources}/json/startFehlerVerhalten.json[]
+----
+ 
+Beim Auftreten eines Startfehlers gibt es folgende Handlungsmöglichkeiten, die im Attribut *option*
+vorgegeben werden:
+
+* *beenden:* bei einem Startfehler werden alle von der lokalen StartStopp-Applikation bereits gestarten 
+      Inkarnationen beendet und die Ausführung der Prozessverwaltung ausgesetzt.
+* *abbrechen:* bei einem Startfehler werden keine weiteren Applikationen der Startstopp-Konfiguration 
+      ausgeführt.
+* *ignorieren* es wird keine weitere Fehlerbehandlung durchgeführt
+
+Mit dem Attribut *Wiederholungen* kann eine Anzahl von Startwiederholungen angegeben werden, mit denen
+ein erneuter Start versucht wird, bevor die definierte Fehlerbehandlung wirksam wird.
+
+==== Definition einer Stoppbedingung
+
+Die optionale Stoppbedingung beschreibt, wann eine Applikation gestartet werden darf.
+
+[source,json]
+.Definition einer Stoppbedingung
+----
+include::${sweResources}/json/stoppBedingung.json[]
+----
+
+Die Stoppbedingung bezieht sich immer auf eine andere Inkarnation der lokalen StartStopp-Konfiguration
+oder einer Inkarnation auf einem anderen Rechner. Diese Inkarnation, die als Vorbedingung für den Start der
+definierenden Inkarnation gewertet wird, ist durch den *Inkarnationsnamen* referenziert, wenn sich
+die Inkarnation auf einem anderen Rechner befindet, wird zusätzlich der *Rechnername* angegeben.
+
+Mit dem Attribut kann optional eine Verzögerungszeit definiert werden, die noch gewartet wird, nachdem die
+Regel gültig geworden ist, bevor die Inkarnation dann tatsächlich gestoppt wird. Nach Ablauf der Wartezeit
+wird die Regel zuvor erneut geprüft.  
+
+==== Definition einer Stoppfehlerverhaltens
+
+Anmerkung: Das Stoppfehlerverhalten ist nur relevant, wenn die gesamte StartStopp-Konfiguration beendet
+      wird. Das erfolgt ausschließlich nur beim Beenden von StartStopp selbst (was potenziell damit 
+      verhindert werden kann) oder nachdem explizit über die StartStopp-API ein kompletter Stopp
+      des Systems angefordert wurde.
+
+Als Stoppfehler wertet die StartStopp-Applikation, wenn eine Inkarnation gestoppt werden soll und den
+Zustand GESTOPPT nicht innerhalb von 30 Sekunden erreicht hat.
+
+[source,json]
+.Definition des Stoppfehlerverhaltens
+----
+include::${sweResources}/json/stoppFehlerVerhalten.json[] 
+----
+
+Beim Auftreten eines Stoppfehlers gibt es folgende Handlungsmöglichkeiten, die im Attribut *option*
+vorgegeben werden:
+
+* *stopp:* bei einem Stoppfehler wird der Stopp-Vorgang beendet. Alle noch laufenden Inkarnationen werden 
+      nicht gestoppt.
+* *abbruch:* bei einem Stoppfehler wird die betroffene Inkarnation auf Betriebssystemebene gestoppt.
+      Der Stoppvorgang wird fortgesetzt.
+* *ignorieren* es wird keine weitere Fehlerbehandlung durchgeführt
+
+Mit dem Attribut *Wiederholungen* kann eine Anzahl von Stoppwiederholungen angegeben werden, mit denen
+ein erneuter Stopp versucht wird, bevor die definierte Fehlerbehandlung wirksam wird.
+
+
+
+=== Terminal-Bedienoberfläche
+
+==== Allgemeines
+
+Die Oberfläche wird je nach Bedarf und Betriebssystem in einem eigenen Fenster gestartet oder direkt innerhalb der Shell, in dem sie aufgerufen wurde ausgeführt. Es sollte daher immer eine eigene Shell verwendet werden, damit potentielle Ausgaben anderer Prozesse die Oberfläche nicht beeinflussen und die Darstellung stören können.
+
+Die Bedienoberfläche kann mit verschiedenen Themes ausgeführt bzw. online umgeschaltet werden, um Informationen nach Bedarf geeignet zu präsentieren.
+
+Die Bedienung erfolgt per Tastatur. Die wichtigsten Tasten sind am unteren Rand des Terminalfensters vermerkt bzw. können diesem Anwenderhandbuch entnommen werden.
+
+Allgemeine Bedientasten sind:
+
+* *TAB und Pfeiltasten:* zum Navigieren zwischen den Bedienelementen in einem Fenster
+* *ESC: * zum Schließen eines Dialogs
+* *Alt-Insert:* zum Anlegen eines neuen Eintrags in Listen
+* *Alt-Delete:* zum Entfernen eines Eintrags in Listen
+* *Alt-Up:* zum Verschieben eines Listeneintrags nach oben
+* *Alt-Down:* zum Verschieben eines Listeneintrags nach unten
+* *Alt-<Buchstabe>:* zum Navigieren in Dialogen mit mehreren Eingabeelementen
+
+Grundsätzlich sind zwei Betriebsarten der Bedienoberfläche vorgesehen:
+
+* *Online-Modus:* zur Darstellung der aktuellen Konfiguration von StartStopp und dem Betrioebszustand der einzelnen Applikationen
+* *Editor-Modus:* zum Bearbeiten und abschließenden Versionieren einer neuen Konfiguration.
+
+==== Online-Modus
+
+===== Allgemeine Darstellung
+
+Die Applikation startet initial immer im Online-Modus, dabei wird folgendes Fenster angezeigt:
+
+image::hauptfenster.png[Hauptfenster der Bedienoberfläche]
+
+Die Darstellung zeigt den Zustand der Bedienoberfläche, wenn keine StartStopp-SWE läuft bzw. keine Verbindung zu einer laufenden StartStopp-SWE hergestellt werden konnte.
+
+Das Onlinefenster zeigt den Status der laufenden StartStopp-Applikation als:
+
+* *XXXX:* es wurde keine StartStopp-SWE gefunden
+* *INITIALIZED:* die StartStopp-SWE wurde gestartet und befindet sich in der Initialisierungsphase
+* *RUNNING:* die StartStopp-SWE führt die vorgegebenen Konfiguration aus
+* *RUNNING_CANCELED:* die Ausführung der StartStopp-Konfiguration wurde abgebrochen, weil das definierte Startfehlerverhalten einer Inkarnation das verlangt hat
+* *STOPPING:* die StartStopp-Konfiguration wird gerade angehalten
+* *STOPPING_CANCELED:* das Anhalten der StartStopp-Konfiguration wurde unterbrochen, weil es das Stoppfehlerverhalten einer Inkarnation verlangt hat
+* *STOPPED:* die StartStopp-Konfiguration wurde angehalten, die SWE slebst ist abr noch aktiv
+* *SHUTDOWN:* die StartStopp-Konfiguration wird beendet mit dem Ziel anschließend die StartStopp-SWE selbst zu beenden
+* *CONFIGERROR:* die geladene StartStopp-Konfiguration ist nicht ausführbar und muss angepasst oder versioniert werden.
+
+Der Modus des Betriebsmeldungsversandes zeigt an, ob beim Starten und Stoppen von Applikationen Betriebsmeldungen versandt werden sollen. Das erfordert natürlich eine bestehende Datenverteilerverbindung und eine aktive Betriebsmeldungsverwaltung.
+
+In der Titelzeile wird zusätzlich der letzte Abrufzeitpunkt von Informationen angezeigt, womit implizit die Aktivität der Bedienoberfläche erkennbar ist.
+
+Im Zentrum des Onlinefensters wird die Liste der von der verbundenen StartStopp-SWE verwalteten Applikationen angezeigt. Dargestellt werden:
+
+* der Name einer Applikation/Inkarnation
+* die Startart einer Applikation
+* der aktuelle Zustand einer Applikation
+* Meldungen zum Betrieb einer Applikation
+
+image::hauptfenster_aktiv.png[Hauptfenster der Bedienoberfläche mit aktiver Verbindung]
+
+Am unteren Rand sind die wichtigsten Bedientasten vermerkt, mit denen steuernd auf die StartStopp-SWE eingewirkt werden kann.
+
+===== System-Menü
+
+Über die Taste "s" wird das System-Menü aufgerufen, mit dem Funktionen, die sich auf die gesamte StartStopp-SWE beziehen ausgeführt werden können.
+
+image::online_system_menu.png[Online-Systemmenü]
+
+Folgende Funktionen stehen zur Verfügung:
+
+* *System anhalten:* veranlasst das Anhalten der laufenden StartStopp-Konfiguration. Es wird der Auftrag versendet, alle Applikationen zu Beenden und die StartStopp in den Zustand GESTOPPT zu überführen. Die StartStopp-SWE selbst wird aber nicht beendet.
+* *System starten:* veranlasst die StartStopp-SWE alle Applikationen, die nicht im Modus "manuell" ausgeführt werden sollen, zu starten bzw. für den zyklischen Start freizugeben und die SWE in den Status RUNNING zu überführen. Über diese Funktion können auch alle nicht laufenden Applikationen nachgestartet werden, wenn sich die StartStopp-SWE bereits im Status RUNNING befindet.
+* *System neu starten* ist eine Konbination aus den beiden oben genannten Funktionen. Zunächst wird die StartStopp-Konfiguration angehalten und dann wieder gestartet.
+* *Betriebsmeldungen umschalten:* schaltet den Modus für den Versand von Betriebsmeldungen beim Stoppen und Starten von Applikationen um.
+* *StartStopp beenden:* hält die aktuelle StartStopp-Konfiguration an und beendet anschließend die StartStopp-SWE selbst. Der Start der SWE über die Bedienoberfläche ist nicht vorgesehen, d.h. die StartStopp-SWE muss dann wie im Betriebshandbuch beschrieben händisch neu gestartet werden.
+* *Schließen:* schließt die Bedienoberfläche nach einer Sicherheitsabfrage
+
+Mit der ESC-Taste kann das Menü geschlossen werden, ohne eine Funktion auszuführen.
+
+===== Applikation-Menü
+
+Über die Taste "ENTER" wird das Applikations-Menü für die jeweils ausgewählte Applikation/Inkarnation aufgerufen, über das Funktionen, die sich auf die ausgewählte Applikation beziehen ausgeführt werden können.
+
+image::online_applikation_menu.png[Online-Applikationsmenü]
+
+Folgende Funktionen stehen zur Verfügung:
+
+* *Starten:* versendet einen Auftrag zum Starten der ausgewählten Applikation.
+* *Neu starten:* versendet einen Auftrag zum Stoppen und anschließendem Neustart der ausgewählten Applikation.
+* *Anhalten* versendet einen Auftrag zum Stoppen der ausgewählten Applikation.
+* *Details anzeigen:* zeigt die Detailinformationen zur ausgewählten Applikation an (siehe auch Abschnitt "Applikationsdetails").
+* *Ausgaben anzeigen:* zeigt die beim Start der Applikation gesammelten Informationen von Standardausgabe und Standardfehlerausgabe. Das ist insbesondere hilfreich, wenn eine Applikation nicht gestartet und noch kein Logging initialisiert werden konnte. 
+
+Mit der ESC-Taste kann das Menü geschlossen werden, ohne eine Funktion auszuführen.
+
+===== Applikationsdetails
+
+Das Fenster zeigt die Details zu einer ausgewählten Applikation an.
+
+image::online_applikation_details.png[Online-Applikationsdetails]
+
+[NOTE]
+Die Anzeige wird nicht aktualisiert. Es werden die Informationen zum Zeitpunkt der Aktivierung des Dialogs dargestellt.
+
+Über die Schaltfläche "Inkarnation" kann zur Anzeige der statischen Inkarnationsinfromationen der Applikation gewechselt werden.
+
+image::online_inkarnation_details.png[Online-Inkarnationsdetails]
+
+Über die Schaltfläche "Applikation" kann zur Anzeige der dynamischen Applikationsinformationen der Applikation gewechselt werden.
+
+==== Editor-Modus
+
+===== Allgemeine Darstellung
+
+Der Editor-Modus wird aus dem Online-Modus durch Betätigen der Taste "e" erreicht.
+
+image::editor_fenster.png[Editor-Modus]
+
+Es wird die von der StartStopp-SWE aktuell geladene Konfiguration in den Editor geladen.
+Dort kann diese angepasst oder bei Bedarf versioniert werden.
+
+In der Titelzeile wird angezeigt, ob die im Editor geladene Konfiguration Änderungen gegenüber der in StartStopp geladenen enthält.
+
+Im Zentrum des Fensters wird die Liste der in der Konfiguration angelegten Applikationen/Inkarnationen angezeigt. Dargestellt werden:
+
+* der Name einer Applikation/Inkarnation
+* die Inkarnationsart
+* die Startart der Applikation/Inkarnation
+
+Mit den oben beschriebenen Tasten *Alt-Insert* bzw. *Alt-Delete* können Applikationen/Inkarnationen aus der Liste und damit aus der Konfiguration entfernt bzw. neue hinzugefügt werden.
+
+Neben der Liste der Inkarnationen können im Editor auch andere Elemente bearbeitet werden. Zwischen den verschiedenen Elementen wird mit folgenden Tasten umgeschaltet:
+
+* *i: * zeigt die Liste der Applikationen/Inkarnationen
+* *m: * zeigt die Liste der in der Konfiguration definierten Makros
+* *r: * zeigt die Liste der in der Konfiguration definierten Rechner
+* *k: * zeigt den Editor zum Bearbeiten des Kernsystems
+* *u: * zeigt den Editor zum Bearbeiten der optionalen USV-Überwachung
+* *z: * zeigt den Editor zum Bearbeiten der Datenverteiler-Zugangsdaten
+
+===== Systemmenü
+
+Über die Taste "s" wird das System-Menü aufgerufen, mit dem Funktionen, die sich auf die im Editor geladene Konfiguration und den Editor-Modus ingesamt beziehen ausgeführt werden können.
+
+image::editor_system_menu.png[Editor-Systemmenü]
+
+Folgende Funktionen stehen zur Verfügung:
+
+* *Versionieren:* zeigt einen Urlasserdialog. in dem die Informationen zum Versionieren des bearbeiteten Skripts angegeben werden und nach dessen Bestätigung ein Auftrag zum Versionieren des Skripts an die StartStopp-SWE versendet wird. Wenn das Skript keine inhaltlichen Fehler hat, wird es von StartStopp übernommen und alle geänderten Applikationen neu gestartet. Wenn eine Applikation des Kernsystems geändert wurde, wird die gesamte Konfiguration neu gestartet.
+* *Datei laden:* öffnet einen Dateiauswahldialog mit dem ein extern bearbeitetes StartStopp-Skript in den Editor geladen werden kann.
+* *Sichern* öffnet einen Dateiauswahldialog und erlaubt es, die im Editor befindliche Konfiguration als externe JSON-Datei anzulegen.
+* *Verlassen:* verlässt den Editor-Modus nach einer potentiellen Sicherheitsabfrage.
+
+Mit der ESC-Taste kann das Menü geschlossen werden, ohne eine Funktion auszuführen.
+
+===== Applikation-Editor
+
+Über die Taste "ENTER" wird der Editor für die jeweils ausgewählte Applikation/Inkarnation aufgerufen.
+
+image::editor_applikation.png[Applikationseditor]
+
+Die einzelnen Elemente des Editor-Dailogs können über die Tabulator-Taste, Pfeiltasten oder die Alt-Taste in Kombination mit den markierten Buchstaben ausgewählt und editiert werden.
+
+Textfelder sind direkt editierbar, Checkboxen werden mit der Leertaste umgeschaltet, Comboboxen werden mit der ENTER-Taste für die Auswahl aktiviert.
+
+In Texteingabefeldern kann mit der Tastenkombination *Alt-M* ein Eintrag aus der Makroliste eingefügt werden.
+
+Für einige Elemente stehen spezielle Eingabedialoge zur Verfügung:
+
+*Aufufparameter*
+
+Die Aufrufparameter werden in einer Liste dargestellt:
+
+image::editor_aufrufparameter.png[Aufrufparameter-Editor]
+
+Mit den oben genannten Tasten für Tabellen und Listen können neue Aufrufparameter hinzugefügt oder bestehende entfernt werden. Außerdem besteht hier die Möglichkeit die Reihenfolge der Parameter zu verändern.
+
+Mit der ENTER-Taste wird ein Eingabefeld für den jeweils ausgewählten Parameter geöffnet.
+
+*Startart*
+
+Zum Bearbeiten der Startart wird ein zusätzlicher Dialog angezeigt:
+
+image::editor_startart.png[Startart-Editor]
+
+Der Dialog enthält die bekannten Standard-Bedienelemente für die Eingabe der gewünschten Optionen.
+
+*Startbedingung*
+
+Zum Bearbeiten der optionalen Startbedingung wird ein zusätzlicher Dialog angezeigt:
+
+image::editor_startbedingung.png[Startbedingung-Editor]
+
+Der Dialog enthält die bekannten Standard-Bedienelemente für die Eingabe der gwünschten Optionen. Die Liste der Inkarnationen, die als Bedingung eingesetzt werden sollen, wird mit Hilfe der oben genannten Tasten zum Bearbeiten von Listen/Tabellen spezifiziert.
+
+*Startfehlerverhalten*
+
+Zum Bearbeiten des Startfehlerverhaltens wird ein zusätzlicher Dialog angezeigt:
+
+image::editor_startfehlerverhalten.png[Startfehlerverhalten-Editor]
+
+Der Dialog enthält die bekannten Standard-Bedienelemente für die Eingabe der gewünschten Optionen.
+
+*Stoppbedingung*
+
+Zum Bearbeiten der optionalen Stoppbedingung wird ein zusätzlicher Dialog angezeigt:
+
+image::editor_stoppbedingung.png[Stoppbedingung-Editor]
+
+Der Dialog enthält die bekannten Standard-Bedienelemente für die Eingabe der gwünschten Optionen. Die Liste der Inkarnationen, die als Bedingung eingesetzt werden sollen, wird mit Hilfe der oben genannten Tasten zum Bearbeiten von Listen/Tabellen spezifiziert.
+
+*Stoppfehlerverhalten*
+
+Zum Bearbeiten des Stoppfehlerverhaltens wird ein zusätzlicher Dialog angezeigt:
+
+image::editor_stoppfehlerverhalten.png[Stoppfehlerverhalten-Editor]
+
+Der Dialog enthält die bekannten Standard-Bedienelemente für die Eingabe der gewünschten Optionen.
+
+===== Makroliste
+
+Die Liste der Makros wird mit der Taste "m" erreicht.
+
+image::editor_makroliste.png[Liste der Makrodefinitionen]
+
+Mit den oben genannten Tasten für Tabellen und Listen können neue Aufrufparameter hinzugefügt oder bestehende entfernt werden. Außerdem besteht hier die Möglichkeit die Reihenfolge der Parameter zu verändern.
+
+Mit der ENTER-Taste wird ein Eingabedialog für die jeweils ausgewählte Makrodefinition geöffnet.
+
+image::editor_makro.png[Liste der Makrodefinitionen]
+
+===== Rechnerliste
+
+Die Liste der definierten Rechner wird mit der Taste "r" erreicht.
+
+image::editor_rechnerliste.png[Liste der Rechner]
+
+Mit den oben genannten Tasten für Tabellen und Listen können neue Rechner hinzugefügt oder bestehende entfernt werden.
+
+Mit der ENTER-Taste wird ein Eingabedialog für den jeweils ausgewählten Rechner geöffnet.
+
+===== Kernsystemeditor
+
+Der Editor für das Kernsystem wird mit der Taste "k" erreicht.
+
+image::editor_kernsystem.png[Kernsystemeditor]
+
+Mit den oben genannten Tasten für Tabellen und Listen können dem Kernsystem neue Applikationen/Inkarnationen hinzugefügt oder bestehende entfernt werden. Außerdem besteht hier die Möglichkeit die Reihenfolge der Applikationen zu verändern.
+
+===== USV-Editor
+
+Der Editor für die optionale USV-Überwachung wird mit der Taste "u" erreicht.
+
+image::editor_usv.png[USV-Editor]
+
+Einzugeben ist hier lediglich die PID des verwendeten USV-Objekts. Wird keines angegeben, erfolgt auch keine Überwachung.
+
+===== Zugang-Datenverteiler-Editor
+
+Der Editor für die Zugangsdaten zum verwendeten Datenverteilersystem wird mit der Taste "z" erreicht.
+
+image::editor_zugang_dav.png[Zugang-DAV-Editor]
+
+In den Textfeldern kann mit Hilfe der Tastenkombination "Alt-M" eine Makrodefinition eingefügt werden.

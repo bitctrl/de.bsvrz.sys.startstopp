@@ -119,7 +119,7 @@ public class StartenWartenStatus extends OnlineApplikationStatus {
 							+ DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis()
 									+ applikation.getOnlineApplikationTimer().getTaskDelay(TimeUnit.MILLISECONDS))));
 				} catch (StartStoppException e) {
-					LOGGER.warning(e.getLocalizedMessage());
+					LOGGER.warning("Zyklische Ausführung einer Applikation konnte nicht eingeplant werden: " + e.getLocalizedMessage());
 					return false;
 				}
 			case AUTOMATISCH:

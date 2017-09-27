@@ -78,7 +78,7 @@ class DatenVerteiler implements ClientReceiverInterface, ClientSenderInterface {
 			dav.subscribeSender(this, datenVerteilerObj, terminierungsDesc, SenderRole.sender());
 			subscription = true;
 		} catch (OneSubscriptionPerSendData e) {
-			LOGGER.warning(e.getLocalizedMessage());
+			LOGGER.fine(e.getLocalizedMessage());
 		}
 	}
 

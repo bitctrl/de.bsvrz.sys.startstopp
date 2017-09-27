@@ -243,7 +243,7 @@ public class OSApplikation {
 		try {
 			this.pid = Integer.parseInt(pidStr);
 		} catch (NumberFormatException e) {
-			LOGGER.error("PID kann nicht ermittelt werden: " + e.getLocalizedMessage());
+			LOGGER.fine("PID kann nicht ermittelt werden: " + e.getLocalizedMessage());
 		}
 	}
 

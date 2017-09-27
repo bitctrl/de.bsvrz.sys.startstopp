@@ -74,7 +74,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 				try {
 					connection.subscribeSender(this, rechner, procInfoDesc, SenderRole.source());
 				} catch (OneSubscriptionPerSendData e) {
-					LOGGER.warning(e.getLocalizedMessage());
+					LOGGER.fine(e.getLocalizedMessage());
 				}
 			} else {
 				procInfoDesc = null;
@@ -90,7 +90,7 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 				try {
 					connection.subscribeSender(this, rechner, startStoppInfoDesc, SenderRole.source());
 				} catch (OneSubscriptionPerSendData e) {
-					LOGGER.warning(e.getLocalizedMessage());
+					LOGGER.fine(e.getLocalizedMessage());
 				}
 			} else {
 				procInfoDesc = null;
@@ -142,10 +142,10 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 			try {
 				connection.sendData(new ResultData(rechner, procInfoDesc, connection.getTime(), infoData));
 			} catch (DataNotSubscribedException | SendSubscriptionNotConfirmed e) {
-				LOGGER.warning(e.getLocalizedMessage());
+				LOGGER.fine(e.getLocalizedMessage());
 			}
 		} else {
-			LOGGER.warning("Prozessdaten sind unvollständig: " + infoData);
+			LOGGER.fine("Prozessdaten sind unvollständig: " + infoData);
 		}
 	}
 
@@ -181,10 +181,10 @@ public class StartStoppKonfigurationProvider implements ClientSenderInterface {
 			try {
 				connection.sendData(new ResultData(rechner, startStoppInfoDesc, connection.getTime(), infoData));
 			} catch (DataNotSubscribedException | SendSubscriptionNotConfirmed e) {
-				LOGGER.warning(e.getLocalizedMessage());
+				LOGGER.fine(e.getLocalizedMessage());
 			}
 		} else {
-			LOGGER.warning("StartStopp-Daten sind unvollständig: " + infoData);
+			LOGGER.fine("StartStopp-Daten sind unvollständig: " + infoData);
 		}
 	}
 

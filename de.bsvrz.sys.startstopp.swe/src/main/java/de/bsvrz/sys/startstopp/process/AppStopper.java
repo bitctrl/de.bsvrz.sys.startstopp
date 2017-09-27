@@ -92,7 +92,7 @@ public class AppStopper implements Runnable {
 				try {
 					lock.wait(1000);
 				} catch (InterruptedException e) {
-					LOGGER.warning(e.getLocalizedMessage());
+					LOGGER.fine(e.getLocalizedMessage());
 				}
 			}
 		}

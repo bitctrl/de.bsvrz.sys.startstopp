@@ -169,7 +169,7 @@ public final class OnlineApplikation {
 			break;
 		case CONFIGERROR:
 		case INITIALIZED:
-			LOGGER.warning("Unerwarteter Status des Prozessmanagers: " + status);
+			LOGGER.fine("Unerwarteter Status des Prozessmanagers: " + status);
 			break;
 		case STOPPING_CANCELED:
 			if (appStatus == Applikation.Status.STOPPENWARTEN) {

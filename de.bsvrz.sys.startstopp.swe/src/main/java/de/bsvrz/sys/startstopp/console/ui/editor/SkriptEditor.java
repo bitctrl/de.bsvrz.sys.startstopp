@@ -102,7 +102,7 @@ public final class SkriptEditor extends BasicWindow {
 
 		menuPanel = new MenuPanel();
 		menuPanel.setLayoutManager(new GridLayout(1));
-		Label statusLabel = new MenuLabel("s-System");
+		Label statusLabel = new MenuLabel("s-System  ENTER-Editor  i/m/r/k/u/z-Konfigurationselemente");
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		addWindowListener(new WindowListenerAdapter() {
@@ -150,7 +150,7 @@ public final class SkriptEditor extends BasicWindow {
 	}
 
 	private void showMakroTable() {
-		MakroTable table = new MakroTable(getTextGUI(), skript);
+		MakroTable table = new MakroTable(skript);
 		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		table.setPreferredSize(TerminalSize.ONE);
