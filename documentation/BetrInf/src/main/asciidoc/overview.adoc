@@ -16,8 +16,8 @@ Folgende Konventionen werden festgelegt:
 
 === Kurzbeschreibung der Funktionalität
 
-Die SWE StartStopp verwaltet in einer Konfiguration eine Liste von Datenverteilerapplikationen und sorgt dafür, dass diese in der vorgegebenen Art und Weise und Reiehenfolge gestartet und beendet werden.
+Die SWE StartStopp verwaltet in einer Konfiguration eine Liste von Datenverteilerapplikationen und sorgt dafür, dass diese in der vorgegebenen Art und Weise und Reihenfolge gestartet und beendet werden.
 
-Über eine Terminal-Bedienoberfläche kann die Konfiguration angepasst und erweitert werden, sowie Teile des System händisch beendet und gestartet werden.
+Über eine Terminal-Bedienoberfläche kann die Konfiguration angepasst und erweitert werden, sowie Teile des Systems händisch beendet und gestartet werden.
 
 Die Bedienoberfläche dient darüber hinaus zur Beobachtung des aktuellen Systemzustands.

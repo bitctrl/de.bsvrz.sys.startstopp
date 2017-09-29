@@ -4,7 +4,7 @@
 
 In der folgenden Tabelle sind die benötigten Werkzeuge für die Diagnose aufgeführt.
 
-[columns="3", options="header"]
+[cols="3", options="header"]
 |===
 | Nr.
 | Werkzeug/Tool
