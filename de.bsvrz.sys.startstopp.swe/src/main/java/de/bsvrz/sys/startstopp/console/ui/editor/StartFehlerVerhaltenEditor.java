@@ -36,7 +36,7 @@ import com.googlecode.lanterna.gui2.TextBox;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.api.util.Util;
 
 class StartFehlerVerhaltenEditor extends StartStoppElementEditor<StartFehlerVerhalten> {
 

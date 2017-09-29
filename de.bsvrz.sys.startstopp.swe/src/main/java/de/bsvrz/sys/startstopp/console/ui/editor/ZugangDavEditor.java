@@ -33,8 +33,8 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.TextBox;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
+import de.bsvrz.sys.startstopp.api.util.Util;
 
 class ZugangDavEditor extends StartStoppElementEditor<ZugangDav> {
 

@@ -29,10 +29,6 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.table.Table;
-
-import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.console.ui.EditableTable;

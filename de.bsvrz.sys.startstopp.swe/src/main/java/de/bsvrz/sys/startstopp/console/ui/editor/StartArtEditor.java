@@ -36,7 +36,7 @@ import com.googlecode.lanterna.gui2.TextBox;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.api.util.Util;
 
 class StartArtEditor extends StartStoppElementEditor<StartArt> {
 
