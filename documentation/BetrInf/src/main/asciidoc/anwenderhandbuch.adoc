@@ -20,6 +20,7 @@ Alternativ bietet die Bedienoberfläche die Möglichkeit eine externe Datei zu l
 === Aufbau der StartStopp-Konfiguration
 
 Die StartStopp-Konfiguration wird als JSON-Datei gespeichert. Dabei wird folgendes Schema verwendet:
+
 === Inhalt der Konfiguration
 
 ==== Grundstruktur einer Konfiguration
@@ -309,7 +310,7 @@ ein erneuter Stopp versucht wird, bevor die definierte Fehlerbehandlung wirksam 
 
 ==== Allgemeines
 
-Die Oberfläche wird je nach Bedarf und Betriebssystem in einem eigenen Fenster gestartet oder direkt innerhalb der Shell, in dem sie aufgerufen wurde ausgeführt. Es sollte daher immer eine eigene Shell verwendet werden, damit potentielle Ausgaben anderer Prozesse die Oberfläche nicht beeinflussen und die Darstellung stören können.
+Die Oberfläche wird je nach Bedarf und Betriebssystem in einem eigenen Fenster gestartet oder direkt innerhalb der Shell, in dem sie aufgerufen wurde, ausgeführt. Es sollte daher immer eine eigene Shell verwendet werden, damit potenzielle Ausgaben anderer Prozesse die Oberfläche nicht beeinflussen und die Darstellung stören können.
 
 Die Bedienoberfläche kann mit verschiedenen Themes ausgeführt bzw. online umgeschaltet werden, um Informationen nach Bedarf geeignet zu präsentieren.
 
@@ -318,7 +319,7 @@ Die Bedienung erfolgt per Tastatur. Die wichtigsten Tasten sind am unteren Rand 
 Allgemeine Bedientasten sind:
 
 * *TAB und Pfeiltasten:* zum Navigieren zwischen den Bedienelementen in einem Fenster
-* *ESC: * zum Schließen eines Dialogs
+* *ESC:* zum Schließen eines Dialogs
 * *Alt-Insert:* zum Anlegen eines neuen Eintrags in Listen
 * *Alt-Delete:* zum Entfernen eines Eintrags in Listen
 * *Alt-Up:* zum Verschieben eines Listeneintrags nach oben
@@ -348,11 +349,11 @@ Das Onlinefenster zeigt den Status der laufenden StartStopp-Applikation als:
 * *RUNNING_CANCELED:* die Ausführung der StartStopp-Konfiguration wurde abgebrochen, weil das definierte Startfehlerverhalten einer Inkarnation das verlangt hat
 * *STOPPING:* die StartStopp-Konfiguration wird gerade angehalten
 * *STOPPING_CANCELED:* das Anhalten der StartStopp-Konfiguration wurde unterbrochen, weil es das Stoppfehlerverhalten einer Inkarnation verlangt hat
-* *STOPPED:* die StartStopp-Konfiguration wurde angehalten, die SWE slebst ist abr noch aktiv
-* *SHUTDOWN:* die StartStopp-Konfiguration wird beendet mit dem Ziel anschließend die StartStopp-SWE selbst zu beenden
+* *STOPPED:* die StartStopp-Konfiguration wurde angehalten, die SWE selbst ist aber noch aktiv
+* *SHUTDOWN:* die StartStopp-Konfiguration wird beendet mit dem Ziel, anschließend die StartStopp-SWE selbst zu beenden
 * *CONFIGERROR:* die geladene StartStopp-Konfiguration ist nicht ausführbar und muss angepasst oder versioniert werden.
 
-Der Modus des Betriebsmeldungsversandes zeigt an, ob beim Starten und Stoppen von Applikationen Betriebsmeldungen versandt werden sollen. Das erfordert natürlich eine bestehende Datenverteilerverbindung und eine aktive Betriebsmeldungsverwaltung.
+Der Modus des Betriebsmeldungsversandes zeigt an, ob beim Starten und Stoppen von Applikationen Betriebsmeldungen versandt werden sollen. Das erfordert natürlich eine bestehende Datenverteilerverbindung und ggf. eine aktive Betriebsmeldungsverwaltung.
 
 In der Titelzeile wird zusätzlich der letzte Abrufzeitpunkt von Informationen angezeigt, womit implizit die Aktivität der Bedienoberfläche erkennbar ist.
 
@@ -377,16 +378,16 @@ Folgende Funktionen stehen zur Verfügung:
 
 * *System anhalten:* veranlasst das Anhalten der laufenden StartStopp-Konfiguration. Es wird der Auftrag versendet, alle Applikationen zu Beenden und die StartStopp in den Zustand GESTOPPT zu überführen. Die StartStopp-SWE selbst wird aber nicht beendet.
 * *System starten:* veranlasst die StartStopp-SWE alle Applikationen, die nicht im Modus "manuell" ausgeführt werden sollen, zu starten bzw. für den zyklischen Start freizugeben und die SWE in den Status RUNNING zu überführen. Über diese Funktion können auch alle nicht laufenden Applikationen nachgestartet werden, wenn sich die StartStopp-SWE bereits im Status RUNNING befindet.
-* *System neu starten* ist eine Konbination aus den beiden oben genannten Funktionen. Zunächst wird die StartStopp-Konfiguration angehalten und dann wieder gestartet.
+* *System neu starten* ist eine Kombination aus den beiden oben genannten Funktionen. Zunächst wird die StartStopp-Konfiguration angehalten und dann wieder gestartet.
 * *Betriebsmeldungen umschalten:* schaltet den Modus für den Versand von Betriebsmeldungen beim Stoppen und Starten von Applikationen um.
-* *StartStopp beenden:* hält die aktuelle StartStopp-Konfiguration an und beendet anschließend die StartStopp-SWE selbst. Der Start der SWE über die Bedienoberfläche ist nicht vorgesehen, d.h. die StartStopp-SWE muss dann wie im Betriebshandbuch beschrieben händisch neu gestartet werden.
+* *StartStopp beenden:* hält die aktuelle StartStopp-Konfiguration an und beendet anschließend die StartStopp-SWE selbst. Der Start der SWE über die Bedienoberfläche ist nicht vorgesehen, d. h. die StartStopp-SWE muss dann wie im Betriebshandbuch beschrieben händisch neu gestartet werden.
 * *Schließen:* schließt die Bedienoberfläche nach einer Sicherheitsabfrage
 
 Mit der ESC-Taste kann das Menü geschlossen werden, ohne eine Funktion auszuführen.
 
-===== Applikation-Menü
+===== Applikations-Menü
 
-Über die Taste "ENTER" wird das Applikations-Menü für die jeweils ausgewählte Applikation/Inkarnation aufgerufen, über das Funktionen, die sich auf die ausgewählte Applikation beziehen ausgeführt werden können.
+Über die Taste "ENTER" wird das Applikations-Menü für die jeweils ausgewählte Applikation/Inkarnation aufgerufen, über das Funktionen, die sich auf die ausgewählte Applikation beziehen, ausgeführt werden können.
 
 image::online_applikation_menu.png[Online-Applikationsmenü]
 
@@ -460,7 +461,7 @@ Folgende Funktionen stehen zur Verfügung:
 
 Mit der ESC-Taste kann das Menü geschlossen werden, ohne eine Funktion auszuführen.
 
-===== Applikation-Editor
+===== Applikations-Editor
 
 Über die Taste "ENTER" wird der Editor für die jeweils ausgewählte Applikation/Inkarnation aufgerufen.
 
@@ -498,7 +499,7 @@ Zum Bearbeiten der optionalen Startbedingung wird ein zusätzlicher Dialog angez
 
 image::editor_startbedingung.png[Startbedingung-Editor]
 
-Der Dialog enthält die bekannten Standard-Bedienelemente für die Eingabe der gwünschten Optionen. Die Liste der Inkarnationen, die als Bedingung eingesetzt werden sollen, wird mit Hilfe der oben genannten Tasten zum Bearbeiten von Listen/Tabellen spezifiziert.
+Der Dialog enthält die bekannten Standard-Bedienelemente für die Eingabe der gewünschten Optionen. Die Liste der Inkarnationen, die als Bedingung eingesetzt werden sollen, wird mit Hilfe der oben genannten Tasten zum Bearbeiten von Listen/Tabellen spezifiziert.
 
 *Startfehlerverhalten*
 
