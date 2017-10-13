@@ -54,4 +54,4 @@ StartStopp wird wieder beendet.
 ==== Erwartete Ergebnisse
 
 * Start/Stopp erkennt die Zyklen in den Konfigurationen und bricht deren Start ab. Es wird eine Fehlermeldung in die Logdatei von Start/Stopp geschrieben.
-* * Start/Stopp erkennt, dass es bereits läuft und startet nicht. Es wird eine Fehlermeldung in die Logdatei von Start/Stopp geschrieben.
+* Start/Stopp erkennt, dass es bereits läuft und startet nicht. Es wird eine Fehlermeldung in die Logdatei von Start/Stopp geschrieben.
