@@ -26,7 +26,7 @@ Folgende Statuswerte sind für eine Applikation vorgesehen:
   Initialisierungsmeldung geliefert
 * _STOPPENWARTEN_: die Applikation soll gestoppt werden, die Ausführung wird
      aber durch eine der folgenden Bedingungen verhindert:
-** die Stopbedingung ist nicht erfüllt
+** die Stoppbedingung ist nicht erfüllt
 ** die Stoppbedingung für die Applikation ist erfüllt, es ist aber eine Wartezeit 
     bis zum Stopp definiert
 ** der zugehörige Betriebssystemprozess wurde noch nicht beendet
@@ -63,11 +63,11 @@ end note
 
 === Initialisierung
 
-Die Prozessverwaltung greift auf die von der Skrtipverwaltung übergebene Liste der definierten Inkarnationen
+Die Prozessverwaltung greift auf die von der Skriptverwaltung übergebene Liste der definierten Inkarnationen
 zurück und legt für jede Inkarnation eine Instanz an. Der initiale Zustand einer Instanz ist INSTALLIERT.
 
 In Abhängigkeit von der Startart wird die Inkarnation ausgeführt, d. h. ein entsprechender Betriebssystemprozeß gestartet.
-Automatisch ausgeführt werden alle Inkarnationen, die die Startart *automatisch* haben, potentiell nachgestartet
+Automatisch ausgeführt werden alle Inkarnationen, die die Startart *automatisch* haben, potenziell nachgestartet
 werden *zyklische* Inkarnationen.
 
 === Starten einer Applikation
@@ -81,10 +81,10 @@ folgenden Startbedingungen geprüft:
 * die Inkarnation gehört zum Kernsystem: Der Start ist erst möglich wenn alle Komponenten
   die innerhalb des Kernsystems vor der Inkarnation definiert sind den Zustand *INITALISIERT* erreicht haben.
 * die Inkarnation hat eine zugeordnete Startbedingung: Der Start der Inkarnation ist erst möglich, wenn
-  die Startbedingung erfüllt ist und die potentiell festgelegt Verzögerungszeit abgelaufen ist.  
+  die Startbedingung erfüllt ist und die potenziell festgelegte Verzögerungszeit abgelaufen ist.  
 
 Wenn alle Startbedingungen erfüllt sind, wird die Inkarnation in den Zustand "GESTARTET" versetzt und ein
-entsprechender Betriebssystemprozeß initiiert.
+entsprechender Betriebssystemprozess initiiert.
 
 === Stoppen einer Applikation
 
