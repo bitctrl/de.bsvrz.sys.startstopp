@@ -56,7 +56,7 @@ Die SWE gibt zu bestimmen Vorgängen, die aber in der Regel normales Verhalten d
 | Erläuterung/Massnahme
 
 | Datenverteilerverbindung beendet: {fehlermeldung}
-| Die bestehende Datenverteilerverbindung wurde unterbrochen. Das kann jederzeit passieren, wenn das Kernsystem oder die gesamte Konfiguration heruntergefahren wird. Die StartStopp-SWE versucht sich wiederholt mit dem definierten Datenverteilersystem zu verbinden, wenn dieses wirder verfügbar ist.
+| Die bestehende Datenverteilerverbindung wurde unterbrochen. Das kann jederzeit passieren, wenn das Kernsystem oder die gesamte Konfiguration heruntergefahren wird. Die StartStopp-SWE versucht sich wiederholt mit dem definierten Datenverteilersystem zu verbinden, wenn dieses wieder verfügbar ist.
 
 | System wird wegen kritischem Zustand der USV heruntergefahren!
 | Die definierte USV hat einen kritischen Zustand gemeldet und veranlasst StartStopp, das verwaltete Software-System herunterzufahren.
@@ -74,7 +74,7 @@ Die SWE gibt zu bestimmen Vorgängen, die aber in der Regel normales Verhalten d
 | Eine Applikation/Inkarnation ändert ihren Status
 
 | Shutdown-Hook aufgerufen
-| Der Shutdownhook wurde aufgerufen, d.h. StartStopp soll beendet werden
+| Der Shutdownhook wurde aufgerufen, d. h. StartStopp soll beendet werden
 
 | Warte auf Applikationen
 | StartStopp soll beendet werden, es sind aber Applikationen vorhanden, die noch nicht gestoppt wurden.
@@ -86,7 +86,7 @@ Die SWE gibt zu bestimmen Vorgängen, die aber in der Regel normales Verhalten d
 | Der in einer Stoppbedingung definierte Rechner ist nicht erreichbar, die Bedingung wird in diesem Fall ignoriert.
 
 | {inkarnatiosname} muss auf {nachfolger} auf Rechner {rechnername} warten!
-| Eine Inkarnation kann nicht gestoppt werden, weil der referenzierte Prozess auf den angegebenen Rechner noch aktiv ist. Der Prozess muss über die StartStopP-SWE auf dem betroffenen Rechner oder das Betriebssystem beendet werden.
+| Eine Inkarnation kann nicht gestoppt werden, weil der referenzierte Prozess auf den angegebenen Rechner noch aktiv ist. Der Prozess muss über die StartStopp-SWE auf dem betroffenen Rechner oder das Betriebssystem beendet werden.
 |===
 
 ===== Allgemeine Meldungen (Debug-Level WARNING)
@@ -136,11 +136,11 @@ Die in geschweifte Klammern gesetzten Bestandteile werden in den konkreten Meldu
 | Die Attributgruppe zum Versand von StartStopp-Informationen ist nicht ermittelbar. Es werden keine Prozessinformationen publiziert
 | Es können keine StartStopp-Informationen über den Datenverteiler publiziert werden.
 
-| Das Objekt mit der PID: {pid} ist nicht vom Typ "typ.usv
+| Das Objekt mit der PID: {pid} ist nicht vom Typ "typ.usv"
 | Es soll eine USV-Überwachung erfolgen, die PID ist jedoch ungültig. Die Überwachung ist damit nicht aktiv.
 
 | {rechner} : Liste der Applikationen konnte von {rechner_tcpadresse}:{port}  nicht abgerufen werden!
-| Der Rechner ist nicht verfügbar oder falsch konfiguriert. Das kann potentiell zu Blockierungen durch rechnerübergreifende Start-Stopp-Bedingungen führen.
+| Der Rechner ist nicht verfügbar oder falsch konfiguriert. Das kann potenziell zu Blockierungen durch rechnerübergreifende Start-Stopp-Bedingungen führen.
 
 | Zyklischer Start konnte nicht eingeplant werden: {message}
 | Eine zyklisch auszuführende Applikation wird nicht ausgeführt.
@@ -161,7 +161,7 @@ Die in geschweifte Klammern gesetzten Bestandteile werden in den konkreten Meldu
 | Die Verbindung zum vorgegebenen Datenverteiler ist fehlgeschlagen. Alle Funktionen die den Datenverteiler erfordern sind nicht aktiv.
 
 | Definition der USV ist ungültig: {message}
-| In der Konfiguration wurde die zu verwendende USV nicht korrekt definiert. Die USV-Überwachung kann nicht aktiviert werden, potentiell ist eine Übernahme des Skripts nicht möglich.
+| In der Konfiguration wurde die zu verwendende USV nicht korrekt definiert. Die USV-Überwachung kann nicht aktiviert werden, potenziell ist eine Übernahme des Skripts nicht möglich.
 
 | Die Kernsystemapplikation {name} wurde nicht gefunden!
 | Im Kernsystem ist eine Applikation referenziert, die nicht in der Liste der Inkarnationen definiert ist. Das Skript kann nicht ausgeführt werden.
