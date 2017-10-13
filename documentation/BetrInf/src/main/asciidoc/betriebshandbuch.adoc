@@ -47,7 +47,7 @@ Zusätzlich benötigte Komponenten: siehe Kapitel "Benötigte zusätzliche Softw
 
 ===== SWE
 
-Die SWE wird als ZIP-Archive ausgeliefert, deren Dateiname dem Muster
+Die SWE wird als zwei ZIP-Archive ausgeliefert, deren Dateiname dem Muster
 
 * SWE_de.bsvrz.sys.startstopp_FREI_V2.0.0_D2017-11-11.zip und
 * SWE_de.bsvrz.sys.startstopp.api_FREI_V2.0.0_D2017-11-11.zip
@@ -62,16 +62,16 @@ Das Distributionspaket *de.bsvrz.sys.startstopp.api* enthält die API für die K
 
 ==== Laufzeitumgebung
 
-Die SWE benötigt prinzipiell keine spezielle Laufzeitumgebung, da sie dazu dient, eine Datenverteiler/Kernsoftware-Laufzeitumgebung selbst herzustellen.
+Die SWE benötigt prinzipiell keine spezielle Laufzeitumgebung, da sie dazu dient, eine Datenverteiler-/Kernsoftware-Laufzeitumgebung selbst herzustellen.
 
-Da die SWE für spezielle Funktionen eine Datenverteiler-Verbindung verwendet sollte eine entsprechende Konfiguration vorliegen, um die optionalen Funktionen der SWE nutzen zu können:
+Da die SWE für spezielle Funktionen eine Datenverteiler-Verbindung verwendet, sollte eine entsprechende Konfiguration vorliegen, um die optionalen Funktionen der SWE nutzen zu können:
 
 * Publikation des Zustandes von Applikationen über Datenverteilerattributgruppen
 * Beenden von Applikationen über die Terminierungsschnittstelle des Datenverteilers
 * Versand von Betriebsinformationen
 * Beenden des Systems über USV-Objekte und Attributgruppen
 
-Die Verbindungsparameter zu einem Datenverteiler werden über die Konfiguration der StartStopp-Applikation festgelegt. Der aktuelle Stand dieser BetrInf geht  davon aus, dass die Kernsoftware V3.9.2 oder höher eingesetzt wird. Diese erfordert eine Java-Runtime-Umgebung ab Version 8. 
+Die Verbindungsparameter zu einem Datenverteiler werden über die Konfiguration der StartStopp-Applikation festgelegt. Der aktuelle Stand dieser Betriebsinformationen geht davon aus, dass die Kernsoftware V 3.9.2 oder höher eingesetzt wird. Diese erfordert eine Java-Runtime-Umgebung ab Version 8. 
 
 ==== Benötigte zusätzliche Softwarekomponenten
 
@@ -264,7 +264,7 @@ Zusätzlich zu den Standardparametern für die DAF und die Debug-Ausgaben verfü
 
 Die Angabe des Verzeichnisses kann als relativer oder absoluter Pfad erfolgen.
 
-Der Standardwert ist *"."*, d.h. das Verzeichnis aus dem heraus die SWE gestartet wird.
+Der Standardwert ist *"."*, d. h. das Verzeichnis aus dem heraus die SWE gestartet wird.
 
 Innerhalb des Verzeichnisses wird ein Unterverzeichnis "history" angelegt, in dem die gespeicherten Versionen der StartStopp-Konfiguration angelegt werden.
 
@@ -276,7 +276,7 @@ Das Verzeichnis sollte daher zum Lesen und Schreiben für den Nutzer, der die St
 
 *Hier erfolgt die Angabe des Benutzerdefinition der Konfiguration (benutzerdaten.xml)*
 
-Die Benutzerdatenkonfigurationsdatei wird verwendeten, um einen Nutzer, der eine Konfiguration versionieren will zu authentifizieren, wenn noch keine Datenverteilerverbindung besteht.
+Die Benutzerdatenkonfigurationsdatei wird verwendet, um einen Nutzer, der eine Konfiguration versionieren will, zu authentifizieren, wenn noch keine Datenverteilerverbindung besteht.
 
 Es gibt keinen Standardwert. Die Authentifizierung erfolgt dann über die weiter unten definierte "passwd"-Datei.
 
@@ -289,7 +289,7 @@ Zur Interpretation der Datei wird auf die Möglichkeiten der Datenverteiler-Appl
 
 *Hier erfolgt die Angabe der Passwd-Datei eines Datenverteilersystems (passwd)*
 
-Die Datei wird verwendeten, um einen Nutzer, der eine Konfiguration versionieren will zu authentifizieren, wenn noch keine Datenverteilerverbindung besteht und die Auswertung der benutzerdaten.xml-Datei nicht möglich ist.
+Die Datei wird verwendet, um einen Nutzer, der eine Konfiguration versionieren will, zu authentifizieren, wenn noch keine Datenverteilerverbindung besteht und die Auswertung der benutzerdaten.xml-Datei nicht möglich ist.
 
 Es gibt keinen Standardwert. Wenn diese letzte Möglichkeit der Authentifizierung fehlschlägt, ist keine Versionierung einer neuen Konfiguration möglich.
 
@@ -324,13 +324,13 @@ Der Standardwert ist "StartStopp".
 -rechner=<pid>
 ****
 
-*Der Parameter definiert die PID des Rehnerobjekts in der verwendeten Datenverteiler-Konfiguration über das die Prozeßinformationen von der SWE publiziert werden.*
+*Der Parameter definiert die PID des Rechnerobjekts in der verwendeten Datenverteiler-Konfiguration über das die Prozeßinformationen von der SWE publiziert werden.*
 
 Es gibt keinen Standardwert. 
 
 Wenn der Parameter nicht angegegeben wird, wird ein Rechnerobjekt gesucht, das mit der Hostnamen oder der lokalen IP-Adresse in der Datenverteiler-Konfiguration konfiguriert ist.
 
-Wird kein geeignetes Rechnerobjekt gefunden, werden dieoben beschriebenen Datensätze nicht publiziert. Ansonsten arbeitet die SWE wie vorgesehen.
+Wird kein geeignetes Rechnerobjekt gefunden, werden die oben beschriebenen Datensätze nicht publiziert. Ansonsten arbeitet die SWE wie vorgesehen.
 
 ****
 -betriebsMeldungVersenden=ja
@@ -338,7 +338,7 @@ Wird kein geeignetes Rechnerobjekt gefunden, werden dieoben beschriebenen Datens
 
 *Der Parameter bestimmt, ob bei einer bestehenden Datenverteilerverbindung Betriebsmeldungen versendet werden.*
 
-Der Standardwert ist "ja", d.h. beim Starten und Stoppen von Applikationen werden Betriebsmeldungen versendet.
+Der Standardwert ist "ja", d. h. beim Starten und Stoppen von Applikationen werden Betriebsmeldungen versendet.
 
 Die Einstellung gilt initial für den Start der SWE. Der Versand von Betriebsmeldungen kann über die StartStopp-REST-API im Betrieb ein- und ausgeschaltet werden.
 
@@ -350,7 +350,7 @@ Für die Bedienoberfläche stehen folgende Parameter zur Verfügung:
 -host=localhost
 ****
 
-*Der Parameter bestimmt den Hostname des Systems auf dem die StartStopp-SWE gesucht wird.*
+*Der Parameter bestimmt den Hostnamen des Systems, auf dem die StartStopp-SWE gesucht wird.*
 
 Der Standardwert ist "localhost".
 
@@ -488,7 +488,7 @@ Nur in Ausnahmefällen kann der SWE-Prozess direkt beendet werden.
 ===== Windows
 
 [WARNING]
-Auf Windows-Systemen kann die SWE den kill-Befehl nicht auswerten, d.h. das von der SWE verwaltete Datenverteiler-System wird nicht beendet und muss in diesem Fall händisch verwaltet werden.
+Auf Windows-Systemen kann die SWE den kill-Befehl nicht auswerten, d. h. das von der SWE verwaltete Datenverteiler-System wird nicht beendet und muss in diesem Fall händisch verwaltet werden.
 
 Unter Windows-Systemen wird zunächst die Prozess-ID der zu beendenden 
 SWE ermittelt. Der Befehl
