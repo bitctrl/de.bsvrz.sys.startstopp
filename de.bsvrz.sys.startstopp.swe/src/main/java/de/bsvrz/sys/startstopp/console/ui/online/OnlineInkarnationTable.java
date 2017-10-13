@@ -29,6 +29,7 @@ package de.bsvrz.sys.startstopp.console.ui.online;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
@@ -57,13 +58,16 @@ class OnlineInkarnationTable extends EditableTable<Applikation> {
 	protected Applikation editElement(Applikation applikation) {
 		ActionListDialogBuilder builder;
 		if (applikation != null) {
-			builder = new ActionListDialogBuilder().setTitle("Applikation");
+			builder = new ActionListDialogBuilder().setTitle("Applikation").setCanCancel(false);
 			builder.addAction(new ApplikationStartAction(applikation));
 			builder.addAction(new ApplikationRestartAction(applikation));
 			builder.addAction(new ApplikationStoppAction(applikation));
 			builder.addAction(new ApplikationDetailAction(applikation));
 			builder.addAction(new ApplikationLogAction(applikation));
-			builder.build().showDialog(getTextGUI());
+			builder.setDescription("ESC - Abbrechen");
+			ActionListDialog dialog = builder.build();
+			dialog.setCloseWindowWithEscape(true);
+			dialog.showDialog(getTextGUI());
 		}
 		return null;
 	}
@@ -101,5 +105,10 @@ class OnlineInkarnationTable extends EditableTable<Applikation> {
 		}
 
 		return result;
+	}
+
+	@Override
+	protected boolean checkDelete(Applikation element) {
+		return false;
 	}
 }

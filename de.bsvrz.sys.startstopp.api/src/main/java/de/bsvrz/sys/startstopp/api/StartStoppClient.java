@@ -1,5 +1,5 @@
 /*
- * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Segment 10 System (Sys), SWE 10.1 StartStopp API
  * Copyright (C) 2007-2017 BitCtrl Systems GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -40,6 +40,8 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.glassfish.jersey.client.ClientConfig;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.client.StartStoppStatusException;
@@ -96,7 +98,7 @@ public class StartStoppClient {
 
 			SSLContext sslContext = sslContextFactory.getSslContext();
 			connector = ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(verifier)
-					.withConfig(new ClientConfig().register(Applikation.class)).build();
+					.withConfig(new ClientConfig().register(JacksonJsonProvider.class)).build();
 		}
 		return connector;
 	}
@@ -134,68 +136,69 @@ public class StartStoppClient {
 	/* System-Funktionen. */
 
 	public StartStoppStatus getStartStoppStatus() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createGetResponse("/system");
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+		int status;
+		try (Response response = createGetResponse("/system")) {
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(StartStoppStatus.class);
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		throw new StartStoppException(
-				"SystemStatus konnte nicht abgerufen werden (Response: " + response.getStatus() + ")");
+		throw new StartStoppException("SystemStatus konnte nicht abgerufen werden (Response: " + status + ")");
 	}
 
 	public void exitStartStopp() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createPostResponse("/system/exit");
-			if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+		int status;
+		try (Response response = createPostResponse("/system/exit")) {
+			status = response.getStatus();
+			if (status == Response.Status.ACCEPTED.getStatusCode()) {
 				return;
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		throw new StartStoppException("Anforderung zum Beenden von StartStopp wurde nicht entgegengenommen (Response: "
-				+ response.getStatus() + ")");
+		throw new StartStoppException(
+				"Anforderung zum Beenden von StartStopp wurde nicht entgegengenommen (Response: " + status + ")");
 	}
 
 	public void stoppStartStopp() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createPostResponse("/system/stopp");
-			if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+		int status;
+		try (Response response = createPostResponse("/system/stopp")) {
+			status = response.getStatus();
+			if (status == Response.Status.ACCEPTED.getStatusCode()) {
 				return;
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
 		throw new StartStoppException(
-				"Anforderung zum Beenden der StartStopp-Konfiguration wurde nicht entgegengenommen (Response: "
-						+ response.getStatus() + ")");
+				"Anforderung zum Beenden der StartStopp-Konfiguration wurde nicht entgegengenommen (Response: " + status
+						+ ")");
 	}
 
 	public void startStartStopp() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createPostResponse("/system/start");
-			if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+		int status;
+
+		try (Response response = createPostResponse("/system/start")) {
+			status = response.getStatus();
+			if (status == Response.Status.ACCEPTED.getStatusCode()) {
 				return;
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
 		throw new StartStoppException(
-				"Anforderung zum Starten der StartStopp-Konfiguration wurde nicht entgegengenommen (Response: "
-						+ response.getStatus() + ")");
+				"Anforderung zum Starten der StartStopp-Konfiguration wurde nicht entgegengenommen (Response: " + status
+						+ ")");
 	}
 
 	public void restartStartStopp() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createPostResponse("/system/restart");
-			if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+		int status;
+
+		try (Response response = createPostResponse("/system/restart")) {
+			status = response.getStatus();
+			if (status == Response.Status.ACCEPTED.getStatusCode()) {
 				return;
 			}
 		} catch (Exception e) {
@@ -203,14 +206,16 @@ public class StartStoppClient {
 		}
 		throw new StartStoppException(
 				"Anforderung zum Neustart der StartStopp-Konfiguration wurde nicht entgegengenommen (Response: "
-						+ response.getStatus() + ")");
+						+ status + ")");
 	}
 
 	public void betriebsmeldungenUmschalten() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createPostResponse("/system/betriebsmeldungen");
-			if (response.getStatus() == Response.Status.ACCEPTED.getStatusCode()) {
+
+		int status;
+
+		try (Response response = createPostResponse("/system/betriebsmeldungen")) {
+			status = response.getStatus();
+			if (status == Response.Status.ACCEPTED.getStatusCode()) {
 				return;
 			}
 		} catch (Exception e) {
@@ -218,34 +223,35 @@ public class StartStoppClient {
 		}
 		throw new StartStoppException(
 				"Anforderung zum Neustart der StartStopp-Konfiguration wurde nicht entgegengenommen (Response: "
-						+ response.getStatus() + ")");
+						+ status + ")");
 	}
 
-	
 	/* Skript-Funktionen. */
 
 	public StartStoppSkript getCurrentSkript() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createGetResponse("/skripte/current");
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+		int status;
+
+		try (Response response = createGetResponse("/skripte/current")) {
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(StartStoppSkript.class);
+			}
+			if (status == Response.Status.SERVICE_UNAVAILABLE.getStatusCode()) {
+				throw new StartStoppStatusException(
+						"Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden",
+						response.readEntity(StatusResponse.class));
 			}
 		} catch (Exception e) {
 			throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden", e);
 		}
-		if (response.getStatus() == Response.Status.SERVICE_UNAVAILABLE.getStatusCode()) {
-			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden",
-					response.readEntity(StatusResponse.class));
-		}
 
-		throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden (Response: "
-				+ response.getStatus() + ")");
+		throw new StartStoppException(
+				"Die aktuelle StartStopp-Konfiguration konnte nicht abgerufen werden (Response: " + status + ")");
 	}
 
 	public StartStoppSkript setCurrentSkript(String veranlasser, String passwort, String name, String grund,
 			StartStoppSkript skript) throws StartStoppException {
-		Response response = null;
+
 		VersionierungsRequest request = new VersionierungsRequest();
 		request.setVeranlasser(veranlasser);
 		request.setPasswort(passwort);
@@ -254,149 +260,166 @@ public class StartStoppClient {
 		}
 		request.setAenderungsgrund(grund);
 		request.setSkript(skript);
-		try {
-			response = createPutResponse("/skripte/current", request);
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		int status;
+		try (Response response = createPutResponse("/skripte/current", request)) {
+
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(StartStoppSkript.class);
+			}
+			if (status == Response.Status.BAD_REQUEST.getStatusCode()) {
+				throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden",
+						response.readEntity(StatusResponse.class));
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		if (response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
-			throw new StartStoppStatusException("Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden",
-					response.readEntity(StatusResponse.class));
-		}
 
-		throw new StartStoppException("Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden (Response: "
-				+ response.getStatus() + ")");
+		throw new StartStoppException(
+				"Die aktuelle StartStopp-Konfiguration konnte nicht gesetzt werden (Response: " + status + ")");
 	}
 
 	public StartStoppSkriptStatus getCurrentSkriptStatus() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createGetResponse("/skripte/current/status");
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		int status;
+
+		try (Response response = createGetResponse("/skripte/current/status")) {
+
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(StartStoppSkriptStatus.class);
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
 		throw new StartStoppException(
-				"Die Status der aktuellen StartStopp-Konfiguration konnte nicht abgerufen werden (Response: "
-						+ response.getStatus() + ")");
+				"Die Status der aktuellen StartStopp-Konfiguration konnte nicht abgerufen werden (Response: " + status
+						+ ")");
 	}
 
 	/* Applikation-Funktionen. */
 
 	public List<Applikation> getApplikationen() throws StartStoppException {
-		Response response = null;
-		try {
-			response = createGetResponse("/applikationen");
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		int status;
+		try (Response response = createGetResponse("/applikationen")) {
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(new GenericType<List<Applikation>>() {
 					// keine zusätzlicher Code erforderlich
 				});
 			}
 		} catch (Exception e) {
 			LOGGER.fine(e.getLocalizedMessage());
-		}
-		if (response == null) {
 			throw new StartStoppException("Keine Verbindung zu StartStopp!");
 		}
-		throw new StartStoppException(
-				"Applikationen konnten nicht abgerufen werden (Response: " + response.getStatus() + ")");
+		throw new StartStoppException("Applikationen konnten nicht abgerufen werden (Response: " + status + ")");
 	}
 
 	public Applikation getApplikation(String inkarnationsName) throws StartStoppException {
-		Response response = null;
-		try {
-			response = createGetResponse("/applikationen/" + inkarnationsName);
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		int status;
+
+		try (Response response = createGetResponse("/applikationen/" + inkarnationsName)) {
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(Applikation.class);
 			}
 		} catch (Exception e) {
 			LOGGER.fine(e.getLocalizedMessage());
-		}
-		if (response == null) {
 			throw new StartStoppException("Keine Verbindung zu StartStopp!");
 		}
-		throw new StartStoppException("Die Applikation \"" + inkarnationsName
-				+ "\"konnte nicht abgerufen werden (Response: " + response.getStatus() + ")");
+		throw new StartStoppException(
+				"Die Applikation \"" + inkarnationsName + "\"konnte nicht abgerufen werden (Response: " + status + ")");
 	}
 
-
 	public ApplikationLog getApplikationLog(String inkarnationsName) throws StartStoppException {
-		Response response = null;
-		try {
-			response = createGetResponse("/applikationen/" + inkarnationsName + "/log");
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		int status;
+
+		try (Response response = createGetResponse("/applikationen/" + inkarnationsName + "/log")) {
+
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(ApplikationLog.class);
 			}
 		} catch (Exception e) {
 			LOGGER.fine(e.getLocalizedMessage());
-		}
-		if (response == null) {
 			throw new StartStoppException("Keine Verbindung zu StartStopp!");
 		}
 		throw new StartStoppException("Die Ausgaben der Applikation \"" + inkarnationsName
-				+ "\"konnten nicht abgerufen werden (Response: " + response.getStatus() + ")");
+				+ "\"konnten nicht abgerufen werden (Response: " + status + ")");
 	}
 
-	
 	public Applikation starteApplikation(String inkarnationsName) throws StartStoppException {
-		Response response = null;
-		try {
-			response = createPostResponse("/applikationen/" + inkarnationsName + "/start");
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		int status;
+		try (Response response = createPostResponse("/applikationen/" + inkarnationsName + "/start")) {
+
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(Applikation.class);
+			}
+			if (status == Response.Status.CONFLICT.getStatusCode()) {
+				throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
+						+ "\"konnte nicht gestartet werden (Response: " + status + ")",
+						response.readEntity(StatusResponse.class));
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		if (response.getStatus() == Response.Status.CONFLICT.getStatusCode()) {
-			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
-					+ "\"konnte nicht gestartet werden (Response: " + response.getStatus() + ")",
-					response.readEntity(StatusResponse.class));
-		}
-		throw new StartStoppException("Die Applikation \"" + inkarnationsName
-				+ "\"konnte nicht gestartet werden (Response: " + response.getStatus() + ")");
+		throw new StartStoppException(
+				"Die Applikation \"" + inkarnationsName + "\"konnte nicht gestartet werden (Response: " + status + ")");
 	}
 
 	public Applikation restarteApplikation(String inkarnationsName) throws StartStoppException {
-		Response response = null;
-		try {
-			response = createPostResponse("/applikationen/" + inkarnationsName + "/restart");
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		int status;
+
+		try (Response response = createPostResponse("/applikationen/" + inkarnationsName + "/restart");) {
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(Applikation.class);
+			}
+			if (status == Response.Status.CONFLICT.getStatusCode()) {
+				throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
+						+ "\"konnte nicht neu gestartet werden (Response: " + status + ")",
+						response.readEntity(StatusResponse.class));
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		if (response.getStatus() == Response.Status.CONFLICT.getStatusCode()) {
-			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
-					+ "\"konnte nicht neu gestartet werden (Response: " + response.getStatus() + ")",
-					response.readEntity(StatusResponse.class));
-		}
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
-				+ "\"konnte nicht neu gestartet werden (Response: " + response.getStatus() + ")");
+				+ "\"konnte nicht neu gestartet werden (Response: " + status + ")");
 	}
 
 	public Applikation stoppeApplikation(String inkarnationsName) throws StartStoppException {
-		Response response = null;
-		try {
-			response = createPostResponse("/applikationen/" + inkarnationsName + "/stopp");
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+
+		int status;
+
+		try (Response response = createPostResponse("/applikationen/" + inkarnationsName + "/stopp")) {
+			status = response.getStatus();
+			if (status == Response.Status.OK.getStatusCode()) {
 				return response.readEntity(Applikation.class);
+			}
+			if (status == Response.Status.CONFLICT.getStatusCode()) {
+				throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
+						+ "\"konnte nicht gestoppt gestartet werden (Response: " + status + ")",
+						response.readEntity(StatusResponse.class));
 			}
 		} catch (Exception e) {
 			throw new StartStoppException(e);
 		}
-		if (response.getStatus() == Response.Status.CONFLICT.getStatusCode()) {
-			throw new StartStoppStatusException("Die Applikation \"" + inkarnationsName
-					+ "\"konnte nicht gestoppt gestartet werden (Response: " + response.getStatus() + ")",
-					response.readEntity(StatusResponse.class));
-		}
 		throw new StartStoppException("Die Applikation \"" + inkarnationsName
-				+ "\"konnte nicht gestoppt werden (Response: " + response.getStatus() + ")");
+				+ "\"konnte nicht gestoppt werden (Response: " + status + ")");
+	}
+
+	public String getStartStoppHostName() {
+		return startStoppHostName;
+	}
+
+	public int getPort() {
+		return port;
 	}
 }

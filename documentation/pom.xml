@@ -72,5 +72,6 @@
 		<module>Afo</module>
 		<module>SwEnt</module>
 		<module>PrProz</module>
+        <module>BetrInf</module>
 	</modules>
 </project>

@@ -1,0 +1,527 @@
+== Betriebshandbuch
+
+Im  Rahmen  der  Installation,  der  Einrichtung  und  des  Betriebs  der  SWE  sind  folgende  Schritte durchzuführen:
+
+* Installation der Software
+* Einrichtung von Software und Datenverteiler
+    ** Konfiguration und Parametrierung
+    ** Aufnahme des Betriebs
+* Überwachung des Betriebs
+* Unterbrechung und Beendigung des Betriebs
+
+Diese Schritte werden in den folgenden Abschnitten genau beschrieben.
+
+=== Installation der Software
+
+==== Voraussetzungen
+
+===== Java
+
+Es  muss eine Java  Runtime  Umgebung  (JRE)  ab  Version  8.0 oder höher  installiert  und  über  den Suchpfad auffindbar sein [jre]. 
+
+Eine Java Runtime Umgebung (JRE) ist für den Betrieb ausreichend, jedoch bietet  das Java Development Kit (JDK) zusätzlich nützliche Tools für die Diagnose [jdk].
+
+Die korrekte  Installation von Java lässt sich auf der Kommandozeile mit  folgendem  Befehl überprüfen:
+
+----
+java -version
+----
+
+Erfolgt die Ausgabe der installierten Javaversion ist der Pfad korrekt eingerichtet. Erfolgt eine Meldung, dass der Befehl nicht gefunden wurde, muss die Pfadvariable angepasst werden.
+
+Unter Linux-Systemen (unter anderem Linux, Mac OS X) kann dies mit folgendem Kommando erfolgen:
+
+----
+export PATH=$PATH:/pfad_zu_java/bin
+----
+
+Unter Windows muss der Pfad im Dialog "Systemsteuerung/System/Erweitert/Umgebungsvariablen" angepasst werden. Der Wert der Variablen *_PFAD_* muss um den Text *_;/pfad_zu_java/bin_* ergänzt werden.
+
+[NOTE]
+Alternativ kann der Pfad zu Java auch beim Start der SWE bzw. im entsprechenden Startskript angegeben werden.
+
+Im Folgenden wird davon ausgegangen, dass ein JDK installiert ist.
+
+Im Folgenden wird davon ausgegangen, dass die Projektumgebung (Kernsoftware und weitere SWE) im Ordner __$PROJEKT_HOME__ installiert ist.
+Zusätzlich benötigte Komponenten: siehe Kapitel "Benötigte zusätzliche Softwarekomponenten".
+
+===== SWE
+
+Die SWE wird als ZIP-Archive ausgeliefert, deren Dateiname dem Muster
+
+* SWE_de.bsvrz.sys.startstopp_FREI_V2.0.0_D2017-11-11.zip und
+* SWE_de.bsvrz.sys.startstopp.api_FREI_V2.0.0_D2017-11-11.zip
+
+entsprechen (Status, Version und Datum entsprechen dem aktuellen Stand).
+
+Die  jeweils  aktuellste  Version  steht  auf  dem  Server  des  Vereins  der  „Nutzer  der  einheitlichen Rechnerzentralensoftware  für  Verkehrsrechnerzentralen - NERZ e.V.“ [NERZ] als Distributionspaket unter [NERZSoftware] zur Verfügung und kann dort herunter geladen werden.
+
+Es werden Windows- und Linux-basierte Systeme unterstützt.
+
+Das Distributionspaket *de.bsvrz.sys.startstopp.api* enthält die API für die Kommunikation mit der StartStopp-SWE und kann für Drittanwendungen eingesetzt werden.
+
+==== Laufzeitumgebung
+
+Die SWE benötigt prinzipiell keine spezielle Laufzeitumgebung, da sie dazu dient, eine Datenverteiler/Kernsoftware-Laufzeitumgebung selbst herzustellen.
+
+Da die SWE für spezielle Funktionen eine Datenverteiler-Verbindung verwendet sollte eine entsprechende Konfiguration vorliegen, um die optionalen Funktionen der SWE nutzen zu können:
+
+* Publikation des Zustandes von Applikationen über Datenverteilerattributgruppen
+* Beenden von Applikationen über die Terminierungsschnittstelle des Datenverteilers
+* Versand von Betriebsinformationen
+* Beenden des Systems über USV-Objekte und Attributgruppen
+
+Die Verbindungsparameter zu einem Datenverteiler werden über die Konfiguration der StartStopp-Applikation festgelegt. Der aktuelle Stand dieser BetrInf geht  davon aus, dass die Kernsoftware V3.9.2 oder höher eingesetzt wird. Diese erfordert eine Java-Runtime-Umgebung ab Version 8. 
+
+==== Benötigte zusätzliche Softwarekomponenten
+
+Folgende Pakete der ERZ-Software müssen in der aktuellen Version installiert  sein:
+
+* de.bsvrz.dav.daf 
+* de.bsvrz.sys.funclib.application 
+* de.bsvrz.sys.funclib.commandLineArgs 
+* de.bsvrz.sys.funclib.crypt
+* de.bsvrz.sys.funclib.concurrent
+* de.bsvrz.sys.funclib.filelock
+* de.bsvrz.sys.funclib.operatingMessage 
+* de.bsvrz.sys.funclib.debug 
+* de.bsvrz.sys.funclib.hexdump
+* de.bsvrz.sys.funclib.xmlSupport
+
+==== Erstinstallation der Software
+
+Der Inhalt der ZIP-Archive der SWE muss in das Verzeichnis _$PROJEKT_HOME/lib_ kopiert werden.
+
+Unter Linux-Systemen werden die ZIP-Archive mit 
+
+----
+unzip SWE_de.bsvrz.sys.startstopp_FREI_V2.0.0_D2017-11-11.zip 
+unzip SWE_de.bsvrz.sys.startstopp.api_FREI_V2.0.0_D2017-11-11.zip
+----
+
+entpackt und mit
+
+----
+cp -r de.bsvrz.sys.startstopp $PROJEKT_HOME/lib
+cp -r de.bsvrz.sys.startstopp.api $PROJEKT_HOME/lib
+----
+
+in den Ordner mit den Bibliotheken des Projekts kopiert.
+
+Unter Windows kann ab Windows XP der Windows-Explorer sowohl für das Entpacken, als auch für das Kopieren verwendet werden. Für ältere Windows-Systeme muss ein zusätzliches Tool zum Entpacken des ZIP-Archivs verwendet werden (z.B. das kostenlose 7-Zip http://7-zip.org). 
+
+===== Weitere Installationsschritte
+
+Es sind keine weiteren Installationsschritte notwendig.
+
+==== Kontrolle der Installation
+
+Nach erfolgreicher Installation wurde dem Ordner $PROJEKT_HOME/lib
+die Unterordner
+
+* de.bsvrz.sys.startstopp und
+* de.bsvrz.sys.startstopp.api
+
+hinzugefügt und die Unterordner bzw. ihr Inhalt entsprechen der Struktur im Anhang. 
+
+==== Deinstallation der Software
+
+Für die Deinstallation sollte die SWE gestoppt werden.
+
+Zur  Deinstallation  der  Software  werden  die  Dateien  und  Verzeichnisse,  die in Kapitel "Erstinstallation der Software" installiert bzw. kopiert wurden, gelöscht.
+
+Gleiches gilt für Dateien und Verzeichnisse, die bei der Installation angelegt bzw. kopiert wurden
+
+==== Aktualisierung der Software
+
+Für die Aktualisierung muss die SWE gestoppt werden.
+
+Die Aktualisierung entspricht der Deinstallation und anschließender Erstinstallation der SWE.
+
+=== Einrichtung von Software und Datenverteiler
+
+==== Konfiguration
+
+===== Konfigurationsbereiche
+
+Die SWE arbeitet prinzipiell auch ohne Datenverteilersystem.
+Für spezielle Funktionalitäten wird jedoch ein Datenverteilersystem mit den entsprechenden Konfigurationsbereichen benötigt.
+
+Die Statusüberwachung der von der SWE ausgeführten Datenverteiler-Applikationen erfolgt über die im Datenverteiler angelegten Applikationsobjekte (*typ.applikation*). Sie sind mit Einbindung des ohnehin für jedes Datenverteilerssystem obligatorischen Konfigurationsbereiches *kb.systemModellGlobal* verfügbar. Ausgewertet werden die Daten der Attributgruppe *atg.applikationsFertigmeldung*.
+
+Zum Beenden von Applikationen über den Datenverteiler werden die jeweiligen Datenverteilerobjekte (*typ.datenverteiler*) und deren Attributgruppe *atg.terminierung* benötigt, die ebenfalls über den Konfigurationsbereich *kb.systemModellGlobal* verfügbar sind.
+
+Der Zustand der von der StartStopp-SWE verwalteten Datenverteiler-Applikationen wird über Rechnerobjekte (*typ.rechner*) und deren Attributgruppen *atg.prozessInfo* und *atg.startStoppInfo* veröffentlicht. Um dies zu ermöglichen muss der Konfigurationsbereich *kb.tmRechner* eingebunden werden.
+
+Die optionale USV-Überwachung erfordert die Einbindung des Konfigurationsbereichs *kb.tmUsv*. Überwacht werden die Daten der Attributgruppe *atg.usvZustandKritisch* eine vorgegebenen USV-Objekts *typ.usv*.
+
+===== Spezifische Konfigurationen
+
+Spezifische Konfigurationen sind über die Angaben zu den Konfigurationsbereichen hinaus nicht erforderlich.
+
+==== Parametrierung
+
+===== Parametrierung der Parametrierung
+
+Es ist keine Parametrierung erfoderlich, die SWE verwendet keine Parameter eines Datenverteilersystems.
+
+==== Ein- und Ausgangsdaten
+
+Die nachfolgenden Kapitel beschreiben die Ein- und Ausgangsdaten der SWE.
+
+Allgemeine Ein- und Ausgangsdaten, die sich automatisch durch die Verwendung    der Datenverteilerapplikationsschnittstelle (DAF) ergeben, sind hier nicht  aufgeführt. Details  dazu  siehe [BetrInf_DaV-DAF].
+
+===== Eingangsdaten-Datenverteilerschnittstelle
+
+*Senke*
+
+Die SWE ist für keinerlei Daten als Senke an einem Datenverteiler angemeldet.
+
+*Empfänger*
+
+Folgende Daten werden von der SWE als Empfänger vom Datenverteiler empfangen:
+
+[cols="3*", options="header"]
+|===
+| PID Objekttyp + 
+  (PID KB - PID KV)
+| PID Attributgruppe
+| PID Aspekt
+
+| typ.applikation +
+  (kb.systemModellGlobal - kv.kappich)
+| atg.applikationsFertigmeldung
+| asp.standard
+
+| typ.datenverteiler +
+  (kb.systemModellGlobal - kv.kappich)
+| atg.angemeldeteApplikationen
+| asp.standard
+
+| typ.usv +
+  (kb.tmUsv - kv.dambach)
+| atg.usvZustandKritisch
+| asp.zustand
+
+|===
+
+===== Ausgangsdaten-Datenverteilerschnittstelle
+
+*Quelle*
+
+Folgende Daten werden von der SWE als Quelle an den Datenverteiler gesendet:
+
+[cols="3*", options="header"]
+|===
+| PID Objekttyp + 
+  (PID KB - PID KV)
+| PID Attributgruppe
+| PID Aspekt
+
+| typ.rechner +
+  (kb.tmRechner - kv.dambach)
+| atg.prozessInfo
+| asp.zustand
+
+| typ.rechner +
+  (kb.tmRechner - kv.dambach)
+| atg.startStoppInfo
+| asp.zustand
+
+|===
+
+*Sender*
+
+Durch die SWE erfolgen keine weiteren Sendeanmeldungen.
+
+===== StartStopp-API
+
+Die SWE bietet eine REST-API-Schnittstelle zur Bedienung der SWE und zum Austausch von Informationen. Detaillierte Information dazu sind im Software-Feinentwurf bzw. in der API-Dokumentation zu finden.  
+
+==== Aufnahme des Betriebs
+
+===== Startparameter
+
+*Datenverteiler-Applikationsfunktionen*
+
+Die SWE selbst ist keine Datenverteiler-Applikation, sie dient viel mehr der Verwaltung eines Datenverteilersystems und kommuniziert mit diesem. Die Standard-Datenverteilerapplikationsparameter sind daher hier nicht von Bedeutung.
+
+*Debug-Ausgaben*
+
+Für Debugausgaben der SWE werden die Möglichkeiten der Datenverteiler-Applikationsfunktionen genutzt. Die SWE unterstützt daher die entsprechenden Aufrufparameter. 
+
+Die Aufrufparameter sind in [BetrInf_DaV-DAF] dokumentiert.
+
+*SWE*
+
+Zusätzlich zu den Standardparametern für die DAF und die Debug-Ausgaben verfügt  die SWE über folgende Aufrufparameter: 
+
+****
+-startStoppKonfiguration=<verzeichnis>
+****
+
+*Als Verzeichnis wird das angegeben, in dem die StartStopp-Konfigurationsdatei _startstopp.json_ abgelegt wird*
+
+Die Angabe des Verzeichnisses kann als relativer oder absoluter Pfad erfolgen.
+
+Der Standardwert ist *"."*, d.h. das Verzeichnis aus dem heraus die SWE gestartet wird.
+
+Innerhalb des Verzeichnisses wird ein Unterverzeichnis "history" angelegt, in dem die gespeicherten Versionen der StartStopp-Konfiguration angelegt werden.
+
+Das Verzeichnis sollte daher zum Lesen und Schreiben für den Nutzer, der die StartStopp-SWE ausführt freigegeben sein.
+
+****
+-benutzerKonfiguration=<verzeichnis>/<datei>
+****
+
+*Hier erfolgt die Angabe des Benutzerdefinition der Konfiguration (benutzerdaten.xml)*
+
+Die Benutzerdatenkonfigurationsdatei wird verwendeten, um einen Nutzer, der eine Konfiguration versionieren will zu authentifizieren, wenn noch keine Datenverteilerverbindung besteht.
+
+Es gibt keinen Standardwert. Die Authentifizierung erfolgt dann über die weiter unten definierte "passwd"-Datei.
+
+[NOTE]
+Zur Interpretation der Datei wird auf die Möglichkeiten der Datenverteiler-Applikationsfunktionen zurückgegriffen. Das kann zu Problemen führen, wenn der Datenverteiler/Konfiguration bereits gestartet wurde, StartStopp aber keine Verbindung aufbauen kann, weil die Zugangsdaten nicht korrekt konfiguriert wurden. (Lock-Dateien!). In diesem Fall muss der Datenverteiler zunächst beendet werden.
+
+****
+-authentifizierung=<verzeichnis>/<datei>
+****
+
+*Hier erfolgt die Angabe der Passwd-Datei eines Datenverteilersystems (passwd)*
+
+Die Datei wird verwendeten, um einen Nutzer, der eine Konfiguration versionieren will zu authentifizieren, wenn noch keine Datenverteilerverbindung besteht und die Auswertung der benutzerdaten.xml-Datei nicht möglich ist.
+
+Es gibt keinen Standardwert. Wenn diese letzte Möglichkeit der Authentifizierung fehlschlägt, ist keine Versionierung einer neuen Konfiguration möglich.
+
+****
+-port=3000
+****
+
+*Der Parameter definiert den Port über den die StartStopp-SWE per REST-API über eine https-Verbindung erreichbar ist.*
+
+Der Standardwert ist 3000.
+
+****
+-httpport=0
+****
+
+*Der Parameter definiert den optinalen Port über den die StartStopp-SWE per REST-API über eine http-Verbindung erreichbar ist.*
+
+Der Standardwert ist 0, d.h. es wird keine http-Verbindung unterstützt.
+
+[NOTE]
+Die Bedienoberfläche und das verfügbare Standard-Rahmenwerk-Plugin kommunizieren über die https-Verbindung.
+
+****
+-inkarnationsName=StartStopp
+****
+
+*Der Parameter definiert den Inkarnationsname mit dem sich die SWE selbst beim Datenverteiler registriert.*
+
+Der Standardwert ist "StartStopp".
+
+****
+-rechner=<pid>
+****
+
+*Der Parameter definiert die PID des Rehnerobjekts in der verwendeten Datenverteiler-Konfiguration über das die Prozeßinformationen von der SWE publiziert werden.*
+
+Es gibt keinen Standardwert. 
+
+Wenn der Parameter nicht angegegeben wird, wird ein Rechnerobjekt gesucht, das mit der Hostnamen oder der lokalen IP-Adresse in der Datenverteiler-Konfiguration konfiguriert ist.
+
+Wird kein geeignetes Rechnerobjekt gefunden, werden dieoben beschriebenen Datensätze nicht publiziert. Ansonsten arbeitet die SWE wie vorgesehen.
+
+****
+-betriebsMeldungVersenden=ja
+****
+
+*Der Parameter bestimmt, ob bei einer bestehenden Datenverteilerverbindung Betriebsmeldungen versendet werden.*
+
+Der Standardwert ist "ja", d.h. beim Starten und Stoppen von Applikationen werden Betriebsmeldungen versendet.
+
+Die Einstellung gilt initial für den Start der SWE. Der Versand von Betriebsmeldungen kann über die StartStopp-REST-API im Betrieb ein- und ausgeschaltet werden.
+
+*Terminal-Bedienoberfläche*
+
+Für die Bedienoberfläche stehen folgende Parameter zur Verfügung:
+
+****
+-host=localhost
+****
+
+*Der Parameter bestimmt den Hostname des Systems auf dem die StartStopp-SWE gesucht wird.*
+
+Der Standardwert ist "localhost".
+
+****
+-port=3000
+****
+
+*Der Parameter bestimmt den Port über den eine https-Verbindung zur StartStopp-SWE aufgebaut werden soll.*
+
+Der Standardwert ist "3000".
+
+****
+-monochrome=true
+****
+
+*Der Parameter bestimmt, ob die Bedienoberfläche farbig dargestellt werden soll.*
+
+Der Standardwert ist "true", die Anzeige erfolgt nicht farbig.
+
+****
+-themeFile=<pfad>
+****
+
+*Der optionale Parameter erlaubt die Übergabe eines eigenen Themefiles zur Definition der farblichen Darstellung der Bedienoberfläche.*
+
+Nähere Informationen dazu finden sich unter:
+*https://github.com/mabe02/lanterna*
+
+
+===== Starten der SWE
+
+Die SWE wird als Java-Prozess gestartet. In der Regel erfolgt das per Shell-Skript. Ein beispielhaftes Shellskript findet sich nachstehend:
+
+----
+@echo off
+call einstellungen.bat
+
+title StartStopp
+
+%java% ^
+ -cp ..\distributionspakete\de.bsvrz.sys.startstopp\de.bsvrz.sys.startstopp-runtime.jar ^
+ de.bsvrz.sys.startstopp.startstopp.StartStopp ^
+ -benutzerKonfiguration=../konfiguration/benutzerverwaltung.xml ^
+ -authentifizierung=passwd -betriebsMeldungVersenden=nein ^
+ -debugLevelStdErrText=INFO
+
+rem Fenster nicht sofort wieder schließen, damit eventuelle Fehler noch lesbar sind.
+pause
+----
+
+Die erforderlichen Java-Bibliothen inklusive des erforderlichen Klassenpfades sind in der Runtime-Datei *de.bsvrz.sys.startstopp-runtime.jar* hinterlegt.
+
+Die auszuführende Klasse ist *de.bsvrz.sys.startstopp.startstopp.StartStopp*.
+
+Die Terminal-Bedienoberfläche ist ebenfalls in gleichen Paket enthalten:
+
+----
+@echo off
+call einstellungen.bat
+
+title StartStopp
+
+%java% ^
+ -cp ..\distributionspakete\de.bsvrz.sys.startstopp\de.bsvrz.sys.startstopp-runtime.jar ^
+ de.bsvrz.sys.startstopp.console.StartStoppConsole 
+
+rem Fenster nicht sofort wieder schließen, damit eventuelle Fehler noch lesbar sind.
+pause
+----
+
+Die auszuführende Klasse ist *de.bsvrz.sys.startstopp.console.StartStoppConsole*.
+
+==== Überwachung des Prozesses
+
+===== Windows
+
+Um zu prüfen ob ein Prozess der SWE läuft, muss ein Java-Development-Kit [jdk] anstelle der JRE installiert sein. Mit dem dann zur Verfügung stehenden Befehl 
+_jps_ kann der Status bestimmt werden.
+
+----
+jps -l
+----
+ 
+gibt die Liste der laufenden Java-Prozesse aus. Nur wenn in der Liste ein Eintrag
+
+----
+19483 de.bsvrz.sys.startstopp.startstopp.StartStopp 
+----
+
+auftaucht, läuft die Applikation. Die Prozess-ID zu Beginn der Zeile variiert!
+
+Alternativ kann die Kommandozeile des Prozesses über den Windows-Taskmanager gesucht werden oder über die Bedienoberfläche der StartStopp-Applikation der Zustand der StartStopp-SWE selbst ermittelt werden (siehe Anwenderhandbuch).
+
+===== Linux 
+
+Unter Linux-Systemen kann anstelle von _jps_ das Kommando _ps_ verwendet werden.
+
+Wenn die Ausgabe des Befehls
+
+----
+ps -fA | grep de.bsvrz.sys.startstopp.startstopp.StartStopp
+----
+
+einen laufenden Java-Prozess liefert, der in der Kommandozeile de.bsvrz.sys.startstopp.startstopp.StartStopp enthält, läuft die Applikation.
+
+[NOTE]
+Abhängig vom Startscript bzw. Startverfahren kann das Verfahren vom hier beschriebenen abweichen.
+
+==== Prüfung Störungsfreiheit
+
+===== Prüfung durch Log-Files
+
+Das ordnungsgemäße Ausführen der SWE lässt sich an Hand des Logfiles bzw. der    
+Betriebsmeldungen überprüfen. Siehe dazu die Kapitel "Diagnosehandbuch".
+
+=== Unterbrechung oder Beendigung des Betriebs
+
+==== Voraussetzungen
+
+Der Betrieb kann jederzeit beendet werden. 
+
+[NOTE]
+Mit dem Beenden der SWE StartStopp wird in der Regel auch das gesamte Datenverteilersystem auf dem betroffenen Rechner beendet!
+
+==== Unterbrechung des Betriebs
+
+Eine vorübergehende Unterbrechung des Betriebs der SWE ist nicht vorgesehen.
+
+==== Beenden des Betriebs
+
+Die SWE sollte über die Bedienoberfläche beendet werden, da nur so die gezielte Beendigung des verwalteten Datenverteilersystems sichergestellt ist.
+
+Nur in Ausnahmefällen kann der SWE-Prozess direkt beendet werden.
+
+===== Windows
+
+[WARNING]
+Auf Windows-Systemen kann die SWE den kill-Befehl nicht auswerten, d.h. das von der SWE verwaltete Datenverteiler-System wird nicht beendet und muss in diesem Fall händisch verwaltet werden.
+
+Unter Windows-Systemen wird zunächst die Prozess-ID der zu beendenden 
+SWE ermittelt. Der Befehl
+
+----
+jps -l 
+----
+
+liefert zum Beispiel folgende Ausgabe:
+
+----
+19483 de.bsvrz.sys.startstopp.startstopp.StartStopp
+----
+
+Mit dem Befehl taskkill /pid 19483 /f kann die SWE dann beendet werden. Mit einem weiteren Aufruf von 
+
+----
+jps -l 
+----
+
+kann geprüft werden, ob die SWE tatsächlich beendet wurde.
+
+===== Linux
+
+Unter Linux-Systemen wird ebenfalls die Prozess-ID der zu beendenden SWE 
+ermittelt. Das kann über den Befehl _jps_ (wenn ein JDK installiert ist) oder _ps_ erfolgen, wie oben beschrieben.
+
+Mit dem Befehl
+
+----
+kill 19483
+----
+
+kann die SWE dann beendet werden. 
+
+NOTE: Auf Linux-Systemen wird das Signal zum Beenden der SWE ausgewertet und das verwaltete Datenverteilersystem entsprechend Konfiguration heruntergefahren. Es kann daher eine längere Zeit in Anspruch nehmen, ehe der Betriebssystemprozess der SWE tatsächlich beendet wird.

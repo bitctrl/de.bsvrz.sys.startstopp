@@ -4,8 +4,4 @@
 Bundle-Name: StartStopp-API
 Import-Package: *
 Bundle-Vendor: BitCtrl Systems GmbH
-Bundle-Version: 2.0.0.qualifier
-Export-Package: \
-	de.bsvrz.sys.startstopp.api,\
-	de.bsvrz.sys.startstopp.api.client,\
-	de.bsvrz.sys.startstopp.api.jsonschema
+Bundle-Version: 2.0.0.201709150800

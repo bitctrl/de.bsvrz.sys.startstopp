@@ -1,10 +1,7 @@
 [![Build Status](https://travis-ci.org/bitctrl/de.bsvrz.sys.startstopp.svg?branch=develop)](https://travis-ci.org/bitctrl/de.bsvrz.sys.startstopp)
 
-# SWE Start/Stop 
+# SWE Start/Stop API
 
 ## Version 2
 
-Es handelt sich um eine Neuentwicklung der SWE.
-
-Der letzte Stand vom NERZ ist im Legacy-Branch *legacy/dambach_1.17* hinterlegt.
-
+Bibliothek für den Zugriff auf die SWE StartStopp über eine REST-API.

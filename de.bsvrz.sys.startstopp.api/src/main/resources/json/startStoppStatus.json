@@ -16,9 +16,14 @@
       ],
       "default": "initialized",
       "description": "der Status der StartStoppApplikation"
+    },
+    "betriebsmeldungen": {
+      "type": "boolean",
+      "default": true
     }
   },
   "required": [
-    "status"
+    "status",
+    "betriebsmeldungen"
   ]
 }

@@ -27,6 +27,7 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
@@ -43,7 +44,7 @@ public class MakroSelektor {
 		this.gui = gui;
 		
 		builder = new ActionListDialogBuilder();
-		builder.setTitle("Makroauswahl");
+		builder.setTitle("Makroauswahl").setCanCancel(false);
 		for( MakroDefinition definition : skript.getGlobal().getMakrodefinitionen()) {
 			builder.addAction(definition.getName(), new Runnable() {
 				@Override
@@ -56,7 +57,11 @@ public class MakroSelektor {
 	}
 
 	public MakroDefinition getSelectedMakroDefinition() {
-		builder.build().showDialog(gui);
+		builder.setDescription("ESC - Abbrechen");
+		ActionListDialog dialog = builder.build();
+		dialog.setCloseWindowWithEscape(true);
+		dialog.showDialog(gui);
+
 		return selectedMakroDefinition;
 	}
 }

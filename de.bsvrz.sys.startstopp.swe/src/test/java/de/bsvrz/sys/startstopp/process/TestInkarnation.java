@@ -37,12 +37,9 @@ public final class TestInkarnation {
 			System.out.println("Test: " + i);
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (@SuppressWarnings("unused") InterruptedException e) {
+				// wird ignoriert
 			}
 		}
-
 	}
-
 }

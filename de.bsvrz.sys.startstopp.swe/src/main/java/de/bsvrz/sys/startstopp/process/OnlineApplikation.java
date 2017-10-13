@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import de.bsvrz.sys.funclib.debug.Debug;
@@ -40,6 +41,7 @@ import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.ApplikationLog;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation.InkarnationsTyp;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt.Option;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
@@ -79,6 +81,7 @@ public final class OnlineApplikation {
 
 	private final List<String> prozessAusgaben = new ArrayList<>();
 	private int startFehlerCounter;
+	private boolean stopInProgress;
 	private OnlineApplikationTimer onlineApplikationTimer;
 	private StartStopp startStopp;
 
@@ -166,7 +169,12 @@ public final class OnlineApplikation {
 			break;
 		case CONFIGERROR:
 		case INITIALIZED:
-			LOGGER.warning("Unerwarteter Status des Prozessmanagers: " + status);
+			LOGGER.fine("Unerwarteter Status des Prozessmanagers: " + status);
+			break;
+		case STOPPING_CANCELED:
+			if (appStatus == Applikation.Status.STOPPENWARTEN) {
+				checkState(TaskType.DEFAULT);
+			}
 			break;
 		case STOPPED:
 		default:
@@ -271,7 +279,6 @@ public final class OnlineApplikation {
 		case GESTOPPT:
 			handleOsApplikationStopped();
 			break;
-
 		case GESTARTET:
 			handleOsApplikationStarted();
 			break;
@@ -307,16 +314,16 @@ public final class OnlineApplikation {
 							updateStatus(Applikation.Status.INSTALLIERT, "Wiederholung nach Startfehler");
 						} else {
 							LOGGER.warning(getName() + ": Abbruch nach " + wiederholungenStr + " Wiederholungen");
-							updateStatus(Applikation.Status.GESTOPPT, "Abbruch nach " + wiederholungenStr + " Wiederholungen");
-							
+							updateStatus(Applikation.Status.GESTOPPT,
+									"Abbruch nach " + wiederholungenStr + " Wiederholungen");
+
 						}
 						return;
 					}
 				}
 				switch (fehlerVerhalten.getOption()) {
 				case ABBRUCH:
-					CompletableFuture.runAsync(
-							() -> startStopp.setStatus(StartStoppStatus.Status.RUNNING_CANCELED));
+					CompletableFuture.runAsync(() -> startStopp.setStatus(StartStoppStatus.Status.RUNNING_CANCELED));
 					break;
 				case BEENDEN:
 					CompletableFuture.runAsync(() -> prozessManager.stoppeSkript());
@@ -385,10 +392,22 @@ public final class OnlineApplikation {
 		return inkarnation.isTransmitter();
 	}
 
-	public void starteOSApplikation() {
+	public void starteOSApplikation() throws StartStoppException {
+
 		prozessAusgaben.clear();
-		process = new OSApplikation(getName(), applikation.getInkarnation().getApplikation());
-		process.setProgrammArgumente(getApplikationsArgumente());
+		
+		if( applikation.getInkarnation().getInkarnationsTyp() == InkarnationsTyp.WRAPPED) {
+			process = new OSApplikation(getName(), "java");
+			try {
+				process.setProgrammArgumente(DavWrapper.getWrapperArguments(prozessManager, applikation.getInkarnation().getApplikation(), getApplikationsArgumente()));
+			} catch (StartStoppException e) {
+				process = null;
+				throw new StartStoppException("Wrapper-Applikationen konnte nicht initialisiert werden!", e);
+			}
+		} else {
+			process = new OSApplikation(getName(), applikation.getInkarnation().getApplikation());
+			process.setProgrammArgumente(getApplikationsArgumente());
+		}
 		process.onStatusChange.addHandler(osApplikationStatusHandler);
 		process.start();
 		applikation.setLetzteStartzeit(DateFormat.getDateTimeInstance().format(new Date()));
@@ -459,6 +478,7 @@ public final class OnlineApplikation {
 					process.kill();
 				}
 			}
+			stopInProgress = true;
 		}
 	}
 
@@ -476,8 +496,11 @@ public final class OnlineApplikation {
 		applikation.setStartMeldung(message);
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
+			if( status != Applikation.Status.STOPPENWARTEN) {
+				stopInProgress = false;
+			}
 			applikation.setStatus(status);
-			LOGGER.info("Statuswechsel " + getName() + ": " + oldStatus  + " --> " + getStatus());
+			LOGGER.info("Statuswechsel " + getName() + ": " + oldStatus + " --> " + getStatus());
 			prozessManager.getDavConnector().sendeStatusBetriebsMeldung(this);
 			onStatusChanged.send(new ApplikationEvent(onStatusChanged, this.getName(), status));
 			checkState(TaskType.DEFAULT);
@@ -622,6 +645,30 @@ public final class OnlineApplikation {
 
 	ProzessManager getProzessManager() {
 		return prozessManager;
+	}
+
+	public long getPid() {
+		if (process == null || process.getPid() == null) {
+			return 0;
+		}
+
+		return process.getPid();
+	}
+
+	public String getNextStart() {
+		if (onlineApplikationTimer.isIntervallTaskAktiv()) {
+			return DateFormat.getDateTimeInstance().format(
+					new Date(System.currentTimeMillis() + onlineApplikationTimer.getTaskDelay(TimeUnit.MILLISECONDS)));
+		}
+		return "";
+	}
+
+	StartStopp getStartStopp() {
+		return startStopp;
+	}
+
+	boolean isStopInProgress() {
+		return stopInProgress;
 	}
 
 }

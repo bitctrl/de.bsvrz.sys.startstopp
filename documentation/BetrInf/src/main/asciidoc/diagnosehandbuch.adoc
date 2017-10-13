@@ -1,0 +1,192 @@
+== Diagnosehandbuch
+
+=== Benötigte Werkzeuge
+
+In der folgenden Tabelle sind die benötigten Werkzeuge für die Diagnose aufgeführt.
+
+[cols="3", options="header"]
+|===
+| Nr.
+| Werkzeug/Tool
+| Verwendung
+
+| 1
+| Generischer Testmonitor
+| Anzeige von Betriebsinformationen
+
+| 2
+| Texteditor/Textviewer
+| Analyse der Log-Dateien
+
+| 3 
+| Prozess-Status-Monitor (Windows: z.B. „jps“; Linux: z.B. „ps“)
+| Überwachung des Betriebs der SWE
+
+| 4 
+| StartStopp-Bedienoberfläche
+| Anzeige des Status der StartStopp-SWE
+|===
+
+=== Diagnosemöglichkeiten
+
+==== Betriebsmeldungen
+
+Die StartStopp-SWE versendet Betriebsmeldungen, wenn Applikationen gestartet bzw. gestoppt werden.
+
+Die Betriebsmeldungen können über den Generischen Testmonitor verfolgt werden.
+
+[NOTE]
+Der Versand von Betriebsmeldungen kann im Betrieb abgeschaltet werden. Der aktuelle Zustand kann über die Bedienoberfläche der SWE ermittelt werden.
+
+==== Logmeldungen
+
+Logmeldungen werden im angegebenen Log-File (Standard-Datenverteiler-Parameter) und bis zum angegebenen Log-Level in einer Log-Datei ausgegeben.
+
+Die Meldungen können mit einem geeigneten Textbetrachter/-editor angezeigt und ausgewertet werden.
+
+===== Allgemeine Meldungen (Debug-Level INFO)
+
+Die Meldungen im Debug-Level INFO erlauben die Überprüfung der korrekten Funktion der SWE zur Laufzeit. 
+
+Die SWE gibt zu bestimmen Vorgängen, die aber in der Regel normales Verhalten darstellen, entsprechende Meldungen aus. Die in geschweifte Klammern gesetzten Bestandteile werden in den konkreten Meldungen angepasst.
+
+[cols="2", options="header"]
+|===
+| Meldung 
+| Erläuterung/Massnahme
+
+| Datenverteilerverbindung beendet: {fehlermeldung}
+| Die bestehende Datenverteilerverbindung wurde unterbrochen. Das kann jederzeit passieren, wenn das Kernsystem oder die gesamte Konfiguration heruntergefahren wird. Die StartStopp-SWE versucht sich wiederholt mit dem definierten Datenverteilersystem zu verbinden, wenn dieses wirder verfügbar ist.
+
+| System wird wegen kritischem Zustand der USV heruntergefahren!
+| Die definierte USV hat einen kritischen Zustand gemeldet und veranlasst StartStopp, das verwaltete Software-System herunterzufahren.
+
+| Starte Inkarnation {inkarnationsname}
+| Der Betriebssystem der genannten Inkarnation wurde gestartet
+
+| Kommandozeile: {argumente}
+| Die Kommandozeile einer gestarteten Inkarnation (Ausgabe erfolgt nach der vorherigen Meldung).
+
+| {inkarnationsname}: {meldung}
+| Der Status der genannten Inkarnation kann nicht verändert werden, weil bestimmte Bedingungen (message) gelten. 
+
+| Statuswechsel {inkarnationsname}: {alterstatus} --> {neuerstatus}
+| Eine Applikation/Inkarnation ändert ihren Status
+
+| Shutdown-Hook aufgerufen
+| Der Shutdownhook wurde aufgerufen, d.h. StartStopp soll beendet werden
+
+| Warte auf Applikationen
+| StartStopp soll beendet werden, es sind aber Applikationen vorhanden, die noch nicht gestoppt wurden.
+
+| Alle Applikationen beendet
+| StartStopp soll beendet werden und alle noch nicht gestoppten Applikation wurden jetzt beendet.
+
+| {inkarnationsname} kann den Status von {nachfolger} auf Rechner {rechnername} nicht ermitteln
+| Der in einer Stoppbedingung definierte Rechner ist nicht erreichbar, die Bedingung wird in diesem Fall ignoriert.
+
+| {inkarnatiosname} muss auf {nachfolger} auf Rechner {rechnername} warten!
+| Eine Inkarnation kann nicht gestoppt werden, weil der referenzierte Prozess auf den angegebenen Rechner noch aktiv ist. Der Prozess muss über die StartStopP-SWE auf dem betroffenen Rechner oder das Betriebssystem beendet werden.
+|===
+
+===== Allgemeine Meldungen (Debug-Level WARNING)
+ 
+Log-Einträge mit dem Level WARNING behindern zwar den Betrieb, verhindern ihn jedoch nicht. Es stehen jedoch unter Umständen nicht alle Funktionen der SWE zur Verfügung. Die Ursache einer Warnung sollte behoben werden, damit die SWE voll funktionstüchtig ist. 
+
+Die in geschweifte Klammern gesetzten Bestandteile werden in den konkreten Meldungen angepasst.
+
+[cols="2", options="header"]
+|===
+| Meldung 
+| Erläuterung/Massnahme
+
+| Fehler beim Verarbeiten einer StartStopp-Startanforderung: {message}
+| Der Server hat über die API eine Startanforderung erhalten, die jedoch nicht verarbeitet werden konnte.
+
+| Die Skript-Datei {name} wurde nicht gefunden!
+| StartStopp kann die angegebenen Skriptdatei nicht finden.
+
+| Skript konnte nicht geladen werden: {message}
+| Das angegebene Skript konnte von der SWE nicht eingelesen werden.
+
+| Fehler beim Einlesen des XML-StartStopp-Skripts: {message}
+| Das Einlesen und konvertieren eines "alten" XML.StartSkripts ist fehlgeschlagen
+
+| Authentifizierung fehlgeschlagen: {message}
+| Ein Skript sollte versioniert werden, der Nutzer konnte jedoch nicht authentifiziert werden
+
+| Fehler beim Einlesen der StartStopp-Historie!
+| Die Historie der versionierten Skripte konnte nicht eingelesen werden, damit steht auch kein versioniertes gültiges Skript zur Verfügung. Vor dem Start muss die Versionierung durchgeführt werden.
+
+| Datenverteilerverbindung kann nicht hergestellt werden!
+| Die Herstellung der Datenverteilerverbindung ist fehlgeschlagen. Die Exception wird mit geloggt.
+
+| Hostname des lokalen Rechners kann nicht bestimmt werden: {message}
+| Der Prefix für die Inkarnationsnamen wird auf "unbekannt" gesetzt
+
+| Die Attributgruppe "atg.rechnerInformation" ist in der aktuellen Konfiguration nicht verfügbar
+| Es können keine StartStopp-Informationen über den Datenverteiler publiziert werden.
+
+| Der lokale Rechner konnte nicht ermittelt werden. Es werden keine Prozessinformationen publiziert!
+| Es können keine StartStopp-Informationen über den Datenverteiler publiziert werden.
+
+| Die Attributgruppe zum Versand von Prozessinformationen ist nicht ermittelbar. Es werden keine Prozessinformationen publiziert
+| Es können keine StartStopp-Informationen über den Datenverteiler publiziert werden.
+
+| Die Attributgruppe zum Versand von StartStopp-Informationen ist nicht ermittelbar. Es werden keine Prozessinformationen publiziert
+| Es können keine StartStopp-Informationen über den Datenverteiler publiziert werden.
+
+| Das Objekt mit der PID: {pid} ist nicht vom Typ "typ.usv
+| Es soll eine USV-Überwachung erfolgen, die PID ist jedoch ungültig. Die Überwachung ist damit nicht aktiv.
+
+| {rechner} : Liste der Applikationen konnte von {rechner_tcpadresse}:{port}  nicht abgerufen werden!
+| Der Rechner ist nicht verfügbar oder falsch konfiguriert. Das kann potentiell zu Blockierungen durch rechnerübergreifende Start-Stopp-Bedingungen führen.
+
+| Zyklischer Start konnte nicht eingeplant werden: {message}
+| Eine zyklisch auszuführende Applikation wird nicht ausgeführt.
+
+| {inkarnationsname}: Startfehler {zaehler} von {wiederholungen}
+| Eine Applikation konnte nicht gestartet werden, potentiell erfolgt eine Wiederholung des Startversuchs.
+
+| {inkarnationsname}: Abbruch nach {wiederholungen} Wiederholungen
+| Eine Applikation konnte auch nach der definierten Anzahl von Wiederholungen nicht gestartet werden. Es tritt das definierte Startfehlerverhalten in Kraft.
+
+| Manueller Start einer Applikation fehlgeschlagen: {message}
+| Eine Applikation konnte nicht gestartet werden.
+
+| Skriptaktualisierung fehlgeschlagen: {message}
+| Ein neues Skript konnte nicht vollständig übernommen bzw. nicht komplett ausgeführt werden.
+
+| Ungültige DAV-Zugangsdaten: {message}
+| Die Verbindung zum vorgegebenen Datenverteiler ist fehlgeschlagen. Alle Funktionen die den Datenverteiler erfordern sind nicht aktiv.
+
+| Definition der USV ist ungültig: {message}
+| In der Konfiguration wurde die zu verwendende USV nicht korrekt definiert. Die USV-Überwachung kann nicht aktiviert werden, potentiell ist eine Übernahme des Skripts nicht möglich.
+
+| Die Kernsystemapplikation {name} wurde nicht gefunden!
+| Im Kernsystem ist eine Applikation referenziert, die nicht in der Liste der Inkarnationen definiert ist. Das Skript kann nicht ausgeführt werden.
+
+| In der Startbedingung referenzierte Inkarnation {name} existiert nicht
+| Die referenzierte Applikation existiert nicht in der Liste der Inkarnationen. Das Skript kann nicht ausgeführt werden.
+
+| Rechner {rechner} ist in der Konfiguration nicht definiert
+| Der in einer Bedingung referenzierte Rechner existiert nicht in Konfiguration. Das Skript kann nicht ausgeführt werden.
+
+| In der Stoppbedingung referenzierte Inkarnation {name} existiert nicht
+| Die referenzierte Applikation existiert nicht in der Liste der Inkarnationen. Das Skript kann nicht ausgeführt werden.
+|===
+
+===== Allgemeine Meldungen (Debug-Level ERROR)
+
+Log-Einträge mit dem Level ERROR verhindern den korrekten Betrieb. Die Funktionen der SWE stehen nicht zur Verfügung. Die Ursache eines Fehlers muss umgehend behoben werden, damit die SWE funktionstüchtig ist. 
+
+Die in geschweifte Klammern gesetzten Bestandteile werden in den konkreten Meldungen angepasst.
+
+[cols="2", options="header"]
+|===
+| Meldung 
+| Erläuterung/Massnahme
+
+| StartStopp abgebrochen: {message}
+| Die SWE kann nicht oder nicht mehr ausgeführt werden. In der Regel passiert das nur, wenn der vorgegebene Port für die REST-API-Schnittstelle nicht gebunden werden kann.
+

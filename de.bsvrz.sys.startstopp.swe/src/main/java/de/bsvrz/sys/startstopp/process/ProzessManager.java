@@ -29,6 +29,7 @@ package de.bsvrz.sys.startstopp.process;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,10 @@ public final class ProzessManager {
 	private StartStopp startStopp;
 
 	private boolean neuStartGeplant;
+
+	private Date startTime = new Date();
+
+	private boolean rekonfigurationAktiv;
 
 	public ProzessManager() {
 		this(StartStopp.getInstance());
@@ -118,7 +123,7 @@ public final class ProzessManager {
 					try {
 						TimeUnit.SECONDS.sleep(2);
 					} catch (InterruptedException e) {
-						LOGGER.warning(e.getLocalizedMessage());
+						LOGGER.fine(e.getLocalizedMessage());
 					}
 				}
 				LOGGER.info("Alle Applikationen beendet");
@@ -185,7 +190,7 @@ public final class ProzessManager {
 					try {
 						applikation.starteApplikationManuell();
 					} catch (StartStoppException e) {
-						LOGGER.warning(e.getLocalizedMessage());
+						LOGGER.warning("Manueller Start einer Applikation fehlgeschlagen: " + e.getLocalizedMessage());
 					}
 				});
 
@@ -246,7 +251,7 @@ public final class ProzessManager {
 			try {
 				starteSkript();
 			} catch (StartStoppException e) {
-				LOGGER.warning(e.getLocalizedMessage());
+				LOGGER.warning("Neustart der StartStopp-Konfiguration fehlgeschlagen: " + e.getLocalizedMessage());
 			}
 		}
 	}
@@ -262,12 +267,11 @@ public final class ProzessManager {
 		case CONFIGERROR:
 		case INITIALIZED:
 		case STOPPED:
-			// System.exit(0);
 			break;
 		case SHUTDOWN:
 			break;
 		default:
-			LOGGER.warning("Unerwarteter Status: " + startStopp.getStatus());
+			LOGGER.fine("Unerwarteter Status: " + startStopp.getStatus());
 			break;
 		}
 	}
@@ -286,11 +290,12 @@ public final class ProzessManager {
 				entfernt.addAll(konfigurationsVergleicher.getEntfernteInkarnationen());
 				geandert.putAll(konfigurationsVergleicher.getGeanderteInkarnationen());
 			} catch (StartStoppException e) {
-				LOGGER.warning(e.getLocalizedMessage());
+				LOGGER.warning("Skriptaktualisierung fehlgeschlagen: " + e.getLocalizedMessage());
 				return;
 			}
 		}
 
+		rekonfigurationAktiv = true;
 		if (kernsystemGeandert) {
 			stoppeSkript();
 			CompletableFuture.runAsync(() -> startStopp.waitForStopp())
@@ -340,9 +345,11 @@ public final class ProzessManager {
 			}
 
 		} catch (StartStoppException e) {
-			LOGGER.error(e.getLocalizedMessage());
+			LOGGER.info(e.getLocalizedMessage());
 			throw new IllegalStateException("Sollte hier nicht auftreten, da nur geprüfte Skripte verwendet werden!",
 					e);
+		} finally {
+			rekonfigurationAktiv = false;
 		}
 	}
 
@@ -362,14 +369,10 @@ public final class ProzessManager {
 					starteSkript();
 					neuStartGeplant = false;
 				} catch (StartStoppException e) {
-					LOGGER.warning(e.getLocalizedMessage());
+					LOGGER.warning("Neustart der StartStopp-Konfiguration fehlgeschlagen: "+ e.getLocalizedMessage());
 				}
 			}
 		}
-
-		// if ((startStoppStatus == Status.SHUTDOWN) && allStopped) {
-		// System.exit(0);
-		// }
 	}
 
 	private boolean checkStoppStatus() {
@@ -438,7 +441,7 @@ public final class ProzessManager {
 		try {
 			return aktuelleKonfiguration.getResolvedZugangDav();
 		} catch (StartStoppException e) {
-			LOGGER.warning(e.getLocalizedMessage());
+			LOGGER.warning("Ungültige DAV-Zugangsdaten: " + e.getLocalizedMessage());
 		}
 
 		return new ZugangDav();
@@ -450,7 +453,7 @@ public final class ProzessManager {
 				return aktuelleKonfiguration.getResolvedUsv();
 			}
 		} catch (StartStoppException e) {
-			LOGGER.warning(e.getLocalizedMessage());
+			LOGGER.warning("Definition der USV ist ungültig: " + e.getLocalizedMessage());
 		}
 
 		return null;
@@ -477,4 +480,16 @@ public final class ProzessManager {
 		return result;
 	}
 
+	public Status getStatus() {
+		return startStopp.getStatus();
+	}
+
+	public Date getStartzeit() {
+		return startTime;
+	}
+
+	boolean isRekonfigurationAktiv() {
+		return rekonfigurationAktiv;
+	}
+	
 }

@@ -29,8 +29,6 @@ package de.bsvrz.sys.startstopp.console.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.lanterna.input.KeyStroke;
-
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
@@ -46,69 +44,38 @@ class InkarnationTable extends EditableTable<Inkarnation> {
 	InkarnationTable(StartStoppSkript skript) {
 		super(skript.getInkarnationen(), "Name", "Typ", "Startart");
 		this.skript = skript;
-
-		initUI();
-	}
-
-	private void initUI() {
-
-		setSelectAction(new Runnable() {
-			@Override
-			public void run() {
-				Inkarnation inkarnation = getSelectedElement();
-				InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
-				if (editor.showDialog(getTextGUI())) {
-					replaceCurrentElementWith(editor.getElement());
-				}
-			}
-		});
-	}
-
-	@Override
-	public Result handleKeyStroke(KeyStroke keyStroke) {
-
-		if (SkriptEditor.isInsertAfterKey(keyStroke)) {
-			int row = getSelectedRow() + 1;
-			Inkarnation inkarnation = new Inkarnation().withInkarnationsName("NeueInkarnation").withApplikation("java")
-					.withStartArt(new StartArt()).withStartFehlerVerhalten(new StartFehlerVerhalten())
-					.withStoppFehlerVerhalten(new StoppFehlerVerhalten());
-			InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
-			if (editor.showDialog(getTextGUI())) {
-				addElement(row, editor.getElement());
-			}
-			return Result.HANDLED;
-		}
-
-		if (SkriptEditor.isDeleteKey(keyStroke)) {
-			JaNeinDialog dialog = new JaNeinDialog("Löschen",
-					"Soll die ausgewählte Inkarnation wirklich gelöscht werden?");
-			if (dialog.display()) {
-				removeCurrentElement();
-			}
-			return Result.HANDLED;
-		}
-
-		return super.handleKeyStroke(keyStroke);
 	}
 
 	@Override
 	protected List<String> getStringsFor(Inkarnation inkarnation) {
 		List<String> result = new ArrayList<>();
 		result.add(inkarnation.getInkarnationsName());
-		result.add(inkarnation.getInkarnationsTyp().toString());
-		result.add(inkarnation.getStartArt().getOption().toString());
+		result.add(inkarnation.getInkarnationsTyp().name());
+		result.add(inkarnation.getStartArt().getOption().name());
 		return result;
 	}
 
 	@Override
 	protected Inkarnation requestNewElement() {
-		// TODO Auto-generated method stub
+		return new Inkarnation().withInkarnationsName("NeueInkarnation").withApplikation("java")
+				.withStartArt(new StartArt()).withStartFehlerVerhalten(new StartFehlerVerhalten())
+				.withStoppFehlerVerhalten(new StoppFehlerVerhalten());
+	}
+
+	@Override
+	protected Inkarnation editElement(Inkarnation inkarnation) {
+		InkarnationEditor editor = new InkarnationEditor(skript, inkarnation);
+		if (editor.showDialog(getTextGUI())) {
+			return editor.getElement();
+		}
+		
 		return null;
 	}
 
 	@Override
-	protected Inkarnation editElement(Inkarnation oldElement) {
-		// TODO Auto-generated method stub
-		return null;
+	protected boolean checkDelete(Inkarnation element) {
+		JaNeinDialog dialog = new JaNeinDialog("Löschen",
+				"Soll die Inkarnation \"" + element.getInkarnationsName() + "\" wirklich gelöscht werden?");
+		return dialog.display();
 	}
 }

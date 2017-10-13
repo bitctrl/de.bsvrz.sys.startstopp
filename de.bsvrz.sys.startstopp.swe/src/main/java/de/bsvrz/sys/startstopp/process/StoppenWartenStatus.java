@@ -28,12 +28,15 @@ package de.bsvrz.sys.startstopp.process;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.concurrent.CompletableFuture;
 
 import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
+import de.bsvrz.sys.startstopp.api.util.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 
 public class StoppenWartenStatus extends OnlineApplikationStatus {
@@ -44,7 +47,39 @@ public class StoppenWartenStatus extends OnlineApplikationStatus {
 
 	@Override
 	public boolean wechsleStatus(TaskType task, StartStoppStatus.Status startStoppStatus) {
-		if (task != TaskType.STOPPFEHLER) {
+
+		if (startStoppStatus == Status.STOPPING_CANCELED) {
+			return restoreRunningState();
+		}
+
+		if (task == TaskType.STOPPFEHLER) {
+			
+			if( startStoppStatus == Status.SHUTDOWN) {
+				applikation.stoppeApplikation();
+				return applikation.updateStatus(Applikation.Status.GESTOPPT, "Stoppfehler ignoriert");
+			}
+
+			if( applikation.getProzessManager().isRekonfigurationAktiv()) {
+				applikation.stoppeApplikation();
+				return applikation.updateStatus(Applikation.Status.GESTOPPT, "Rekonfiguration: Stoppfehler ignoriert");
+			}
+			
+			StoppFehlerVerhalten fehlerVerhalten = applikation.getApplikation().getInkarnation()
+					.getStoppFehlerVerhalten();
+			switch (fehlerVerhalten.getOption()) {
+			case ABBRUCH:
+				applikation.stoppeApplikation();
+				return false;
+			case IGNORIEREN:
+				return applikation.updateStatus(Applikation.Status.GESTOPPT, "Stoppfehler ignoriert");
+			case STOPP:
+				CompletableFuture.runAsync(
+						() -> applikation.getStartStopp().setStatus(StartStoppStatus.Status.STOPPING_CANCELED));
+				return false;
+			default:
+				break;
+			}
+		} else {
 			if (applikation.getOnlineApplikationTimer().isStoppFehlerTaskAktiv()) {
 				return false;
 			}
@@ -92,11 +127,26 @@ public class StoppenWartenStatus extends OnlineApplikationStatus {
 		if (applikation.getOnlineApplikationTimer().isStoppFehlerTaskAktiv()) {
 			return false;
 		}
-		
-		applikation.getOnlineApplikationTimer().initStoppFehlerTask();
+
+		if (!applikation.isManuellGestartetOderGestoppt()) {
+			applikation.getOnlineApplikationTimer().initStoppFehlerTask(applikation);
+		}
+
 		applikation.updateStatus(Applikation.Status.STOPPENWARTEN, "Warte auf Prozessende");
 		applikation.stoppeApplikation();
 		return true;
+	}
+
+	private boolean restoreRunningState() {
+		if (applikation.isStopInProgress()) {
+			return false;
+		}
+
+		applikation.getOnlineApplikationTimer().clear();
+		if (applikation.getProzessManager().getDavConnector().getAppStatus(applikation) || applikation.getApplikation().getInkarnation().getInitialize()) {
+			return applikation.updateStatus(Applikation.Status.INITIALISIERT, "Stoppen abgebrochen");
+		}
+		return applikation.updateStatus(Applikation.Status.GESTARTET, "Stoppen abgebrochen");
 	}
 
 }

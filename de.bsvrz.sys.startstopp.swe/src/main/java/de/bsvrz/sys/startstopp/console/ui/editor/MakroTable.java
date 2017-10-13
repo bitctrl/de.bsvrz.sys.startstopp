@@ -26,34 +26,51 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
-import com.googlecode.lanterna.gui2.table.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
+import de.bsvrz.sys.startstopp.console.ui.EditableTable;
+import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
-class MakroTable extends Table<Object> {
+class MakroTable extends EditableTable<MakroDefinition> {
 
-	MakroTable(WindowBasedTextGUI gui, StartStoppSkript skript) {
-		super("Name", "Wert");
+	private StartStoppSkript skript;
 
-		for (MakroDefinition makroDefinition : skript.getGlobal().getMakrodefinitionen()) {
-			getTableModel().addRow(makroDefinition.getName(), makroDefinition.getWert());
-		}
-		
-		setSelectAction(new Runnable() {
-			@Override
-			public void run() {
-				int row = getSelectedRow();
-				MakroDefinition makroDefinition = skript.getGlobal().getMakrodefinitionen().get(row);
-				MakroEditor editor = new MakroEditor(skript, makroDefinition); 
-				if( editor.showDialog(gui)) {
-					makroDefinition.setName(editor.getElement().getName());
-					getTableModel().setCell(0, row, makroDefinition.getName());
-					makroDefinition.setWert(editor.getElement().getWert());
-					getTableModel().setCell(1, row, makroDefinition.getWert());
-				}
-			}
-		});
+	MakroTable(StartStoppSkript skript) {
+		super(skript.getGlobal().getMakrodefinitionen(), "Name", "Wert");
+		this.skript = skript;
 	}
+
+	@Override
+	protected MakroDefinition requestNewElement() {
+		return new MakroDefinition("NeuesMakro", "???");
+	}
+
+	@Override
+	protected MakroDefinition editElement(MakroDefinition oldElement) {
+		MakroEditor dialog = new MakroEditor(skript, oldElement);
+		if (dialog.showDialog(getTextGUI())) {
+			return dialog.getElement();
+		}
+		return null;
+
+	}
+
+	@Override
+	protected boolean checkDelete(MakroDefinition element) {
+		JaNeinDialog dialog = new JaNeinDialog("Löschen",
+				"Soll das Makro \"" + element.getName() + "\" wirklich gelöscht werden?");
+		return dialog.display();
+	}
+
+	@Override
+	protected List<String> getStringsFor(MakroDefinition element) {
+		List<String> result = new ArrayList<>();
+		result.add(element.getName());
+		result.add(element.getWert());
+		return result;
+	}
+
 }

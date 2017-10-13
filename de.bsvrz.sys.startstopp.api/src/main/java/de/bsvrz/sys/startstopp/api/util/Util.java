@@ -1,5 +1,5 @@
 /*
- * Segment 10 System (Sys), SWE 10.1 StartStopp
+ * Segment 10 System (Sys), SWE 10.1 StartStopp API
  * Copyright (C) 2007-2017 BitCtrl Systems GmbH
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -24,7 +24,7 @@
  * mailto: info@bitctrl.de
  */
 
-package de.bsvrz.sys.startstopp.api.jsonschema;
+package de.bsvrz.sys.startstopp.api.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -58,6 +58,19 @@ public final class Util {
 
 	public static String wrapText(int width, String text) {
 
+		StringBuilder textBuffer = new StringBuilder();
+		String[] parts = text.split("\\n");
+		for( String part : parts ) {
+			if( textBuffer.length() > 0) {
+				textBuffer.append('\n');
+			}
+			textBuffer.append(wrapLine(width, part));
+		}
+		return textBuffer.toString();
+	}
+	
+	private static String wrapLine(int width, String text) {
+
 		int useableWidth = width - 6;
 		String[] parts = text.split("\\s");
 		StringBuilder lineBuffer = new StringBuilder(200);
@@ -89,18 +102,32 @@ public final class Util {
 		return textBuffer.toString();
 	}
 	
-	public static String nonEmptyString(String string) {
-		if( string == null) {
-			return "";
-		}
-		return string;
-	}
-
 	public static long convertToWarteZeitInMsec(String warteZeitStr) throws StartStoppException {
 		try {
 			return TimeUnit.SECONDS.toMillis(Integer.parseInt(warteZeitStr));
 		} catch (NumberFormatException e) {
 			throw new StartStoppException(e.getLocalizedMessage());
 		}
+	}
+
+	public static String nonEmptyString(String string) {
+		return nonEmptyString(string, "");
+	}
+
+	public static String nonEmptyString(String string, String defaultValue) {
+		if( string == null) {
+			return defaultValue;
+		}
+		return string;
+	}
+
+
+	public static String shorterString(String parameterStr, int len) {
+		int strLen = parameterStr.length();
+		if( strLen <= len) {
+			return parameterStr;
+		}
+		
+		return parameterStr.substring(0, len - 4) + " ...";
 	}
 }

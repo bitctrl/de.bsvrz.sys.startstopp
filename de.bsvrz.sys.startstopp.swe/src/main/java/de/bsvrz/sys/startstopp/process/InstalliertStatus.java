@@ -35,7 +35,7 @@ import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Applikation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.api.util.Util;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 
 public class InstalliertStatus extends OnlineApplikationStatus {
@@ -106,7 +106,7 @@ public class InstalliertStatus extends OnlineApplikationStatus {
 						+ DateFormat.getDateTimeInstance().format(new Date(System.currentTimeMillis()
 								+ applikation.getOnlineApplikationTimer().getTaskDelay(TimeUnit.MILLISECONDS))));
 			} catch (StartStoppException e) {
-				LOGGER.warning(e.getLocalizedMessage());
+				LOGGER.warning("Zyklischer Start konnte nicht eingeplant werden: " + e.getLocalizedMessage());
 				return false;
 			}
 		case AUTOMATISCH:
@@ -115,8 +115,12 @@ public class InstalliertStatus extends OnlineApplikationStatus {
 			break;
 		}
 
-		applikation.starteOSApplikation();
-		return applikation.updateStatus(Applikation.Status.GESTARTET, "Start initialisiert");
+		try {
+			applikation.starteOSApplikation();
+			return applikation.updateStatus(Applikation.Status.GESTARTET, "Start initialisiert");
+		} catch (StartStoppException e) {
+			return applikation.updateStatus(Applikation.Status.GESTOPPT, e.getLocalizedMessage());
+		}
 	}
 
 }

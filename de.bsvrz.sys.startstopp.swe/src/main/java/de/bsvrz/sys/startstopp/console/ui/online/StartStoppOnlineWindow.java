@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.bundle.LanternaThemes;
 import com.googlecode.lanterna.gui2.BasicWindow;
@@ -45,6 +46,8 @@ import com.googlecode.lanterna.gui2.GridLayout.Alignment;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.WindowListenerAdapter;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
 import com.googlecode.lanterna.input.KeyStroke;
 
@@ -57,6 +60,7 @@ import de.bsvrz.sys.startstopp.console.StartStoppConsole;
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
+import de.bsvrz.sys.startstopp.console.ui.StartStoppInfoDialog;
 import de.bsvrz.sys.startstopp.console.ui.TerminalCloseAction;
 import de.bsvrz.sys.startstopp.console.ui.editor.SkriptEditor;
 
@@ -85,16 +89,18 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 	public static class OnlineDisplay extends Panel {
 
+		private Label betriebsMeldungsStatusLabel = new Label("BM: OFF");
 		private OnlineStatusLabel verbindungsStatus;
 		private Label letzteAbfrage;
 
 		public OnlineDisplay() {
-			setLayoutManager(new GridLayout(3));
+			setLayoutManager(new GridLayout(4));
 			addComponent(new Label("Startstopp - Online"), GridLayout.createHorizontallyFilledLayoutData(1));
 			letzteAbfrage = new Label("00.00.0000 00:00:00");
 			addComponent(letzteAbfrage);
 			verbindungsStatus = new OnlineStatusLabel();
 			addComponent(verbindungsStatus);
+			addComponent(betriebsMeldungsStatusLabel);
 		}
 
 		public void setStatus(StartStoppStatus startStoppStatus) {
@@ -103,10 +109,16 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				verbindungsStatus.setForegroundColor(TextColor.ANSI.WHITE);
 				verbindungsStatus.setBackgroundColor(TextColor.ANSI.RED);
 				verbindungsStatus.setText("XXXXX");
+				betriebsMeldungsStatusLabel.setText("BM: ???");
 			} else {
 				verbindungsStatus.setForegroundColor(getForegroundColor(startStoppStatus));
 				verbindungsStatus.setBackgroundColor(getBackgroundColor(startStoppStatus));
 				verbindungsStatus.setText(startStoppStatus.getStatus().name());
+				if( startStoppStatus.getBetriebsmeldungen()) {
+					betriebsMeldungsStatusLabel.setText("BM: EIN");
+				} else {
+					betriebsMeldungsStatusLabel.setText("BM: AUS");
+				}
 			}
 		}
 
@@ -194,6 +206,14 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		this.table = new OnlineInkarnationTable(applikationen);
 		table.setEditierbar(false);
 
+		addWindowListener(new WindowListenerAdapter() {
+			@Override
+			public void onResized(Window window, TerminalSize oldSize, TerminalSize newSize) {
+				table.setVisibleRows(newSize.getRows() - 7);
+			}
+		});
+
+		
 		setHints(Arrays.asList(Window.Hint.FULL_SCREEN, Window.Hint.NO_DECORATIONS));
 
 		Panel panel = new Panel();
@@ -208,7 +228,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 		MenuPanel menuPanel = new MenuPanel();
 		panel.setLayoutManager(new GridLayout(1));
-		Label statusLabel = new MenuLabel("s-System  ENTER-Applikation t-Theme   e-Editieren   i-Info");
+		Label statusLabel = new MenuLabel("s-System  ENTER-Applikation  t-Theme  e-Editieren  i-Info");
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
 		panel.addComponent(menuPanel, GridLayout.createHorizontallyFilledLayoutData(1));
 
@@ -232,31 +252,16 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		case Character:
 			switch (keyStroke.getCharacter()) {
 			case 't':
-				ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("Theme")
-						.setDescription("Theme auswählen");
-				for (String theme : LanternaThemes.getRegisteredThemes()) {
-					builder.addAction(theme, new Runnable() {
-						@Override
-						public void run() {
-							getTextGUI().setTheme(LanternaThemes.getRegisteredTheme(theme));
-						}
-					});
-				}
-
-				builder.build().showDialog(getTextGUI());
-				return true;
+				return handleThemeSelection();
 
 			case 's':
-				builder = new ActionListDialogBuilder().setTitle("System");
-				builder.addAction(new StartStoppStoppAction());
-				builder.addAction(new StartStoppStartAction());
-				builder.addAction(new StartStoppRestartAction());
-				builder.addAction(new StartStoppBetriebsmeldungenUmschaltenAction());
-				builder.addAction(new StartStoppExitAction());
-				builder.addAction(new TerminalCloseAction());
-				builder.build().showDialog(getTextGUI());
+				return handleSystemFunktion();
+
+			case 'i':
+				new StartStoppInfoDialog().display();
 				return true;
 
+				
 			case 'e':
 				try {
 					getTextGUI().addWindow(new SkriptEditor(StartStoppConsole.getClient().getCurrentSkript()));
@@ -285,5 +290,40 @@ public class StartStoppOnlineWindow extends BasicWindow {
 		}
 
 		return super.handleInput(keyStroke);
+	}
+
+	private boolean handleSystemFunktion() {
+		ActionListDialogBuilder builder;
+		builder = new ActionListDialogBuilder().setTitle("System-Funktionen").setCanCancel(false);
+		builder.addAction(new StartStoppStoppAction());
+		builder.addAction(new StartStoppStartAction());
+		builder.addAction(new StartStoppRestartAction());
+		builder.addAction(new StartStoppBetriebsmeldungenUmschaltenAction());
+		builder.addAction(new StartStoppExitAction());
+		builder.addAction(new TerminalCloseAction());
+		builder.setDescription("ESC - Abbrechen");
+		ActionListDialog dialog = builder.build();
+		dialog.setCloseWindowWithEscape(true);
+		dialog.showDialog(getTextGUI());
+		return true;
+	}
+
+	private boolean handleThemeSelection() {
+		ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("Theme").setCanCancel(false)
+				.setDescription("Theme auswählen");
+		for (String theme : LanternaThemes.getRegisteredThemes()) {
+			builder.addAction(theme, new Runnable() {
+				@Override
+				public void run() {
+					getTextGUI().setTheme(LanternaThemes.getRegisteredTheme(theme));
+				}
+			});
+		}
+
+		builder.setDescription("ESC - Abbrechen");
+		ActionListDialog dialog = builder.build();
+		dialog.setCloseWindowWithEscape(true);
+		dialog.showDialog(getTextGUI());
+		return true;
 	}
 }

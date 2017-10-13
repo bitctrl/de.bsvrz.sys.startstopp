@@ -26,6 +26,15 @@
 
 package de.bsvrz.sys.startstopp.console;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import com.googlecode.lanterna.bundle.LanternaThemes;
+import com.googlecode.lanterna.graphics.PropertyTheme;
+
 import de.bsvrz.sys.funclib.commandLineArgs.ArgumentList;
 
 public class StartStoppConsoleOptions {
@@ -33,24 +42,52 @@ public class StartStoppConsoleOptions {
 	private final String host;
 	private final int port;
 	private final boolean monochrome;
+	private String themeFileName;
 
-	public StartStoppConsoleOptions(String ... args) {
+	public StartStoppConsoleOptions(String... args) {
 		ArgumentList argList = new ArgumentList(args);
 		host = argList.fetchArgument("-host=localhost").asNonEmptyString();
 		port = argList.fetchArgument("-port=3000").intValue();
 		monochrome = argList.fetchArgument("-monochrome=true").booleanValue();
+
+		if (argList.hasArgument("-themeFile")) {
+			String parameter = argList.fetchArgument("-themeFile").asNonEmptyString();
+			String[] split = parameter.split(":");
+			if( split.length > 0) {
+				File themeFile = new File(split[0]);
+				if( themeFile.exists() && themeFile.canRead()) {
+
+					if( split.length > 1) {
+						themeFileName = split[1];
+					} else {
+						themeFileName = "Individuell";
+					}
+					
+					Properties themeProperties = new Properties();
+					try (InputStream stream = new FileInputStream(themeFile)) {
+						themeProperties.load(stream);
+						LanternaThemes.registerTheme(themeFileName, new PropertyTheme(themeProperties));
+					} catch (@SuppressWarnings("unused") IOException e) {
+						themeFileName = null;
+					}
+				}
+			}
+		} 
 	}
 
 	public String getHost() {
-		return host ;
+		return host;
 	}
 
 	public int getPort() {
-		return port ;
+		return port;
 	}
 
 	public boolean isMonochrome() {
 		return monochrome;
 	}
 
+	public String getThemeFileName() {
+		return themeFileName;
+	}
 }

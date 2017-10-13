@@ -35,12 +35,14 @@ import java.util.concurrent.TimeUnit;
 import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
+import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
+import de.bsvrz.sys.startstopp.api.util.Util;
 import de.bsvrz.sys.startstopp.process.OnlineApplikation.TaskType;
 import de.bsvrz.sys.startstopp.util.NamingThreadFactory;
 
 class OnlineApplikationTimer {
 
+	private static final int STOP_FEHLER_TIMEOUT_SEC = 30;
 	private ScheduledFuture<?> currentTask;
 	private ScheduledExecutorService taskExecutor;
 
@@ -103,10 +105,16 @@ class OnlineApplikationTimer {
 		return currentTaskType == TaskType.INTERVALLTIMER && getTaskDelay(TimeUnit.MILLISECONDS) > 0;
 	}
 
-	public void initStoppFehlerTask() {
+	public void initStoppFehlerTask(OnlineApplikation applikation) {
 		clear();
 		currentTaskType = TaskType.STOPPFEHLER;
-		currentTask = taskExecutor.schedule(() -> onlineApplikation.checkState(TaskType.STOPPFEHLER), 30, TimeUnit.SECONDS);
+		
+		int faktor = 1;
+		StoppFehlerVerhalten stoppFehlerVerhalten = applikation.getApplikation().getInkarnation().getStoppFehlerVerhalten();
+		if( stoppFehlerVerhalten != null) {
+			faktor += Integer.parseInt(Util.nonEmptyString(stoppFehlerVerhalten.getWiederholungen(), "0"));
+		}
+		currentTask = taskExecutor.schedule(() -> onlineApplikation.checkState(TaskType.STOPPFEHLER), STOP_FEHLER_TIMEOUT_SEC * faktor, TimeUnit.SECONDS);
 	}
 	
 	public void initWarteTask(long warteZeitInMsec) {

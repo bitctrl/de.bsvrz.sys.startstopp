@@ -136,7 +136,7 @@ class AusgabeVerarbeitung implements Runnable {
 			try {
 				completer.wait(10000);
 			} catch (InterruptedException e) {
-				LOGGER.warning(e.getLocalizedMessage());
+				LOGGER.fine(e.getLocalizedMessage());
 			}
 		}
 	}

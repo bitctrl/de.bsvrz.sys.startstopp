@@ -59,7 +59,7 @@ public class SystemService {
 
 		Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 				"application/json");
-		responseBuilder.entity(new StartStoppStatus(startStopp.getStatus()));
+		responseBuilder.entity(new StartStoppStatus(startStopp.getStatus(), startStopp.getOptions().isBetriebsMeldungVersenden()));
 		return responseBuilder.build();
 	}
 
@@ -102,7 +102,7 @@ public class SystemService {
 		try {
 			startStopp.getProcessManager().starteSkript();
 		} catch (StartStoppException e) {
-			LOGGER.warning(e.getLocalizedMessage());
+			LOGGER.warning("Fehler beim Verarbeiten einer StartStopp-Startanforderung: " + e.getLocalizedMessage());
 		}
 		return Response.accepted().build();
 	}

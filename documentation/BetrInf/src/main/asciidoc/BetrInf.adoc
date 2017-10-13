@@ -1,0 +1,17 @@
+= Betriebsinformationen Sys Start/Stopp
+Version: 1.0
+Stand: 31.08.17
+:toc: left
+:doctype: book
+:encoding: utf-8
+:toclevels: 4
+:sectnums:
+:sweResources: ../../../../../../../de.bsvrz.sys.startstopp.api/src/main/resources
+
+include::overview.adoc[]
+
+include::betriebshandbuch.adoc[]
+
+include::anwenderhandbuch.adoc[]
+
+include::diagnosehandbuch.adoc[]

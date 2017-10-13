@@ -52,6 +52,7 @@ import de.bsvrz.dav.daf.main.config.SystemObject;
 import de.bsvrz.dav.daf.main.config.SystemObjectType;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.StartStoppException;
+import de.bsvrz.sys.startstopp.process.OnlineApplikation;
 import de.bsvrz.sys.startstopp.startstopp.StartStopp;
 import de.muspellheim.events.Event;
 
@@ -207,13 +208,14 @@ class ApplikationStatusHandler implements DynamicObjectCreatedListener, Invalida
 	}
 
 	public void disconnect() {
-		for( String name : applikationStatus.keySet()) {
-			if (name.startsWith(inkarnationsPrefix)) {
-				String processMgrInkarnation = name.substring(inkarnationsPrefix.length());
-				Debug.getLogger().info("Aktualisiere Prozessmanager: " + processMgrInkarnation);
-// TODO				processManager.updateFromDav(processMgrInkarnation, false);
-			}
-		}
 		reconnect(null);
+	}
+
+	public boolean getAppStatus(OnlineApplikation applikation) {
+		DavApplikationStatus davApplikationStatus = applikationStatus.get(inkarnationsPrefix + applikation.getName());
+		if( davApplikationStatus == null) {
+			return false;
+		}
+		return davApplikationStatus.fertig;
 	}
 }

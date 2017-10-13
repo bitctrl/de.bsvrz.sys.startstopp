@@ -26,13 +26,11 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.BasicWindow;
 import com.googlecode.lanterna.gui2.Border;
@@ -43,35 +41,36 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.WindowListenerAdapter;
+import com.googlecode.lanterna.gui2.dialogs.ActionListDialog;
 import com.googlecode.lanterna.gui2.dialogs.ActionListDialogBuilder;
-import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
 import de.bsvrz.sys.startstopp.api.jsonschema.Global;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
-import de.bsvrz.sys.startstopp.console.ui.InfoDialog;
+import de.bsvrz.sys.startstopp.api.util.Util;
 import de.bsvrz.sys.startstopp.console.ui.MenuLabel;
 import de.bsvrz.sys.startstopp.console.ui.MenuPanel;
 
 public final class SkriptEditor extends BasicWindow {
 
 	private StartStoppSkript skript;
+	private final StartStoppSkript initialSkript;
 
 	private Border currentTableBorder;
 	private Panel panel;
 	private MenuPanel menuPanel;
+	private ScheduledExecutorService changeChecker;
+	private Label changeLabel;
 
 	public SkriptEditor(StartStoppSkript skript) {
 		super("StartStopp - Editor");
+		initialSkript = skript;
 		this.skript = (StartStoppSkript) Util.cloneObject(skript);
 		init();
-		
 		skriptVervollstaendigen();
-		
 	}
 
 	private void skriptVervollstaendigen() {
@@ -90,13 +89,20 @@ public final class SkriptEditor extends BasicWindow {
 		panel.setLayoutManager(new GridLayout(1));
 		panel.setLayoutData(GridLayout.createLayoutData(Alignment.BEGINNING, Alignment.BEGINNING, true, true));
 
+		Panel infoPanel = new Panel(new GridLayout(2));
 		Label infoLabel = new Label("Startstopp - Editor");
-		panel.addComponent(infoLabel.withBorder(Borders.singleLine()));
-		infoLabel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
+		infoLabel.setLayoutData(GridLayout.createLayoutData(Alignment.FILL, Alignment.CENTER, true, false));
+		infoPanel.addComponent(infoLabel);
+		changeLabel = new Label("Keine Änderungen");
+		changeLabel.setLayoutData(GridLayout.createLayoutData(Alignment.END, Alignment.CENTER));
+		infoPanel.addComponent(changeLabel);
+		
+		panel.addComponent(infoPanel.withBorder(Borders.singleLine()));
+		infoPanel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
 		menuPanel = new MenuPanel();
 		menuPanel.setLayoutManager(new GridLayout(1));
-		Label statusLabel = new MenuLabel("s-System");
+		Label statusLabel = new MenuLabel("s-System  ENTER-Editor  i/m/r/k/u/z-Konfigurationselemente");
 		menuPanel.addComponent(statusLabel, GridLayout.createHorizontallyFilledLayoutData(1));
 
 		addWindowListener(new WindowListenerAdapter() {
@@ -111,6 +117,19 @@ public final class SkriptEditor extends BasicWindow {
 
 		setComponent(panel);
 		showInkarnationTable();
+		
+		changeChecker = Executors.newSingleThreadScheduledExecutor();
+		changeChecker.scheduleAtFixedRate(()->checkForChanges(), 5, 5, TimeUnit.SECONDS);
+	}
+
+	boolean checkForChanges() {
+		boolean changed = !skript.equals(initialSkript);
+		if( changed ) {
+			changeLabel.setText("Skript geändert");
+		} else {
+			changeLabel.setText("Keine Änderungen");
+		}
+		return changed;
 	}
 
 	private void showInkarnationTable() {
@@ -131,7 +150,7 @@ public final class SkriptEditor extends BasicWindow {
 	}
 
 	private void showMakroTable() {
-		MakroTable table = new MakroTable(getTextGUI(), skript);
+		MakroTable table = new MakroTable(skript);
 		table.setLayoutData(
 				GridLayout.createLayoutData(GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true, true));
 		table.setPreferredSize(TerminalSize.ONE);
@@ -185,10 +204,6 @@ public final class SkriptEditor extends BasicWindow {
 				showRechnerTable();
 				return true;
 
-			case 'l':
-				loadSkriptFromFile();
-				return true;
-
 			case 'k':
 				showKernsystemEditor();
 				return true;
@@ -236,25 +251,15 @@ public final class SkriptEditor extends BasicWindow {
 	}
 
 	private void showSystemActionMenu() {
-		ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System");
-		builder.addActions(new EditorVersionierenAction(this, skript), new EditorSichernAction(skript),
-				new EditorCloseAction(this));
-		builder.build().showDialog(getTextGUI());
-	}
-
-	private void loadSkriptFromFile() {
-		FileDialogBuilder fileDialogBuilder = new FileDialogBuilder();
-		fileDialogBuilder.setTitle("StartStopp-Konfiguration auswählen");
-		fileDialogBuilder.setActionLabel("Laden");
-		File selectedFile = fileDialogBuilder.build().showDialog(getTextGUI());
-		if ((selectedFile != null) && selectedFile.exists()) {
-			try (InputStream stream = new FileInputStream(selectedFile)) {
-				ObjectMapper mapper = new ObjectMapper();
-				skript = mapper.readValue(stream, StartStoppSkript.class);
-			} catch (IOException e) {
-				new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
-			}
-		}
+		ActionListDialogBuilder builder = new ActionListDialogBuilder().setTitle("System").setCanCancel(false);
+		builder.addAction(new EditorVersionierenAction(this, skript));
+		builder.addAction(new EditorLadenAction(this));
+		builder.addAction(new EditorSichernAction(skript));
+		builder.addAction(new EditorCloseAction(this));
+		builder.setDescription("ESC - Abbrechen");
+		ActionListDialog dialog = builder.build();
+		dialog.setCloseWindowWithEscape(true);
+		dialog.showDialog(getTextGUI());
 	}
 
 	public static boolean isDeleteKey(KeyStroke key) {
@@ -279,5 +284,18 @@ public final class SkriptEditor extends BasicWindow {
 
 	public static boolean isSelectMakroKey(KeyStroke key) {
 		return key.getKeyType() == KeyType.Character && key.isAltDown() && key.getCharacter() == 'm';
+	}
+	
+	@Override
+	public void close() {
+		if (changeChecker != null) {
+			changeChecker.shutdown();
+		}
+		super.close();
+	}
+
+	public void updateSkript(StartStoppSkript newSkript) {
+		this.skript = newSkript;
+		showInkarnationTable();
 	}
 }

@@ -36,7 +36,7 @@ import com.googlecode.lanterna.gui2.Panel;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.console.ui.EditableTable;
-import de.bsvrz.sys.startstopp.console.ui.MakroTextInputDialog;
+import de.bsvrz.sys.startstopp.console.ui.ParameterInputDialog;
 
 class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 
@@ -48,7 +48,7 @@ class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 
 		@Override
 		protected String requestNewElement() {
-			MakroTextInputDialog dialog = new MakroTextInputDialog(getSkript(), "Parameter", "Neuen Parameter angeben:", "");
+			ParameterInputDialog dialog = new ParameterInputDialog(getSkript(), "Parameter", "Neuen Parameter angeben:", "");
 			if( dialog.showDialog(getTextGUI())) {
 				return dialog.getElement();
 			}
@@ -57,7 +57,7 @@ class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 
 		@Override
 		protected String editElement(String oldElement) {
-			MakroTextInputDialog dialog = new MakroTextInputDialog(getSkript(), "Parameter", "Parameter bearbeiten:", oldElement);
+			ParameterInputDialog dialog = new ParameterInputDialog(getSkript(), "Parameter", "Parameter bearbeiten:", oldElement);
 			if( dialog.showDialog(getTextGUI())) {
 				return dialog.getElement();
 			}
@@ -67,6 +67,11 @@ class AufrufParameterEditor extends StartStoppElementEditor<List<String>> {
 		@Override
 		protected List<String> getStringsFor(String element) {
 			return Collections.singletonList(element);
+		}
+
+		@Override
+		protected boolean checkDelete(String element) {
+			return true;
 		}
 	}
 

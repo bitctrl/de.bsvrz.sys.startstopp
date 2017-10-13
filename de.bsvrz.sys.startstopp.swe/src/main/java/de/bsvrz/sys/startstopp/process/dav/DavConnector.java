@@ -66,8 +66,9 @@ public class DavConnector {
 	private ZugangDav zugangDav;
 	private Object lock = new Object();
 	private ClientDavConnection connection;
-	private ProzessManager processManager;
-	private ApplikationStatusHandler appStatusHandler;
+	private ProzessManager prozessManager;
+	private final ApplikationStatusHandler appStatusHandler = new ApplikationStatusHandler();
+	private final StartStoppKonfigurationProvider configProvider = new StartStoppKonfigurationProvider();
 	private UsvHandler usvHandler;
 
 	private String inkarnationsPrefix;
@@ -81,13 +82,11 @@ public class DavConnector {
 
 	public DavConnector(StartStopp startStopp, ProzessManager prozessManager) {
 		this.options = startStopp.getOptions();
-		this.processManager = prozessManager;
+		this.prozessManager = prozessManager;
 		
 		this.inkarnationsPrefix = startStopp.getInkarnationsPrefix();
-		appStatusHandler = new ApplikationStatusHandler();
 		appStatusHandler.onStatusChange.addHandler((status) -> appStatusChanged(status));
-
-		usvHandler = new UsvHandler(processManager);
+		usvHandler = new UsvHandler(prozessManager);
 		Executors.newSingleThreadScheduledExecutor(new NamingThreadFactory("DavConnector"))
 				.scheduleAtFixedRate(() -> connectToDav(), 0, 10, TimeUnit.SECONDS);
 	}
@@ -110,8 +109,6 @@ public class DavConnector {
 
 				if (!connection.isLoggedIn()) {
 					
-					LOGGER.info("Anmelden als \"" + zugangDav.getUserName() + "\" Passwort: \""
-							+ zugangDav.getPassWord() + "\"");
 					connection.login(zugangDav.getUserName(), zugangDav.getPassWord());
 
 					messageSender = MessageSender.getInstance();
@@ -119,15 +116,15 @@ public class DavConnector {
 					lokalerRechner = ermittleLokalenRechner(connection.getDataModel());
 					
 					appStatusHandler.reconnect(connection);
+					configProvider.reconnect(prozessManager, connection, lokalerRechner);
+					configProvider.update(prozessManager.getApplikationen());
 					usvHandler.reconnect(connection);
-					processManager.davConnected();
+					prozessManager.davConnected();
 				}
 
-			} catch (CommunicationError | ConnectionException | RuntimeException e) {
-				LOGGER.warning(e.getLocalizedMessage());
-			} catch (InconsistentLoginException e1) {
-				LOGGER.warning(e1.getLocalizedMessage());
-			}
+			} catch (CommunicationError | ConnectionException | InconsistentLoginException | RuntimeException e) {
+				LOGGER.warning("Datenverteilerverbindung kann nicht hergestellt werden!", e);
+			} 
 		}
 	}
 
@@ -173,7 +170,7 @@ public class DavConnector {
 	}
 
 	public void reconnect() {
-		ZugangDav newZugangDav = processManager.getZugangDav();
+		ZugangDav newZugangDav = prozessManager.getZugangDav();
 
 		if (!newZugangDav.equals(zugangDav)) {
 			this.zugangDav = newZugangDav;
@@ -197,7 +194,7 @@ public class DavConnector {
 
 		try {
 			ClientDavParameters parameters = new ClientDavParameters();
-			parameters.setApplicationName(processManager.getOptions().getInkarnationsName());
+			parameters.setApplicationName(prozessManager.getOptions().getInkarnationsName());
 			parameters.setDavCommunicationAddress(zugangDav.getAdresse());
 			parameters.setDavCommunicationSubAddress(Integer.parseInt(zugangDav.getPort()));
 			connection = new ClientDavConnection(parameters);
@@ -235,7 +232,13 @@ public class DavConnector {
 	}
 
 	public void sendeStatusBetriebsMeldung(OnlineApplikation onlineApplikation) {
-		if (!isOnline() || !options.isBetriebsMeldungVersenden()) {
+		if (!isOnline()) {
+			return;
+		}
+
+		configProvider.update(prozessManager.getApplikationen());
+		
+		if( !options.isBetriebsMeldungVersenden()) {
 			return;
 		}
 
@@ -270,13 +273,17 @@ public class DavConnector {
 
 	private SystemObject ermittleLokalenRechner(DataModel dataModel) {
 		
+		if( options.getRechnerPid() != null) {
+			return dataModel.getObject(options.getRechnerPid());
+		}
+		
 		String hostName = null;
 		String adresse = null;
 		try {
 			adresse = InetAddress.getLocalHost().getHostAddress();
 			hostName = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
-			LOGGER.warning("Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
+			LOGGER.warning("Hostname des lokalen Rechners kann nicht bestimmt werden: " + e.getLocalizedMessage());
 			return null;
 		}
 
@@ -298,4 +305,7 @@ public class DavConnector {
 		return null;
 	}
 
+	public boolean getAppStatus(OnlineApplikation applikation) {
+		return appStatusHandler.getAppStatus(applikation);
+	}
 }

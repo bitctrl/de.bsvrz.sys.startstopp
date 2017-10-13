@@ -38,8 +38,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.jetty.util.ConcurrentArrayQueue;
-
 import de.bsvrz.dav.daf.util.cron.CronDefinition;
 import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.StartStoppException;
@@ -47,18 +45,18 @@ import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
 import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.MakroDefinition;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
+import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkriptStatus.Status;
+import de.bsvrz.sys.startstopp.api.util.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
-import de.bsvrz.sys.startstopp.api.jsonschema.Util;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
 import de.bsvrz.sys.startstopp.process.OnlineInkarnation;
-import de.bsvrz.sys.startstopp.util.StartStoppXMLParser;
 
 public final class StartStoppKonfiguration {
 
@@ -67,9 +65,27 @@ public final class StartStoppKonfiguration {
 	private StartStoppSkriptStatus skriptStatus = new StartStoppSkriptStatus();
 	private String checkSumme = "";
 
+	public static void fuelleStandardWerte(StartStoppSkript konfiguration) {
+		for( Inkarnation inkarnation : konfiguration.getInkarnationen()) {
+			StartArt startArt = inkarnation.getStartArt();
+			if( startArt == null) {
+				inkarnation.setStartArt(new StartArt());
+			}
+			StartFehlerVerhalten startFehlerVerhalten = inkarnation.getStartFehlerVerhalten();
+			if( startFehlerVerhalten == null) {
+				inkarnation.setStartFehlerVerhalten(new StartFehlerVerhalten());
+			}
+			StoppFehlerVerhalten stoppFehlerVerhalten = inkarnation.getStoppFehlerVerhalten();
+			if( stoppFehlerVerhalten == null) {
+				inkarnation.setStoppFehlerVerhalten(new StoppFehlerVerhalten());
+			}
+		}
+	}
+
+	
 	public StartStoppKonfiguration(StartStoppSkript skript) {
 		this.skript = skript;
-		StartStoppXMLParser.fuelleStandardWerte(skript);
+		fuelleStandardWerte(skript);
 
 		skriptStatus.getMessages().addAll(pruefeVollstaendigkeit());
 		skriptStatus.getMessages().addAll(pruefeZirkularitaet());
@@ -125,7 +141,7 @@ public final class StartStoppKonfiguration {
 	private void checkStartRules(Inkarnation inkarnation) throws StartStoppException {
 
 		Set<String> usedInkarnations = new LinkedHashSet<>();
-		Queue<Inkarnation> mustBeChecked = new ConcurrentArrayQueue<>();
+		Queue<Inkarnation> mustBeChecked = new ConcurrentLinkedQueue<>();
 		mustBeChecked.add(inkarnation);
 
 		while (!mustBeChecked.isEmpty()) {
@@ -277,16 +293,6 @@ public final class StartStoppKonfiguration {
 				result.add(e.getLocalizedMessage());
 			}
 		}
-
-		// Angabe aller per JSON-Schema erforderlichen Attribute der Konfigurationsdatei
-		// Vollständige Definition des Datenverteilerzugangs
-		// Vollständige Auflösbarkeit aller Makros
-		// Korrekte Angabe aller Daten für die Ausführung der Inkarnationen, z. B.
-		// Zeitangaben bei Intervallstart
-		// Verfügbarkeit aller Rechnerdefinitionen von Rechnern, die in Start- oder
-		// Stoppbedingungen referenziert werden
-
-		// TODO Prüfung vervollständigen
 
 		return result;
 	}

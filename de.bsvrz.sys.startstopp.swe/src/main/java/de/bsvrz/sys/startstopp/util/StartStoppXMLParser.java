@@ -55,6 +55,7 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StoppBedingung;
 import de.bsvrz.sys.startstopp.api.jsonschema.StoppFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.Usv;
 import de.bsvrz.sys.startstopp.api.jsonschema.ZugangDav;
+import de.bsvrz.sys.startstopp.config.StartStoppKonfiguration;
 
 public class StartStoppXMLParser {
 
@@ -367,7 +368,7 @@ public class StartStoppXMLParser {
 		}
 
 		suppressInkarnationName(konfiguration);
-		fuelleStandardWerte(konfiguration);
+		StartStoppKonfiguration.fuelleStandardWerte(konfiguration);
 
 		return konfiguration;
 	}
@@ -385,28 +386,11 @@ public class StartStoppXMLParser {
 		}
 
 		suppressInkarnationName(konfiguration);
-		fuelleStandardWerte(konfiguration);
+		StartStoppKonfiguration.fuelleStandardWerte(konfiguration);
 
 		return konfiguration;
 	}
 
-	// TODO Location anpassen
-	public static void fuelleStandardWerte(StartStoppSkript konfiguration) {
-		for( Inkarnation inkarnation : konfiguration.getInkarnationen()) {
-			StartArt startArt = inkarnation.getStartArt();
-			if( startArt == null) {
-				inkarnation.setStartArt(new StartArt());
-			}
-			StartFehlerVerhalten startFehlerVerhalten = inkarnation.getStartFehlerVerhalten();
-			if( startFehlerVerhalten == null) {
-				inkarnation.setStartFehlerVerhalten(new StartFehlerVerhalten());
-			}
-			StoppFehlerVerhalten stoppFehlerVerhalten = inkarnation.getStoppFehlerVerhalten();
-			if( stoppFehlerVerhalten == null) {
-				inkarnation.setStoppFehlerVerhalten(new StoppFehlerVerhalten());
-			}
-		}
-	}
 
 	private void suppressInkarnationName(StartStoppSkript konfiguration) {
 		for (String item : suppressInkarnationsName) {

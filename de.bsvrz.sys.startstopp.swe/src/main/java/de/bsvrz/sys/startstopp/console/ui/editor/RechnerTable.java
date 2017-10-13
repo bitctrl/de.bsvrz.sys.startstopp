@@ -32,6 +32,7 @@ import java.util.List;
 import de.bsvrz.sys.startstopp.api.jsonschema.Rechner;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
 import de.bsvrz.sys.startstopp.console.ui.EditableTable;
+import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 class RechnerTable extends EditableTable<Rechner> {
 
@@ -68,4 +69,12 @@ class RechnerTable extends EditableTable<Rechner> {
 		result.add(rechner.getTcpAdresse());
 		result.add(rechner.getPort());
 		return result;	}
+
+
+	@Override
+	protected boolean checkDelete(Rechner element) {
+		JaNeinDialog dialog = new JaNeinDialog("Löschen",
+				"Soll der Rechner \"" + element.getName() + "\" wirklich gelöscht werden?");
+		return dialog.display();
+	}
 }

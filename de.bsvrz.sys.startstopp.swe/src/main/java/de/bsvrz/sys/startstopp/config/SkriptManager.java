@@ -117,8 +117,6 @@ public class SkriptManager {
 				LOGGER.warning("Die Skript-Datei \"" + src.getAbsolutePath() + "\" wurde nicht gefunden!");
 			}
 			if (skript == null) {
-				LOGGER.warning("Versuche XML-Datei zu konvertieren!");
-
 				File localXmlFile = new File(startStopp.getOptions().getSkriptDir(), "startstopp.xml");
 				skript = new StartStoppXMLParser().getSkriptFromFile(localXmlFile);
 				
@@ -210,14 +208,14 @@ public class SkriptManager {
 						try {
 							offlineChecker.close();
 						} catch (IOException e) {
-							LOGGER.warning(e.getLocalizedMessage());
+							LOGGER.warning("Authentifizierung fehlgeschlagen: "+ e.getLocalizedMessage());
 						}
 						throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" ist kein Administrator!");
 					}
 					try {
 						offlineChecker.close();
 					} catch (IOException e) {
-						LOGGER.warning(e.getLocalizedMessage());
+						LOGGER.warning("Authentifizierung fehlgeschlagen: "+ e.getLocalizedMessage());
 					}
 					return;
 				}

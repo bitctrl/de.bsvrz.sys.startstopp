@@ -26,25 +26,26 @@
 
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
-import com.googlecode.lanterna.gui2.Window;
-
 import de.bsvrz.sys.startstopp.console.ui.JaNeinDialog;
 
 class EditorCloseAction implements Runnable {
 
-	private Window window;
+	private SkriptEditor editor;
 
-	EditorCloseAction(Window window) {
-		this.window = window;
+	EditorCloseAction(SkriptEditor editor) {
+		this.editor = editor;
 	}
 
 	@Override
 	public void run() {
-		JaNeinDialog dialog = new JaNeinDialog("Editor verlassen",
-				"Soll der Editor wirklich verlassen werden?\nEventuell wurden Änderungen noch nicht versioniert!");
-		if (dialog.display()) {
-			window.close();
-		}
+		if (editor.checkForChanges()) {
+			JaNeinDialog dialog = new JaNeinDialog("Editor verlassen",
+					"Soll der Editor wirklich verlassen werden?\nEventuell wurden Änderungen noch nicht versioniert!");
+			if (!dialog.display()) {
+				return;
+			}
+		} 
+		editor.close();
 	}
 
 	@Override

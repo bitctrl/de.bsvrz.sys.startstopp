@@ -46,12 +46,12 @@ class ApplikationDetailAction implements Runnable {
 	
 	@Override
 	public void run() {
-		ApplikationDetailWindow window = new ApplikationDetailWindow("Details: " + applikation.getInkarnation().getInkarnationsName());
-		window.setHints(Collections.singleton(Hint.EXPANDED));
-		StartStoppConsole.getGui().addWindow(window);
 		
 		try {
-			window.setApplikation(StartStoppConsole.getClient().getApplikation(applikation.getInkarnation().getInkarnationsName()));
+			Applikation appInfo = StartStoppConsole.getClient().getApplikation(applikation.getInkarnation().getInkarnationsName());
+			ApplikationDetailWindow window = new ApplikationDetailWindow(appInfo);
+			window.setHints(Collections.singleton(Hint.EXPANDED));
+			StartStoppConsole.getGui().addWindow(window);
 		} catch (StartStoppException e) {
 			new InfoDialog("FEHLER", e.getLocalizedMessage()).display();
 		}

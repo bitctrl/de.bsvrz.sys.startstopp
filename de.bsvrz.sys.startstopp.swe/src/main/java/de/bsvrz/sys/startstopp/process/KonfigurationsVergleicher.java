@@ -40,28 +40,33 @@ public class KonfigurationsVergleicher {
 	private List<String> entfernteInkarnationen = new ArrayList<>();
 	private boolean kernSystemGeaendert;
 
-	public void vergleiche(StartStoppKonfiguration letzteKonfiguration, StartStoppKonfiguration neueKonfiguration) throws StartStoppException {
+	public void vergleiche(StartStoppKonfiguration letzteKonfiguration, StartStoppKonfiguration neueKonfiguration)
+			throws StartStoppException {
 
 		Map<String, OnlineInkarnation> letzteInkarnationen = new LinkedHashMap<>();
-		for( OnlineInkarnation inkarnation : letzteKonfiguration.getInkarnationen()) {
+		for (OnlineInkarnation inkarnation : letzteKonfiguration.getInkarnationen()) {
 			letzteInkarnationen.put(inkarnation.getName(), inkarnation);
 		}
 
-		for( OnlineInkarnation inkarnation : neueKonfiguration.getInkarnationen()) {
+		kernSystemGeaendert = !letzteKonfiguration.getKernSysteme().equals(neueKonfiguration.getKernSysteme());
+
+		for (OnlineInkarnation inkarnation : neueKonfiguration.getInkarnationen()) {
 			OnlineInkarnation letzteInkarnation = letzteInkarnationen.remove(inkarnation.getName());
-			if( letzteInkarnation == null) {
+			if (letzteInkarnation == null) {
 				kernSystemGeaendert = kernSystemGeaendert || inkarnation.isKernSystem();
 				continue;
 			}
-			
-			InkarnationsAenderung aenderung = new InkarnationsAenderung(inkarnation.getInkarnation(), letzteInkarnation.getInkarnation());
-			if( !aenderung.getAenderungen().isEmpty()) {
+
+			InkarnationsAenderung aenderung = new InkarnationsAenderung(inkarnation.getInkarnation(),
+					letzteInkarnation.getInkarnation());
+			if (!aenderung.getAenderungen().isEmpty()) {
 				geanderteInkarnationen.put(inkarnation.getName(), aenderung);
-				kernSystemGeaendert = kernSystemGeaendert || inkarnation.isKernSystem() || letzteInkarnation.isKernSystem();
+				kernSystemGeaendert = kernSystemGeaendert || inkarnation.isKernSystem()
+						|| letzteInkarnation.isKernSystem();
 			}
 		}
 
-		for( OnlineInkarnation inkarnation : letzteInkarnationen.values()) {
+		for (OnlineInkarnation inkarnation : letzteInkarnationen.values()) {
 			entfernteInkarnationen.add(inkarnation.getName());
 			kernSystemGeaendert = kernSystemGeaendert || inkarnation.isKernSystem();
 		}
