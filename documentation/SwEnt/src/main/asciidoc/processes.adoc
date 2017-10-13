@@ -97,7 +97,7 @@ Befindet sich die Inkarnation im Zustand *GESTARTET* oder *INITIALISIERT* wird s
 überführt. Innerhalb dieses Zustands werden die Stoppbedingungen überprüft:
 
 * die Inkarnation hat eine zugeordnete Stoppbedingung: Der Stopp der Inkarnation ist erst möglich, wenn
-  die Stoppbedingung erfüllt ist und die potentiell festgelegt Verzögerungszeit abgelaufen ist.  
+  die Stoppbedingung erfüllt ist und die potenziell festgelegt Verzögerungszeit abgelaufen ist.  
 * die Inkarnation gehört zum Kernsystem: Der Stopp ist erst möglich wenn alle Komponenten
   die nicht zum Kernsystem gehören, sowie alle Kernsoftware-Inkarnationen, die nach der Inkarnation
   als Bestandteil des Kernsystems definiert wurden beendet wurden.
