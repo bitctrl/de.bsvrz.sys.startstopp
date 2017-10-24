@@ -160,7 +160,10 @@ public abstract class EditableTable<T> extends Table<T> {
 	}
 
 	private void editSelectedElement() {
-		T oldElement = dataList.get(getSelectedRow());
+		T oldElement = getSelectedElement();
+		if( oldElement == null) {
+			return;
+		}
 		T newParameter = editElement(oldElement);
 		if (newParameter != null) {
 			int row = getSelectedRow();
@@ -170,7 +173,11 @@ public abstract class EditableTable<T> extends Table<T> {
 	}
 
 	protected T getSelectedElement() {
-		return dataList.get(getSelectedRow());
+		int selectedRow = getSelectedRow();
+		if( selectedRow >= dataList.size()) {
+			return null;
+		}
+		return dataList.get(selectedRow);
 	}
 
 	@Override
