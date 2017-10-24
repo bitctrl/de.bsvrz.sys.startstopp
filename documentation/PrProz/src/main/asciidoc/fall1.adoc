@@ -19,7 +19,7 @@ Auf Rechner 1 wird Start/Stopp mit dem Aufrufparameter „-startStoppKonfigurati
 Auf beiden Rechnern wird beim Start die Bedienoberfläche mitgestartet.
 
 Zur Überprüfung der Betriebsmeldungen wird der im Testsystem mitgelieferte Generische Testmonitor (GTM) verwendet.
-Der GTM wird über das Skript "GenericicTestMonitor.bat" bzw. "GenericTestMonitor.bash" gestartet, wenn das Kernsystem des Datenverteilers in Betrieb ist.
+Der GTM wird über das Skript "GenericTestMonitor.bat" bzw. "GenericTestMonitor.bash" gestartet, wenn das Kernsystem des Datenverteilers in Betrieb ist.
 
 ==== Durchführung
 

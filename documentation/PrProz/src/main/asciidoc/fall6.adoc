@@ -23,12 +23,12 @@ Nach der Versionierung werden die Inkarnationen gestartet.
 
 Folgendes Verhalten wird beobachtet:
 
-* Applikation02 beendet sich selbst, wird aber von StartStopp entsprechend Konfiguration neu gestartet
-* Applikation03 beendet sich selbst, wird aber von StartStopp entsprechend Konfiguration nicht neu gestartet
+* Applikation02 beendet sich selbst, wird aber von StartStopp entsprechend der Konfiguration neu gestartet.
+* Applikation03 beendet sich selbst, wird aber von StartStopp entsprechend der Konfiguration nicht neu gestartet.
 
 Applikation05 beendet sich nicht, wenn die Datenverteilerverbindung geschlossen wird.
 
-* Wenn Applikatio05 sich im Zustand INITIALISIERT befindet, wird sie die Bedienoberfläche beendet. 
+* Wenn Applikatio05 sich im Zustand INITIALISIERT befindet, wird sie über die Bedienoberfläche beendet. 
 * Die Applikation verbleibt über einen längeren Zeitraum im Zustand STOPPEN_WARTEN, weil die Rückmeldung vom Betriebssystem nicht empfangen wurde
 * Die Applikation wird erneut über die Bedienoberfläche beendet (ohne Datenverteilerschnittstelle, da die Datenverteilerverbindung beim ersten Versuch bereits geschlossen wurde).
 
