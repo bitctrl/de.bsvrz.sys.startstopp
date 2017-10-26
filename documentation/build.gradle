@@ -13,10 +13,6 @@ buildscript {
   }
 }
 
-plugins {
-  id 'org.asciidoctor.convert' version '1.5.3'
-}
-
 apply plugin: "base"
 apply plugin: 'org.asciidoctor.convert'
 
@@ -25,8 +21,3 @@ version = '1.0.0-SNAPSHOT'
 ext {
 	themesDir = projectDir.path + '/themes'
 }
-
-asciidoctorj {
-    version = '1.5.5'
-}
-
