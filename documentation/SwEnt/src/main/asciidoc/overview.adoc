@@ -2,9 +2,20 @@
 
 === Aufgaben der SWE
 
+
+ifdef::basebackend-docbook[]
+++++
+<div custom-style="NOBODY">
+endif::basebackend-docbook[]
+
 Die SWE StartStopp dient dazu, die Komponenten eines Datenverteiler-Systems
 auf einem Rechnerknoten zu verwalten, diese nach vorgegebenen Regeln auszuführen
 bzw. zu beenden.
+
+ifdef::basebackend-docbook[]
+</div>
+++++
+endif::basebackend-docbook[]
 
 Die SWE läuft unabhängig vom Datenverteilersystem selbst, verbindet 
 sich aber mit einem vordefinierten System, um den Status des verwalteten
