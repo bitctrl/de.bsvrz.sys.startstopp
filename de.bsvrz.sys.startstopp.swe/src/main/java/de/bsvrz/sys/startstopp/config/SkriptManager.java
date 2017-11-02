@@ -360,7 +360,7 @@ public class SkriptManager {
 		}
 
 		StatusResponse status = new StatusResponse();
-		status.setCode(-1);
+		status.setCode(-1); 
 		status.getMessages().addAll(newSkript.getSkriptStatus().getMessages());
 		throw new StartStoppStatusException("Skript konnte nicht übernommen und versioniert werden!", status);
 	}
