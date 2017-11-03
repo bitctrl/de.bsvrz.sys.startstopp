@@ -225,24 +225,40 @@ public final class StartStoppKonfiguration {
 		Collection<String> result = new ArrayList<>();
 
 		/* Prüfung der Datenverteilerzugangsdaten. */
-		ZugangDav zugangDav = skript.getGlobal().getZugangDav();
-		if (zugangDav == null) {
-			result.add("Keine Datenverteiler-Zugangsdaten definiert!");
-		} else {
-			if ((zugangDav.getAdresse() == null) || zugangDav.getAdresse().trim().isEmpty()) {
-				result.add("Keine Adresse für den Datenverteiler-Zugang definiert!");
+		try {
+			ZugangDav zugangDav = getResolvedZugangDav();
+			if (zugangDav == null) {
+				result.add("Keine Datenverteiler-Zugangsdaten definiert!");
+			} else {
+				if ((zugangDav.getAdresse() == null) || zugangDav.getAdresse().trim().isEmpty()) {
+					result.add("Keine Adresse für den Datenverteiler-Zugang definiert!");
+				}
+				if ((zugangDav.getPort() == null) || zugangDav.getPort().trim().isEmpty()) {
+					result.add("Kein Port für den Datenverteiler-Zugang definiert!");
+				}
+				if ((zugangDav.getUserName() == null) || zugangDav.getUserName().trim().isEmpty()) {
+					result.add("Kein Nutzername für den Datenverteiler-Zugang definiert!");
+				}
+				if ((zugangDav.getPassWord() == null) || zugangDav.getPassWord().trim().isEmpty()) {
+					result.add("Kein Passwort für den Datenverteiler-Zugang definiert!");
+				}
 			}
-			if ((zugangDav.getPort() == null) || zugangDav.getPort().trim().isEmpty()) {
-				result.add("Kein Port für den Datenverteiler-Zugang definiert!");
-			}
-			if ((zugangDav.getUserName() == null) || zugangDav.getUserName().trim().isEmpty()) {
-				result.add("Kein Nutzername für den Datenverteiler-Zugang definiert!");
-			}
-			if ((zugangDav.getPassWord() == null) || zugangDav.getPassWord().trim().isEmpty()) {
-				result.add("Kein Passwort für den Datenverteiler-Zugang definiert!");
-			}
+		} catch (StartStoppException e) {
+			result.add(e.getLocalizedMessage());
 		}
 
+		try {
+			getResolvedRechner();
+		} catch (StartStoppException e) {
+			result.add(e.getLocalizedMessage());
+		}
+
+		try {
+			getResolvedZugangDav();
+		} catch (StartStoppException e) {
+			result.add(e.getLocalizedMessage());
+		}
+		
 		for (Inkarnation inkarnation : skript.getInkarnationen()) {
 			try {
 				OnlineInkarnation onlineInkarnation = new OnlineInkarnation(this, inkarnation);
