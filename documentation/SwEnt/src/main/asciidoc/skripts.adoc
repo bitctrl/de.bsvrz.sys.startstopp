@@ -303,7 +303,7 @@ die Inkarnation auf einem anderen Rechner befindet, wird zusätzlich der *Rechne
 
 Das Attribut "Warteart" definiert, wann die Bedingung als erfüllt gewertet wird:
 
-* *start:* die referenzierte Inkarnation hat den Zustand "GESTARTET" eingenommen
+* *beginn:* die referenzierte Inkarnation hat den Zustand "GESTARTET" eingenommen
 * *ende:* die referenzierte Inkarnation hat den Zustand "INITIALISIERT" eingenommen
 
 Mit dem Attribut kann optional eine Verzögerungszeit definiert werden, die noch gewartet wird, nachdem die
