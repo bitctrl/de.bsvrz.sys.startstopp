@@ -62,7 +62,7 @@ class MakroEditor extends StartStoppElementEditor<MakroDefinition> {
 		nameField.setPreferredSize(new TerminalSize(nameField.getText().length(), 1));
 		mainPanel.addComponent(nameField, GridLayout.createHorizontallyFilledLayoutData(1));
 
-		mainPanel.addComponent(new Label("Adresse:"));
+		mainPanel.addComponent(new Label("Wert:"));
 		TextBox wertField = new TextBox(""){
 			@Override
 			protected void afterLeaveFocus(FocusChangeDirection direction, Interactable nextInFocus) {
