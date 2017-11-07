@@ -198,30 +198,29 @@ public class SkriptManager {
 			LOGGER.fine(e.getLocalizedMessage());
 		}
 
+		UserManagementFileOffline offlineChecker = null;
 		try {
 			File userManagementFile = startStopp.getOptions().getUserManagementFile();
 			if (userManagementFile != null) {
-				UserManagementFileOffline offlineChecker = new UserManagementFileOffline(userManagementFile);
+				offlineChecker = new UserManagementFileOffline(userManagementFile);
 				if (offlineChecker.validateClientCredentials(veranlasser,
 						ClientCredentials.ofPassword(passwort.toCharArray()), -1)) {
 					if (!offlineChecker.isUserAdmin(veranlasser)) {
-						try {
-							offlineChecker.close();
-						} catch (IOException e) {
-							LOGGER.warning("Authentifizierung fehlgeschlagen: "+ e.getLocalizedMessage());
-						}
 						throw new StartStoppException("Der Nutzer \"" + veranlasser + "\" ist kein Administrator!");
-					}
-					try {
-						offlineChecker.close();
-					} catch (IOException e) {
-						LOGGER.warning("Authentifizierung fehlgeschlagen: "+ e.getLocalizedMessage());
 					}
 					return;
 				}
 			}
 		} catch (ParserConfigurationException | ConfigurationTaskException e) {
 			LOGGER.fine(e.getLocalizedMessage());
+		} finally {
+			if( offlineChecker != null) {
+				try {
+					offlineChecker.close();
+				} catch (IOException e) {
+					LOGGER.warning("Schließen der Benutzerkonfiguration fehlgeschlagen: "+ e.getLocalizedMessage());
+				}
+			}
 		}
 
 		File passwdFile = startStopp.getOptions().getPasswdFile();
