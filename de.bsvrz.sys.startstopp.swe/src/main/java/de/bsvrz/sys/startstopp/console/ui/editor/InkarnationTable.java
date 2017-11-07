@@ -27,9 +27,12 @@
 package de.bsvrz.sys.startstopp.console.ui.editor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import de.bsvrz.sys.startstopp.api.jsonschema.Global;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
+import de.bsvrz.sys.startstopp.api.jsonschema.KernSystem;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartArt;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartFehlerVerhalten;
 import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppSkript;
@@ -77,5 +80,21 @@ class InkarnationTable extends EditableTable<Inkarnation> {
 		JaNeinDialog dialog = new JaNeinDialog("Löschen",
 				"Soll die Inkarnation \"" + element.getInkarnationsName() + "\" wirklich gelöscht werden?");
 		return dialog.display();
+	}
+	
+	@Override
+	protected void additionalActionsAfterDelete(Inkarnation element) {
+		super.additionalActionsAfterDelete(element);
+		Global global = skript.getGlobal();
+		if( global != null) {
+			String name = element.getInkarnationsName();
+			Iterator<KernSystem> iterator = global.getKernsysteme().iterator();
+			while(iterator.hasNext()) {
+				KernSystem kernSystem = iterator.next();
+				if(name.equals(kernSystem.getInkarnationsName())) {
+					iterator.remove();
+				}
+			}
+		}
 	}
 }

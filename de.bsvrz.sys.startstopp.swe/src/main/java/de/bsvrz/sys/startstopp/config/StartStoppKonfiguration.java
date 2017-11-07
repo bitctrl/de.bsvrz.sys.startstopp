@@ -135,7 +135,7 @@ public final class StartStoppKonfiguration {
 				return new OnlineInkarnation(this, inkarnation);
 			}
 		}
-		throw new StartStoppException("Ein referenziertes Skript mit dem Name \"" + name + "\" ist nicht definiert");
+		throw new StartStoppException("Ein Inkarnation \"" + name + "\" ist nicht definiert");
 	}
 
 	private void checkStartRules(Inkarnation inkarnation) throws StartStoppException {
@@ -257,6 +257,14 @@ public final class StartStoppKonfiguration {
 			getResolvedZugangDav();
 		} catch (StartStoppException e) {
 			result.add(e.getLocalizedMessage());
+		}
+		
+		for( KernSystem kernSystem : getKernSysteme()) {
+			try {
+				getInkarnation(kernSystem.getInkarnationsName());
+			} catch (StartStoppException e) {
+				result.add("Kernsystem: " + e.getLocalizedMessage());
+			}
 		}
 		
 		for (Inkarnation inkarnation : skript.getInkarnationen()) {

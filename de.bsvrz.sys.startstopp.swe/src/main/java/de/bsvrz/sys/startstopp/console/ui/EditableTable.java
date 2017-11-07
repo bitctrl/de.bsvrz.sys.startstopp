@@ -115,9 +115,11 @@ public abstract class EditableTable<T> extends Table<T> {
 
 	void deleteElementAt(int selectedRow) {
 		if ((selectedRow >= 0) && (selectedRow < dataList.size())) {
-			if (checkDelete(dataList.get(selectedRow))) {
+			T element = dataList.get(selectedRow);
+			if (checkDelete(element)) {
 				removeElementAt(selectedRow);
 				setSelectedRow(Math.max(0, selectedRow - 1));
+				additionalActionsAfterDelete(element);
 			}
 		}
 	}
@@ -190,6 +192,10 @@ public abstract class EditableTable<T> extends Table<T> {
 	protected abstract T editElement(T oldElement);
 
 	protected abstract boolean checkDelete(T element);
+
+	protected void additionalActionsAfterDelete(T element) {
+		// Default-Implementierung, tut nichts
+	}
 
 	protected abstract List<String> getStringsFor(T element);
 
