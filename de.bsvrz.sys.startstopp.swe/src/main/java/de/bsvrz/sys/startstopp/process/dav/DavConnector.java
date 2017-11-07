@@ -123,7 +123,7 @@ public class DavConnector {
 				}
 
 			} catch (CommunicationError | ConnectionException | InconsistentLoginException | RuntimeException e) {
-				LOGGER.warning("Datenverteilerverbindung kann nicht hergestellt werden!", e);
+				LOGGER.warning("Datenverteilerverbindung kann nicht hergestellt werden: " + e.getLocalizedMessage());
 			} 
 		}
 	}

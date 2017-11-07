@@ -65,7 +65,7 @@ public class UsvHandler implements ClientReceiverInterface {
 	}
 
 	private void connectUsv() {
-		if( connection != null && usv != null && usv.getPid() != null) {
+		if( connection != null && connection.isLoggedIn() && usv != null && usv.getPid() != null) {
 			usvObject = connection.getDataModel().getObject(usv.getPid());
 			if( usvObject != null) {
 				
@@ -78,6 +78,8 @@ public class UsvHandler implements ClientReceiverInterface {
 					LOGGER.warning("Das Objekt mit der PID: " + usv.getPid() + " ist nicht vom Typ \"typ.usv\"");
 					usvObject = null;
 				}
+			} else {
+				LOGGER.warning("Das Objekt mit der PID: " + usv.getPid() + " konnte nicht abgerufen werden!");
 			}
 		}
 	}
