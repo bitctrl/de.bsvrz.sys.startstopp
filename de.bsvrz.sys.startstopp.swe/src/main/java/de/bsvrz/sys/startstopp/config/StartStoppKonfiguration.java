@@ -394,7 +394,7 @@ public final class StartStoppKonfiguration {
 				String key = part.substring(1, part.length() - 1);
 				String replacement = resolvedMakros.get(key);
 				if (replacement == null) {
-					throw new StartStoppException("Das Makro " + key + "ist nicht definiert!");
+					throw new StartStoppException("Das Makro \"" + key + "\" für den Rechner \"" + rechner.getName() + "\" ist nicht definiert!");
 				}
 				adresse = adresse.replaceAll(part, replacement);
 			}
@@ -407,7 +407,7 @@ public final class StartStoppKonfiguration {
 				String key = part.substring(1, part.length() - 1);
 				String replacement = resolvedMakros.get(key);
 				if (replacement == null) {
-					throw new StartStoppException("Das Makro " + key + "ist nicht definiert!");
+					throw new StartStoppException("Das Makro \"" + key + "\" für den Rechner \"" + rechner.getName() + "\" ist nicht definiert!");
 				}
 				port = port.replaceAll(part, replacement);
 			}
@@ -429,7 +429,7 @@ public final class StartStoppKonfiguration {
 		throw new StartStoppException("Ein Rechner mit dem Name \"" + rechnerName + "\" ist nicht definiert!");
 	}
 
-	public String makroResolvedString(String wert) throws StartStoppException {
+	public String makroResolvedString(String quelle, String wert) throws StartStoppException {
 
 		if (wert == null) {
 			return null;
@@ -445,7 +445,7 @@ public final class StartStoppKonfiguration {
 			String key = part.substring(1, part.length() - 1);
 			String replacement = resolvedMakros.get(key);
 			if (replacement == null) {
-				throw new StartStoppException("Das Makro " + key + "ist nicht definiert!");
+				throw new StartStoppException("Das Makro \"" + key + "\" für " + quelle + " ist nicht definiert!");
 			}
 			result = result.replaceAll(part, replacement);
 		}
@@ -456,10 +456,10 @@ public final class StartStoppKonfiguration {
 	public ZugangDav getResolvedZugangDav() throws StartStoppException {
 		ZugangDav zugangDav = getSkript().getGlobal().getZugangDav();
 		ZugangDav result = new ZugangDav();
-		result.setAdresse(makroResolvedString(zugangDav.getAdresse()));
-		result.setPassWord(makroResolvedString(zugangDav.getPassWord()));
-		result.setPort(makroResolvedString(zugangDav.getPort()));
-		result.setUserName(makroResolvedString(zugangDav.getUserName()));
+		result.setAdresse(makroResolvedString("Zugang-DAV", zugangDav.getAdresse()));
+		result.setPassWord(makroResolvedString("Zugang-DAV", zugangDav.getPassWord()));
+		result.setPort(makroResolvedString("Zugang-DAV", zugangDav.getPort()));
+		result.setUserName(makroResolvedString("Zugang-DAV", zugangDav.getUserName()));
 		return result;
 	}
 
@@ -473,7 +473,7 @@ public final class StartStoppKonfiguration {
 		bedingung.setVorgaenger(startBedingung.getVorgaenger());
 		bedingung.setWarteart(startBedingung.getWarteart());
 		bedingung.setRechner(startBedingung.getRechner());
-		bedingung.setWartezeit(makroResolvedString(startBedingung.getWartezeit()));
+		bedingung.setWartezeit(makroResolvedString("Startbedingung", startBedingung.getWartezeit()));
 		return bedingung;
 	}
 
@@ -498,7 +498,7 @@ public final class StartStoppKonfiguration {
 		StoppBedingung bedingung = new StoppBedingung();
 		bedingung.setNachfolger(stoppBedingung.getNachfolger());
 		bedingung.setRechner(stoppBedingung.getRechner());
-		bedingung.setWartezeit(makroResolvedString(stoppBedingung.getWartezeit()));
+		bedingung.setWartezeit(makroResolvedString("StoppBedingung", stoppBedingung.getWartezeit()));
 		return bedingung;
 	}
 
@@ -553,7 +553,7 @@ public final class StartStoppKonfiguration {
 			String key = part.substring(1, part.length() - 1);
 			String replacement = resolvedMakros.get(key);
 			if (replacement == null) {
-				throw new StartStoppException("Das Makro " + key + "ist nicht definiert!");
+				throw new StartStoppException("Das Makro \"" + key + "\" ist für die USV nicht definiert!");
 			}
 			pid = pid.replaceAll(part, replacement);
 		}

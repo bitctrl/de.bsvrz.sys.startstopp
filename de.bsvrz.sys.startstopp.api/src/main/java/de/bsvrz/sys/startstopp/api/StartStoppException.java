@@ -39,10 +39,16 @@ public class StartStoppException extends Exception {
 
 	public StartStoppException(Exception e) {
 		super(e);
+		if( e instanceof StartStoppException) {
+			addMessages(((StartStoppException) e).getMessages());
+		}
 	}
 
 	public StartStoppException(String string, Exception e) {
 		super(string, e);
+		if( e instanceof StartStoppException) {
+			addMessages(((StartStoppException) e).getMessages());
+		}
 	}
 
 	protected void addMessages(List<String> newMessages) {

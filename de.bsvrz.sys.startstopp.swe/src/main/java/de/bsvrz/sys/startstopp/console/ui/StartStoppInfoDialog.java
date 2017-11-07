@@ -46,7 +46,7 @@ public class StartStoppInfoDialog {
 		message.append(StartStoppConsole.getVersionInfo());
 		message.append("\n\n");
 		message.append("Client: ");
-		message.append(StartStoppConsole.getClient().getPort());
+		message.append(StartStoppConsole.getClient().getStartStoppHostName());
 		message.append(" Port: ");
 		message.append(StartStoppConsole.getClient().getPort());
 		

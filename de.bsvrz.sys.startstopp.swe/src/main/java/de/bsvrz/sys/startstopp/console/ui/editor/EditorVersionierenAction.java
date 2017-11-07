@@ -62,15 +62,7 @@ class EditorVersionierenAction implements Runnable {
 				window.close();
 			} catch (StartStoppException e) {
 
-				StringBuilder text = null;
-				if (e.getCause() instanceof StartStoppStatusException) {
-					text = new StringBuilder(e.getCause().getLocalizedMessage());
-					for (String msg : ((StartStoppException) e.getCause()).getMessages()) {
-						text.append('\n');
-						text.append(msg);
-					}
-				} else
-					text = new StringBuilder(e.getLocalizedMessage());
+				StringBuilder text = new StringBuilder(e.getLocalizedMessage());
 				for (String msg : e.getMessages()) {
 					text.append('\n');
 					text.append(msg);

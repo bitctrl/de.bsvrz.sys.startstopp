@@ -36,17 +36,17 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
+import de.bsvrz.sys.startstopp.process.os.OSTools;
 import de.muspellheim.events.Event;
 
 public class StartStopp {
 
-	private static final Debug LOGGER = Debug.getLogger();
-	private static StartStopp instance = new StartStopp();
+	private static Debug logger = Debug.getLogger();
+	private static StartStopp instance = new StartStopp(); 
 
 	public final Event<StartStoppStatus.Status> onStartStoppStatusChanged = new Event<>();
 
 	private Object stopLock = new Object();
-
 
 	private StartStoppOptions options;
 
@@ -55,7 +55,7 @@ public class StartStopp {
 	private ProzessManager processManager;
 
 	private StartStoppStatus.Status status = Status.INITIALIZED;
-	
+
 	private ApiServer apiServer;
 	private String inkarnationsPrefix;
 
@@ -66,16 +66,54 @@ public class StartStopp {
 	public static void main(String[] args) throws Exception {
 		try {
 
+			Debug.init("StartStopp", new ArgumentList(args));
+			logger = Debug.getLogger();
+
+			try {
+				if (OSTools.isWindows() && isMinimalWindowsVersion()) {
+					if ("64".equals(System.getProperty("sun.arch.data.model"))) {
+						System.load(System.getProperty("user.dir") + "/dll/softkill64.dll");
+					} else {
+						System.load(System.getProperty("user.dir") + "/dll/softkill.dll");
+					}
+				}
+			} catch (Throwable e) {
+				logger.warning("Spezialbehandlung für Taskkill unter Windows konnte nicht initialisiert werden!", e);
+			}
 
 			instance.init(args);
 			instance.start();
 
+			
 		} catch (Exception e) {
-			LOGGER.error("StartStopp abgebrochen: " +  e.getLocalizedMessage());
-			System.err.println("StartStopp abgebrochen: " +  e.getLocalizedMessage());
+			logger.error("StartStopp abgebrochen: " + e.getLocalizedMessage());
+			System.err.println("StartStopp abgebrochen: " + e.getLocalizedMessage());
 			e.printStackTrace();
 			System.exit(-1);
 		}
+	}
+
+	private static boolean isMinimalWindowsVersion() {
+		String property = System.getProperty("os.version");
+		try {
+			if( property != null) {
+				String[] parts = property.split("\\.");
+				if( parts.length > 1) {
+					int mainVersion = Integer.parseInt(parts[0]);
+					if( mainVersion == 6) {
+						if( Integer.parseInt(parts[1]) >= 2) {
+							return true;
+						}
+					} else if (mainVersion > 6) {
+						return true;
+					}
+				}
+			}
+		} catch (NumberFormatException e) {
+			logger.warning("Windowsversion kann nicht interpretiert werden: " + property);
+		}
+		logger.warning("Minimale Windowsversion nicht gegeben: " + property);
+		return false;
 	}
 
 	public String getInkarnationsPrefix() {
@@ -89,7 +127,7 @@ public class StartStopp {
 				hostName = InetAddress.getLocalHost().getHostName();
 				builder.append(hostName);
 			} catch (UnknownHostException e) {
-				LOGGER.warning("Lokaler Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
+				logger.warning("Lokaler Hostname kann nicht bestimmt werden: " + e.getLocalizedMessage());
 				builder.append("unknown_host");
 			}
 			builder.append('_');
@@ -113,8 +151,6 @@ public class StartStopp {
 
 	private void init(String... args) throws Exception {
 
-		Debug.init("StartStopp", new ArgumentList(args));
-
 		options = new StartStoppOptions(args);
 		skriptManager = new SkriptManager();
 		processManager = new ProzessManager();
@@ -133,9 +169,8 @@ public class StartStopp {
 		setStatus(status, false);
 	}
 
-
 	public void setStatus(StartStoppStatus.Status newStatus, boolean force) {
-		
+
 		if ((this.status != newStatus) || force) {
 			this.status = newStatus;
 			onStartStoppStatusChanged.send(newStatus);
@@ -144,14 +179,14 @@ public class StartStopp {
 			stopLock.notifyAll();
 		}
 	}
-	
+
 	public void waitForStopp() {
 		while (getStatus() == Status.STOPPING) {
 			synchronized (stopLock) {
 				try {
 					stopLock.wait(1000);
 				} catch (InterruptedException e) {
-					LOGGER.fine(e.getLocalizedMessage());
+					logger.fine(e.getLocalizedMessage());
 				}
 			}
 		}

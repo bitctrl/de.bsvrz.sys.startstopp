@@ -49,9 +49,9 @@ public class OnlineInkarnation {
 
 		inkarnation = new Inkarnation();
 		
-		inkarnation.setApplikation(skript.makroResolvedString(quelle.getApplikation()));
+		inkarnation.setApplikation(skript.makroResolvedString(inkarnation.getInkarnationsName(), quelle.getApplikation()));
 		for (String aufrufParameter : quelle.getAufrufParameter()) {
-			inkarnation.getAufrufParameter().add(skript.makroResolvedString(aufrufParameter));
+			inkarnation.getAufrufParameter().add(skript.makroResolvedString(inkarnation.getInkarnationsName(), aufrufParameter));
 		}
 		inkarnation.setInkarnationsName(quelle.getInkarnationsName());
 		inkarnation.setInkarnationsTyp(quelle.getInkarnationsTyp());
