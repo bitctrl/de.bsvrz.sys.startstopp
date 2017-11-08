@@ -81,27 +81,15 @@ class InkarnationDetailWindow extends BasicWindow {
 		panel.addComponent(new Label(getInitialisierungStr(inkarnation)));
 
 		StartBedingung startBedingung = inkarnation.getStartBedingung();
-		if( startBedingung == null) {
-			startBedingung = new StartBedingung(Collections.singletonList("Applikation1"), Warteart.BEGINN, "HeinzRudolf", "345");
-		}
 		showStartBedingungen(panel, startBedingung);
 
 		StartFehlerVerhalten startFehlerVerhalten = inkarnation.getStartFehlerVerhalten();
-		if( startFehlerVerhalten == null) {
-			startFehlerVerhalten = new StartFehlerVerhalten(StartFehlerVerhalten.Option.IGNORIEREN, "56");
-		}
 		showStartFehlerVerhalten(panel, startFehlerVerhalten);
 
 		StoppBedingung stoppBedingung = inkarnation.getStoppBedingung();
-		if( stoppBedingung == null) {
-			stoppBedingung = new StoppBedingung(Collections.singletonList("Parametrierung"),"WILLI", "23" );
-		}
 		showStoppBedingung(panel, stoppBedingung);
 
 		StoppFehlerVerhalten stoppFehlerVerhalten = inkarnation.getStoppFehlerVerhalten();
-		if( stoppFehlerVerhalten == null) {
-			stoppFehlerVerhalten = new StoppFehlerVerhalten(Option.IGNORIEREN, "45");
-		}
 		showStoppFehlerVerhalten(panel, stoppFehlerVerhalten);
 
 		Button applikationButton = new StartStoppButton("Applikation", () -> showApplikationPanel());
