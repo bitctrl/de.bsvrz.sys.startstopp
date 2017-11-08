@@ -395,11 +395,12 @@ public final class OnlineApplikation {
 	public void starteOSApplikation() throws StartStoppException {
 
 		prozessAusgaben.clear();
-		
-		if( applikation.getInkarnation().getInkarnationsTyp() == InkarnationsTyp.WRAPPED) {
+
+		if (applikation.getInkarnation().getInkarnationsTyp() == InkarnationsTyp.WRAPPED) {
 			process = new OSApplikation(getName(), "java");
 			try {
-				process.setProgrammArgumente(DavWrapper.getWrapperArguments(prozessManager, applikation.getInkarnation().getApplikation(), getApplikationsArgumente()));
+				process.setProgrammArgumente(DavWrapper.getWrapperArguments(prozessManager,
+						applikation.getInkarnation().getApplikation(), getApplikationsArgumente()));
 			} catch (StartStoppException e) {
 				process = null;
 				throw new StartStoppException("Wrapper-Applikationen konnte nicht initialisiert werden!", e);
@@ -496,7 +497,7 @@ public final class OnlineApplikation {
 		applikation.setStartMeldung(message);
 		Applikation.Status oldStatus = applikation.getStatus();
 		if (oldStatus != status) {
-			if( status != Applikation.Status.STOPPENWARTEN) {
+			if (status != Applikation.Status.STOPPENWARTEN) {
 				stopInProgress = false;
 			}
 			applikation.setStatus(status);
@@ -527,7 +528,8 @@ public final class OnlineApplikation {
 	public void reinit(Inkarnation newInkarnation) throws StartStoppException {
 		applikation.setInkarnation(newInkarnation);
 		startFehlerCounter = 0;
-		if (startStopp.getStatus() == Status.RUNNING) {
+		if (applikation.getInkarnation().getStartArt().getOption() != StartArt.Option.MANUELL
+				&& startStopp.getStatus() == Status.RUNNING) {
 			prozessManager.restarteApplikation(getName());
 		}
 	}
