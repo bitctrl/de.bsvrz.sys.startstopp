@@ -117,7 +117,10 @@ public class SkriptManager {
 				LOGGER.warning("Die Skript-Datei \"" + src.getAbsolutePath() + "\" wurde nicht gefunden!");
 			}
 			if (skript == null) {
-				File localXmlFile = new File(startStopp.getOptions().getSkriptDir(), "startstopp.xml");
+				File localXmlFile = new File(startStopp.getOptions().getSkriptDir(), "startStopp.xml");
+				if( !localXmlFile.exists()) {
+					localXmlFile = new File(startStopp.getOptions().getSkriptDir(), "startstopp.xml");
+				}
 				skript = new StartStoppXMLParser().getSkriptFromFile(localXmlFile);
 				
 				mapper.configure(SerializationFeature.INDENT_OUTPUT, true);

@@ -37,9 +37,13 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.DTDHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import de.bsvrz.sys.funclib.debug.Debug;
 import de.bsvrz.sys.startstopp.api.StartStoppException;
 import de.bsvrz.sys.startstopp.api.jsonschema.Global;
 import de.bsvrz.sys.startstopp.api.jsonschema.Inkarnation;
@@ -91,6 +95,7 @@ public class StartStoppXMLParser {
 			return Tags.tagIsUndefined;
 		}
 	}
+	private static final Debug LOGGER = Debug.getLogger();
 
 	private Set<String> suppressInkarnationsName = new LinkedHashSet<>();
 
@@ -98,11 +103,33 @@ public class StartStoppXMLParser {
 
 		private StartStoppSkript destination;
 		private Inkarnation currentInkarnation;
+		private InputStream myDtdRes;
 
 		StartStoppParserHandler(StartStoppSkript destination) {
 			this.destination = destination;
 		}
 
+		@Override
+		public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+			if (systemId.contains("startStopp.dtd")) {
+				myDtdRes = getClass().getResourceAsStream("startStopp.dtd");
+				return new InputSource(myDtdRes);
+			}
+			return super.resolveEntity(publicId, systemId);
+		}
+
+		@Override
+		public void endDocument() throws SAXException {
+			if( myDtdRes != null) {
+				try {
+					myDtdRes.close();
+				} catch (IOException e) {
+					LOGGER.warning(e.getLocalizedMessage());
+				}
+			}
+			super.endDocument();
+		}
+		
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 				throws SAXException {
@@ -185,7 +212,7 @@ public class StartStoppXMLParser {
 				if (currentInkarnation.getStartFehlerVerhalten() == null) {
 					currentInkarnation.setStartFehlerVerhalten(new StartFehlerVerhalten());
 				}
-				
+
 				String startFehlerOptionValue = attributes.getValue("option");
 				if (startFehlerOptionValue != null) {
 					currentInkarnation.getStartFehlerVerhalten()
@@ -361,7 +388,6 @@ public class StartStoppXMLParser {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
-
 			saxParser.parse(file, new StartStoppParserHandler(konfiguration));
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			throw new StartStoppException(e);
@@ -379,7 +405,6 @@ public class StartStoppXMLParser {
 		try {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			SAXParser saxParser = factory.newSAXParser();
-
 			saxParser.parse(stream, new StartStoppParserHandler(konfiguration));
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			throw new StartStoppException(e);
@@ -390,7 +415,6 @@ public class StartStoppXMLParser {
 
 		return konfiguration;
 	}
-
 
 	private void suppressInkarnationName(StartStoppSkript konfiguration) {
 		for (String item : suppressInkarnationsName) {
