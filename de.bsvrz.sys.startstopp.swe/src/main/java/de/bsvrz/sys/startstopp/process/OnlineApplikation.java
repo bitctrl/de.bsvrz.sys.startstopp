@@ -237,7 +237,7 @@ public final class OnlineApplikation {
 			if (builder.length() > 0) {
 				builder.append(' ');
 			}
-			builder.append(argument);
+			builder.append(argument.trim());
 		}
 
 		if (applikation.getInkarnation().getMitInkarnationsName()) {
