@@ -28,7 +28,7 @@ Folgendes Verhalten wird beobachtet:
 
 Applikation05 beendet sich nicht, wenn die Datenverteilerverbindung geschlossen wird.
 
-* Wenn Applikatio05 sich im Zustand INITIALISIERT befindet, wird sie über die Bedienoberfläche beendet. 
+* Wenn Applikation05 sich im Zustand INITIALISIERT befindet, wird sie über die Bedienoberfläche beendet. 
 * Die Applikation verbleibt über einen längeren Zeitraum im Zustand STOPPEN_WARTEN, weil die Rückmeldung vom Betriebssystem nicht empfangen wurde
 * Die Applikation wird erneut über die Bedienoberfläche beendet (ohne Datenverteilerschnittstelle, da die Datenverteilerverbindung beim ersten Versuch bereits geschlossen wurde).
 
