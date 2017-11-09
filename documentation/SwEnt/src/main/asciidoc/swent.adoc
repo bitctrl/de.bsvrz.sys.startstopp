@@ -25,3 +25,5 @@ include::davinterface.adoc[]
 include::api.adoc[]
 
 include::terminalui.adoc[]
+
+include::rahmenwerkplugin.adoc[]
