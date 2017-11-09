@@ -59,7 +59,9 @@ public class SystemService {
 
 		Response.ResponseBuilder responseBuilder = Response.status(Response.Status.OK).header("Content-Type",
 				"application/json");
-		responseBuilder.entity(new StartStoppStatus(startStopp.getStatus(), startStopp.getOptions().isBetriebsMeldungVersenden()));
+		responseBuilder.entity(
+				new StartStoppStatus(startStopp.getStatus(), startStopp.getOptions().isBetriebsMeldungVersenden(),
+						startStopp.getProcessManager().getDavConnector().getConnectionStatus()));
 		return responseBuilder.build();
 	}
 
@@ -67,7 +69,7 @@ public class SystemService {
 	@Path("exit")
 	public Response responseStartStoppExit() {
 		Response response = Response.accepted().build();
-		CompletableFuture.runAsync(()->System.exit(0));
+		CompletableFuture.runAsync(() -> System.exit(0));
 		return response;
 	}
 
@@ -95,7 +97,6 @@ public class SystemService {
 		return response;
 	}
 
-	
 	@POST
 	@Path("start")
 	public Response responseStartStoppStart() {

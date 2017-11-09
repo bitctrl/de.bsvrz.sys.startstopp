@@ -20,10 +20,15 @@
     "betriebsmeldungen": {
       "type": "boolean",
       "default": true
+    },
+    "davconnection": {
+      "type": "boolean",
+      "default": false
     }
   },
   "required": [
     "status",
-    "betriebsmeldungen"
+    "betriebsmeldungen",
+    "davconnection"
   ]
 }

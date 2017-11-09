@@ -89,18 +89,20 @@ public class StartStoppOnlineWindow extends BasicWindow {
 
 	public static class OnlineDisplay extends Panel {
 
+		private Label davConnectionLabel = new Label("DAV: OFF");
 		private Label betriebsMeldungsStatusLabel = new Label("BM: OFF");
 		private OnlineStatusLabel verbindungsStatus;
 		private Label letzteAbfrage;
 
 		public OnlineDisplay() {
-			setLayoutManager(new GridLayout(4));
+			setLayoutManager(new GridLayout(5));
 			addComponent(new Label("Startstopp - Online"), GridLayout.createHorizontallyFilledLayoutData(1));
 			letzteAbfrage = new Label("00.00.0000 00:00:00");
 			addComponent(letzteAbfrage);
 			verbindungsStatus = new OnlineStatusLabel();
 			addComponent(verbindungsStatus);
 			addComponent(betriebsMeldungsStatusLabel);
+			addComponent(davConnectionLabel);
 		}
 
 		public void setStatus(StartStoppStatus startStoppStatus) {
@@ -110,6 +112,7 @@ public class StartStoppOnlineWindow extends BasicWindow {
 				verbindungsStatus.setBackgroundColor(TextColor.ANSI.RED);
 				verbindungsStatus.setText("XXXXX");
 				betriebsMeldungsStatusLabel.setText("BM: ???");
+				davConnectionLabel.setText("DAV: ???");
 			} else {
 				verbindungsStatus.setForegroundColor(getForegroundColor(startStoppStatus));
 				verbindungsStatus.setBackgroundColor(getBackgroundColor(startStoppStatus));
@@ -118,6 +121,11 @@ public class StartStoppOnlineWindow extends BasicWindow {
 					betriebsMeldungsStatusLabel.setText("BM: EIN");
 				} else {
 					betriebsMeldungsStatusLabel.setText("BM: AUS");
+				}
+				if( startStoppStatus.getDavconnection()) {
+					davConnectionLabel.setText("DAV:  ON");
+				} else {
+					davConnectionLabel.setText("DAV: OFF");
 				}
 			}
 		}

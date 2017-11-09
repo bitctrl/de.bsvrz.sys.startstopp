@@ -308,4 +308,8 @@ public class DavConnector {
 	public boolean getAppStatus(OnlineApplikation applikation) {
 		return appStatusHandler.getAppStatus(applikation);
 	}
+
+	public boolean getConnectionStatus() {
+		return 	connection != null && connection.isConnected() && connection.isLoggedIn();
+	}
 }
