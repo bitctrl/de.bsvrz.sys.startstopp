@@ -4,7 +4,7 @@ Die  SWE  ist  ein  Serverprozess.  Der  Anwender  nutzt  die  SWE  nur  indirek
 
 In der SWE integriert ist eine Terminal-Bedienoberfläche, mit der die wesentlichen Funktionen der StartStopp-Server-SWE bereitgestellt werden.
 
-Der Start der Bedienoberfläche erfolgt per Shell-Kommando (Skript) wie im Betriebshandbuch beschrieben.
+Der Start der Bedienoberfläche erfolgt per Shell-Komando (Skript) wie im Betriebshandbuch beschrieben.
 
 Die Konfiguration der StartStopp-SWE wird in einer JSON-Datei abgelegt.
 Eine bestehende XML-Konfigurationen der Vorversion der StartStopp-SWE werden beim Start eingelesen und konvertiert, wenn keine _startstopp.json_-Datei vorliegt.
@@ -77,6 +77,9 @@ Stellen der Konfiguration oder zur Bildung komplexerer Makrodefinitionen eingese
 ----
 include::${sweResources}/json/makroDefinition.json[]
 ----
+
+Ein Makro kann für Textwerte anderer Strukturen verwendet werden, indem es in der Form %<makroname>% in den Texteingefügt wird.
+Die Werte von Makros können auf diese Weise auch as anderen Makros gebildet werden, indem sie in der beschriebenen Form verschachtelt werden.
 
 Die Makros werden von StartStopp expandiert und in dieser Form an die Prozessverwaltung weitergereicht.
 Potentielle zyklische Makrodefinitionen werden vor der Versionierung eines StartStopp-Skripts geprüft
@@ -529,9 +532,14 @@ Der Dialog enthält die bekannten Standard-Bedienelemente für die Eingabe der g
 
 Die Liste der Makros wird mit der Taste "m" erreicht.
 
+Die Makros können über das Format %<makroname>% in anderen Textfeldern verwendet, werden.
+Da der Wert eines Makros auch ein Text ist, besteht die Möglichkeit Makros in andere einzubetten und zu verschachteln.
+
+Die Bedienoberfläche bietet für geeignete Texteingabefelder die Möglichkeit, eines der definierten Makros in das Textfeld einzufügen. Dazu wird mit der Tastenkombination Alt-M die Auswahlliste für Makros geöffnet und das gewünschte Makro ausgewählt.
+
 image::editor_makroliste.png[Liste der Makrodefinitionen]
 
-Mit den oben genannten Tasten für Tabellen und Listen können neue Aufrufparameter hinzugefügt oder bestehende entfernt werden. Außerdem besteht hier die Möglichkeit die Reihenfolge der Parameter zu verändern.
+Mit den oben genannten Tasten für Tabellen und Listen können neue Aufrufparameter hinzugefügt oder bestehende entfernt werden. Außerdem besteht hier die Möglichkeit, die Reihenfolge der Parameter zu verändern.
 
 Mit der ENTER-Taste wird ein Eingabedialog für die jeweils ausgewählte Makrodefinition geöffnet.
 
@@ -570,3 +578,15 @@ Der Editor für die Zugangsdaten zum verwendeten Datenverteilersystem wird mit d
 image::editor_zugang_dav.png[Zugang-DAV-Editor]
 
 In den Textfeldern kann mit Hilfe der Tastenkombination "Alt-M" eine Makrodefinition eingefügt werden.
+
+=== Rahmenwerk-Bedienoberfläche
+
+Der im Online-Modus der Terminal-Bedienoberfläche verfügbaren Informationen können auch in einem Rahmenwerk-Plugin dargestellt werden.
+
+image::rw_online.png[Rahmenwerk Online-Anzeige]
+
+Darüber hinaus bietet das Plugin die Möglichkeit, die Abhängigkeiten der Inkarnationen einer StartStopp-Konfiguration bezüglich Startbedingungen und Stoppbedingungen darzustellen.
+
+image::rw_dependency.png[Rahmenwerk Startbedingungen]
+
+Eine ausführlichere Beschreibung des Plugins ist in der Onlinehilfe innerhalb des Rahmenwerks verfügbar.
