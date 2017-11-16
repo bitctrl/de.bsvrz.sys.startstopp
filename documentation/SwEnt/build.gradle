@@ -38,7 +38,6 @@ task docx (
 ) {
     workingDir 'build/docs/docbook'
     executable = "pandoc"
-    new File('build/docs/docx/').mkdirs()
     args = ['-r','docbook',
             '-t','docx',
             '-o','../docx/swent.docx',
