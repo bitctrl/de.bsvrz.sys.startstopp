@@ -1,0 +1,48 @@
+=== Prüffall 9: Bedienoberfläche
+
+==== Prüfobjekt
+
+Start/Stopp verfügt über eine textbasierte Bedienoberfläche über die es umfassend bedient werden kann.
+
+Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt5, Sys-StSt-7 bis Sys-StSt-12, Sys-StSt17 bis Sys-StSt-35, Sys-StSt-39, Sys-StSt-40, Sys-StSt-43, Sys-StSt-47 bis Sys-StSt-49,  Sys-StSt-55, Sys-StSt-57 bis Sys-StSt-66 und Sys-StSt-69 teilweise oder vollständig ab.
+
+==== Prüfvoraussetzungen
+
+Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
+
+Für den Testfall wird auf Rechner1 die Skriptdateien "startStopp09.json" verwendet. 
+Die Datei "startStopp09.json" wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt. 
+
+Auf Rechner 1 werden die SWE StartStopp sowie die Bedienoberfläche per Shell-Skript gestartet.
+
+==== Durchführung
+
+===== Allgemeine Funktionen
+
+Nach dem Start der SWE wird das StartStopp-Skript geladen und muss zunächst noch versioniert werden (siehe Prüffall 1).
+
+Nach der Versionierung werden die Inkarnationen gestartet. 
+
+* Die Bedienoberfläche wird auf eine farbige Darstellung umgeschaltet. 
+* Es werden die Detailinformationen von einzelnen Applikation angezeigt. 
+* Eine vorbereitete Anwendung (Applikation05) wird manuell gestartet, danach wieder gestoppt.
+
+===== Bearbeiten von Inkarnationen
+
+Folgende Operationen werden vorgenommen. Nach jedem Schritt wird die Konfiguration versioniert.
+
+* Es wird eine neue Applikation hinzugefügt. 
+* Die zuvor gestoppte Applikation wird aus der Konfiguration entfernt. 
+* Es wird eine neue Makrodefinition hinzugefügt. 
+* Es wird eine neue Applikation zum Kernsystem hinzugefügt, die die neue Makrodefinition verwendet. 
+* Ein vorhandener Aufrufparameter der Applikation und einer der JVM wird geändert. 
+* Die Konfiguration wird gespeichert und das Gesamtsystem neu gestartet, so dass alle laufenden Anwendungen beendet werden. 
+* Eine Makrodefinition, ein Aufrufparameter einer Applikation und ein Aufrufparameter der JVM werden entfernt.
+
+==== Erwartete Ergebnisse
+
+* Die farbige Darstellung ist möglich und die Statusänderungen der Applikationen werden korrekt visualisiert.
+* Die Detailinformationen zu den Applikationen werden korrekt angezeigt.
+* Das Hinzufügen und Entfernen von Applikationen, Makrodefinitionen und Aufrufparametern im laufenden Betrieb ist möglich.
+* Bei länger dauernden Vorgängen signalisiert die Oberfläche ihre Funktionsfähigkeit
+* Die Oberfläche zeigt an, dass die Konfiguration nicht versionierte Änderungen enthält.

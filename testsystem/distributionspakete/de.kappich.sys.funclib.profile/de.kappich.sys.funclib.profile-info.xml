@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package name="de.kappich.sys.funclib.profile">
+  <license name="GPL" />
+  <release name="Kernsoftware 3.9.2" />
+  <version number="3.9.2-201705261115" />
+  <revision number="866ec7f8528df5f1c8965c1d289385ec3737472a" />
+  <compile time="26.05.2017 11:27:22" />
+  <depends-on-compiled packages="" />
+  <depends-on-source packages="" />
+  <depends-on-lib jars="" />
+  <jvm version="1.8" />
+</package>

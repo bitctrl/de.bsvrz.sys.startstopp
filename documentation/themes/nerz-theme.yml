@@ -1,0 +1,62 @@
+font:
+  catalog:
+    OpenSans:
+      normal: OpenSans-Regular.ttf
+      italic: OpenSans-Italic.ttf
+      bold: OpenSans-Bold.ttf
+      bold_italic: OpenSans-BoldItalic.ttf
+    
+title_page:
+  align: left
+
+title_page_logo:
+  image: image:images/bitctrl_logo.png[]
+
+page:
+  layout: portrait
+  margin: [3cm, 2cm, 4cm, 2cm]
+  margin_inner: 30mm
+  margin_outer: 30mm
+  size: A4
+base:
+  font_family: OpenSans
+  font_color: #000000
+  line_height_length: 17
+  line_height: $base_line_height_length / $base_font_size
+vertical_rhythm: $base_line_height_length
+heading:
+  font_color: #000000
+  font_size: 17
+  font_style: bold
+  line_height: 1.2
+  margin_bottom: $vertical_rhythm
+link:
+  font_color: #009900
+outline_list:
+  indent: $base_font_size * 1.5
+header:
+  height: 0.75in
+  line_height: 1
+  recto_content:
+    center: |
+     '{document-title}'
+  verso_content:
+    center: '{document-title}'
+footer:
+  height: 0.75in
+  line_height: 1
+  recto_content:
+    right: '{chapter-title} | *{page-number}*'
+  verso_content:
+    left: '*{page-number}* | {chapter-title}'
+image:
+  align: center
+caption:
+  align: center
+  font_color: #000000
+  font_size: 10
+sidebar:
+  align: center
+  padding: [0, 2cm, 0, 2cm]
+  font_size: 10
+  background_color: #fefefe

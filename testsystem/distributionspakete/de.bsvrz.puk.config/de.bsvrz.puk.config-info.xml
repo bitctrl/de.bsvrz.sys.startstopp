@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package name="de.bsvrz.puk.config">
+  <license name="GPL" />
+  <release name="Kernsoftware 3.9.2" />
+  <version number="3.9.2-201705261115" />
+  <revision number="866ec7f8528df5f1c8965c1d289385ec3737472a" />
+  <compile time="26.05.2017 11:24:42" />
+  <depends-on-compiled packages="de.bsvrz.dav.daf, de.bsvrz.sys.funclib.dataSerializer, de.bsvrz.sys.funclib.communicationStreams, de.bsvrz.sys.funclib.commandLineArgs, de.bsvrz.sys.funclib.hexdump, de.bsvrz.sys.funclib.debug, de.bsvrz.sys.funclib.xmlSupport, de.bsvrz.sys.funclib.filelock, de.bsvrz.sys.funclib.crypt, de.bsvrz.sys.funclib.concurrent, de.bsvrz.sys.funclib.application" />
+  <depends-on-source packages="" />
+  <depends-on-lib jars="" />
+  <jvm version="1.8" />
+</package>

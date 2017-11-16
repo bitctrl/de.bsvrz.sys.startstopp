@@ -1,0 +1,14 @@
+subprojects {
+    repositories {
+        mavenCentral()
+        jcenter() 
+        maven {
+            url 'http://dl.bintray.com/bitctrl/maven'
+        }
+    }
+
+    group = 'de.bsvrz.sys'
+    apply plugin: "de.bsvrz.gradle.nerzswe"
+
+    compileJava.options.encoding = 'UTF-8'
+}

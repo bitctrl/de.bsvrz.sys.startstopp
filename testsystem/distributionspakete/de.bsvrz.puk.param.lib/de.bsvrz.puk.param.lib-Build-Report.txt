@@ -1,0 +1,109 @@
+*************************************************************************************
+* Segment 8 Parametrierung und Konfiguration (PuK), SWE Parametrierung - Bibliothek *
+*************************************************************************************
+
+Version: 2.3.2
+
+Übersicht
+=========
+
+Die Bibliothek enthält die öffentlichen Funktionen für den Zugriff auf die Parameter-
+verwaltung.
+
+Versionsgeschichte
+==================
+
+Version 2.3.2
+=============
+- Encoding-Probleme korrigiert.
+
+Version 2.3.1
+=============
+- Runtime-Jar-File hatte nicht den korrekten Klassenpfad, so dass das Online-Backup-
+  Programm nicht ausgeführt werden konnte.
+
+Version 2.3.0
+=============
+- Umstellung auf Java 8
+- Umstellung der Quellen auf UTF-8
+
+Version 2.2.5
+=============
+
+Assoziative Referenzen auf Systemobjekte werden über die PID aufgelöst. 
+Da ansonsten potentiell veraltete Objekte referenziert werden.
+
+Version 2.2.4
+=============
+
+Der Datensatz zur Parametrierung der Parametrierung wird repariert, wenn dort Referenzen auf 
+nicht mehr existierende Systemobjekte vorliegen.
+Die entsprechenden Datenspezifikationen bzw. Parametersätze werden bereinigt bzw. entfernt, wenn eine
+zuvor nicht leere Liste durch die Bereinigung leer werden würde.
+
+Version 2.2.3
+=============
+
+Java-Version 7 eingeführt
+
+Version 2.2.2
+=============
+
+Parameterdaten enthalten zusätzliche Informationen zum Änderungszeitpunkt, der von der
+Parametrierung ab Version 1.10 ausgeliefert wird.
+
+Version 2.2.1
+=============
+
+- Parameter#toString() führte zu einer NPE, wenn keine Daten vorhanden waren.
+
+Version 2.2.0
+=============
+
+- Parameter haben einen zugeordneten Zeitstempel
+
+Version 2.1.3
+=============
+
+  - Setter für Zeitstempel wird korrekte Exception
+
+Version 2.1.2
+=============
+
+  - Anpassung wegen Änderung des Buildprozesses von Los E.
+
+Version 1.0.0
+=============
+
+  - Erste Auslieferung
+  
+
+Disclaimer
+==========
+
+Segment 8 Parametrierung und Konfiguration (PuK), SWE Parametrierung
+Copyright (C) 2007 BitCtrl Systems GmbH 
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 51
+Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+
+Kontakt
+=======
+
+BitCtrl Systems GmbH
+Weißenfelser Straße 67
+04229 Leipzig
+Phone: +49 341-490670
+mailto: info@bitctrl.de

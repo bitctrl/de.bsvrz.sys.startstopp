@@ -1,0 +1,166 @@
+***********************************************************************************
+*  Segment 11 Verwaltung (Vew), SWE 11.4 Betriebsmeldungsverwaltung               *
+***********************************************************************************
+
+Version: 1.5.6 (20170619)
+
+
+Übersicht
+=========
+
+Die SW-Einheit Betriebsmeldungsverwaltung ist für die Verwaltung der automatisch und
+manuell erzeugten Meldungen zuständig. Die Betriebsmeldungsverwaltung prüft die
+automatisch erstellten Meldungen (im folgenden Informationsmeldungen genannt) nach
+parametrierbaren Kriterien und führt entsprechende Aktionen durch.
+Neben dieser Behandlung der Informationsmeldungen ist die SWE für die Verwaltung von
+Meldungen zuständig, die interaktiven Charakter haben. Bei diesem Meldungstyp werden
+zusätzlich Abläufe für die Lebenszeit der Meldung verwaltet.
+
+
+Versionsgeschichte
+==================
+
+Stand 19.06.2017 Version 1.5.6
+Feature lt. Beschreibung F165 umsetzt. Es können jetzt beim Kriterium Meldungklasse die Operationen =,>,<,>= und <= angewendet werden.
+Die entsprechenden Werte können sowohl als Zahl, als auch textuell angegeben werden. Folgende Zahlenzuordnungen wurden bei den Meldungklassen getroffen:  
+Information -> 3
+Warnung     -> 2
+Fehler 		-> 1
+Fatal		-> 0
+
+Stand 09.06.2015 Version 1.5.5
+Bugfix für SWE BMVEW verwendet unbekannten Aspekt (Bug 98).
+Bugfix für ConcurrentModificationException beim Setzen des Zustandes auf erledigt (Bug 99).
+Diese trat auf wenn zahlreiche Meldungen wiedervorlgelegt und erledigt wurden.
+
+Stand 31.07.2013 Version 1.5.4
+Die Kriterien wurden um den Wert "Meldungstext" erweitert
+
+Stand 23.09.2011 Version 1.5.3
+Anpassung bzgl. automatischer Erledigung von Gutmeldungen.
+Auf Wunsch des AG wurde die automatische Erledigung von Gutmeldungen entfernt.
+Die Überführung der Meldungen in den Zustand erledigt ist nun einzig durch den Anwender möglich.
+ 
+
+Stand 28.01.2011 Version 1.5.2
+Bugfixes für
+Bug 51: Fehlermeldung 'Erzeugen eines neuen dynamischen Objekts...'
+Workaround: Auf Wunsch der Firma BitCtrl wurde die Länge der Pid bei der Erzeugung eines 
+dynamischen Meldungsobjektes zur impliziten Steuerung der Zuordnung des Meldungsobjektes
+zur Applikation auf 255 Zeichen erhöht.
+
+Stand 14.09.2010 Version 1.5.1
+Bugfixes für
+Bug 41: Keine Fehlerbehandlung bei fehlenden Parameterdatensätze für Meldungen beim Start
+Bug 42: Stillstand der Applikation bei missglückten Erzeugen von Meldungen
+Bug 44: Meldungs-ID in VersandAuftraegen werden nicht richtig gesetzt
+
+
+Stand 21.05.2010 Version 1.5.0
+Bugfixes für
+Bug 28: Meldungszuordnung unklar
+Bug 29: Problem bei Benutzermeldung hinzufügen 
+
+
+Stand 22.04.2010 Version 1.4.2
+Typfehler im Klassenpfad des Manifest für runtime-jar korrigiert
+
+Stand 12.11.2009 Version 1.4.1
+Erste Version mit neuer Paketstruktur
+
+Stand 06.03.2009 Version 1.4 erstellt mit Kernsoftware Version 3.7
+Der Aufrufparameter "-konfigurationsObjekt=" wurde in "-betriebsMeldungsVerwaltung="
+geändert werden. Dieser kann nun zusätzlich optional angegeben werden. Wird dieser
+Parameter nicht angegeben, wird die AOE verwendet. Bei Angabe des Parameters wird
+geprüft, ob das angegebene Objekt vorhanden und vom typ.betriebsMeldungsVerwaltung
+ist.
+Ist dies nicht der Fall wird eine Fehlermeldung erzeugt und die Programmausführung
+wird
+abgebrochen.
+
+Stand 19.02.2009 Version 1.3 erstellt mit Kernsoftware Version 3.7
+JUnit-Tests hinzugefuegt
+
+Stand 22.12.2008 Version 1.2 erstellt mit Kernsoftware Version 3.7
+Update Informationsanteil beim Erstellen des Meldungsobjektes
+Publikation aller zugehörigen Meldungsreferenzen bei Änderung der Meldungsgruppe
+
+
+Start der SWE
+=============
+
+Aufbau eines Startskripts
+(.bat-Datei im Verzeichnis skripte-dosshell, Unix-Skript im Verzeichnis skripte-bash
+ist analog)
+
+rem Startskript Anfang
+@echo off
+
+rem in einstellungen werden die globalen DaV-Einstellungen gemacht
+rem insbesondere werden die Umgebungsvariablen %dav1% und %java% gesetzt
+call einstellungen.bat
+
+%java% -jar ../distributionspakete/de.bsvrz.vew.bmvew/de.bsvrz.vew.bmvew-runtime.jar ^
+ %dav1% ^
+ <SWE-spezifischer Parameter 1>=... ^
+ <SWE-spezifischer Parameter 2>=... ^
+ ...
+rem Startskript Ende 
+
+SWE-spezifische Parameter
+
+-betriebsMeldungsVerwaltung=<konfigurationsobjekt>
+Es muss die Pid eines vom typ.betriebs-MeldungsVerwaltung abgeleitetes
+Konfigurationsobjekt übergeben werden.
+
+-konfigurationsbreich=<konfigurationsBereich>
+Es muss die Pid eines Konfigurationsbereichs übergeben werden.
+
+-versandobjektkex=<konfigurationsobjekt>
+Es muss die Pid eines vom typ.versandModulExterneMeldungen abgeleitetes
+Konfigurationsobjekt übergeben werden.
+
+-loeschoffset=<loeschOffset>
+Zeit in Sekunden bis das Dynamische Meldungsobjekt endgültig gelöscht wird.
+
+-groesseinfoanteil=<groesseInfoAnteil>
+Die Größe des Ringspeichers für den Informationsanteil
+
+-infokanaleingeschraenkterbetrieb=<InfoKanalEingeschraenkterBetrieb>
+Der Informationskanal der verwendet wird, wenn es keine Menge Meldungen gibt.
+
+Hinweis
+Die Bibliothek de.bsvrz.sys.funclib.dambach.jar muss als Distributionspaket 
+installiert sein
+
+Disclaimer
+==========
+
+Segment 11 Verwaltung (Vew), SWE 11.4 Betriebsmeldungsverwaltung
+Copyright (C) 2010 Swarco Traffic Systems GmbH
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+
+Kontakt
+=======
+
+Swarco Traffic Systems GmbH
+Adolf-Dambach-Straße
+D-76571 Gaggenau
+T. +49-7225-64-10
+F. +49-7225-64-300
+mailto: office.sts@swarco.de
+

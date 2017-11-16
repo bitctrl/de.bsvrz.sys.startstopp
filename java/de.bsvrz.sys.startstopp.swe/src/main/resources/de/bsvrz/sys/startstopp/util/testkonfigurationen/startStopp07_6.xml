@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE konfiguration PUBLIC "-//startstopp//DTD Dokument//DE" "startStopp.dtd">
+
+<!-- Konfigurationsdatei SWE Start/Stopp: Prueffall 7, Rechner 1 -->
+<konfiguration>
+  <startStopp>
+    <global>
+      <!-- (Absoluter) Pfad zum Stammverzeichnis des Projekts. -->
+      <makrodefinition name="root" wert=".." />
+      <!-- Pfad zu den SWEs -->
+      <makrodefinition name="dist" wert="%root%/distributionspakete" />
+      <!-- Befehl zum Aufruf des Java-Interpreters. -->
+      <makrodefinition name="java" wert="java" />
+      <!-- Alle verfügbaren Rechner -->
+      <!-- Makros für Authentifizierung einer Applikation. -->
+      <!-- Benutzername unter dem alle Applikationen ausgeführt werden -->
+      <makrodefinition name="authentifizierung.benutzer" wert="vrzanwendung" />
+      <makrodefinition name="authentifizierung.passwortdatei" wert="%root%/skripte-bash/passwd" />
+      <makrodefinition name="authentifizierung.default" wert="-benutzer=%authentifizierung.benutzer% -authentifizierung=%authentifizierung.passwortdatei%" />
+      <makrodefinition name="authentifizierung.falsch" wert="-benutzer=falscherBenutzer -authentifizierung=%authentifizierung.passwortdatei%" />
+      <!-- Makros für Standardvorgabe des Datenverteilerloggers für die Applikationen. -->
+      <makrodefinition name="debug.stderr" wert="NONE" />
+      <makrodefinition name="debug.file" wert="CONFIG" />
+      <makrodefinition name="debug.filePath" wert="-debugFilePath=%root%" />
+      <makrodefinition name="debug.default" wert="-debugLevelStdErrText=%debug.stderr% -debugLevelFileText=%debug.file%" />
+      <!-- Makros für Datenverteilerverbindung einer Applikation. -->
+      <makrodefinition name="dav1.host" wert="localhost" />
+      <makrodefinition name="dav1.appPort" wert="8083" />
+      <makrodefinition name="dav1.davPort" wert="8082" />
+      <makrodefinition name="dav1.einstellungen" wert="-davAppPort=%dav1.appPort% -davDavPort=%dav1.davPort% %debug.filePath%" />
+      <makrodefinition name="dav1.mitAuthentifizierung" wert="-datenverteiler=%dav1.host%:%dav1.appPort% %authentifizierung.default% %debug.filePath%" />
+      <makrodefinition name="dav1.ohneAuthentifizierung" wert="-datenverteiler=%dav1.host%:%dav1.appPort% %debug.filePath%" />
+      <makrodefinition name="dav1.mitFalscherAuthentifizierung" wert="-datenverteiler=%dav1.host%:%dav1.appPort% %authentifizierung.falsch% %debug.filePath%" />
+      <!-- Die PID der AOE des Projekts -->
+      <makrodefinition name="aoe.pid" wert="kv.aoe.test" />
+      <!-- Aufzählung der Applikationen die das Kernsystem bilden.
+		Beim Beenden wird nur die erste Applikation der Liste beendet. -->
+      <kernsystem inkarnationsname="Datenverteiler" />
+      <kernsystem inkarnationsname="Konfiguration" />
+      <kernsystem inkarnationsname="Parametrierung" mitInkarnationsname="ja" />
+      <!-- Zugangsdaten mit denen sich StartStopp selbst am Datenverteiler anmeldet. -->
+      <zugangdav adresse="%dav1.host%" port="%dav1.appPort%" username="SystestStSt" passwort="systeststst" />
+      <!-- Name und IP-Adresse von anderen Rechnern, auf denen ebenfalls StartStopp läuft (optional).
+		Der Name ist freiwählbar und wird weiter unten für Bedingungen verwendet. Für jeden
+		Rechner muss ein Objekt (typ.rechner) in der Konfiguration vorhanden sein. Der
+		Übersichtlichkeit wegen empfielt es sich, in der Konfiguration und hier den selben Namen
+		(Hostname) zu verwenden. -->
+      <!-- Spezifikation der verschiedenen Logfiles zum Mitschnitt von stdout und stderr. -->
+      <protokolldatei name="Datenverteiler.stdout" nameDatei="%root%/logs/Datenverteiler.stdout.log" groesse="1" />
+      <protokolldatei name="Datenverteiler.stderr" nameDatei="%root%/logs/Datenverteiler.stderr.log" groesse="1" />
+      <protokolldatei name="Konfiguration.stdout" nameDatei="%root%/logs/Konfiguration.stdout.log" groesse="1" />
+      <protokolldatei name="Konfiguration.stderr" nameDatei="%root%/logs/Konfiguration.stderr.log" groesse="1" />
+      <protokolldatei name="Parametrierung.stdout" nameDatei="%root%/logs/Parametrierung.stdout.log" groesse="1" />
+      <protokolldatei name="Parametrierung.stderr" nameDatei="%root%/logs/Parametrierung.stderr.log" groesse="1" />
+      <protokolldatei name="Applikation01.stdout" nameDatei="%root%/logs/Applikation01.stdout.log" groesse="1" />
+      <protokolldatei name="Applikation01.stderr" nameDatei="%root%/logs/Applikation01.stderr.log" groesse="1" />
+      <protokolldatei name="Applikation02.stdout" nameDatei="%root%/logs/Applikation02.stdout.log" groesse="1" />
+      <protokolldatei name="Applikation02.stderr" nameDatei="%root%/logs/Applikation02.stderr.log" groesse="1" />
+      <protokolldatei name="Applikation03.stdout" nameDatei="%root%/logs/Applikation03.stdout.log" groesse="1" />
+      <protokolldatei name="Applikation03.stderr" nameDatei="%root%/logs/Applikation03.stderr.log" groesse="1" />
+      <protokolldatei name="Applikation04.stdout" nameDatei="%root%/logs/Applikation04.stdout.log" groesse="1" />
+      <protokolldatei name="Applikation04.stderr" nameDatei="%root%/logs/Applikation04.stderr.log" groesse="1" />
+      <protokolldatei name="Applikation05.stdout" nameDatei="%root%/logs/Applikation05.stdout.log" groesse="1" />
+      <protokolldatei name="Applikation05.stderr" nameDatei="%root%/logs/Applikation05.stderr.log" groesse="1" />
+      <protokolldatei name="Applikation06.stdout" nameDatei="%root%/logs/Applikation06.stdout.log" groesse="1" />
+      <protokolldatei name="Applikation06.stderr" nameDatei="%root%/logs/Applikation06.stderr.log" groesse="1" />
+    </global>
+    <applikationen>
+		<!-- Kernsystem -->
+      <inkarnation name="Datenverteiler">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx4G" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-cp %dist%/de.bsvrz.dav.dav/de.bsvrz.dav.dav-runtime.jar de.bsvrz.dav.dav.main.Transmitter" />
+        <aufrufparameter wert="%dav1.einstellungen%" />
+        <aufrufparameter wert="%debug.default%" />
+        <aufrufparameter wert="-benutzer=davnutzer" />
+        <aufrufparameter wert="-konfigurationsBenutzer=konfigurationnutzer" />
+        <aufrufparameter wert="-parametrierungsBenutzer=parametrierungnutzer" />
+        <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
+        <!-- Die ID des Systemobjekts dieses Datenverteilers -->
+        <aufrufparameter wert="-datenverteilerId=111111111111111111" />
+        <!-- Steuert ob Benutzerrechte ausgewertet und angewandt werden sollen -->
+        <aufrufparameter wert="-rechtePruefung=neu" />
+        <!-- Verzögerungswert für Verbindung mit anderen Datenverteilern -->
+        <aufrufparameter wert="-verzögerungFürAndereDatenverteiler=600s" />
+        <startart option="automatisch" neustart="nein" intervall="" />
+        <standardAusgabe dateiname="Datenverteiler.stdout" />
+        <standardFehlerAusgabe dateiname="Datenverteiler.stderr" />
+        <startFehlerverhalten option="abbruch" wiederholungen="0" />
+        <stoppFehlerverhalten option="abbruch" wiederholungen="0" />
+      </inkarnation>
+      <inkarnation name="Konfiguration">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx4g" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-cp %dist%/de.bsvrz.puk.config/de.bsvrz.puk.config-runtime.jar de.bsvrz.puk.config.main.ConfigurationApp" />
+        <aufrufparameter wert="%dav1.ohneAuthentifizierung%" />
+        <!-- <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" /> -->
+        <aufrufparameter wert="%debug.default%" />
+        <!-- Der Benutzer mit dem die Konfiguration gestartet wird -->
+        <aufrufparameter wert="-benutzer=konfigurationnutzer" />
+        <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
+        <!-- Pfad zu der Verwaltungsdatendatei der Konfiguration -->
+        <aufrufparameter wert="-verwaltung=%root%/konfiguration/verwaltungsdaten.xml" />
+        <!-- Pfad zu der Benutzerverwaltungsdaten der Konfiguration -->
+        <aufrufparameter wert="-benutzerverwaltung=%root%/konfiguration/benutzerverwaltung.xml" />
+        <startart option="automatisch" neustart="nein" intervall="" />
+        <standardAusgabe dateiname="Konfiguration.stdout" />
+        <standardFehlerAusgabe dateiname="Konfiguration.stderr" />
+        <startFehlerverhalten option="abbruch" wiederholungen="0" />
+        <stoppFehlerverhalten option="abbruch" wiederholungen="0" />
+      </inkarnation>
+      <inkarnation name="Parametrierung">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx20g" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-jar %dist%/de.bsvrz.puk.param/de.bsvrz.puk.param-runtime.jar" />
+        <aufrufparameter wert="%dav1.ohneAuthentifizierung%" />
+        <aufrufparameter wert="%debug.default%" />
+        <!-- <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" /> -->
+        <aufrufparameter wert="-benutzer=parametrierungnutzer" />
+        <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
+        <!-- Die Klasse, die zum Speichern der Parameter verwendet wird.
+				Zur Verfügung stehen:
+				- de.bsvrz.puk.param.param.DerbyPersistenz (verwendet eine Datenbank)
+				- de.bsvrz.puk.param.param.FilePersistenz (dateibasiert nach Objekt-ID sortiert)
+				- de.bsvrz.puk.param.param.FilePersistenzPid (dateibasiert nach Objekt-PID sortiert)
+				- jede andere Klasse die de.bsvrz.puk.param.param.Persistenz implementiert
+		-->
+        <aufrufparameter wert="-persistenzModul=de.bsvrz.puk.param.param.DerbyPersistenz" />
+        <!-- Das Verzeichnis, in dem die Parameter gesichert werden -->
+        <aufrufparameter wert="-persistenz=%root%/parameter" />
+        <!-- Das Objekt, welches die Parametrierung repräsentiert, wenn nicht angegeben wird die AOE verwendet -->
+        <!-- <aufrufparameter wert=" -parametrierung=" /> -->
+        <!-- Maximale Anzahl der Datensätze, die permanent im RAM gehalten werden, 
+			weitere werden bei Bedarf aus der Persistenz nachgeladen. -->
+        <aufrufparameter wert="-cacheGroesse=200000" />
+        <!-- Wenn "ja", dann werden zusätzlich die Defaultparameter aus der Parameterattributgruppe mit
+			dem Aspekt asp.parameterDefault gelesen. Mit "nein" werden Defaultparameter nur aus der
+			Attributgruppe atg.defaultParameterdatensätze verwendet.
+			Nützlicher Workaround für dynamische Objekte, für die sonst keine Defaultparameter angegeben
+			werden können. -->
+        <aufrufparameter wert="-oldDefault=nein" />
+        <startart option="automatisch" neustart="nein" intervall="" />
+        <standardAusgabe dateiname="Parametrierung.stdout" />
+        <standardFehlerAusgabe dateiname="Parametrierung.stderr" />
+        <startFehlerverhalten option="abbruch" wiederholungen="0" />
+        <stoppFehlerverhalten option="abbruch" wiederholungen="0" />
+      </inkarnation>
+		<!-- Restsystem -->
+      <inkarnation name="Applikation01">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx512m" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application01" />
+        <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
+        <!-- <aufrufparameter wert="%debug.default%" /> -->
+        <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
+        <startart option="automatisch" neustart="nein" intervall="" />
+        <startbedingung vorgaenger="Parametrierung" warteart="ende" wartezeit="60" />
+        <standardAusgabe dateiname="Applikation01.stdout" />
+        <standardFehlerAusgabe dateiname="Applikation01.stderr" />
+        <startFehlerverhalten option="abbruch" wiederholungen="1" />
+        <stoppFehlerverhalten option="stopp" wiederholungen="2" />
+      </inkarnation>
+      <inkarnation name="Applikation02">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx512m" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application02" />
+        <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
+        <!-- <aufrufparameter wert="%debug.default%" /> -->
+        <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
+        <startart option="automatisch" neustart="nein" intervall="" />
+        <standardAusgabe dateiname="Applikation02.stdout" />
+        <standardFehlerAusgabe dateiname="Applikation02.stderr" />
+        <startFehlerverhalten option="abbruch" wiederholungen="1" />
+        <stoppFehlerverhalten option="stopp" wiederholungen="2" />
+      </inkarnation>
+      <inkarnation name="Applikation03">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx512m" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application03" />
+        <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
+        <!-- <aufrufparameter wert="%debug.default%" /> -->
+        <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
+        <startart option="automatisch" neustart="nein" intervall="" />
+        <standardAusgabe dateiname="Applikation03.stdout" />
+        <standardFehlerAusgabe dateiname="Applikation03.stderr" />
+        <startFehlerverhalten option="ignorieren" wiederholungen="3" />
+        <stoppFehlerverhalten option="stopp" wiederholungen="1" />
+      </inkarnation>
+      <inkarnation name="Applikation04">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx512m" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04" />
+        <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
+        <!-- <aufrufparameter wert="%debug.default%" /> -->
+        <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
+        <startart option="automatisch" neustart="nein" intervall="" />
+        <standardAusgabe dateiname="Applikation04.stdout" />
+        <standardFehlerAusgabe dateiname="Applikation04.stderr" />
+        <startFehlerverhalten option="ignorieren" wiederholungen="3" />
+        <stoppFehlerverhalten option="ignorieren" wiederholungen="3" />
+      </inkarnation>
+      <inkarnation name="Applikation05">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx512" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application05" />
+        <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
+        <!-- <aufrufparameter wert="%debug.default%" /> -->
+        <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
+        <startart option="manuell" neustart="nein" intervall="" />
+        <standardAusgabe dateiname="Applikation05.stdout" />
+        <standardFehlerAusgabe dateiname="Applikation05.stderr" />
+        <startFehlerverhalten option="abbruch" wiederholungen="0" />
+        <stoppFehlerverhalten option="stopp" wiederholungen="0" />
+      </inkarnation>
+      <inkarnation name="Applikation06">
+        <applikation name="%java%" />
+        <!-- Heap Space -->
+        <aufrufparameter wert="-Xmx512m" />
+        <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
+        <aufrufparameter wert="-jar %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04" />
+        <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
+        <!-- <aufrufparameter wert="%debug.default%" /> -->
+        <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
+        <standardAusgabe dateiname="Applikation06.stdout" />
+        <standardFehlerAusgabe dateiname="Applikation06.stderr" />
+      </inkarnation>
+    </applikationen>
+  </startStopp>
+</konfiguration>
+
