@@ -16,4 +16,6 @@ build
 history/
 effective.pom
 .DS_Store
+.project
+.settings
 
