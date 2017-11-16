@@ -10,9 +10,9 @@ Das Projekt ist in Unterprojekte aufgeteilt:
 
 - *de.bsvrz.sys.startstopp.swe:* enthält die eigentliche SWE StartStopp
 - *de.bsvrz.sys.stst.test:* enthält die Dummy-Applikationen gemaäß Testspezifikation
+- *de.bsvrz.sys.startstopp.api:* enthält die API für den Zugriff auf StartStopp
 - *documentation:* enthält Dokumentationen zur SWE im Asciidoc-Format
     - *Afo:* die angepassten Anforderungen
     - *SwEnt:* der Software-Entwurf
-
-Der letzte Stand vom NERZ ist im Legacy-Branch *legacy/dambach_1.17* hinterlegt.
-
+    - *PrProz:* die Prüfprozedur
+    - *BetrInf:* die Betriebsinformationen
