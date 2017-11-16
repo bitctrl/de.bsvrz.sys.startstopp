@@ -10,7 +10,7 @@ v1.0, 2017-07-17
 :source-highlighter: coderay
 :chapter-label:
 :toc-title: Inhaltsverzeichnis
-:sweResources: ../../../../../../../de.bsvrz.sys.startstopp.api/src/main/resources
+:sweResources: ../../../../../../../java/de.bsvrz.sys.startstopp.api/src/main/resources
 
 include::overview.adoc[]
 
