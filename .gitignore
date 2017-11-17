@@ -18,4 +18,5 @@ effective.pom
 .DS_Store
 .project
 .settings
+.classpath
 
