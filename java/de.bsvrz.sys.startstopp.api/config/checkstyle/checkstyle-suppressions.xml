@@ -5,8 +5,7 @@
 "http://checkstyle.sourceforge.net/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-	<suppress files="[/\\]target[/\\]" checks=".*" />
-	<suppress files="[/\\]build[/\\]" checks=".*" />
+	<suppress files="[/\\]generated-sources[/\\]" checks=".*" />
 	<suppress checks="ClassDataAbstractionCoupling" files="StartStoppConsole.java" />
     <suppress checks="ClassDataAbstractionCoupling" files="StartBedingungEditor.java" />
     <suppress checks="ClassDataAbstractionCoupling" files="StoppBedingungEditor.java" />
