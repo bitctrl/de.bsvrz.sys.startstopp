@@ -1,0 +1,5 @@
+*.log.txt
+*.configOld
+*.lock
+*.lck
+/debug/

@@ -1,0 +1,14 @@
+== Rahmenwerk-Plugin
+
+=== Allgemeine Eigenschaften
+
+Es wird ein Plugin für das Rahmenwerk bereitgestellt, mit dem der aktuelle Status einer StartStopp-Applikation angezeigt werden kann.
+
+image::rw_online.png[Rahmenwerk Online-Anzeige]
+
+Darüber hinaus bietet das Plugin die Möglichkeit, die Abhängigkeiten der Inkarnationen einer StartStopp-Konfiguration bezüglich Startbedingungen und Stoppbedingungen darzustellen.
+
+image::rw_dependency.png[Rahmenwerk Startbedingungen]
+
+Das Rahmenwerk-Plugin steht für das Rahmenwerk ab Version 3 zur Verfügung.
+

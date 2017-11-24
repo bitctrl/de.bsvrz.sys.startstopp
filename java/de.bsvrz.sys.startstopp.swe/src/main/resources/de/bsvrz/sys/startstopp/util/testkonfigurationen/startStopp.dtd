@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- Wurzelelement -->
+<!ELEMENT konfiguration (startStopp)>
+
+<!-- Definiert die Version der aktuellen StartStopp-Konfiguration -->
+<!ELEMENT startStopp (global, applikationen?)>
+<!ATTLIST startStopp
+	Versionsnummer CDATA #REQUIRED
+	ErstelltAm CDATA #REQUIRED
+	ErstelltDurch CDATA #REQUIRED
+	Aenderungsgrund CDATA #REQUIRED
+>
+
+<!-- Globaler Abschnitt, der für _alle_ Applikationen der StartStopp-Konfiguration gilt -->
+<!ELEMENT global (makrodefinition*, kernsystem*, zugangdav, usv?,  rechner*, protokolldatei*)>
+
+<!-- Definition des Kernsystems, das vor allen weiteren Anwendungen gestartet sein muss. 
+	Definition über Nennung der Applikationen in Startreihenfolge.
+	Optional: wartezeit: die Zeit, die vor dem Start der Applikation gewartet wird, in Sekunden.
+	Optional: mitInkarnationsname: soll der Parameter -inkarnationsname beim Aufruf der Inkarnation 
+              hinzugefügt werden oder nicht (nicht alle Prozesse des Kernsystems kommen mit diesem 
+              Parameter zurecht; Default: nein.
+-->
+<!ELEMENT kernsystem EMPTY>
+<!ATTLIST kernsystem
+	inkarnationsname CDATA #REQUIRED
+	wartezeit CDATA #IMPLIED 
+	mitInkarnationsname ( ja | nein ) "nein" #IMPLIED 
+>
+
+<!-- Definition einer USV mit PID -->
+<!ELEMENT usv EMPTY>
+<!ATTLIST usv
+	pid CDATA #REQUIRED
+>
+
+<!-- Definition eines Textmakros, das unter Angabe des definierten Namens im
+	applikationsspezifischen Teil referenziert werden kann. -->
+<!ELEMENT makrodefinition EMPTY>
+<!ATTLIST makrodefinition
+	name CDATA #REQUIRED
+	wert CDATA #REQUIRED
+>
+
+<!-- Definition der Benennung der Rechner im System -->
+<!ELEMENT rechner EMPTY>
+<!ATTLIST rechner
+	name CDATA #REQUIRED
+	tcpAdresse CDATA #REQUIRED
+>
+
+<!-- Definition des Datenverteiler-Zugangs
+	Die Attribute adresse und port entsprechen der Adresse und dem
+	Port, unter denen der DaV erreichbar ist. Für die Verbindung sind
+	die Attribute username und passwort zwingend notwendig.
+	Wird auch benutzt, wenn der DaV lokal (IP=127.0.0.1) läuft. 
+-->
+<!ELEMENT zugangdav EMPTY>
+<!ATTLIST zugangdav
+	adresse CDATA #REQUIRED
+	port CDATA #REQUIRED
+	username CDATA #REQUIRED
+	passwort CDATA #REQUIRED
+>
+
+<!-- Definition einer Protokolldatei
+	name: Der Name, unter dem die Protokolldatei in der Konfiguration verwendet wird
+	nameDatei: Der Dateiname der Protokolldatei (inkl. optionaler Pfadangabe)
+	groesse: Maximale Größe der Protokolldatei in in MByte -->
+<!ELEMENT protokolldatei EMPTY>
+<!ATTLIST protokolldatei
+	name CDATA #REQUIRED
+    nameDatei CDATA #REQUIRED
+	groesse CDATA #REQUIRED
+>
+<!-- Definition des applikationsspezifischen Abschnitts -->
+<!ELEMENT applikationen (inkarnation*)>
+
+<!ELEMENT inkarnation (applikation, aufrufparameter*, startart?,
+					   startbedingung*, stoppbedingung*, standardAusgabe?, standardFehlerAusgabe?,
+					   startFehlerverhalten?, stoppFehlerverhalten?)>
+<!-- Name dieser Inkarnation, der an anderen Stellen verwendet werden kann -->
+<!ATTLIST inkarnation
+	name CDATA #REQUIRED
+>
+
+<!-- Name der aufzurufenden Applikation (inkl. optionaler Pfadangabe) -->
+<!ELEMENT applikation EMPTY>
+<!ATTLIST applikation
+	name CDATA #REQUIRED
+>
+
+<!-- Zeichenkette mit Aufrufparameter(n) der Applikation -->
+<!ELEMENT aufrufparameter EMPTY>
+<!ATTLIST aufrufparameter
+	wert CDATA #REQUIRED
+>
+
+<!-- Startart der Inkarnation
+	option: kann die Werte "automatisch" (Standard), "manuell", "intervallrelativ" oder "intervallabsolut" haben.
+	neustart: kann die Werte "ja" (Standard) oder "nein" haben.
+	intervall: Bei den beiden Intervall-Optionen wird der Startzeitpunkt der Applikation relativ zum Start von
+	StartStopp oder als absolute Zeitangabe in der cron-Syntax angegeben.
+-->
+<!ELEMENT startart EMPTY>
+<!ATTLIST startart
+	option ( automatisch | manuell | intervallrelativ | intervallabsolut ) "automatisch"
+	neustart ( ja | nein ) "ja"
+	intervall CDATA #IMPLIED
+>
+
+<!-- Festlegung der Startbedingungen
+	vorgaenger: Inkarnationen, die bereits gestartet sein müssen.
+	warteart: kann die Werte "beginn" oder "ende" haben.
+		Bei "beginn" muss nur der Start der Inkarnation abgewartet werden,
+		bei "ende" die Fertigmeldung als "initialisiert".
+	Optional: rechner: Der definierte Rechner, auf dem die Inkarnation, auf die gewartet wird, läuft.
+	Optional: wartezeit: Zusätzliche Wartezeit, bevor die Inkarnation gestartet werden darf.
+-->
+<!ELEMENT startbedingung EMPTY>
+<!ATTLIST startbedingung
+	vorgaenger CDATA #REQUIRED
+	warteart ( beginn | ende ) "beginn"
+	rechner CDATA #IMPLIED
+	wartezeit CDATA #IMPLIED
+>
+
+<!-- Festlegen der Stoppbedingungen
+	nachfolger: Inkarnationen, die bereits beendet sein müssen.
+	Optional: rechner: Der definierte Rechner, auf dem die Inkarnation, auf die gewartet wird, läuft.
+	Optional: wartezeit: Zusätzliche Wartezeit, bevor die Inkarnation gestartet werden darf.
+-->
+<!ELEMENT stoppbedingung EMPTY>
+<!ATTLIST stoppbedingung
+	nachfolger CDATA #REQUIRED
+	rechner CDATA #IMPLIED
+	wartezeit CDATA #IMPLIED
+>
+
+<!-- Festlegung der Standardausgabe.
+	dateiname: Der Dateiname der Protokolldatei.
+-->
+<!ELEMENT standardAusgabe EMPTY>
+<!ATTLIST standardAusgabe
+	dateiname CDATA #IMPLIED
+>
+
+<!-- Festlegung der Standardfehlerausgabe.
+	dateiname: Der Dateiname der Protokolldatei.
+-->
+<!ELEMENT standardFehlerAusgabe EMPTY>
+<!ATTLIST standardFehlerAusgabe
+	dateiname CDATA #IMPLIED
+>
+
+<!-- Startverhalten bei Fehlern.
+	option: Kann die Werte "beenden", "abbruch" oder "ignorieren" (Standard) haben:
+		Bei "beenden" werden alle bereits gestarteten Applikationen beendet,
+		bei "abbruch" laufen sie weiter.
+	wiederholungen: wie oft der Startvorgang ggf. wiederholt wird (Standard ist 0),
+		bevor die Aktion aus "option" durchgeführt wird.
+-->
+<!ELEMENT startFehlerverhalten EMPTY>
+<!ATTLIST startFehlerverhalten
+	option ( beenden | abbruch | ignorieren ) "ignorieren"
+	wiederholungen CDATA #IMPLIED
+>
+
+<!-- Stoppverhalten bei Fehlern.
+	option: Kann die Werte "stopp", "abbruch" oder "ignorieren" (Standard) haben:
+		Bei "stopp" wird der Stopp-Vorgang abgebrochen,
+		bei "abbruch" wird der Stopp der betreffenden Applikation erzwungen.
+	wiederholungen: wie oft der Stoppvorgang ggf. wiederholt wird (Standard ist 0),
+		bevor die Aktion aus "option" durchgeführt wird.
+-->
+<!ELEMENT stoppFehlerverhalten EMPTY>
+<!ATTLIST stoppFehlerverhalten
+	option ( stopp | abbruch | ignorieren ) "ignorieren"
+	wiederholungen CDATA #IMPLIED
+>

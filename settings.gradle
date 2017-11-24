@@ -1,0 +1,11 @@
+include ':java:de.bsvrz.sys.startstopp.api'
+include ':java:de.bsvrz.sys.startstopp.swe'
+include ':java:de.bsvrz.sys.stst.test'
+
+
+include ':documentation:Afo'
+include ':documentation:SwEnt'
+include ':documentation:PrProz'
+include ':documentation:BetrInf'
+
+// project(':java:de.bsvrz.sys.startstopp.swe').name = "de.bsvrz.sys.startstopp"

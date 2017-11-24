@@ -1,0 +1,24 @@
+archivesBaseName = 'de.bsvrz.sys.startstopp'
+description = 'StartStopp-SWE'
+
+dependencies {
+
+    compile "commons-lang:commons-lang:2.6"
+    compile "com.googlecode.lanterna:lanterna:3.0.0"
+	compile "net.java.dev.jna:jna:4.4.0"
+	compile "net.java.dev.jna:jna-platform:4.4.0"
+    compile "org.json:json:20170516"
+    compile project(":java:de.bsvrz.sys.startstopp.api")
+    compile "com.nimbusds:srp6a:2.0.0"
+    compile "de.bsvrz.sys:de.bsvrz.sys.funclib.application:${kernsoftware_version}"
+    compile "de.bsvrz.puk:de.bsvrz.puk.config:${kernsoftware_version}"
+    compile "com.profesorfalken:WMI4Java:1.6"
+    compile "org.jprocesses:jProcesses:1.6.3"
+    compile "de.muspellheim:events:1.1.0"
+    testCompile "junit:junit:4.12"       
+}
+
+nerzswe {
+    mainClassName = 'de.bsvrz.sys.startstopp.startstopp.StartStopp'      
+}
+

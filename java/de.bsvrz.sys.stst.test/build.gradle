@@ -1,0 +1,8 @@
+description = 'Test-Applikation für StartStopp-PrSpez'
+
+dependencies {
+    compile "de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}"
+    compile "de.bsvrz.sys:de.bsvrz.sys.funclib.application:${kernsoftware_version}"
+}
+
+

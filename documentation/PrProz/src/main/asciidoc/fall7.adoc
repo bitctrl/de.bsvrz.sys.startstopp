@@ -1,0 +1,37 @@
+=== Prüffall 7: Verhalten bei Fehlern
+
+==== Prüfobjekt
+
+Für das Verhalten beim Auftreten von Fehlern beim Starten oder Stoppen von Applikationen sind verschiedene Optionen möglich.
+
+Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt5, Sys-StSt7 bis Sys-StSt9, Sys-StSt-11, Sys-StSt-12, Sys-StSt-14, Sys-StSt-15, Sys-StSt17 bis Sys-StSt21, Sys-StSt23 bis Sys-StSt-27, Sys-StSt-29, Sys-StSt-31 bis Sys-StSt-35, Sys-StSt-39, Sys-StSt-40, Sys-StSt-51, Sys-StSt-52, Sys-StSt-55, Sys-StSt-57, Sys-StSt-60, Sys-StSt-66 und Sys-StSt-67 teilweise oder vollständig ab.
+
+==== Prüfvoraussetzungen
+
+Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
+
+Für den Testfall werden auf Rechner1 nacheinander die Skriptdateien "startStopp07_1.json" bis "startStopp07_7.json" verwendet. 
+
+==== Durchführung
+
+Für alle Skriptdateien werden die folgenden Operationen ausgeführt:
+
+* Die Datei wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt.
+* Auf Rechner 1 werden die SWE StartStopp sowie die Bedienoberfläche per Shell-Skript gestartet.
+* Nach dem Start der SWE wird das StartStopp-Skript versioniert (siehe Prüffall 1).
+* Das Startverhalten wird beobachtet.
+* Die StartStopp-Konfiguration wird mit dem System-Menü-Kommando "System anhalten" gestoppt.
+* Das Stoppverhalten wird beobachtet.
+* StartStopp wird beendet.
+
+==== Erwartete Ergebnisse
+
+Für die einzelnen Fälle
+
+* 7.1: Der Startvorgang wird abgebrochen, bereits gestartete Applikationen und Start/Stopp selbst werden beendet.
+* 7.2: Der Startvorgang wird abgebrochen, bereits gestartete Applikationen laufen weiter.
+* 7.3: Der Startvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften laufen.
+* 7.4: Der Startvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften laufen.
+* 7.5: Der Stoppvorgang wird abgebrochen. Die noch nicht gestoppten Applikationen laufen weiter.
+* 7.6: Der Stoppvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften wurden beendet.
+* 7.7: Der Stoppvorgang wird fortgesetzt. Alle Applikationen außer der fehlerhaften wurden beendet.
