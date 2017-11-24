@@ -11,7 +11,7 @@ subprojects {
     apply plugin: "de.bsvrz.gradle.nerzswe"
 
     nerzswe {
-      sweStatus = 'BETA'
+      sweStatus = 'FREI'
       sweDatum = '2017-11-17'
   	}
 
