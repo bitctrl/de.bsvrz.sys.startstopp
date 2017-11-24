@@ -1,0 +1,7 @@
+-exportcontents: de.bsvrz.sys.startstopp.api.*
+-sources: true
+
+Bundle-Name: StartStopp-API
+Import-Package: *
+Bundle-Vendor: BitCtrl Systems GmbH
+

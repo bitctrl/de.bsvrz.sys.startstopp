@@ -1,0 +1,29 @@
+=== Prüffall 11: Code-Review
+
+==== Prüfobjekt
+
+Start/Stopp arbeitet unabhängig von der verwendeten Plattform bzw. Betriebssystem. Es verfügt über eine Schnittstelle, über die es vollständig von außen gesteuert werden kann. 
+Bei länger dauernden Prozessen signalisiert Start/Stopp, dass es noch bestimmungsgemäß läuft.
+
+Der Prüffall deckt die Anforderungen Sys-StSt17, Sys-StSt-19, Sys-StSt-20, Sys-StSt-46, Sys-StSt-47, Sys-StSt-50 und Sys-StSt-54 teilweise oder vollständig ab.
+
+==== Prüfvoraussetzungen
+
+Der Quellcode der StartStopp-SWE liegt vor.
+
+==== Durchführung
+
+Die Anforderungen, die nur schwerlich im Betrieb getestet werden können, sind in einem Review zu demonstrieren. Im Quellcode sind die Stellen zu benennen, die zeigen, dass
+
+* Die Datenablage in einem sicherheitstechnisch unkritischen Bereich erfolgt.
+* Start/Stopp keine Abhängigkeiten vom Betriebssystem besitzt.
+* Start/Stopp die Terminierungsschnittstelle des Datenverteilers nutzt.
+* Eine API existiert, über die Start/Stopp gesteuert werden kann.
+* Notwendige Werkzeuge oder Protokolle mit Hilfe eigener Bibliotheken realisiert werden.
+
+==== Erwartete Ergebnisse
+
+* Die Datenablage erfolgt in einem unkritischen Bereich, z. B. dem Userspace.
+* Es gibt keine Abhängigkeiten vom Betriebssystem, es werden keine Umgebungsvariablen geändert und alle notwendigen Werkzeuge oder Protokolle sind über eigene Bibliotheken implementiert.
+* Die Terminierungsschnittstelle des Datenverteilers wird verwendet, um Applikationen kontrolliert zu beenden.
+* Es existiert eine API, die von externen Programmen und insbesondere der Bedienoberfläche genutzt werden kann und wird.

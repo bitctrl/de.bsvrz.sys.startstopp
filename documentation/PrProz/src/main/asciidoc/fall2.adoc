@@ -1,0 +1,63 @@
+=== Prüffall 2: Normalbetrieb Applikationen
+
+==== Prüfobjekt
+
+Start/Stopp ermöglicht die die komfortable Steuerung der verwalteten Applikationen.
+
+Der Prüffall deckt die Anforderungen Sys-StSt1 bis Sys-StSt5, Sys-StSt7 bis Sys-StSt12, Sys-StSt16 bis Sys-StSt30, Sys-StSt-35, Sys-StSt-39, Sys-StSt-40, Sys-StSt-42, Sys-StSt-44, Sys-StSt-46, Sys-StSt-48, Sys-StSt-49, Sys-StSt-55, Sys-StSt-56, Sys-StSt-57, Sys-StSt-59, Sys-StSt-60, Sys-StSt-61, Sys-StSt-64 bis Sys-StSt-66 und Sys-StSt-68 teilweise oder vollständig ab.
+
+==== Prüfvoraussetzungen
+
+Auf dem Testrechner wurde das vorbereitete Datenverteiler-Testsystem installiert. Es liegt als ZIP-Archiv vor oder kann aus dem Zweig "testsystem" des SourceCode-Repositories entnommen werden.
+
+Für den Testfall wird auf Rechner1 die Skriptdateien "startStopp02.json" verwendet. 
+Die Datei "startStopp02.json" wird auf dem Rechner 1 in das Unterverzeichnis „startstopp“ innerhalb des Skript-Ordners kopiert und in "startstopp.json" umbenannt. 
+
+Da die farbige Darstellung verwendet werden soll, wird im Startskript für die Bedienoberfläche "StartStoppGUI.bash" der Startparameter "-monochrome=nein" ergänzt.
+
+Auf Rechner 1 werden die SWE StartStopp sowie die Bedienoberfläche per Shell-Skript gestartet.
+
+==== Durchführung
+
+Nach dem Start der SWE wird das StartStopp-Skript geladen und muss zunächst noch versioniert werden (siehe Prüffall 1).
+
+Nach der Versionierung werden die Inkarnationen gestartet. Die Zustände der Inkarnationen werden in der Oberfläche farblich gekennzeichnet.
+
+Um das Handling von Applikationen zu prüfen werden folgende Schritte ausgeführt:
+
+* Eine Anwendung wird über das Applikationsmenü der Bedienoberfläche gestoppt und anschließend wieder neu gestartet. 
+* Eine Anwendung wird gestoppt und anschließend die Bedienoberfläche beendet. 
+* Die Bedienoberfläche wird wieder gestartet und anschließend die gestoppte Anwendung. 
+* Eine Applikation wird neu gestartet, also in einem Schritt gestoppt und wieder gestartet. Das erfolgt über das Applikationsmenü der Oberfläche über den Menüpunkt "Neu starten".
+
+Zur Prüfung der Betriebsmeldungen wird der GTM verwendet (siehe Prüffall 1).
+
+* Eine Applikation wird beendet und gestartet und die Betriebsmeldungen beobachtet.
+* Die Anzeige der Betriebsmeldungen wird über den Punkt "Betriebsmeldungen umschalten" im System-Menü der Bedienoberfläche ausgeschaltet.
+* Erneut wird eine Applikation beendet und gestartet und die Betriebsmeldungen beobachtet.
+
+Die Änderung von Inkarnationen/Applikationen wird im Folgenden geprüft. Dazu wird in der Bedienoberfläche in den Editor-Modus umgeschaltet. In der Liste der Applikationen wird eine Applikation ausgewählt und mit der ENTER-Taste der Editor für die Inkarnation geöffnet.
+
+image::inkarnationseditor.png[Inkarnationseditor]
+
+Der jeweils zu ändernde Bereich (Liste der Parameter, Startart, ...) wird ausgewählt und im Detaileditor weiter bearbeitet.
+
+Folgende Änderungen sind vorzunehmen:
+
+* Bei einer Applikation wird ein Aufrufparameter der Applikation geändert, z.B. der Loglevel.
+* Bei einer Applikation wird ein Aufrufparameter der JVM geändert, z.B. der -Xmx-Parameter. 
+* Bei einer Applikation wird der zyklische Aufruf von relativ auf absolut geändert.
+
+Nach jeder Änderung erfolgt eine Versionierung. Nach der Versionierung wird die geänderte Applikation automatisch beendet und neu gestartet. Zur Überprüfung der Versionierung wird nach einem Versionierungschritt die Skriptdatei "startstopp.json" in einem Texteditor geöffnet. In der Datei muss die vorgenommene Änderung bei der betroffenen Inkarnation zu finden sein, außerdem sind die Metadaten (Änderungsgrund, Ersteller, Erstellungsdatum und Versionsnummer) ergänzt worden. Im Unterverzeichnis "history" unterhalb des Verzeichnisses, in dem die Startdatei residiert, wurde ein neuer Eintrag mit den entsprechenden Versionierungsinformationen in der Datei "startstopp_history.json" ergänzt und es existiert eine neue archivierte Startdatei.
+
+Zur Prüfung des Mehrfachstarts einer SWE mit verschiedenen Inkarnationen werden die Inkarnationen "Applikation04" und "Applikation06" verwendet, die beide die gleiche SWE mit verschiedenen Startparametern ausführen.
+
+* Es wird eine Inkarnation der mehrfach vorhandenen Applikation gestoppt.
+* Anschließend wird die Inkarnation neu gestartet.
+
+==== Erwartete Ergebnisse
+
+* Die Anwendungen können gestoppt und gestartet werden. Das Beenden und Neustarten der Bedienoberfläche ist ohne weiteren Einfluss möglich. Die Zustände der Applikationen werden über unterschiedliche Farben visualisiert.
+* Die Betriebsmeldungen lassen sich unabhängig vom Aufrufparameter ausschalten.
+* Die Änderung der Aufrufparameter im laufenden Betrieb ist möglich. Nach Abschluss der Änderungen wird die geänderte Konfiguration versioniert.
+* Das Beenden einer Inkarnation beeinflusst die anderen Inkarnationen der Applikation nicht.

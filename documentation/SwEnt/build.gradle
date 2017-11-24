@@ -1,0 +1,45 @@
+apply plugin: 'org.asciidoctor.convert'
+
+asciidoctor { 
+    sourceDir = file('src/main/asciidoc')
+    sources {
+    		include 'swent.adoc'
+    	}
+    requires = ['asciidoctor-diagram']
+    outputDir "${buildDir}/docs"
+    options doctype: 'book'
+    backends = ['pdf','html','docbook']
+    attributes  'build-gradle': file('build.gradle'),
+    			'source-highlighter': 'coderay',
+                toc                 : 'left',
+                idprefix            : '',
+                idseparator         : '-',
+                'pdf-stylesdir'     : themesDir,
+                'pdf-style'         : 'nerz',
+                'pdf-fontsdir'       : themesDir + '/fonts/',
+                'icons'             : 'font',
+                'setanchors'        : '',
+                'pagenums'          : '',
+                'imagesoutdir'      : 'images',
+                'imagesdir'         : 'images', 
+                'docinfo1'          : ''
+}
+
+task docxDir {
+    def subdir = new File(project.buildDir, "docs/docx")
+    if( !subdir.exists() ) {
+        subdir.mkdirs()
+    }
+}
+
+task docx (
+        dependsOn: [asciidoctor, docxDir],
+        type: Exec
+) {
+    workingDir 'build/docs/docbook'
+    executable = "pandoc"
+    args = ['-r','docbook',
+            '-t','docx',
+            '-o','../docx/swent.docx',
+                 'swent.xml']
+}

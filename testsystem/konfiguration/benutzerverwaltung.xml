@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<!DOCTYPE benutzerkonten PUBLIC "-//K2S//DTD Authentifizierung//DE" "authentication.dtd">
+<benutzerkonten>
+	<benutzeridentifikation admin="ja" name="Tester" passwort="SRP6~~~~ v:2771be59060d104b6cb84e97858f9f6cd61dd53e4a52f4f82e767531e43232ab774c1762123aa7c5e8f8495b7b8b1e885cd53961a4811f237fcb7d54d79205a447a97e42e84daef432867d5fd59ecbd6f0a1384a6c9ab0c09597be248859458ffd4afe1620ad6e384b063c90debca0814ad7862d3016bcbc05e6e5de059dda58 s:5ee2ff1687045f6fc9661a481d1d7fd8 t:96 L:128 H:SHA-256 KDF:PBKDF2WithHmacSHA256 c:20000 dkLen:256 n:1024 sLen:16">
+</benutzeridentifikation>
+<benutzeridentifikation admin="ja" name="TestDatenverteilerBenutzer" passwort="SRP6~~~~ v:948a70798a4ba854e3cdbdcf6d5554468720895f16fb2b31d35bdd5cbc4736d702507de02afff72f6cf00484d0c643cc204f81b832e03c3303c695f73b0a1baf326d8e2157b399ff3ab71b7ddf0120788028940ee0ae8a923f7256245c74b8904fa83f91d5b000ae79967d70acc127f044d2e2cbb04affd127716dd72045d39d s:dd626619bbd55f1d13ba2720630b421e t:96 L:128 H:SHA-256 KDF:PBKDF2WithHmacSHA256 c:20000 dkLen:256 n:1024 sLen:16"/>
+<benutzeridentifikation admin="nein" name="AutostartApplikation" passwort="SRP6~~~~ v:91b90825bff37a5fff80c65340846c7f656b104a2a3141d219803638aa9a491eeafe35d6b19130d68ddea22fdd66579de6e42c6491b5ffc03c08e504d77f5a02dd2cb5b4ec1c5e884c39a5cf8f705c5c4dc50ab11d8aa04d633fe8f5a85b86a66d61827a4128b79038d7bf6074c5e9e061703fb670078f335a620d2272ad9d2e s:58bf6851ac6c29d5f6ed41a32c327c00 t:96 L:128 H:SHA-256 KDF:PBKDF2WithHmacSHA256 c:20000 dkLen:256 n:1024 sLen:16"/>
+</benutzerkonten>

@@ -1,0 +1,53 @@
+== Schnittstelle zum Datenverteiler
+
+=== Verwendung der Datenverteilerverbindung
+
+Die StartStopp-Applikation verbindet sich mit einem definierten Datenverteilersystem. 
+Die Verbindung wird für folgende Aufgaben eingesetzt:
+
+* Stoppen von Applikationen über die Datenverteilerschnittstelle
+* Auswertung des Initialisierungszustandes von Datenverteilerapplikationen
+* Publikation von Informationen der StartStopp-Applikation über den Datenverteiler
+* Überwachung der Stromversorgung
+
+Zur Zuordnung von den in der StartStopp-Applikation verwalteten Inkarnationen zu
+Applikationen, die innerhalb des Datenverteiler-Systems als dynamische Objekte vom 
+Typ *typ.applikation* repräsentiert werden, wird der übergebene Inkarnationsname
+verwendet, der aus Rechnername und definiertem Inkarnationsnamen einer Inkarnation gebildet 
+wird. 
+
+=== Stoppen von Applikationen
+
+Zum Stoppen einer Applikation über den Datenverteiler wird die Attributgruppe *atg.terminierung*
+an einem SystemObjekt vom Typ *typ.datenverteiler* verwendet. Die Attributgruppe enthält
+eine Liste von Applikations-Referenzen für die die Datenverteiler-Verbindung beendet werden
+soll. 
+
+Implizit wird damit die verbundene Applikation beendet.
+
+=== Auswertung des Initialisierungszustandes von Datenverteilerapplikationen
+
+Die StartStopp-SWE liest für alle Inkarnationen für das per Namensmatching ermittelte
+Systemobjekt die Daten der Attributgruppe *atg.applikationsFertigmeldung*. Wenn der Wert 
+"InitialisierungFertig" auf JA steht wird in der Inkarnation innerhalb der 
+StartStopp-Prozessverwaltung der Zustandübergang vom Zustand *GESTARTET* zu *INITIALISIERT* 
+ausgeführt.
+
+=== Publikation von Informationen 
+ 
+Der Zustand der von der StartStopp-Applikation verwalteten Inkarnationen wird in der
+Attributgruppe *atg.prozessInfo* am ermittelten Systemobjekt vom Typ *typ.rechner* publiziert.
+
+Der Rechner wird aus der lokalen Netzwerk-Konfiguration über die IP-Adresse oder den Hostnamen
+aus der Menge der im Datenverteiler konfigurierten Objekte ermittelt.
+
+Optional kann das Rechnerobjekt als PID auch als Aufrufparameter an die StartStopp-Applikation
+übergeben werden.
+
+=== Überwachung der Stromversorgung
+
+Für das optional in der StartStopp-Konfiguration definierte Systemobjekt vom Typ *typ.usv*
+wird die Attributgruppe *atg.usvZustandKritisch* ausgewertet. Wenn der Wert des Attributs 
+*ZustandKritisch* den Wert *erreicht* eingenommen hat werden die StartStopp-Konfiguration 
+und die StartStopp-Applikation beendet.
+

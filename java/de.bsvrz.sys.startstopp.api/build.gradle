@@ -1,0 +1,44 @@
+buildscript {
+
+  repositories {
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:0.5.1'
+  }
+}
+
+
+plugins {
+  id "biz.aQute.bnd.builder" version "3.3.0"
+}
+
+description = "Bibliothek StartStopp-API"
+
+apply plugin: 'jsonschema2pojo'
+
+jsonSchema2Pojo {
+  generateBuilders = true
+  targetPackage = 'de.bsvrz.sys.startstopp.api.jsonschema'
+  includeConstructors = true
+  serializable = true
+}
+
+dependencies {
+	compileOnly "de.bsvrz.dav:de.bsvrz.dav.daf:${kernsoftware_version}"
+	compile "com.nimbusds:srp6a:2.0.0"
+    compile "commons-lang:commons-lang:2.6"
+    compile "org.glassfish.jersey.core:jersey-common:${jersey_version}"
+    compile "org.glassfish.jersey.ext:jersey-entity-filtering:${jersey_version}"
+    compile "org.glassfish.jersey.media:jersey-media-json-jackson:${jersey_version}"
+    compile "org.glassfish.jersey.containers:jersey-container-jetty-http:${jersey_version}"
+    compile "org.glassfish.jersey.inject:jersey-hk2:${jersey_version}"
+    compile "com.fasterxml.jackson.core:jackson-core:${jackson_version}"
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jackson_version}"
+    compile "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:${jackson_version}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
+    testCompile "junit:junit:4.12"
+}
+
+

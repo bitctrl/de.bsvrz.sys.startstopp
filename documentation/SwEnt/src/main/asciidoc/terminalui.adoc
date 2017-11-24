@@ -1,0 +1,103 @@
+== Terminal - Bedienoberfläche
+
+=== Allgemeine Eigenschaften
+
+Die StartStopp-SWE wird mit einer Bedienoberfläche ausgeliefert, die den
+Zugriff auf eine laufende StartStopp-Applikation erlaubt.
+
+Die Terminal-Applikation verwendet die StartStopp-API für die Kommmunikation
+und stellt alle dort definierten Funktionen zur Verfügung.
+
+Die Oberfläche wird auf Basis der offenen Bibliothek
+https://github.com/mabe02/lanterna[Lanterna] erstellt, die den Aufbau einer 
+ncurses-ähnlichen Applikation ermöglicht.
+
+image::ui_onlineview.png[Beispiel Terminal-UI (prototypisch)]
+
+In gesonderten Fenstern werden folgende Funktionen abgebildet:
+
+=== Online-Funktionen
+
+Die Online-Funktionen dienen der Visualisierung des aktuellen Status des StartStopp-SWE inklusive der von der SWE verwalteten Applikationen/Inkarnationen.
+
+Darüber hinaus bietet eine entsprechende Ansicht die Funktionen zum Steuern der gesamten Anwendung sowie der individuellen Applikationen.
+
+* *Online-Informationen zum System*
+** Anzeige des Systemstatus
+** Aktionen zum Steuern des StartStopp-System
+*** Beenden der laufenden Konfiguration
+*** Neustart der laufenden Konfiguration
+*** Beenden der StartStopp-Applikation
+
+image::ui_onlineview_sysfkt.png[Terminal-UI: Online-Systemfunktionen]
+
+* *Online-Informationen zu Inkarnationen*
+** Darstellung des aktuellen Status der Inkarnationen
+** Anzeige der Details zu einer ausgewählten Inkarnationen
+   in einem neuen Dialog
+** Ausführen von inkarnationsbezogenen Operationen
+*** Starten einer nicht laufenden Inkarnationen
+*** Neu starten eine laufenden Inkarnation
+*** Beenden einer laufenden Inkarnation
+
+image::ui_onlineview_appfkt.png[Terminal-UI: Online-Applikationsfunktionen]
+
+* *Informationen zu Rechnern*
+** Anzeige der Liste der definierten Rechner
+** Anzeige der Inkarnationen mit ihrem aktuellen Status
+   auf einem entfernten Rechner
+
+Für ausgewählte Informationen werden Detailansichten angeboten. Beispielhaft ist hier die Darstellungen der aktuellen Informationen zu einer Applikation/Inkarnation gezeigt:
+
+image::ui_onlineview_details.png[Terminal-UI: Applikation-Detailansicht]
+
+Aktionen sind per Menü selektier- und ausführbar. Für 
+definierte Aktionen erfolgt eine Sicherheitsabfrage. 
+
+=== Editor-Modus
+
+Im Editor-Modus besteht die Möglichkeit das aktuelle Skript bzw. ein externes im Dateisystem hinterlegtes Skript zu Laden, zu Editieren und zu Versionieren.
+
+image::ui_editor.png[Terminal-UI: Editor-Modus]
+
+* Anzeige des aktuellen Skripts
+* Möglichkeit zur Bearbeitung des Skripts
+* Aktion zum Versionieren und Aktivieren eines Skripts
+
+Für die Bearbeitung des Skripts stehen für die einzelnen
+Elemente gesonderte Dialoge zur Verfügung.
+
+Beispielhaft ist hier das Grundfenster zum Bearbeiten einer ausgeweählten Inkarnation dargestellt:
+
+image::ui_editor_inkarnation.png[Terminal-UI: Inkarnationseditor]
+
+Für Referenzen wie Makros oder Verweise auf Rechner werden
+Auswahllisten angeboten. Die folgende Darstellung zeigt die Tabelle zum Bearbeiten der Makros des aktuell im Editor geladenen Skripts:
+
+image::ui_editor_makros.png[Terminal-UI: Makroliste]
+
+Zum Bearbeiten von Elementen stehen Standard-Eingabeelemente zur Verfügung:
+
+* Texteingabefelder
+* Checkboxen für binäre Attribute
+* Comboboxen für Statuswerten
+
+Optional sind Eingabehilfen, wie Auswahllisten für einzufügende Makros oder Applikationsreferenzen für Start-Stopp-Bedingungen verfügbar.
+
+Das Editieren einer Konfiguration wird von der Editorseite
+weitestgehend so unterstützt, dass fehlerhafte Skripte
+möglichst gar nicht erst entstehen können und die 
+Versionierung und Aktivierung einer neuen Konfiguration
+mit einer minimalen Anzahl von Arbeitsschritten möglich ist.
+
+Den Abschluss der Skriptbearbeitung bildet die Versionierung des bearbeiteten Skripts.
+Dazu wird dieses mit den Informationen aus einem Urlasserdialog an die StartStopp-SWE versendet.
+
+image::ui_editor_versionieren.png[Terminal-UI: Versionierung]
+
+Das Skript wird geprüft. Ist das Skript gültig, werden die Änderungen in das laufende System übernommen und gegebenenfalls Applikationen beendet und neu gestartet.
+
+Schlägt die Prüfung fehl wird eine entsprechende Meldung im Editorfenster angezeigt.
+
+Optional kann ein bearbeitetes Skript auch als externe Datei im Betriebssystem hinterlegt werden, um die Bearbeitung später weiterzuführen oder einen definierten Stand als Backup vorzuhalten.
+
