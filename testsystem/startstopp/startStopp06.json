@@ -174,7 +174,7 @@
     }
   }, {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.ApplicationExit02", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "aufrufParameter" : [ "-Xmx512m", "-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.ApplicationExit01", "%dav1.mitAuthentifizierung%", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation03",
     "initialize" : false,

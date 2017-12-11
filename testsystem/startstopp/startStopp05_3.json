@@ -154,7 +154,7 @@
     }
   }, {
     "applikation" : "%java%",
-    "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.startstopp/de.bsvrz.sys.startstopp-runtime.jar de.bsvrz.sys.startstopp.startstopp.StartStopp", "%dav1.mitAuthentifizierung%", "-benutzerKonfiguration=../konfiguration/benutzerverwaltung.xml", "-authentifizierung=passwd", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
+    "aufrufParameter" : [ "-Xmx512m", "-jar %dist%/de.bsvrz.sys.startstopp/de.bsvrz.sys.startstopp.jar de.bsvrz.sys.startstopp.startstopp.StartStopp", "%dav1.mitAuthentifizierung%", "-benutzerKonfiguration=../konfiguration/benutzerverwaltung.xml", "-authentifizierung=passwd", "-debugLevelStdErrText=NONE -debugLevelFileText=FINE" ],
     "inkarnationsTyp" : "dav",
     "inkarnationsName" : "Applikation02",
     "initialize" : false,
