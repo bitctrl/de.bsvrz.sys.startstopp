@@ -5,10 +5,10 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.de.bsvrz.gradle.nerzswe:de.bsvrz.gradle.nerzswe:0.1.6"
+    classpath "gradle.plugin.de.bsvrz.gradle.nerzswe:de.bsvrz.gradle.nerzswe:0.4.0"
   }
 }
 
 allprojects {
-    version = '2.0.0-SNAPSHOT'
+    version = '2.0.1-SNAPSHOT'
 }
