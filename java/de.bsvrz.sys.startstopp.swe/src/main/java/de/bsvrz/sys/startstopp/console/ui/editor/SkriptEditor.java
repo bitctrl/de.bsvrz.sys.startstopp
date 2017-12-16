@@ -96,7 +96,7 @@ public final class SkriptEditor extends BasicWindow {
 		changeLabel = new Label("Keine Änderungen");
 		changeLabel.setLayoutData(GridLayout.createLayoutData(Alignment.END, Alignment.CENTER));
 		infoPanel.addComponent(changeLabel);
-		
+
 		panel.addComponent(infoPanel.withBorder(Borders.singleLine()));
 		infoPanel.setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1));
 
@@ -117,7 +117,7 @@ public final class SkriptEditor extends BasicWindow {
 
 		setComponent(panel);
 		showInkarnationTable();
-		
+
 		changeChecker = Executors.newSingleThreadScheduledExecutor();
 		changeChecker.scheduleAtFixedRate(()->checkForChanges(), 5, 5, TimeUnit.SECONDS);
 	}
@@ -182,7 +182,7 @@ public final class SkriptEditor extends BasicWindow {
 		setFocusedInteractable(table);
 	}
 
-	@Override 
+	@Override
 	public boolean handleInput(KeyStroke key) {
 
 		switch (key.getKeyType()) {
@@ -263,29 +263,30 @@ public final class SkriptEditor extends BasicWindow {
 	}
 
 	public static boolean isDeleteKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.Delete && key.isAltDown();
+		return (key.getKeyType() == KeyType.Delete && key.isAltDown()) || (key.getKeyType() == KeyType.Character && ((int)key.getCharacter() == 8706));
 	}
 
 	public static boolean isInsertAfterKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.Insert && key.isAltDown() && !key.isShiftDown();
+		return (key.getKeyType() == KeyType.Insert && key.isAltDown() && !key.isShiftDown()) || (key.getKeyType() == KeyType.Character && ((int)key.getCharacter() == 219));
 	}
 
 	public static boolean isInsertBeforeKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.Insert && key.isAltDown() && key.isShiftDown();
+		return (key.getKeyType() == KeyType.Insert  && key.isAltDown() && key.isShiftDown()) || (key.getKeyType() == KeyType.Character && ((int)key.getCharacter() == 8260));
 	}
 
 	public static boolean isEintragNachObenKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.ArrowUp && key.isAltDown();
+	//	System.err.println("Type: " + key.getKeyType() + " AltDown: " + key.isAltDown() + "ShitDown: " + key.isShiftDown() + "Char: " + (int)key.getCharacter());
+		return (key.getKeyType() == KeyType.ArrowUp && key.isAltDown()) || (key.getKeyType() == KeyType.Character && (int)key.getCharacter() == 248);
 	}
 
 	public static boolean isEintragNachUntenKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.ArrowDown && key.isAltDown();
+		return (key.getKeyType() == KeyType.ArrowDown && key.isAltDown()) || (key.getKeyType() == KeyType.Character && (int)key.getCharacter() == 168);
 	}
 
 	public static boolean isSelectMakroKey(KeyStroke key) {
-		return key.getKeyType() == KeyType.Character && key.isAltDown() && key.getCharacter() == 'm';
+		return (key.getKeyType() == KeyType.Character && key.isAltDown() && (key.getCharacter() == 'm') || (key.getKeyType() == KeyType.Character && ((int) key.getCharacter() == 181)));
 	}
-	
+
 	@Override
 	public void close() {
 		if (changeChecker != null) {

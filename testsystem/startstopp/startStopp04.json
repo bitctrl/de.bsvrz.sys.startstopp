@@ -152,7 +152,7 @@
     "startBedingung" : {
       "vorgaenger" : [ "Parametrierung" ],
       "warteart" : "ende",
-      "wartezeit" : "60"
+      "wartezeit" : "10"
     },
     "startFehlerVerhalten" : {
       "option" : "ignorieren",
@@ -197,7 +197,6 @@
     "startBedingung" : {
       "vorgaenger" : [ "Applikation01" ],
       "warteart" : "ende",
-      "rechner" : "rechner2",
       "wartezeit" : "20"
     },
     "startFehlerVerhalten" : {
@@ -216,9 +215,8 @@
     "initialize" : false,
     "mitInkarnationsName" : true,
     "startArt" : {
-      "option" : "manuell",
-      "neuStart" : false,
-      "intervall" : ""
+      "option" : "automatisch",
+      "neuStart" : false
     },
     "startFehlerVerhalten" : {
       "option" : "ignorieren",
@@ -237,7 +235,7 @@
     "mitInkarnationsName" : true,
     "startArt" : {
       "option" : "automatisch",
-      "neuStart" : true
+      "neuStart" : false
     }
   } ],
   "metaDaten" : {

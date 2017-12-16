@@ -251,7 +251,7 @@ public class DavConnector {
 			meldungsZusatz = "[Sys-StSt-St01]";
 			break;
 		case GESTOPPT:
-			meldung = "Applikation " + onlineApplikation.getName() + " gestopped. [Sys-StSt-St02]";
+			meldung = "Applikation " + onlineApplikation.getName() + " gestoppt. [Sys-StSt-St02]";
 			meldungsZusatz = "[Sys-StSt-St02]";
 			break;
 		default:

@@ -146,7 +146,7 @@
     "startBedingung" : {
       "vorgaenger" : [ "Parametrierung" ],
       "warteart" : "ende",
-      "wartezeit" : "60"
+      "wartezeit" : "10"
     },
     "startFehlerVerhalten" : {
       "option" : "abbruch",
@@ -185,7 +185,7 @@
     "mitInkarnationsName" : true,
     "startArt" : {
       "option" : "automatisch",
-      "neuStart" : false,
+      "neuStart" : true,
       "intervall" : ""
     },
     "startBedingung" : {
@@ -196,7 +196,7 @@
     },
     "startFehlerVerhalten" : {
       "option" : "abbruch",
-      "wiederholungen" : "1"
+      "wiederholungen" : "3"
     },
     "stoppFehlerVerhalten" : {
       "option" : "stopp",
@@ -232,7 +232,12 @@
     "startArt" : {
       "option" : "automatisch",
       "neuStart" : true
-    }
+    },
+    "startBedingung" : {
+        "vorgaenger" : [ "Parametrierung" ],
+        "warteart" : "ende",
+        "wartezeit" : "0"
+      }
   } ],
   "metaDaten" : {
     "aenderungsGrund" : "1",

@@ -11,19 +11,19 @@
       <makrodefinition name="dist" wert="%root%/distributionspakete" />
       <!-- Befehl zum Aufruf des Java-Interpreters. -->
       <makrodefinition name="java" wert="java" />
-      <!-- Alle verfügbaren Rechner -->
-      <!-- Makros für Authentifizierung einer Applikation. -->
-      <!-- Benutzername unter dem alle Applikationen ausgeführt werden -->
+      <!-- Alle verfï¿½gbaren Rechner -->
+      <!-- Makros fï¿½r Authentifizierung einer Applikation. -->
+      <!-- Benutzername unter dem alle Applikationen ausgefï¿½hrt werden -->
       <makrodefinition name="authentifizierung.benutzer" wert="Tester" />
       <makrodefinition name="authentifizierung.passwortdatei" wert="%root%/skripte-bash/passwd" />
       <makrodefinition name="authentifizierung.default" wert="-benutzer=%authentifizierung.benutzer% -authentifizierung=%authentifizierung.passwortdatei%" />
       <makrodefinition name="authentifizierung.falsch" wert="-benutzer=falscherBenutzer -authentifizierung=%authentifizierung.passwortdatei%" />
-      <!-- Makros für Standardvorgabe des Datenverteilerloggers für die Applikationen. -->
+      <!-- Makros fï¿½r Standardvorgabe des Datenverteilerloggers fï¿½r die Applikationen. -->
       <makrodefinition name="debug.stderr" wert="NONE" />
       <makrodefinition name="debug.file" wert="CONFIG" />
       <makrodefinition name="debug.filePath" wert="-debugFilePath=%root%" />
       <makrodefinition name="debug.default" wert="-debugLevelStdErrText=%debug.stderr% -debugLevelFileText=%debug.file%" />
-      <!-- Makros für Datenverteilerverbindung einer Applikation. -->
+      <!-- Makros fï¿½r Datenverteilerverbindung einer Applikation. -->
       <makrodefinition name="dav1.host" wert="localhost" />
       <makrodefinition name="dav1.appPort" wert="8083" />
       <makrodefinition name="dav1.davPort" wert="8082" />
@@ -33,17 +33,17 @@
       <makrodefinition name="dav1.mitFalscherAuthentifizierung" wert="-datenverteiler=%dav1.host%:%dav1.appPort% %authentifizierung.falsch% %debug.filePath%" />
       <!-- Die PID der AOE des Projekts -->
       <makrodefinition name="aoe.pid" wert="kv.aoe.test" />
-      <!-- Aufzählung der Applikationen die das Kernsystem bilden.
+      <!-- Aufzï¿½hlung der Applikationen die das Kernsystem bilden.
 		Beim Beenden wird nur die erste Applikation der Liste beendet. -->
       <kernsystem inkarnationsname="Datenverteiler" />
       <kernsystem inkarnationsname="Konfiguration" />
       <kernsystem inkarnationsname="Parametrierung" mitInkarnationsname="ja" />
       <!-- Zugangsdaten mit denen sich StartStopp selbst am Datenverteiler anmeldet. -->
       <zugangdav adresse="%dav1.host%" port="%dav1.appPort%" username="Tester" passwort="geheim" />
-      <!-- Name und IP-Adresse von anderen Rechnern, auf denen ebenfalls StartStopp läuft (optional).
-		Der Name ist freiwählbar und wird weiter unten für Bedingungen verwendet. Für jeden
+      <!-- Name und IP-Adresse von anderen Rechnern, auf denen ebenfalls StartStopp lï¿½uft (optional).
+		Der Name ist freiwï¿½hlbar und wird weiter unten fï¿½r Bedingungen verwendet. Fï¿½r jeden
 		Rechner muss ein Objekt (typ.rechner) in der Konfiguration vorhanden sein. Der
-		Übersichtlichkeit wegen empfielt es sich, in der Konfiguration und hier den selben Namen
+		ï¿½bersichtlichkeit wegen empfielt es sich, in der Konfiguration und hier den selben Namen
 		(Hostname) zu verwenden. -->
       <!-- Spezifikation der verschiedenen Logfiles zum Mitschnitt von stdout und stderr. -->
       <protokolldatei name="Datenverteiler.stdout" nameDatei="%root%/logs/Datenverteiler.stdout.log" groesse="1" />
@@ -83,8 +83,8 @@
         <aufrufparameter wert="-datenverteilerId=10000" />
         <!-- Steuert ob Benutzerrechte ausgewertet und angewandt werden sollen -->
         <aufrufparameter wert="-rechtePruefung=nein" />
-        <!-- Verzögerungswert für Verbindung mit anderen Datenverteilern -->
-        <aufrufparameter wert="-verzögerungFürAndereDatenverteiler=600s" />
+        <!-- Verzï¿½gerungswert fï¿½r Verbindung mit anderen Datenverteilern -->
+        <aufrufparameter wert="-verzï¿½gerungFï¿½rAndereDatenverteiler=600s" />
         <startart option="automatisch" neustart="nein" intervall="" />
         <standardAusgabe dateiname="Datenverteiler.stdout" />
         <standardFehlerAusgabe dateiname="Datenverteiler.stderr" />
@@ -125,7 +125,7 @@
         <aufrufparameter wert="-benutzer=parameter" />
         <aufrufparameter wert="-authentifizierung=%authentifizierung.passwortdatei%" />
         <!-- Die Klasse, die zum Speichern der Parameter verwendet wird.
-				Zur Verfügung stehen:
+				Zur Verfï¿½gung stehen:
 				- de.bsvrz.puk.param.param.DerbyPersistenz (verwendet eine Datenbank)
 				- de.bsvrz.puk.param.param.FilePersistenz (dateibasiert nach Objekt-ID sortiert)
 				- de.bsvrz.puk.param.param.FilePersistenzPid (dateibasiert nach Objekt-PID sortiert)
@@ -134,16 +134,16 @@
         <aufrufparameter wert="-persistenzModul=de.bsvrz.puk.param.param.DerbyPersistenz" />
         <!-- Das Verzeichnis, in dem die Parameter gesichert werden -->
         <aufrufparameter wert="-persistenz=%root%/parameter" />
-        <!-- Das Objekt, welches die Parametrierung repräsentiert, wenn nicht angegeben wird die AOE verwendet -->
+        <!-- Das Objekt, welches die Parametrierung reprï¿½sentiert, wenn nicht angegeben wird die AOE verwendet -->
         <!-- <aufrufparameter wert=" -parametrierung=" /> -->
-        <!-- Maximale Anzahl der Datensätze, die permanent im RAM gehalten werden, 
+        <!-- Maximale Anzahl der Datensï¿½tze, die permanent im RAM gehalten werden,
 			weitere werden bei Bedarf aus der Persistenz nachgeladen. -->
         <aufrufparameter wert="-cacheGroesse=200000" />
-        <!-- Wenn "ja", dann werden zusätzlich die Defaultparameter aus der Parameterattributgruppe mit
+        <!-- Wenn "ja", dann werden zusï¿½tzlich die Defaultparameter aus der Parameterattributgruppe mit
 			dem Aspekt asp.parameterDefault gelesen. Mit "nein" werden Defaultparameter nur aus der
-			Attributgruppe atg.defaultParameterdatensätze verwendet.
-			Nützlicher Workaround für dynamische Objekte, für die sonst keine Defaultparameter angegeben
-			werden können. -->
+			Attributgruppe atg.defaultParameterdatensï¿½tze verwendet.
+			Nï¿½tzlicher Workaround fï¿½r dynamische Objekte, fï¿½r die sonst keine Defaultparameter angegeben
+			werden kï¿½nnen. -->
         <aufrufparameter wert="-oldDefault=nein" />
         <startart option="automatisch" neustart="nein" intervall="" />
         <standardAusgabe dateiname="Parametrierung.stdout" />
@@ -231,14 +231,14 @@
         <!-- Heap Space -->
         <aufrufparameter wert="-Xmx512m" />
         <!-- Jar-File mit der Applikation, dem notwendigen classpath und der main-Klasse -->
-        <aufrufparameter wert="-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application04" />
+        <aufrufparameter wert="-cp %dist%/de.bsvrz.sys.stst.test/de.bsvrz.sys.stst.test-runtime.jar de.bsvrz.sys.stst.test.Application06" />
         <aufrufparameter wert="%dav1.mitAuthentifizierung%" />
         <!-- <aufrufparameter wert="%debug.default%" /> -->
         <aufrufparameter wert="-debugLevelStdErrText=NONE -debugLevelFileText=FINE" />
         <standardAusgabe dateiname="Applikation06.stdout" />
         <standardFehlerAusgabe dateiname="Applikation06.stderr" />
+        <stoppFehlerverhalten option="ignorieren" wiederholungen="0" />
       </inkarnation>
     </applikationen>
   </startStopp>
 </konfiguration>
-
