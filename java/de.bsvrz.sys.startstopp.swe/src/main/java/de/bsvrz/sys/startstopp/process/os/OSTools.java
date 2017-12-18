@@ -46,7 +46,7 @@ public final class OSTools {
 	private OSTools() {
 		// es werden keine Instanzen der Klasse angelegt.
 	}
-	
+
 	/**
 	 * Stellt fest, ob es sich um ein Windows System handelt.
 	 * 
@@ -95,52 +95,54 @@ public final class OSTools {
 
 		return null;
 	}
-	
+
 	public static boolean isMatchingCommandLine(final String inkCmdLine, final String proccmdLine) {
-		
-		if( StringUtils.isAsciiPrintable(inkCmdLine)) {
+
+		if (StringUtils.isAsciiPrintable(inkCmdLine)) {
 			return proccmdLine.contains(inkCmdLine);
 		}
-		
+
 		String buildRegexp = buildRegexp(inkCmdLine);
-		
-		Matcher matcher = Pattern.compile(buildRegexp).matcher( proccmdLine );
+
+		Matcher matcher = Pattern.compile(buildRegexp).matcher(proccmdLine);
 		return matcher.find();
 	}
 
 	private static String buildRegexp(String s) {
 		StringBuilder rstring = new StringBuilder();
-		
-	    for (int i = 0; i < s.length(); i++) { 
-	        if (s.charAt(i) > 127) { 
-	            rstring.append(".+");
-	        } else {
-	        	rstring.append(s.charAt(i));
-	        }
-	    }
-	        
-	    return rstring.toString();
+
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) > 127) {
+				rstring.append(".+");
+			} else {
+				rstring.append(s.charAt(i));
+			}
+		}
+
+		return rstring.toString();
 	}
-	
+
 	/**
 	 * Send CTRL-C to the process using a given PID
 	 * 
 	 * @param pid
+	 *            die Prozess-ID des zu beendenen Prozesses
+	 * @return der ErrorCode des letzten Aufrufs, geliefert vom Betriebssystem
 	 */
 	public static int terminateWindowsProzess(int pid) {
 
-		if(!isWindows()) {
+		if (!isWindows()) {
 			throw new IllegalStateException("Das ist kein Windows-System");
 		}
-		
-		if(!Kernel32.INSTANCE.AttachConsole(pid)) {
+
+		if (!Kernel32.INSTANCE.AttachConsole(pid)) {
 			return Kernel32.INSTANCE.GetLastError();
 		}
 
-		if(!Kernel32.INSTANCE.GenerateConsoleCtrlEvent(Kernel32.CTRL_C_EVENT, 0)) {
+		if (!Kernel32.INSTANCE.GenerateConsoleCtrlEvent(Kernel32.CTRL_C_EVENT, 0)) {
 			return Kernel32.INSTANCE.GetLastError();
 		}
-		
+
 		return 0;
 	}
 }
