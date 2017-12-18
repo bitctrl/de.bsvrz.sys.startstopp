@@ -36,7 +36,6 @@ import de.bsvrz.sys.startstopp.api.jsonschema.StartStoppStatus.Status;
 import de.bsvrz.sys.startstopp.api.server.ApiServer;
 import de.bsvrz.sys.startstopp.config.SkriptManager;
 import de.bsvrz.sys.startstopp.process.ProzessManager;
-import de.bsvrz.sys.startstopp.process.os.OSTools;
 import de.muspellheim.events.Event;
 
 public class StartStopp {
@@ -79,29 +78,6 @@ public class StartStopp {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-	}
-
-	private static boolean isMinimalWindowsVersion() {
-		String property = System.getProperty("os.version");
-		try {
-			if( property != null) {
-				String[] parts = property.split("\\.");
-				if( parts.length > 1) {
-					int mainVersion = Integer.parseInt(parts[0]);
-					if( mainVersion == 6) {
-						if( Integer.parseInt(parts[1]) >= 2) {
-							return true;
-						}
-					} else if (mainVersion > 6) {
-						return true;
-					}
-				}
-			}
-		} catch (NumberFormatException e) {
-			logger.warning("Windowsversion kann nicht interpretiert werden: " + property);
-		}
-		logger.warning("Minimale Windowsversion nicht gegeben: " + property);
-		return false;
 	}
 
 	public String getInkarnationsPrefix() {
