@@ -2,4 +2,4 @@ sys-startstopp-build:
     image:
         openjdk:8-jdk-alpine
     script:
-      - ./gradlew build
+      - ./gradlew build -x test
