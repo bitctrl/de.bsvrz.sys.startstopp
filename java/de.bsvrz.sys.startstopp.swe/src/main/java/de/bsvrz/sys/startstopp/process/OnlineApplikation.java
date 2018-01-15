@@ -394,24 +394,32 @@ public final class OnlineApplikation {
 
 	public void starteOSApplikation() throws StartStoppException {
 
-		prozessAusgaben.clear();
+		synchronized (prozessAusgaben) {
 
-		if (applikation.getInkarnation().getInkarnationsTyp() == InkarnationsTyp.WRAPPED) {
-			process = new OSApplikation(getName(), "java");
-			try {
-				process.setProgrammArgumente(DavWrapper.getWrapperArguments(prozessManager,
-						applikation.getInkarnation().getApplikation(), getApplikationsArgumente()));
-			} catch (StartStoppException e) {
-				process = null;
-				throw new StartStoppException("Wrapper-Applikationen konnte nicht initialisiert werden!", e);
+			if( process != null) {
+				LOGGER.warning("Applikation wird bereits gestartet!");
+				return;
 			}
-		} else {
-			process = new OSApplikation(getName(), applikation.getInkarnation().getApplikation());
-			process.setProgrammArgumente(getApplikationsArgumente());
+			
+			prozessAusgaben.clear();
+
+			if (applikation.getInkarnation().getInkarnationsTyp() == InkarnationsTyp.WRAPPED) {
+				process = new OSApplikation(getName(), "java");
+				try {
+					process.setProgrammArgumente(DavWrapper.getWrapperArguments(prozessManager,
+							applikation.getInkarnation().getApplikation(), getApplikationsArgumente()));
+				} catch (StartStoppException e) {
+					process = null;
+					throw new StartStoppException("Wrapper-Applikationen konnte nicht initialisiert werden!", e);
+				}
+			} else {
+				process = new OSApplikation(getName(), applikation.getInkarnation().getApplikation());
+				process.setProgrammArgumente(getApplikationsArgumente());
+			}
+			process.onStatusChange.addHandler(osApplikationStatusHandler);
+			process.start();
+			applikation.setLetzteStartzeit(DateFormat.getDateTimeInstance().format(new Date()));
 		}
-		process.onStatusChange.addHandler(osApplikationStatusHandler);
-		process.start();
-		applikation.setLetzteStartzeit(DateFormat.getDateTimeInstance().format(new Date()));
 	}
 
 	public void starteApplikationManuell() throws StartStoppException {
