@@ -53,6 +53,9 @@ public class StartStoppConsole {
 
 	public static void main(String[] args) throws IOException {
 
+		System.setProperty("org.eclipse.jetty.util.log.class", "de.bsvrz.sys.startstopp.util.JettyLogWrapper");
+		System.setProperty("org.eclipse.jetty.LEVEL", "OFF");
+
 		Properties themeProperties = new Properties();
 		try (InputStream stream = StartStoppConsole.class.getResourceAsStream("nerz-mono.properties")) {
 			themeProperties.load(stream);
