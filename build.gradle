@@ -6,7 +6,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.de.bsvrz:de.bsvrz.gradle.nerzswe:0.7.1"
+    classpath "gradle.plugin.de.bsvrz:de.bsvrz.gradle.nerzswe:0.7.2"
   }
 }
 
