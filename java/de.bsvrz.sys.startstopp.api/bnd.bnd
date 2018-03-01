@@ -1,5 +1,6 @@
 -exportcontents: de.bsvrz.sys.startstopp.api.*
 -sources: true
+-snapshot: ${tstamp}
 
 Bundle-Name: StartStopp-API
 Import-Package: *
