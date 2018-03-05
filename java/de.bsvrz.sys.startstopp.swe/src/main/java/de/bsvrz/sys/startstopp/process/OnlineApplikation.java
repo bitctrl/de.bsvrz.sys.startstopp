@@ -239,10 +239,6 @@ public final class OnlineApplikation {
 			}
 			
 			builder.append(createArgumentEintrag(argument));
-			
-			builder.append('\'');
-			builder.append(argument.trim());
-			builder.append('\'');
 		}
 
 		if (applikation.getInkarnation().getMitInkarnationsName()) {
