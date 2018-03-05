@@ -491,5 +491,9 @@ public final class ProzessManager {
 	boolean isRekonfigurationAktiv() {
 		return rekonfigurationAktiv;
 	}
-	
+
+	public void exitStartStopp() {
+		shutdownSkript();
+		System.exit(0);
+	}
 }

@@ -237,16 +237,32 @@ public final class OnlineApplikation {
 			if (builder.length() > 0) {
 				builder.append(' ');
 			}
+			
 			builder.append(argument.trim());
 		}
 
 		if (applikation.getInkarnation().getMitInkarnationsName()) {
-			builder.append(" -inkarnationsName=");
-			builder.append(inkarnationsPrefix);
-			builder.append(applikation.getInkarnation().getInkarnationsName());
+			builder.append(createInkarnationsNameArgument());
 		}
 
 		return builder.toString();
+	}
+
+	private String createInkarnationsNameArgument() {
+		StringBuilder argument = new StringBuilder();
+		argument.append(" -inkarnationsName=");
+		argument.append(inkarnationsPrefix);
+		
+		String name = applikation.getInkarnation().getInkarnationsName().trim();
+		if( name.split("\\s").length > 1) {
+			argument.append('\'');
+			argument.append(name);
+			argument.append('\'');
+		} else {
+			argument.append(name);
+		}
+
+		return argument.toString();
 	}
 
 	public String getName() {

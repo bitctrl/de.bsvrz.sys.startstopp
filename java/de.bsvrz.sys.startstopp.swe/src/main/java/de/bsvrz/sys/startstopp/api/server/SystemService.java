@@ -69,7 +69,7 @@ public class SystemService {
 	@Path("exit")
 	public Response responseStartStoppExit() {
 		Response response = Response.accepted().build();
-		CompletableFuture.runAsync(() -> System.exit(0));
+		startStopp.getProcessManager().exitStartStopp();
 		return response;
 	}
 
