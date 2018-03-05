@@ -238,11 +238,11 @@ public final class OnlineApplikation {
 				builder.append(' ');
 			}
 			
-			builder.append(createArgumentEintrag(argument));
+			builder.append(argument.trim());
 		}
 
 		if (applikation.getInkarnation().getMitInkarnationsName()) {
-			builder.append(createArgumentEintrag(createInkarnationsNameArgument()));
+			builder.append(createInkarnationsNameArgument());
 		}
 
 		return builder.toString();
@@ -252,31 +252,17 @@ public final class OnlineApplikation {
 		StringBuilder argument = new StringBuilder();
 		argument.append(" -inkarnationsName=");
 		argument.append(inkarnationsPrefix);
-		argument.append(applikation.getInkarnation().getInkarnationsName().trim());
-		return createArgumentEintrag(argument.toString());
-	}
-
-	private String createArgumentEintrag(String argument) {
-
-		StringBuilder result = new StringBuilder();
 		
-		String text = argument.trim();
-		if( text.contains("=")) {
-			String[] argumentMitWert = text.split("=");
-			result.append(argumentMitWert[0].trim());
-			result.append('=');
-			text = argumentMitWert[1].trim();
-		} 
-		
-		if( text.split("\\s").length > 1) {
-			result.append('\'');
-			result.append(text);
-			result.append('\'');
+		String name = applikation.getInkarnation().getInkarnationsName().trim();
+		if( name.split("\\s").length > 1) {
+			argument.append('\'');
+			argument.append(name);
+			argument.append('\'');
 		} else {
-			result.append(text);
+			argument.append(name);
 		}
-		
-		return result.toString();
+
+		return argument.toString();
 	}
 
 	public String getName() {
