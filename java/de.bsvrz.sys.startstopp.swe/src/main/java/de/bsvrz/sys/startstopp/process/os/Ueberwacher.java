@@ -27,8 +27,12 @@
 package de.bsvrz.sys.startstopp.process.os;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jutils.jprocesses.model.ProcessInfo;
 
@@ -91,7 +95,7 @@ class Ueberwacher implements Runnable {
 			}
 
 			String cmdLine = cmdLineBuilder.toString();
-			String[] cmdArray = cmdLine.split("\\s");
+			String[] cmdArray = buildCommandArray(cmdLine);
 			LOGGER.info("Kommandozeile: '" + Arrays.toString(cmdArray) + "'");
 			ProcessBuilder builder = new ProcessBuilder(cmdArray);
 			builder.redirectErrorStream(true);
@@ -122,6 +126,46 @@ class Ueberwacher implements Runnable {
 			osApplikation.prozessGestartet();
 			ueberwacheProzess(process);
 		}
+	}
+
+	private String[] buildCommandArray(String cmdLine) {
+		
+		Pattern pattern = Pattern.compile("('.*')|(\".*\")|\\S+");
+		Matcher matcher = pattern.matcher(cmdLine);
+		String currentArgument = null;
+		Character escapeChar = null;
+		List<String> parameter = new ArrayList<>();
+		while (matcher.find()) {
+			String nextPart = matcher.group();
+			Character foundEscape = null;
+			if (nextPart.contains("'")) {
+				foundEscape = '\'';
+			} else if (nextPart.contains("\"")) {
+				foundEscape = '\"';
+			} 
+			
+			if( escapeChar == null) {
+				if( foundEscape == null) {
+					parameter.add(nextPart);
+					currentArgument = null;
+				} else {
+					escapeChar = foundEscape;
+					currentArgument = nextPart;
+				}
+			} else {
+				currentArgument = currentArgument + " " + nextPart;
+				if( escapeChar.equals(foundEscape)) {
+					parameter.add(currentArgument);
+					escapeChar = null;
+					currentArgument = null;
+				} 
+			}
+		}
+		if( currentArgument != null) {
+			parameter.add(currentArgument);
+		}
+
+		return parameter.toArray(new String[parameter.size()]);
 	}
 
 	private void ueberwacheProzess(Process process) {
