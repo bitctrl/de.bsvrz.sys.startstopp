@@ -150,15 +150,17 @@ class Ueberwacher implements Runnable {
 					currentArgument = null;
 				} else {
 					escapeChar = foundEscape;
-					currentArgument = nextPart;
+					currentArgument = nextPart.replaceAll("" + foundEscape, "");
 				}
 			} else {
-				currentArgument = currentArgument + " " + nextPart;
 				if( escapeChar.equals(foundEscape)) {
+					currentArgument = currentArgument + " " + nextPart.replaceAll("" + foundEscape, "");
 					parameter.add(currentArgument);
 					escapeChar = null;
 					currentArgument = null;
-				} 
+				} else {
+					currentArgument = currentArgument + " " + nextPart;
+				}
 			}
 		}
 		if( currentArgument != null) {

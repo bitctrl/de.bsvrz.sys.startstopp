@@ -214,6 +214,51 @@ public class TestInkarnationsProzess {
 		Assert.assertNotNull("Pid", process.getPid());
 	}
 
+	
+	private String createInkarnationsNameArgument(String inkarnationsName) {
+		StringBuilder argument = new StringBuilder(200);
+		argument.append("-inkarnationsName=");
+		
+		String name = inkarnationsName.trim();
+		if( name.split("\\s").length > 1) {
+			argument.append('"');
+			argument.append("StartStopp_");
+			argument.append(name);
+			argument.append('"');
+		} else {
+			argument.append("StartStopp_");
+			argument.append(name);
+		}
+
+		return argument.toString();
+	}
+
+	@Test(timeout = 2000000000)
+	public final void testStartInkarnationsName() throws InterruptedException {
+
+		List<OSApplikationStatus> empfangen = new ArrayList<>();
+		OSApplikationStatus[] erwartet = { OSApplikationStatus.GESTARTET,
+				OSApplikationStatus.GESTOPPT };
+
+		OSApplikation process = new OSApplikation("testStart", "java");
+		process.setProgrammArgumente("-cp " + classPath + " de.bsvrz.sys.startstopp.process.TestInkarnation " + createInkarnationsNameArgument("Meine tolle SWE"));
+
+		process.onStatusChange.addHandler((newStatus) -> {
+			empfangen.add(newStatus);
+			if (empfangen.size() >= erwartet.length) {
+				triggerLock();
+			}
+		});
+
+		process.start();
+
+		waitForLock();
+		for (int idx = 0; idx < erwartet.length; idx++) {
+			Assert.assertEquals("Unerwarteter Status", erwartet[idx], empfangen.get(idx));
+		}
+	}
+	
+	
 	private void triggerLock() {
 		synchronized (lock) {
 			lock.notifyAll();
