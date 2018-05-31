@@ -249,15 +249,15 @@ public final class OnlineApplikation {
 	}
 
 	private String createInkarnationsNameArgument() {
-		StringBuilder argument = new StringBuilder();
+		StringBuilder argument = new StringBuilder(200);
 		argument.append(" -inkarnationsName=");
 		
 		String name = applikation.getInkarnation().getInkarnationsName().trim();
 		if( name.split("\\s").length > 1) {
-			argument.append('\'');
+			argument.append('"');
 			argument.append(inkarnationsPrefix);
 			argument.append(name);
-			argument.append('\'');
+			argument.append('"');
 		} else {
 			argument.append(inkarnationsPrefix);
 			argument.append(name);
